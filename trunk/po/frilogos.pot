@@ -1,0 +1,926 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: frilogos 0.6.0\n"
+"Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
+"POT-Creation-Date: 2012-10-01 19:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/bin/about_dlg.c:95
+msgid "About FriLogos..."
+msgstr ""
+
+#: src/bin/about_dlg.c:187 src/bin/import_dlg.c:202
+#: src/bin/items_browser.c:1380 src/bin/patients_browser.c:668
+#: src/bin/preferences_dlg.c:71 src/lib/myfileselector.c:344
+msgid "Close"
+msgstr ""
+
+#: src/bin/frilogos.c:128 src/bin/frilogos.c:134 src/bin/frilogos.c:348
+#: src/modules/diaporama/settings.c:645 src/modules/cli/settings.c:436
+#: src/modules/frilexie/settings.c:122
+msgid "Options"
+msgstr ""
+
+#: src/bin/frilogos.c:209
+#, c-format
+msgid "CRI:Can't init Eina!\n"
+msgstr ""
+
+#: src/bin/frilogos.c:220
+msgid "Can't init Elementary!"
+msgstr ""
+
+#: src/bin/frilogos.c:232
+msgid "Initialize Application..."
+msgstr ""
+
+#: src/bin/frilogos.c:240
+#, c-format
+msgid "Installation path:%s"
+msgstr ""
+
+#: src/bin/frilogos.c:241
+#, c-format
+msgid "User home dir:%s"
+msgstr ""
+
+#: src/bin/frilogos.c:242
+#, c-format
+msgid "User data path :%s"
+msgstr ""
+
+#: src/bin/frilogos.c:243
+#, c-format
+msgid "Locale Path:%s"
+msgstr ""
+
+#: src/bin/frilogos.c:244
+#, c-format
+msgid "Modules Path:%s"
+msgstr ""
+
+#: src/bin/frilogos.c:245
+#, c-format
+msgid "Patients data path:%s"
+msgstr ""
+
+#: src/bin/frilogos.c:246
+#, c-format
+msgid "Items data path:%s"
+msgstr ""
+
+#: src/bin/frilogos.c:247
+#, c-format
+msgid "FriLogos Edje file Path:%s"
+msgstr ""
+
+#: src/bin/frilogos.c:255
+#, c-format
+msgid "FriLogos %s - Session of %02d/%02d/%d"
+msgstr ""
+
+#: src/bin/frilogos.c:285
+msgid "Patients"
+msgstr ""
+
+#: src/bin/frilogos.c:286 src/bin/items_browser.c:1392
+msgid "Items"
+msgstr ""
+
+#: src/bin/frilogos.c:287 src/bin/preferences_dlg.c:41
+msgid "Preferences"
+msgstr ""
+
+#: src/bin/frilogos.c:288
+msgid "About"
+msgstr ""
+
+#: src/bin/frilogos.c:289
+msgid "Quit"
+msgstr ""
+
+#: src/bin/frilogos.c:296
+msgid "Patient selection"
+msgstr ""
+
+#: src/bin/frilogos.c:332
+msgid "Indications"
+msgstr ""
+
+#: src/bin/frilogos.c:339
+msgid ""
+"<b>FriLogos</>Welcome to FriLogos!<br><br>You should select or create a "
+"patient to start a session with him."
+msgstr ""
+
+#: src/bin/import_dlg.c:141
+msgid "Import a FriLogos item..."
+msgstr ""
+
+#: src/bin/import_dlg.c:171 src/lib/myfileselector.c:272
+msgid "Preview"
+msgstr ""
+
+#: src/bin/import_dlg.c:193 src/bin/items_browser.c:1358
+msgid "Import"
+msgstr ""
+
+#: src/bin/init.c:47
+msgid ""
+"It appears that it's the first time you run FriLogos. To be used, FriLogos "
+"needs some database files containing items. I'll copy some default items "
+"files, but you can easily remove them and create new ones(highly "
+"recommended)!"
+msgstr ""
+
+#: src/bin/items_browser.c:122
+#, c-format
+msgid "Item %s has been imported."
+msgstr ""
+
+#: src/bin/items_browser.c:156
+#, c-format
+msgid "Item %s has been exported."
+msgstr ""
+
+#: src/bin/items_browser.c:202
+msgid "Group name can't be null."
+msgstr ""
+
+#: src/bin/items_browser.c:216
+#, c-format
+msgid "New %s group has been added."
+msgstr ""
+
+#: src/bin/items_browser.c:237
+msgid "Create a new group"
+msgstr ""
+
+#: src/bin/items_browser.c:253
+msgid "Group name:"
+msgstr ""
+
+#: src/bin/items_browser.c:282 src/bin/items_browser.c:408
+#: src/bin/items_browser.c:1176 src/bin/patients_browser.c:283
+#: src/lib/utils.c:164
+msgid "Ok"
+msgstr ""
+
+#: src/bin/items_browser.c:292 src/bin/items_browser.c:418
+#: src/bin/items_browser.c:1187 src/bin/patients_browser.c:294
+#: src/bin/patients_browser.c:470
+msgid "Cancel"
+msgstr ""
+
+#: src/bin/items_browser.c:319
+msgid "Subgroup name can't be null."
+msgstr ""
+
+#: src/bin/items_browser.c:336
+#, c-format
+msgid "New %s subgroup has been added."
+msgstr ""
+
+#: src/bin/items_browser.c:362
+msgid "Create a new subgroup to current group"
+msgstr ""
+
+#: src/bin/items_browser.c:379
+msgid "SubGroup name:"
+msgstr ""
+
+#: src/bin/items_browser.c:430
+msgid "You must select or create a group before creating a new subgroup."
+msgstr ""
+
+#: src/bin/items_browser.c:452
+#, c-format
+msgid "Items "
+msgstr ""
+
+#: src/bin/items_browser.c:454
+#, c-format
+msgid "Item "
+msgstr ""
+
+#: src/bin/items_browser.c:469
+msgid "have been removed."
+msgstr ""
+
+#: src/bin/items_browser.c:471
+msgid "has been removed."
+msgstr ""
+
+#: src/bin/items_browser.c:496
+msgid "Are your sure you want to remove the following items:"
+msgstr ""
+
+#: src/bin/items_browser.c:509
+msgid "Yes"
+msgstr ""
+
+#: src/bin/items_browser.c:518
+msgid "No"
+msgstr ""
+
+#: src/bin/items_browser.c:577
+#, c-format
+msgid "Item %s has been moved to subgroup %s."
+msgstr ""
+
+#: src/bin/items_browser.c:585
+#, c-format
+msgid "Moved %s to unknown space."
+msgstr ""
+
+#: src/bin/items_browser.c:645
+#, c-format
+msgid "Subgroup %s"
+msgstr ""
+
+#: src/bin/items_browser.c:749
+#, c-format
+msgid "Item %s has been created."
+msgstr ""
+
+#: src/bin/items_browser.c:756
+msgid "You must select or create a group before creating a new item."
+msgstr ""
+
+#: src/bin/items_browser.c:826
+#, c-format
+msgid "Items Browser - %d items in %d groups"
+msgstr ""
+
+#: src/bin/items_browser.c:959
+#, c-format
+msgid "Item %s has been updated."
+msgstr ""
+
+#: src/bin/items_browser.c:1004 src/bin/patients_browser.c:167
+msgid "Select a picture file"
+msgstr ""
+
+#: src/bin/items_browser.c:1036
+msgid "Item Description"
+msgstr ""
+
+#: src/bin/items_browser.c:1049
+msgid "Item name:"
+msgstr ""
+
+#: src/bin/items_browser.c:1063
+msgid "Distractors"
+msgstr ""
+
+#: src/bin/items_browser.c:1120 src/modules/diaporama/settings.c:545
+#: src/modules/cli/settings.c:363
+msgid "Realistic"
+msgstr ""
+
+#: src/bin/items_browser.c:1134
+msgid "Realistic..."
+msgstr ""
+
+#: src/bin/items_browser.c:1144 src/modules/diaporama/settings.c:552
+#: src/modules/cli/settings.c:371
+msgid "Abstract"
+msgstr ""
+
+#: src/bin/items_browser.c:1158
+msgid "Abstract..."
+msgstr ""
+
+#: src/bin/items_browser.c:1205
+msgid "Initialize Items Browser UI..."
+msgstr ""
+
+#: src/bin/items_browser.c:1236
+msgid "Welcome to items browser!"
+msgstr ""
+
+#: src/bin/items_browser.c:1267
+msgid "Add group"
+msgstr ""
+
+#: src/bin/items_browser.c:1278
+msgid "Add subgroup"
+msgstr ""
+
+#: src/bin/items_browser.c:1290
+msgid "Groups"
+msgstr ""
+
+#: src/bin/items_browser.c:1336 src/bin/patients_browser.c:648
+msgid "Add"
+msgstr ""
+
+#: src/bin/items_browser.c:1347 src/bin/patients_browser.c:658
+msgid "Remove"
+msgstr ""
+
+#: src/bin/items_browser.c:1369
+msgid "Export"
+msgstr ""
+
+#: src/bin/patients_browser.c:113
+#, c-format
+msgid "Profil of %s %s has been updated."
+msgstr ""
+
+#: src/bin/patients_browser.c:198
+msgid "Patient Description"
+msgstr ""
+
+#: src/bin/patients_browser.c:232
+msgid "Photo..."
+msgstr ""
+
+#: src/bin/patients_browser.c:245
+msgid "Firstname:"
+msgstr ""
+
+#: src/bin/patients_browser.c:259
+msgid "Lastname:"
+msgstr ""
+
+#: src/bin/patients_browser.c:406
+#, c-format
+msgid "Profils selected have been removed."
+msgstr ""
+
+#: src/bin/patients_browser.c:408
+#, c-format
+msgid "Profil selected has been removed."
+msgstr ""
+
+#: src/bin/patients_browser.c:445
+msgid "Are your sure you want to delete the following patients profils:"
+msgstr ""
+
+#: src/bin/patients_browser.c:461
+msgid "OK"
+msgstr ""
+
+#: src/bin/patients_browser.c:506
+#, c-format
+msgid "Profil of %s %s has been created."
+msgstr ""
+
+#: src/bin/patients_browser.c:530
+#, c-format
+msgid "Patients Profils Browser - %d patients"
+msgstr ""
+
+#: src/bin/patients_browser.c:532
+#, c-format
+msgid "Patients Profils Browser - 0 patient"
+msgstr ""
+
+#: src/bin/patients_browser.c:619
+msgid "Welcome to patients profil browser!"
+msgstr ""
+
+#: src/bin/shutdown.c:24
+msgid "Shutdown FriLogos..."
+msgstr ""
+
+#: src/lib/items.c:272
+msgid "Graphemic"
+msgstr ""
+
+#: src/lib/items.c:275
+msgid "Semantic"
+msgstr ""
+
+#: src/lib/items.c:278
+msgid "Neutral"
+msgstr ""
+
+#: src/lib/items.c:281 src/modules/diaporama/settings.c:608
+msgid "Visual"
+msgstr ""
+
+#: src/lib/items.c:284
+msgid "Undefined"
+msgstr ""
+
+#: src/lib/items.c:835 src/lib/patients.c:472
+#, c-format
+msgid "Can't write Eet file '%s'!"
+msgstr ""
+
+#: src/lib/items.c:862 src/lib/patients.c:573
+#, c-format
+msgid "Can't remove Eet file:'%s'!"
+msgstr ""
+
+#: src/lib/items.c:891
+#, c-format
+msgid "Can't import %s!"
+msgstr ""
+
+#: src/lib/items.c:919
+#, c-format
+msgid "Can't export %s!"
+msgstr ""
+
+#: src/lib/items.c:1016
+msgid "Can't allocate list node to items Eina_List!"
+msgstr ""
+
+#: src/lib/items.c:1040
+#, c-format
+msgid ""
+"\n"
+"%d - %s %s(in %s) - created on %s"
+msgstr ""
+
+#: src/lib/items.c:1087
+#, c-format
+msgid "Can't get item with id: %d!"
+msgstr ""
+
+#: src/lib/items.c:1138
+#, c-format
+msgid "Test item new/save/remove/free.."
+msgstr ""
+
+#: src/lib/items.c:1173
+#, c-format
+msgid "Test items list load/count..."
+msgstr ""
+
+#: src/lib/items.c:1182
+#, c-format
+msgid "Test groups list load/count/subgroups...\n"
+msgstr ""
+
+#: src/lib/items.c:1186
+#, c-format
+msgid "\t=>%s group has %d subgroups.\n"
+msgstr ""
+
+#: src/lib/items.c:1192
+msgid "Test items_list_except*_get()..."
+msgstr ""
+
+#: src/lib/items.c:1304
+msgid "Couldn't get Eina_List groups!"
+msgstr ""
+
+#: src/lib/items.c:1335 src/lib/items.c:1362
+msgid "Can't allocate list node!"
+msgstr ""
+
+#: src/lib/items.c:1387 src/lib/items.c:1410
+msgid "Couldn't calloc Group"
+msgstr ""
+
+#: src/lib/items.c:1497
+#, c-format
+msgid "Can't get any items from group: %s!"
+msgstr ""
+
+#: src/lib/items.c:1545 src/lib/items.c:1578 src/lib/items.c:1612
+#: src/lib/items.c:1648 src/lib/items.c:1672 src/lib/items.c:1694
+#: src/lib/items.c:1732
+msgid "Can't return randomized items list when not enough items in list!"
+msgstr ""
+
+#: src/lib/mem.c:89
+msgid "Dumping memory usage:"
+msgstr ""
+
+#: src/lib/mem.c:90
+#, c-format
+msgid "Calls to malloc(): %d."
+msgstr ""
+
+#: src/lib/mem.c:91
+#, c-format
+msgid "Calls to realloc(): %d."
+msgstr ""
+
+#: src/lib/mem.c:92
+#, c-format
+msgid "Calls to calloc(): %d."
+msgstr ""
+
+#: src/lib/mem.c:93
+#, c-format
+msgid "Calls to free(): %d."
+msgstr ""
+
+#: src/lib/modules.c:44
+#, c-format
+msgid "Can't load module %s: %s"
+msgstr ""
+
+#: src/lib/modules.c:53
+#, c-format
+msgid "Can't find _print_module_infos() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:62
+#, c-format
+msgid "Can't find _module_id_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:71
+#, c-format
+msgid "Can't find _module_name_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:79
+#, c-format
+msgid "Can't find _module_desc_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:87
+#, c-format
+msgid "Can't find _module_theme_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:95
+#, c-format
+msgid "Can't find _module_settings_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:103
+#, c-format
+msgid "Can't find _module_patient_set() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:175
+msgid "Can't get modules list!"
+msgstr ""
+
+#: src/lib/myfileselector.c:47
+#, c-format
+msgid "You"
+msgstr ""
+
+#: src/lib/myfileselector.c:97
+#, c-format
+msgid "Protected"
+msgstr ""
+
+#: src/lib/myfileselector.c:99 src/lib/myfileselector.c:108
+#: src/lib/myfileselector.c:117
+#, c-format
+msgid "Read Only"
+msgstr ""
+
+#: src/lib/myfileselector.c:106 src/lib/myfileselector.c:115
+#, c-format
+msgid "Forbidden"
+msgstr ""
+
+#: src/lib/myfileselector.c:124
+msgid "Read-Write"
+msgstr ""
+
+#: src/lib/myfileselector.c:134
+#, c-format
+msgid "%'.0f Bytes"
+msgstr ""
+
+#: src/lib/myfileselector.c:138
+#, c-format
+msgid "%'.0f KB"
+msgstr ""
+
+#: src/lib/myfileselector.c:142
+#, c-format
+msgid "%'.0f MB"
+msgstr ""
+
+#: src/lib/myfileselector.c:146
+#, c-format
+msgid "%'.1f GB"
+msgstr ""
+
+#: src/lib/myfileselector.c:172
+msgid "*FIXME*"
+msgstr ""
+
+#: src/lib/myfileselector.c:231
+msgid "Select a file..."
+msgstr ""
+
+#: src/lib/myfileselector.c:278
+msgid "Type :"
+msgstr ""
+
+#: src/lib/myfileselector.c:290
+msgid "Size :"
+msgstr ""
+
+#: src/lib/myfileselector.c:302
+msgid "Owner :"
+msgstr ""
+
+#: src/lib/myfileselector.c:314
+msgid "Permissions :"
+msgstr ""
+
+#: src/lib/myfileselector.c:335
+msgid "Open"
+msgstr ""
+
+#: src/lib/patients.c:106
+msgid "Couldn't calloc Patient_Profil struct!"
+msgstr ""
+
+#: src/lib/patients.c:117 src/lib/patients.c:118 src/lib/patients.c:132
+msgid "undefined"
+msgstr ""
+
+#: src/lib/patients.c:420
+#, c-format
+msgid "Couldn't open file '%s'!"
+msgstr ""
+
+#: src/lib/patients.c:430
+#, c-format
+msgid "Eet file '%s' %#x was too old, upgrading it to %#x!"
+msgstr ""
+
+#: src/lib/patients.c:538
+#, c-format
+msgid ""
+"Patient_Info:\n"
+"\t|->Filename.....:%s(%#x)\n"
+"\t|->ID...........:%d\n"
+"\t|->Name.........:%s %s\n"
+"\t|->Gender.......:%s\n"
+"\t|->BirthDay.....:%s\n"
+"\t|->Creation Date:%s\n"
+"\t|->Revision Date:%s\n"
+msgstr ""
+
+#: src/lib/patients.c:650
+#, c-format
+msgid "%d patients registered."
+msgstr ""
+
+#: src/lib/patients.c:689
+msgid "Can't allocate list node."
+msgstr ""
+
+#: src/lib/settings.c:51
+msgid "Can't read frilogos settings!"
+msgstr ""
+
+#: src/lib/settings.c:87 src/lib/settings.c:102
+#, c-format
+msgid "Can't read %s settings from %s!"
+msgstr ""
+
+#: src/lib/settings.c:124
+#, c-format
+msgid "Can't write %s settings from %s!"
+msgstr ""
+
+#: src/lib/settings.c:155
+msgid "Can't write frilogos settings!"
+msgstr ""
+
+#: src/lib/utils.c:153
+msgid "Confirmation"
+msgstr ""
+
+#: src/modules/diaporama/module.c:105
+msgid "Diaporama"
+msgstr ""
+
+#: src/modules/diaporama/module.c:115
+msgid "Items appears and patient must memorize it."
+msgstr ""
+
+#: src/modules/diaporama/module.c:125 src/modules/cli/module.c:73
+#: src/modules/frilexie/module.c:69
+#, c-format
+msgid "%s module"
+msgstr ""
+
+#: src/modules/diaporama/module.c:126 src/modules/cli/module.c:74
+#: src/modules/frilexie/module.c:70
+#, c-format
+msgid "\tVersion:%d.%d.%d"
+msgstr ""
+
+#: src/modules/diaporama/module.c:130 src/modules/cli/module.c:78
+#: src/modules/frilexie/module.c:74
+#, c-format
+msgid "\tBuild on:%s"
+msgstr ""
+
+#: src/modules/diaporama/module.c:140
+msgid "DIAPORAMA"
+msgstr ""
+
+#: src/modules/diaporama/module.c:226 src/modules/diaporama/module.c:702
+#, c-format
+msgid "Sequence %d Time:%0.f secs"
+msgstr ""
+
+#: src/modules/diaporama/module.c:386 src/modules/diaporama/module.c:429
+#: src/modules/cli/module.c:249 src/modules/cli/module.c:282
+#: src/modules/frilexie/module.c:188 src/modules/frilexie/module.c:211
+#, c-format
+msgid "Score:%d/%d Time:%0.3f secs"
+msgstr ""
+
+#: src/modules/diaporama/module.c:491 src/modules/cli/module.c:330
+#, c-format
+msgid "Setting distractor for item %s."
+msgstr ""
+
+#: src/modules/diaporama/module.c:576 src/modules/cli/module.c:353
+msgid "Can't generate distractors, not enough items registered!"
+msgstr ""
+
+#: src/modules/diaporama/module.c:694 src/modules/cli/module.c:340
+#: src/modules/cli/module.c:372
+#, c-format
+msgid "Can't load Edje image from %s!"
+msgstr ""
+
+#: src/modules/diaporama/module.c:704 src/modules/cli/module.c:445
+#: src/modules/frilexie/module.c:250
+#, c-format
+msgid "Sequence %d"
+msgstr ""
+
+#: src/modules/diaporama/module.c:923
+msgid "Couldn't calloc Screen struct!"
+msgstr ""
+
+#: src/modules/diaporama/module.c:968 src/modules/cli/module.c:668
+#: src/modules/frilexie/module.c:376
+msgid "Can't construct Ecore_Evas object!"
+msgstr ""
+
+#: src/modules/diaporama/module.c:974
+#, c-format
+msgid "%s - Session of %s"
+msgstr ""
+
+#: src/modules/diaporama/module.c:988 src/modules/cli/module.c:683
+#: src/modules/frilexie/module.c:391
+msgid "Can't create Edje object!"
+msgstr ""
+
+#: src/modules/diaporama/module.c:994 src/modules/cli/module.c:689
+#: src/modules/frilexie/module.c:397
+#, c-format
+msgid "Can't set Edje object file: %s!"
+msgstr ""
+
+#: src/modules/diaporama/module.c:1033
+#, c-format
+msgid "Closing session of :%s\n"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:188
+msgid "Denomitation"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:191
+msgid "Simple reading"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:194
+msgid "Pairs with distractors"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:197
+msgid "Pairs and oralization"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:200
+msgid "Rapido-Deno"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:203 src/modules/cli/settings.c:54
+msgid "Unknown"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:533 src/modules/cli/settings.c:351
+msgid "Groups/Subgroups"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:562 src/modules/cli/settings.c:382
+msgid "Images Type"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:571 src/modules/cli/settings.c:395
+msgid "Exercice selection"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:583 src/modules/cli/settings.c:405
+msgid "Exercice"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:600
+msgid "Graphemics"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:616
+msgid "Semantics"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:624 src/modules/cli/settings.c:415
+msgid "Exposition time:"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:625 src/modules/cli/settings.c:416
+#, c-format
+msgid "%1.0f sec"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:634 src/modules/cli/settings.c:425
+#: src/modules/frilexie/settings.c:109
+msgid "Sequences:"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:635 src/modules/cli/settings.c:426
+#: src/modules/frilexie/settings.c:110
+#, c-format
+msgid "%1.0f"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:656 src/modules/cli/settings.c:446
+#: src/modules/frilexie/settings.c:132
+msgid "Start"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:728 src/modules/cli/settings.c:167
+#: src/modules/frilexie/settings.c:66
+#, c-format
+msgid "Selected patient:%s %s"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:746 src/modules/cli/settings.c:459
+#: src/modules/frilexie/settings.c:145
+msgid "Alloc module ressources."
+msgstr ""
+
+#: src/modules/diaporama/settings.c:752
+msgid "Couldn't calloc Settings struct!"
+msgstr ""
+
+#: src/modules/diaporama/settings.c:766 src/modules/cli/settings.c:472
+#: src/modules/frilexie/settings.c:158
+msgid "Free module ressources."
+msgstr ""
+
+#: src/modules/cli/module.c:63
+msgid "Found the intrus"
+msgstr ""
+
+#: src/modules/cli/module.c:89
+msgid "Items appears and patient must found the intrus."
+msgstr ""
+
+#: src/modules/cli/module.c:99
+msgid "CLI"
+msgstr ""
+
+#: src/modules/cli/settings.c:48
+msgid "Simple x4 items"
+msgstr ""
+
+#: src/modules/cli/settings.c:50
+msgid "Simple x6 items"
+msgstr ""
+
+#: src/modules/cli/settings.c:52
+msgid "Simple x8 items"
+msgstr ""
+
+#: src/modules/frilexie/module.c:60
+msgid "Frilexie"
+msgstr ""
+
+#: src/modules/frilexie/module.c:84
+msgid "TODO:Frilexie description...."
+msgstr ""
+
+#: src/modules/frilexie/module.c:93
+msgid "FRILEXIE"
+msgstr ""

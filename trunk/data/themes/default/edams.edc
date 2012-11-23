@@ -1,0 +1,436 @@
+images {
+    image: "icons/about-dlg.png" COMP;
+    image: "icons/add-edit.png" COMP;
+    image: "icons/cut-edit.png" COMP;
+    image: "icons/delete-edit.png" COMP;
+    image: "icons/properties-edit.png" COMP;
+    image: "icons/remove-edit.png" COMP;
+    image: "icons/save-edit.png" COMP;
+    image: "icons/info-notify.png" COMP;
+    image: "icons/question-notify.png" COMP;
+    image: "icons/warning-notify.png" COMP;
+    image: "icons/sensors-browser.png" COMP;
+    image: "icons/preferences-browser.png" COMP;
+    image: "icons/apply-window.png" COMP;
+    image: "icons/close-window.png" COMP;
+    image: "icons/user-male.png" COMP;
+    image: "icons/import.png" COMP;
+    image: "icons/export.png" COMP;
+    image: "images/nopicture.png" COMP;    
+    image: "images/header-bg.png" COMP;
+    image: "images/header.png" COMP;
+}
+
+externals {
+   external: "elm";
+}
+
+collections {
+    group { name: "elm/icon/about-dlg/default";
+      min: 48 48;
+      parts {
+         part { name: "icon";
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/about-dlg.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+  group
+  {
+    name: "user/male";
+    min: 64 64;
+    parts
+    {
+        part
+        {
+            type: IMAGE;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0;
+                image.normal: "icons/user-male.png";
+            }
+         }
+      }
+   }
+  group
+  {
+    name: "default/nopicture";
+    min: 64 64;
+        parts
+        {
+            part
+            {
+                type: IMAGE;
+                mouse_events: 0;
+                description
+                {
+                    state: "default" 0;
+                    image.normal: "images/nopicture.png";
+                }
+         }
+      }
+   }
+  group
+  {
+    name: "bg/header-bg";
+    min: 640 480;
+        parts
+        {
+            part
+            {
+                type: IMAGE;
+                mouse_events: 0;
+                description
+                {
+                    state: "default" 0;
+                    image.normal: "images/header-bg.png";
+                }
+         }
+      }
+   }
+  group
+  {
+    name: "bg/header";
+    min: 250 70;
+    parts
+    {
+        part
+        {
+            type: IMAGE;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0;
+                image.normal: "images/header.png";
+            }
+         }
+      }
+   }
+
+   group
+   {
+    name: "elm/icon/add-edit/default";
+
+      parts
+      {
+         part
+         {
+            type: IMAGE;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0;
+                aspect: 1 1;
+                max: 48 48;
+                aspect_preference: BOTH;
+                image.normal: "icons/add-edit.png";
+                image.middle:DEFAULT;
+               }
+            }
+         }
+      }
+
+    group
+    {
+        name: "elm/icon/cut-edit/default";
+        parts
+        {
+            part
+            {
+                type: IMAGE;
+                mouse_events: 0;
+                description {
+                state: "default" 0;
+                max: 48 48;
+                aspect: 1 1;
+                aspect_preference: BOTH;
+                image.normal: "icons/cut-edit.png";
+                image.middle:DEFAULT;
+               }
+            }
+         }
+      }
+
+   group
+   {
+    name: "elm/icon/delete-edit/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/delete-edit.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+   group { name: "elm/icon/properties-edit/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/properties-edit.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+    group { name: "elm/icon/remove-edit/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/remove-edit.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+   group { name: "elm/icon/save-edit/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/save-edit.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+   group { name: "elm/icon/info/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/info-notify.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+  group { name: "elm/icon/question-notify/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/question-notify.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+  group { name: "elm/icon/warning-notify/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/warning-notify.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+  group { name: "elm/icon/sensors-browser/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/sensors-browser.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+
+  group { name: "elm/icon/preferences-browser/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/preferences-browser.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+  group { name: "elm/icon/apply-window/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/apply-window.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+  group { name: "elm/icon/close-window/default";
+      min: 48 48;
+      parts {
+         part {
+            type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0;
+               aspect: 1 1;
+               aspect_preference: BOTH;
+               image {
+                  normal: "icons/close-window.png";
+                  middle: DEFAULT;
+               }
+               fill {
+               }
+            }
+         }
+      }
+   }
+
+
+
+   group
+   {
+    name: "elm/icon/import/default";
+
+      parts
+      {
+         part
+         {
+            type: IMAGE;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0;
+                aspect: 1 1;
+                max: 48 48;
+                aspect_preference: BOTH;
+                image.normal: "icons/import.png";
+                image.middle:DEFAULT;
+               }
+            }
+         }
+      }
+
+
+   group
+   {
+    name: "elm/icon/export/default";
+
+      parts
+      {
+         part
+         {
+            type: IMAGE;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0;
+                aspect: 1 1;
+                max: 48 48;
+                aspect_preference: BOTH;
+                image.normal: "icons/export.png";
+                image.middle:DEFAULT;
+               }
+            }
+         }
+      }
+}
