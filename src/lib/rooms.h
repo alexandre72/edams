@@ -77,10 +77,11 @@ Eina_List *room_sensors_list_get(const Room *room);
 
 Room *room_load(Evas *evas, const char *filename);
 Eina_Bool room_save(Room *room);
+Eina_Bool room_remove(Room *room);
 
 Eina_List *rooms_list_get();
 Eina_List *rooms_list_free(Eina_List *rooms);
-Eina_Bool room_remove(Room *room);
+Eina_List *rooms_list_room_remove(Eina_List *rooms, Room *room);
 
 /* Global initializer / shutdown functions */
 void rooms_init(void);

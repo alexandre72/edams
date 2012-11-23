@@ -27,7 +27,6 @@
 int edams_shutdown(App_Info *app)
 {
 	INF(_("Shutdown Edams..."));
-    app->module_selection = module_free(app->module_selection);
 	Eina_List *modules = evas_object_data_get(app->win, "modules");    
     modules = modules_list_free(modules);
 	modules = evas_object_data_del(app->win, "modules");

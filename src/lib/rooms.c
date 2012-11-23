@@ -160,7 +160,7 @@ _load_sensor_images(Sensor *sensor, Evas *evas, const char *filename)
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
        {
-          fprintf(stderr, "ERROR: could not open '%s' for read\n", filename);
+          fprintf(stderr, "ERROR: could not open '%s' for read!\n", filename);
           return;
        }
 
@@ -362,7 +362,7 @@ room_new(unsigned int id, const char * name, const char * description, Eina_List
 
     if (!room)
        {
-          fprintf(stderr, "ERROR: could not calloc Room\n");
+          fprintf(stderr, "ERROR: could not calloc Room!\n");
           return NULL;
        }
 
@@ -424,7 +424,7 @@ _load_room_images(Room *room, Evas *evas, const char *filename)
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
        {
-          fprintf(stderr, "ERROR: could not open '%s' for read\n", filename);
+          fprintf(stderr, "ERROR: could not open '%s' for read!\n", filename);
           return;
        }
 
@@ -619,7 +619,7 @@ room_load(Evas *evas, const char *filename)
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
       {
-        fprintf(stderr, "ERROR: could not open '%s' for read\n", filename);
+        fprintf(stderr, "ERROR: could not open '%s' for read!\n", filename);
         return NULL;
       }
 
@@ -630,7 +630,7 @@ room_load(Evas *evas, const char *filename)
    	if (room->version < 0x0001)
      	{
      	
-        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!"), 
+        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"), 
         			room->__eet_filename,
                 	room->version, 0x0001);
 
@@ -654,7 +654,7 @@ room_save(Room *room)
     ef = eet_open(room->__eet_filename, EET_FILE_MODE_READ_WRITE);
     if (!ef)
        {
-          fprintf(stderr, "ERROR: could not open '%s' for write\n", room->__eet_filename);
+          fprintf(stderr, "ERROR: could not open '%s' for write!\n", room->__eet_filename);
           return EINA_FALSE;
        }
 
@@ -718,22 +718,48 @@ Eina_List *rooms_list_free(Eina_List *rooms)
 {
 	if(rooms)
 	{
+		unsigned int n = 0;
 		Room *room;
 
         //Point to first node of list.
         for(rooms = eina_list_last(rooms); rooms; rooms = eina_list_prev(rooms));
 
         EINA_LIST_FREE(rooms, room)
+        {
 			room_free(room);
+			n++;
+		}
 
         eina_list_free(rooms);
 
-        fprintf(stdout, _("%d rooms registered!"), eina_list_count(rooms));
+        fprintf(stdout, _("INFO:%d rooms list freed.\n"), n);
         return NULL;
     }
 
     return NULL;
 }
+
+
+//
+//Remove 'room' from 'rooms' list.
+//
+Eina_List *
+rooms_list_room_remove(Eina_List *rooms, Room *room)
+{
+	Eina_List *l;
+	Room *data;
+
+ 	EINA_LIST_FOREACH(rooms, l, data)
+   {
+		if(data == room)
+		{
+         	rooms = eina_list_remove_list(rooms, l);
+			break;
+		}
+   }
+   return rooms;
+}
+
 
 
 //
@@ -774,7 +800,8 @@ Eina_List *rooms_list_get()
 
 	eina_iterator_free(it);
 	}
-	
+
+	fprintf(stdout, _("INFO:%d rooms list found and registered.\n"), eina_list_count(rooms));
 	rooms = eina_list_sort(rooms, eina_list_count(rooms), EINA_COMPARE_CB(strcoll));
 	return rooms;
 }

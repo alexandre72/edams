@@ -35,17 +35,7 @@ typedef struct
 {
 	Evas_Object *win;
 	Evas_Object *toolbar;
-	Evas_Object *rooms_list;
-	Evas_Object *naviframe;
-	Evas_Object *description_text;
-	
-	//Notifying when an event occurs.
-	Evas_Object *bubble;
-	Evas_Object *bubble_ic;
-	Evas_Object *bubble_label;
-
-	//Contains some current selection.
-	Module_Info *module_selection;
+	Eina_List *rooms;
 } App_Info;
 
 
