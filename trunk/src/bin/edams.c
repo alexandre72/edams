@@ -40,11 +40,13 @@ int _log_dom = -1;
 //Widgets callbacks.
 static void quit_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _rooms_list_selected_cb(void *data, Evas_Object *obj, void *event_info);
-static void _fill_rooms_list();
+static void _remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+static void _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 static void _notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _notify_set(const char *msg, const char *icon);
+static void _room_item_del_cb(void *data, Evas_Object *obj, void *event_info);
 
 App_Info *app = NULL;
 
@@ -73,7 +75,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
 	evas = ecore_evas_get(ee); 
 	
-	img = elm_object_name_find(win, "photo", -1);
+	img = elm_object_name_find(win, "room image", -1);
     elm_image_file_get(img, &f, &g);
     
     //Don't try to update if isn't a new item image!
@@ -85,16 +87,17 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 		evas_object_image_scale(eo, 50, 50);
 		room_photo_set(room, eo);
     }
-    
     room_save(room);
+
+	Evas_Object *list = elm_object_name_find(app->win, "rooms list", -1);
+	Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), NULL, NULL, NULL, room);
+	elm_object_item_del_cb_set(it, _room_item_del_cb);
 
 	if(eo)
 	{		
 		evas_object_del(eo);
     	elm_image_file_set(img, room_filename_get(room), "/image/1");
 	}
-	
-	_fill_rooms_list();
 
     snprintf(s, sizeof(s), _("Room %s has been created."), 
     						room_name_get(room));
@@ -161,14 +164,13 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	Evas_Object *bt;
 	Evas_Object *entry;
  
- 
 	win = elm_win_util_standard_add("rooms_description_dlg", _("Room Description"));
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
 	evas_object_show(win);
 
 	gd = elm_grid_add(win);
-	elm_grid_size_set(gd, 100, 120);
+	elm_grid_size_set(gd, 100, 100);
 	elm_win_resize_object_add(win, gd);
 	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(gd);
@@ -178,13 +180,11 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	evas_object_show(fr);
 		
 	img = elm_image_add(win);
-	evas_object_name_set(img, "photo");
+	evas_object_name_set(img, "room image");
 	elm_image_smooth_set(img, EINA_TRUE);
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
-
-   //if(!elm_image_file_set(img, room_filename_get(room), "/image/1"))
-		elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");    
+	elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");    
 	elm_grid_pack(gd, img, 5, 5, 25, 25);
 	evas_object_show(img);
 
@@ -195,7 +195,7 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	elm_icon_standard_set(ic, "document-open");
 	elm_object_part_content_set(bt, "icon", ic);
 	evas_object_smart_callback_add(bt, "clicked",  _photo_bt_clicked_cb, img);
-	elm_grid_pack(gd, bt, 1, 31, 30, 9);
+	elm_grid_pack(gd, bt, 1, 31, 30, 12);
 	evas_object_show(bt);
 
     label = elm_label_add(win);
@@ -217,11 +217,11 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
+	evas_object_name_set(entry, "room description entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	elm_grid_pack(gd, entry, 51, 15, 40, 9);    
-	evas_object_name_set(entry, "room description entry");
 	evas_object_show(entry);
     
 	bt = elm_button_add(win);
@@ -231,7 +231,7 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	elm_icon_standard_set(ic, "dialog-ok-apply");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Ok"));
-	elm_grid_pack(gd, bt, 20, 50, 30, 10);    
+	elm_grid_pack(gd, bt, 20, 85, 20, 12);    
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", _add_apply_bt_clicked_cb, win);
 
@@ -242,11 +242,11 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	elm_icon_standard_set(ic, "dialog-cancel");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Cancel"));
-    elm_grid_pack(gd, bt, 60, 50, 30, 10);
+    elm_grid_pack(gd, bt, 60, 85, 20, 12);
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
 	
-	evas_object_resize(win, 450, 350);
+	evas_object_resize(win, 400, 250);
 }
 
 
@@ -254,20 +254,21 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 static void 
 _rooms_list_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Module_Info *module = NULL;
+/*
     Eina_List *its, *l;
     Elm_Object_Item *it;
-    
+  
     its = elm_naviframe_items_get(app->naviframe);
     EINA_LIST_FOREACH(its, l, it)
     {
         char *s = elm_object_item_data_get(it);
-        if(strcmp(s, module->id) == 0)
+        if(strcmp(s, room) == 0)
         {
             elm_naviframe_item_promote(it);
             break;
         }
     }
+    */
 }
 
 
@@ -277,39 +278,6 @@ quit_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 {
    elm_exit();
 }
-
-
-
-void
-_fill_rooms_list()
-{
-    Eina_List *rooms = NULL, *l;
-	Module_Info *module;
-	
-	//rooms = rooms_list_get(app->win);
-
-    EINA_LIST_FOREACH(rooms, l, module)
-	{
-		Evas_Object *ic;
-		ic=elm_icon_add(app->win);
-		elm_image_file_set(ic, module->icon, "icon");
-		elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-		evas_object_show(ic);
-		elm_list_item_append(app->rooms_list, module->name, ic, ic, NULL, module);
-		
-        Elm_Object_Item *it = elm_naviframe_item_push(app->naviframe, _("Options"), NULL, NULL, module->settings, NULL);
-        elm_naviframe_item_title_visible_set(it, EINA_FALSE);            
-        elm_object_item_data_set(it, module->id);
-	}
-		
-	//Push a new empty item to naviframe to set when no module is selected(at edams startup).
-	Elm_Object_Item *it = elm_naviframe_item_push(app->naviframe, _("Options"), NULL, NULL, NULL, NULL);
-	elm_naviframe_item_title_visible_set(it, EINA_FALSE);            
-    elm_object_item_data_set(it, "");	
-	elm_list_go(app->rooms_list);
-	evas_object_data_set(app->win, "rooms", rooms);    
-}
-
 
 
 //
@@ -350,7 +318,7 @@ _notify_set(const char *msg, const char *icon)
   	evas_object_hide(bt);
  
     notify = elm_object_name_find(app->win, "notify", -1);
-	elm_notify_allow_events_set(notify, EINA_FALSE);    
+	elm_notify_allow_events_set(notify, EINA_TRUE);    
 	elm_notify_timeout_set(notify, 5.0);
 	evas_object_show(notify);
         
@@ -362,6 +330,93 @@ _notify_set(const char *msg, const char *icon)
 }
 
 
+//
+//
+//
+static void  
+_remove_apply_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   char buf[256];
+   Evas_Object *list;
+   Elm_Object_Item *it;
+   Room *room;
+
+	Evas_Object *notify = (Evas_Object *)data;
+	evas_object_hide(notify);
+
+	list = (Evas_Object*)  elm_object_name_find(app->win, "rooms list", -1);
+	it = (Elm_Object_Item *)elm_list_selected_item_get(list);
+	
+	if(it)
+	{
+	   	room = elm_object_item_data_get(it);
+   
+		snprintf(buf, sizeof(buf), _("Room '%s' have been removed."), room_name_get(room));
+		elm_object_item_del(it);
+		room_remove(room);
+		_notify_set(buf, "elm/icon/info/default");
+	}
+}
+
+
+//
+//Remove currently selected room.
+//
+static void 
+_remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   	Evas_Object *notify, *ic, *bt, *label, *list;
+    Elm_Object_Item *it;
+    
+	list = (Evas_Object*)  elm_object_name_find(app->win, "rooms list", -1);
+	it = (Elm_Object_Item *)elm_list_selected_item_get(list);
+     
+     if(!it)
+     {
+		_notify_set(_("Can't remove profil:no room selected!"), "elm/icon/warning-notify/default");
+        return;
+     }
+         
+   	notify = elm_object_name_find(app->win, "notify", -1);
+	elm_notify_allow_events_set(notify, EINA_TRUE);
+	elm_notify_timeout_set(notify, 0.0);
+	evas_object_show(notify);
+
+    ic = elm_object_name_find(app->win, "notify icon", -1);
+    elm_image_file_set(ic, edams_edje_theme_file_get(), "elm/icon/info-notify/default");
+
+   	label = elm_object_name_find(app->win, "notify label", -1);
+    elm_object_text_set(label, _("Are you sure to want to remove selected profil?"));
+
+    bt = elm_object_name_find(app->win, "notify bt1", -1);
+    elm_object_text_set(bt, _("Yes"));
+   	ic = elm_icon_add(app->win);
+   	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+   	elm_icon_standard_set(ic, "apply-window");
+   	elm_object_part_content_set(bt, "icon", ic);   
+	evas_object_smart_callback_add(bt, "clicked", _remove_apply_clicked_cb, notify);
+    evas_object_show(bt);
+    
+    bt = elm_object_name_find(app->win, "notify bt2", -1);
+   	elm_object_text_set(bt, _("No"));
+   	ic = elm_icon_add(app->win);
+   	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);   
+    elm_icon_standard_set(ic, "close-window");
+    elm_object_part_content_set(bt, "icon", ic);
+	evas_object_show(bt);
+}
+
+
+static void
+_room_item_del_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	Room *room = (Room *)data;
+
+	printf("Delete list item and free room '%s'****\n", room_name_get(room));
+	app->rooms = rooms_list_room_remove(app->rooms, room);
+	room_free(room);
+	room = NULL;
+}
 
 //
 //Main.
@@ -374,7 +429,8 @@ elm_main(int argc, char **argv)
 	struct tm *t;
 	Evas_Object *vbx, *vbx2, *bg, *frame;
 	Evas_Object *sep;
-	Evas_Object *tb, *bt, *ic, *label, *notify, *bx;
+	Evas_Object *tb, *bt, *ic, *label, *notify, *bx, *list, *naviframe, *entry;
+	Eina_List *l;
             
             
 	// Initialize important stuff like eina debug system, ecore_evas, eet, elementary...
@@ -384,7 +440,6 @@ elm_main(int argc, char **argv)
 	bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
 	textdomain(PACKAGE_NAME);
 	#endif
-
 
    	_log_dom = eina_log_domain_register("edams",  EINA_COLOR_CYAN);
 
@@ -421,11 +476,9 @@ elm_main(int argc, char **argv)
     
 	INF(_("Initialize Application..."));
 	app = MALLOC(sizeof(*app));
-	app->module_selection = NULL;
 
 	//Init edams.
 	edams_init();
-
 
 	//Setup main window.
 	timestamp = time(NULL);
@@ -442,6 +495,16 @@ elm_main(int argc, char **argv)
 	elm_win_autodel_set(app->win, EINA_TRUE);
 	evas_object_show(app->win);
     elm_win_center(app->win, EINA_TRUE, EINA_TRUE);
+
+  	bg = elm_bg_add(app->win);
+	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_win_resize_object_add(app->win, bg );
+	evas_object_show(bg );
+	 
+	vbx = elm_box_add(app->win);
+	evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_win_resize_object_add(app->win, vbx);
+	evas_object_show(vbx);
 
 	//Setup notify for user informations.
 	notify = elm_notify_add(app->win);
@@ -485,27 +548,13 @@ elm_main(int argc, char **argv)
 	elm_box_pack_end(bx, bt);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_smart_callback_add(bt, "clicked", _notify_close_bt_cb, notify);
-	    
-   	bx = elm_box_add(app->win);
-   	evas_object_show(bx);
 
-  	bg = elm_bg_add(app->win);
-	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(app->win, bg );
-	evas_object_show(bg );
-  	evas_object_size_hint_min_set(bg, 850, 720);
 	
-	vbx = elm_box_add(app->win);
-	evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(app->win, vbx);
-	evas_object_show(vbx);
-
 	//Setup toolbar.
 	app->toolbar = elm_toolbar_add(app->win);
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-
 	elm_toolbar_item_append(app->toolbar,"sensors-browser", _("Sensors"), sensors_browser_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);
@@ -539,14 +588,34 @@ elm_main(int argc, char **argv)
 	elm_box_pack_end(vbx2, frame);
 	evas_object_show(frame);
    
-	app->rooms_list = elm_list_add(app->win);
-	evas_object_size_hint_weight_set(app->rooms_list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	evas_object_size_hint_align_set(app->rooms_list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_smart_callback_add(app->rooms_list, "selected", _rooms_list_selected_cb, app);
-	evas_object_show(app->rooms_list);
-	elm_object_content_set(frame, app->rooms_list);	
+	list = elm_list_add(app->win);
+	evas_object_name_set(list, "rooms list");
+	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_smart_callback_add(list, "selected", _rooms_list_selected_cb, NULL);
+	evas_object_show(list);
+	elm_object_content_set(frame, list);	
     elm_panes_content_left_size_set(panes, 0.15);
 	elm_object_part_content_set(panes, "left", vbx2);
+	  
+    app->rooms = rooms_list_get();
+    Room *room;        
+    EINA_LIST_FOREACH(app->rooms, l, room)
+	{
+		Evas_Object *ic;
+		ic = elm_icon_add(app->win);
+   			if(!elm_image_file_set(ic, room_filename_get(room), "/image/1"))		
+		elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
+		evas_object_show(ic);
+		Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), ic, ic, NULL, room);
+		elm_object_item_del_cb_set(it, _room_item_del_cb);
+		/*
+		Elm_Object_Item *it = elm_naviframe_item_push(app->naviframe, _("Options"), NULL, NULL, NULL, NULL);
+		elm_naviframe_item_title_visible_set(it, EINA_FALSE);            
+    	elm_object_item_data_set(it, "");
+    	*/
+		}
+    elm_list_go(list);
 	  
 	//Table widget, contains group/subgroup genlist navigation and actions buttons like add.
    	tb = elm_table_add(app->win);
@@ -562,10 +631,20 @@ elm_main(int argc, char **argv)
     elm_icon_standard_set(ic, "add-edit");
     elm_object_part_content_set(bt, "icon", ic);
    	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   	elm_table_pack(tb, bt, 0, 1, 1, 1);
+   	elm_table_pack(tb, bt, 0, 0, 1, 1);
     evas_object_show(bt);
     evas_object_smart_callback_add(bt, "clicked", _add_room_bt_clicked_cb, NULL);  
 	  
+	bt = elm_button_add(app->win);
+    elm_object_text_set(bt, _("Remove"));
+    ic = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(ic,  "delete-edit");
+    elm_object_part_content_set(bt, "icon", ic);
+   	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   	elm_table_pack(tb, bt, 0, 1, 1, 1);
+    evas_object_show(bt);
+    evas_object_smart_callback_add(bt, "clicked", _remove_room_bt_clicked_cb, NULL);
 
 	vbx2 = elm_box_add(app->win);
 	evas_object_size_hint_weight_set(vbx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -580,26 +659,24 @@ elm_main(int argc, char **argv)
 	elm_box_pack_end(vbx2, frame);
 	evas_object_show(frame);
 
-  	app->description_text =  elm_entry_add(app->win);
-	evas_object_size_hint_weight_set(app->description_text, EVAS_HINT_EXPAND, 0.0);
-   	evas_object_size_hint_align_set(app->description_text, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_entry_line_wrap_set(app->description_text, EINA_TRUE);
-	elm_entry_editable_set(app->description_text, EINA_FALSE);
-   	elm_entry_entry_set(app->description_text, _("<b>edams</>Welcome to edams!<br><br>"
-   	                                              "You should select or create a patient to start a session with him."));
-	evas_object_size_hint_weight_set(app->description_text, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_object_content_set(frame, app->description_text);
-	evas_object_show(app->description_text);
+  	entry =  elm_entry_add(app->win);
+	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0.0);
+   	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_entry_line_wrap_set(entry, EINA_TRUE);
+	elm_entry_editable_set(entry, EINA_FALSE);
+   	elm_entry_entry_set(entry, _("<b>edams</>Welcome to edams!<br><br>"
+   	                                              "You should select or create a room to start a monitoring process."));
+	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_object_content_set(frame, entry);
+	evas_object_show(entry);
 
-	app->naviframe = elm_naviframe_add(app->win);
-	evas_object_size_hint_weight_set(app->naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(app->naviframe, -1.0, -1.0);
-	elm_object_text_set(app->naviframe, _("Options"));
-	elm_box_pack_end(vbx2, app->naviframe);	
-	evas_object_show(app->naviframe);
+	naviframe = elm_naviframe_add(app->win);
+	evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(naviframe, -1.0, -1.0);
+	elm_object_text_set(naviframe, _("Options"));
+	elm_box_pack_end(vbx2, naviframe);	
+	evas_object_show(naviframe);
 	elm_object_part_content_set(panes, "right", vbx2);
-
-	_fill_rooms_list(app);
 
 	//char *ret;
 	//settings_write("wanttoolbar", "no");
@@ -608,6 +685,8 @@ elm_main(int argc, char **argv)
 
 	elm_run();
 	edams_shutdown(app);
+	
+	app->rooms = rooms_list_free(app->rooms);
 	
    	eina_log_domain_unregister(_log_dom);
   	 _log_dom = -1;    
