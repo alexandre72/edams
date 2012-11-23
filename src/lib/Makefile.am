@@ -1,0 +1,32 @@
+AUTOMAKE_OPTIONS     = 1.6 foreign
+MAINTAINERCLEANFILES = Makefile.in Makefile
+
+AM_CPPFLAGS = \
+-W -Wall -Wextra \
+-I$(top_srcdir) \
+-I$(top_srcdir)/src/bin \
+-DPACKAGE_DIR=\"$(prefix)\" \
+-g -DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
+@EDAMS_CFLAGS@ \
+@ELEMENTARY_WIN32_CFLAGS@ \
+@EMOTION_CFLAGS@
+
+lib_LTLIBRARIES = libedams.la
+
+libedams_la_SOURCES = \
+mem.c \
+modules.c \
+myfileselector.c \
+myfontselector.c \
+path.c \
+rooms.c \
+settings.c \
+serial.c \
+utils.c
+
+libedams_la_LIBADD = \
+@EDAMS_LIBS@ \
+@LTLIBINTL@ \
+@EMOTION_LIBS@
+
+libedams_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -avoid-version

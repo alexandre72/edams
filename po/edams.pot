@@ -1,0 +1,460 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: edams 0.0.1\n"
+"Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
+"POT-Creation-Date: 2012-11-22 19:59+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/bin/about_dlg.c:97
+msgid "About edams..."
+msgstr ""
+
+#: src/bin/about_dlg.c:189 src/bin/sensors_browser.c:222
+#: src/lib/myfileselector.c:354
+msgid "Close"
+msgstr ""
+
+#: src/bin/edams.c:92 src/bin/edams.c:98 src/bin/edams.c:260
+#: src/bin/preferences_dlg.c:222 src/bin/preferences_dlg.c:291
+#: src/modules/skel/settings.c:197
+msgid "Options"
+msgstr ""
+
+#: src/bin/edams.c:139
+#, c-format
+msgid "CRI:Can't init Eina!\n"
+msgstr ""
+
+#: src/bin/edams.c:150
+msgid "Can't init Elementary!"
+msgstr ""
+
+#: src/bin/edams.c:162
+msgid "Initialize Application..."
+msgstr ""
+
+#: src/bin/edams.c:174
+#, c-format
+msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
+msgstr ""
+
+#: src/bin/edams.c:204
+msgid "Patients"
+msgstr ""
+
+#: src/bin/edams.c:205 src/bin/preferences_dlg.c:253
+msgid "Preferences"
+msgstr ""
+
+#: src/bin/edams.c:206
+msgid "About"
+msgstr ""
+
+#: src/bin/edams.c:207
+msgid "Quit"
+msgstr ""
+
+#: src/bin/edams.c:240
+msgid "Indications"
+msgstr ""
+
+#: src/bin/edams.c:251
+msgid ""
+"<b>edams</>Welcome to edams!<br><br>You should select or create a patient to "
+"start a session with him."
+msgstr ""
+
+#: src/bin/init.c:49
+msgid ""
+"It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
+"some database files containing items. I'll copy some default items files, "
+"but you can easily remove them and create new ones(highly recommended)!"
+msgstr ""
+
+#: src/bin/sensors_browser.c:50
+#, c-format
+msgid "Sensors Browser - %d sensors"
+msgstr ""
+
+#: src/bin/sensors_browser.c:52
+#, c-format
+msgid "sensors Browser - 0 sensor"
+msgstr ""
+
+#: src/bin/sensors_browser.c:204
+msgid "Add"
+msgstr ""
+
+#: src/bin/sensors_browser.c:213
+msgid "Remove"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:119
+#, c-format
+msgid "Installation path:%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:120
+#, c-format
+msgid "User home dir:%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:121
+#, c-format
+msgid "User data path :%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:122
+#, c-format
+msgid "Locale Path:%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:123
+#, c-format
+msgid "Modules Path:%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:124
+#, c-format
+msgid "Patients data path:%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:125
+#, c-format
+msgid "Items data path:%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:126
+#, c-format
+msgid "edams Edje file Path:%s"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:136
+msgid "Realistic"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:142
+msgid "Abstract"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:151
+msgid "Images Type"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:164
+msgid "Exercice"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:182
+msgid "Graphemics"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:189
+msgid "Visual"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:196
+msgid "Semantics"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:203 src/modules/skel/settings.c:175
+msgid "Exposition time:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:204 src/modules/skel/settings.c:176
+#, c-format
+msgid "%1.0f sec"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:212 src/modules/skel/settings.c:186
+msgid "Sequences:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:213 src/modules/skel/settings.c:187
+#, c-format
+msgid "%1.0f"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:228
+msgid "Apply"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:295 src/bin/preferences_dlg.c:297
+msgid "General"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:301 src/bin/preferences_dlg.c:302
+msgid "Modules"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:306 src/bin/preferences_dlg.c:307
+msgid "Debug"
+msgstr ""
+
+#: src/bin/shutdown.c:29
+msgid "Shutdown FriLogos..."
+msgstr ""
+
+#: src/lib/mem.c:136
+msgid "Dumping memory usage:"
+msgstr ""
+
+#: src/lib/mem.c:137
+#, c-format
+msgid "Calls to malloc(): %d."
+msgstr ""
+
+#: src/lib/mem.c:138
+#, c-format
+msgid "Calls to realloc(): %d."
+msgstr ""
+
+#: src/lib/mem.c:139
+#, c-format
+msgid "Calls to calloc(): %d."
+msgstr ""
+
+#: src/lib/mem.c:140
+#, c-format
+msgid "Calls to free(): %d."
+msgstr ""
+
+#: src/lib/modules.c:47
+#, c-format
+msgid "Can't load module %s: %s"
+msgstr ""
+
+#: src/lib/modules.c:56
+#, c-format
+msgid "Can't find _print_module_infos() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:65
+#, c-format
+msgid "Can't find _module_id_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:74
+#, c-format
+msgid "Can't find _module_name_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:82
+#, c-format
+msgid "Can't find _module_desc_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:90
+#, c-format
+msgid "Can't find _module_theme_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:98
+#, c-format
+msgid "Can't find _module_settings_get() in module %s: %s!"
+msgstr ""
+
+#: src/lib/modules.c:171
+msgid "Can't get modules list!"
+msgstr ""
+
+#: src/lib/myfileselector.c:49
+#, c-format
+msgid "You"
+msgstr ""
+
+#: src/lib/myfileselector.c:101
+#, c-format
+msgid "Protected"
+msgstr ""
+
+#: src/lib/myfileselector.c:103 src/lib/myfileselector.c:112
+#: src/lib/myfileselector.c:121
+#, c-format
+msgid "Read Only"
+msgstr ""
+
+#: src/lib/myfileselector.c:110 src/lib/myfileselector.c:119
+#, c-format
+msgid "Forbidden"
+msgstr ""
+
+#: src/lib/myfileselector.c:128
+msgid "Read-Write"
+msgstr ""
+
+#: src/lib/myfileselector.c:139
+#, c-format
+msgid "%'.0f Bytes"
+msgstr ""
+
+#: src/lib/myfileselector.c:143
+#, c-format
+msgid "%'.0f KB"
+msgstr ""
+
+#: src/lib/myfileselector.c:147
+#, c-format
+msgid "%'.0f MB"
+msgstr ""
+
+#: src/lib/myfileselector.c:151
+#, c-format
+msgid "%'.1f GB"
+msgstr ""
+
+#: src/lib/myfileselector.c:178
+msgid "*FIXME*"
+msgstr ""
+
+#: src/lib/myfileselector.c:241
+msgid "Select a file..."
+msgstr ""
+
+#: src/lib/myfileselector.c:282
+msgid "Preview"
+msgstr ""
+
+#: src/lib/myfileselector.c:288
+msgid "Type :"
+msgstr ""
+
+#: src/lib/myfileselector.c:300
+msgid "Size :"
+msgstr ""
+
+#: src/lib/myfileselector.c:312
+msgid "Owner :"
+msgstr ""
+
+#: src/lib/myfileselector.c:324
+msgid "Permissions :"
+msgstr ""
+
+#: src/lib/myfileselector.c:345
+msgid "Open"
+msgstr ""
+
+#: src/lib/settings.c:55
+msgid "Can't read edams settings!"
+msgstr ""
+
+#: src/lib/settings.c:91 src/lib/settings.c:106
+#, c-format
+msgid "Can't read %s settings from %s!"
+msgstr ""
+
+#: src/lib/settings.c:128
+#, c-format
+msgid "Can't write %s settings from %s!"
+msgstr ""
+
+#: src/lib/settings.c:159
+msgid "Can't write edams settings!"
+msgstr ""
+
+#: src/lib/utils.c:167
+msgid "Confirmation"
+msgstr ""
+
+#: src/lib/utils.c:178
+msgid "Ok"
+msgstr ""
+
+#: src/modules/skel/module.c:93 src/modules/skel/module.c:128
+msgid "skel"
+msgstr ""
+
+#: src/modules/skel/module.c:103
+#, c-format
+msgid "%s module"
+msgstr ""
+
+#: src/modules/skel/module.c:104
+#, c-format
+msgid "\tVersion:%d.%d.%d"
+msgstr ""
+
+#: src/modules/skel/module.c:108
+#, c-format
+msgid "\tBuild on:%s"
+msgstr ""
+
+#: src/modules/skel/module.c:118
+msgid "skel module is only here to be a skeleton for new module!"
+msgstr ""
+
+#: src/modules/skel/module.c:268 src/modules/skel/module.c:294
+#, c-format
+msgid "Score:%d/%d Time:%0.3f secs"
+msgstr ""
+
+#: src/modules/skel/module.c:326
+#, c-format
+msgid "Items in queue:\n"
+msgstr ""
+
+#: src/modules/skel/module.c:377
+#, c-format
+msgid "Sequence %d"
+msgstr ""
+
+#: src/modules/skel/module.c:505
+msgid "Couldn't calloc Screen struct!"
+msgstr ""
+
+#: src/modules/skel/module.c:550
+msgid "Can't construct Ecore_Evas object!"
+msgstr ""
+
+#: src/modules/skel/module.c:556
+#, c-format
+msgid "%s - Session of %s"
+msgstr ""
+
+#: src/modules/skel/module.c:571
+msgid "Can't create Edje object!"
+msgstr ""
+
+#: src/modules/skel/module.c:577
+#, c-format
+msgid "Can't set Edje object file: %s!"
+msgstr ""
+
+#: src/modules/skel/module.c:615
+#, c-format
+msgid "Closing session of :%s\n"
+msgstr ""
+
+#: src/modules/skel/settings.c:132
+#, c-format
+msgid "Selected patient:%s %s"
+msgstr ""
+
+#: src/modules/skel/settings.c:209
+msgid "Start"
+msgstr ""
+
+#: src/modules/skel/settings.c:224
+msgid "Alloc module ressources."
+msgstr ""
+
+#: src/modules/skel/settings.c:230
+msgid "Couldn't calloc Settings struct!"
+msgstr ""
+
+#: src/modules/skel/settings.c:244
+msgid "Free module ressources."
+msgstr ""

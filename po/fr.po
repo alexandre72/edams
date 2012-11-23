@@ -1,0 +1,1324 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <alexandre.dussart@laposte.net>, YEAR.
+# Alexandre Dussart <alexandre.dussart@laposte.net>, 2011, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: FriLogos 0.1\n"
+"Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
+"POT-Creation-Date: 2012-11-22 19:59+0100\n"
+"PO-Revision-Date: 2012-10-01 19:44+0200\n"
+"Last-Translator: Alexandre Dussart <alexandre.dussart@laposte.net>\n"
+"Language-Team: français <alexandre.dussart@laposte.net>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.5\n"
+
+#: src/bin/about_dlg.c:97
+#, fuzzy
+msgid "About edams..."
+msgstr "A propos de FriLogos..."
+
+#: src/bin/about_dlg.c:189 src/bin/sensors_browser.c:222
+#: src/lib/myfileselector.c:354
+msgid "Close"
+msgstr "Fermer"
+
+#: src/bin/edams.c:92 src/bin/edams.c:98 src/bin/edams.c:260
+#: src/bin/preferences_dlg.c:222 src/bin/preferences_dlg.c:291
+#: src/modules/skel/settings.c:197
+msgid "Options"
+msgstr "Options"
+
+#: src/bin/edams.c:139
+#, c-format
+msgid "CRI:Can't init Eina!\n"
+msgstr "CRI:Impossible d'initialiser Eina!\n"
+
+#: src/bin/edams.c:150
+msgid "Can't init Elementary!"
+msgstr "Impossible d'initialiser Elementary!"
+
+#: src/bin/edams.c:162
+msgid "Initialize Application..."
+msgstr "Initialisation de l'application..."
+
+#: src/bin/edams.c:174
+#, c-format
+msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
+msgstr ""
+
+#: src/bin/edams.c:204
+msgid "Patients"
+msgstr "Patients"
+
+#: src/bin/edams.c:205 src/bin/preferences_dlg.c:253
+msgid "Preferences"
+msgstr "Préférences"
+
+#: src/bin/edams.c:206
+msgid "About"
+msgstr "A propos"
+
+#: src/bin/edams.c:207
+msgid "Quit"
+msgstr "Quitter"
+
+#: src/bin/edams.c:240
+msgid "Indications"
+msgstr "Indications"
+
+#: src/bin/edams.c:251
+#, fuzzy
+msgid ""
+"<b>edams</>Welcome to edams!<br><br>You should select or create a patient to "
+"start a session with him."
+msgstr ""
+"<b>FriLogos</>Bienvenue dans FriLogos!<br><br>Vous devez sélectionner ou "
+"créer une fiche patient pour démarrer une session."
+
+#: src/bin/init.c:49
+#, fuzzy
+msgid ""
+"It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
+"some database files containing items. I'll copy some default items files, "
+"but you can easily remove them and create new ones(highly recommended)!"
+msgstr ""
+"Il apparaît que c'est la première fois que vous démarrer FriLogos. Pour être "
+"utilisé, FriLogos nécessite la présence de certains fichiers de données. Je "
+"vais copier des fichiers de données par défaut, mais il est fortement "
+"conseillé d'adapter FriLogos à ses besoins pour profiter pleinement de son "
+"utilisation."
+
+#: src/bin/sensors_browser.c:50
+#, fuzzy, c-format
+msgid "Sensors Browser - %d sensors"
+msgstr "Navigateur de profils - %d patients"
+
+#: src/bin/sensors_browser.c:52
+#, fuzzy, c-format
+msgid "sensors Browser - 0 sensor"
+msgstr "Navigateur de profils - 0 patients"
+
+#: src/bin/sensors_browser.c:204
+msgid "Add"
+msgstr "Ajouter"
+
+#: src/bin/sensors_browser.c:213
+msgid "Remove"
+msgstr "Supprimer"
+
+#: src/bin/preferences_dlg.c:119
+#, c-format
+msgid "Installation path:%s"
+msgstr "Répertoire d'installation:%s"
+
+#: src/bin/preferences_dlg.c:120
+#, c-format
+msgid "User home dir:%s"
+msgstr "Répertoire des données utilisateur:%s"
+
+#: src/bin/preferences_dlg.c:121
+#, c-format
+msgid "User data path :%s"
+msgstr "Répertoire des données utilisateur:%s"
+
+#: src/bin/preferences_dlg.c:122
+#, c-format
+msgid "Locale Path:%s"
+msgstr "Répertoire des traductions:%s"
+
+#: src/bin/preferences_dlg.c:123
+#, c-format
+msgid "Modules Path:%s"
+msgstr "Répertoire des traductions:%s"
+
+#: src/bin/preferences_dlg.c:124
+#, c-format
+msgid "Patients data path:%s"
+msgstr "Répertoire des données utilisateur:%s"
+
+#: src/bin/preferences_dlg.c:125
+#, c-format
+msgid "Items data path:%s"
+msgstr "Répertoire des données utilisateur:%s"
+
+#: src/bin/preferences_dlg.c:126
+#, fuzzy, c-format
+msgid "edams Edje file Path:%s"
+msgstr "Répertoire des fichiers Edje: %s"
+
+#: src/bin/preferences_dlg.c:136
+msgid "Realistic"
+msgstr "Réaliste"
+
+#: src/bin/preferences_dlg.c:142
+msgid "Abstract"
+msgstr "Abstrait"
+
+#: src/bin/preferences_dlg.c:151
+msgid "Images Type"
+msgstr "Type d'images"
+
+#: src/bin/preferences_dlg.c:164
+msgid "Exercice"
+msgstr "Exercice"
+
+#: src/bin/preferences_dlg.c:182
+msgid "Graphemics"
+msgstr "Graphémiques"
+
+#: src/bin/preferences_dlg.c:189
+msgid "Visual"
+msgstr "Visuel"
+
+#: src/bin/preferences_dlg.c:196
+msgid "Semantics"
+msgstr "Sémantiques"
+
+#: src/bin/preferences_dlg.c:203 src/modules/skel/settings.c:175
+msgid "Exposition time:"
+msgstr "Temps d'exposition:"
+
+#: src/bin/preferences_dlg.c:204 src/modules/skel/settings.c:176
+#, c-format
+msgid "%1.0f sec"
+msgstr "%1.0f secondes"
+
+#: src/bin/preferences_dlg.c:212 src/modules/skel/settings.c:186
+msgid "Sequences:"
+msgstr "Séquences:"
+
+#: src/bin/preferences_dlg.c:213 src/modules/skel/settings.c:187
+#, c-format
+msgid "%1.0f"
+msgstr "%1.0f"
+
+#: src/bin/preferences_dlg.c:228
+msgid "Apply"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:295 src/bin/preferences_dlg.c:297
+msgid "General"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:301 src/bin/preferences_dlg.c:302
+#, fuzzy
+msgid "Modules"
+msgstr "Répertoire des traductions:%s"
+
+#: src/bin/preferences_dlg.c:306 src/bin/preferences_dlg.c:307
+msgid "Debug"
+msgstr ""
+
+#: src/bin/shutdown.c:29
+msgid "Shutdown FriLogos..."
+msgstr "Extinction de FriLogos..."
+
+#: src/lib/mem.c:136
+msgid "Dumping memory usage:"
+msgstr "Mémoire utilisé:"
+
+#: src/lib/mem.c:137
+#, c-format
+msgid "Calls to malloc(): %d."
+msgstr "Appels à malloc():%d."
+
+#: src/lib/mem.c:138
+#, c-format
+msgid "Calls to realloc(): %d."
+msgstr "Appels à realloc():%d."
+
+#: src/lib/mem.c:139
+#, c-format
+msgid "Calls to calloc(): %d."
+msgstr "Appels à calloc():%d."
+
+#: src/lib/mem.c:140
+#, c-format
+msgid "Calls to free(): %d."
+msgstr "Appels à free():%d."
+
+#: src/lib/modules.c:47
+#, c-format
+msgid "Can't load module %s: %s"
+msgstr "Impossible de charger le module %s: %s"
+
+#: src/lib/modules.c:56
+#, c-format
+msgid "Can't find _print_module_infos() in module %s: %s!"
+msgstr "Fonction _print_module_infos() non trouvée dans le module %s: %s!"
+
+#: src/lib/modules.c:65
+#, c-format
+msgid "Can't find _module_id_get() in module %s: %s!"
+msgstr "Fonction _module_id_get() non trouvée dans le module %s: %s!"
+
+#: src/lib/modules.c:74
+#, c-format
+msgid "Can't find _module_name_get() in module %s: %s!"
+msgstr "Fonction _module_name_get() non trouvée dans le module %s: %s!"
+
+#: src/lib/modules.c:82
+#, c-format
+msgid "Can't find _module_desc_get() in module %s: %s!"
+msgstr "Fonction _module_desc_get() non trouvée dans le module %s: %s!"
+
+#: src/lib/modules.c:90
+#, c-format
+msgid "Can't find _module_theme_get() in module %s: %s!"
+msgstr "Fonction _module_them_get() non trouvée dans le module %s: %s!"
+
+#: src/lib/modules.c:98
+#, c-format
+msgid "Can't find _module_settings_get() in module %s: %s!"
+msgstr "Fonction _module_settings_get() non trouvée dans le module %s: %s!"
+
+#: src/lib/modules.c:171
+msgid "Can't get modules list!"
+msgstr "Impossible d'obtenir la liste des modules!"
+
+#: src/lib/myfileselector.c:49
+#, c-format
+msgid "You"
+msgstr "Vous"
+
+#: src/lib/myfileselector.c:101
+#, c-format
+msgid "Protected"
+msgstr "Protégé"
+
+#: src/lib/myfileselector.c:103 src/lib/myfileselector.c:112
+#: src/lib/myfileselector.c:121
+#, c-format
+msgid "Read Only"
+msgstr "Lecture Seule"
+
+#: src/lib/myfileselector.c:110 src/lib/myfileselector.c:119
+#, c-format
+msgid "Forbidden"
+msgstr "Interdit"
+
+#: src/lib/myfileselector.c:128
+msgid "Read-Write"
+msgstr "Lecture-Ecriture"
+
+#: src/lib/myfileselector.c:139
+#, c-format
+msgid "%'.0f Bytes"
+msgstr "%'.0f Octets"
+
+#: src/lib/myfileselector.c:143
+#, c-format
+msgid "%'.0f KB"
+msgstr "%'.0f Ko"
+
+#: src/lib/myfileselector.c:147
+#, c-format
+msgid "%'.0f MB"
+msgstr "%'.0f Mo"
+
+#: src/lib/myfileselector.c:151
+#, c-format
+msgid "%'.1f GB"
+msgstr "%'.1f Go"
+
+#: src/lib/myfileselector.c:178
+msgid "*FIXME*"
+msgstr "*FIXME*"
+
+#: src/lib/myfileselector.c:241
+msgid "Select a file..."
+msgstr "Ouvrir un fichier..."
+
+#: src/lib/myfileselector.c:282
+msgid "Preview"
+msgstr "Aperçu"
+
+#: src/lib/myfileselector.c:288
+msgid "Type :"
+msgstr "Type :"
+
+#: src/lib/myfileselector.c:300
+msgid "Size :"
+msgstr "Taille :"
+
+#: src/lib/myfileselector.c:312
+msgid "Owner :"
+msgstr "Propriétaire :"
+
+#: src/lib/myfileselector.c:324
+msgid "Permissions :"
+msgstr "Permissions :"
+
+#: src/lib/myfileselector.c:345
+msgid "Open"
+msgstr "Ouvrir"
+
+#: src/lib/settings.c:55
+#, fuzzy
+msgid "Can't read edams settings!"
+msgstr "Impossible de lire les paramètres de FriLogos!"
+
+#: src/lib/settings.c:91 src/lib/settings.c:106
+#, c-format
+msgid "Can't read %s settings from %s!"
+msgstr "Impossible de lire le paramètre %s de %s!"
+
+#: src/lib/settings.c:128
+#, c-format
+msgid "Can't write %s settings from %s!"
+msgstr "Impossible d'écrire le paramètre %s de %s!"
+
+#: src/lib/settings.c:159
+#, fuzzy
+msgid "Can't write edams settings!"
+msgstr "Impossible d'écrire les paramètres de FriLogos!"
+
+#: src/lib/utils.c:167
+msgid "Confirmation"
+msgstr "Confirmation"
+
+#: src/lib/utils.c:178
+msgid "Ok"
+msgstr "Ok"
+
+#: src/modules/skel/module.c:93 src/modules/skel/module.c:128
+msgid "skel"
+msgstr ""
+
+#: src/modules/skel/module.c:103
+#, c-format
+msgid "%s module"
+msgstr "%s module"
+
+#: src/modules/skel/module.c:104
+#, c-format
+msgid "\tVersion:%d.%d.%d"
+msgstr "\tVersion:%d.%d.%d"
+
+#: src/modules/skel/module.c:108
+#, c-format
+msgid "\tBuild on:%s"
+msgstr "\tCompilé le:%s"
+
+#: src/modules/skel/module.c:118
+msgid "skel module is only here to be a skeleton for new module!"
+msgstr ""
+
+#: src/modules/skel/module.c:268 src/modules/skel/module.c:294
+#, c-format
+msgid "Score:%d/%d Time:%0.3f secs"
+msgstr "Score:%d/%d Temps:%0.3f secs"
+
+#: src/modules/skel/module.c:326
+#, fuzzy, c-format
+msgid "Items in queue:\n"
+msgstr "%d éléments dans la file d'attente."
+
+#: src/modules/skel/module.c:377
+#, c-format
+msgid "Sequence %d"
+msgstr "Séquence %d"
+
+#: src/modules/skel/module.c:505
+msgid "Couldn't calloc Screen struct!"
+msgstr "Impossible d'allouer de la mémoire pour la structure Screen!"
+
+#: src/modules/skel/module.c:550
+msgid "Can't construct Ecore_Evas object!"
+msgstr "Impossible de construire un objet Ecore_Evas!"
+
+#: src/modules/skel/module.c:556
+#, c-format
+msgid "%s - Session of %s"
+msgstr "%s - Session du %s"
+
+#: src/modules/skel/module.c:571
+msgid "Can't create Edje object!"
+msgstr "Impossible de créer un objet Edje!"
+
+#: src/modules/skel/module.c:577
+#, c-format
+msgid "Can't set Edje object file: %s!"
+msgstr "Impossible de charger un fichier Edje:%s!"
+
+#: src/modules/skel/module.c:615
+#, c-format
+msgid "Closing session of :%s\n"
+msgstr "Fermeture de la session du: %s\n"
+
+#: src/modules/skel/settings.c:132
+#, c-format
+msgid "Selected patient:%s %s"
+msgstr "Patient sélectionné: %s %s"
+
+#: src/modules/skel/settings.c:209
+msgid "Start"
+msgstr "Démarrer"
+
+#: src/modules/skel/settings.c:224
+msgid "Alloc module ressources."
+msgstr "Allocation des ressources module."
+
+#: src/modules/skel/settings.c:230
+msgid "Couldn't calloc Settings struct!"
+msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
+
+#: src/modules/skel/settings.c:244
+msgid "Free module ressources."
+msgstr "Libération des ressources module."
+
+#~ msgid "FriLogos %s - Session of %02d/%02d/%d"
+#~ msgstr "FriLogos %s - Session du %02d/%02d/%d"
+
+#~ msgid "Items"
+#~ msgstr "Eléments"
+
+#~ msgid "Patient selection"
+#~ msgstr "Sélection du patient"
+
+#~ msgid "Import a FriLogos item..."
+#~ msgstr "Importer un élément FriLogos..."
+
+#~ msgid "Import"
+#~ msgstr "Importer"
+
+#~ msgid "Item %s has been imported."
+#~ msgstr "L'élément %s a été importé."
+
+#~ msgid "Item %s has been exported."
+#~ msgstr "L'élément %s a été exporté."
+
+#~ msgid "Group name can't be null."
+#~ msgstr "Le nom du groupe ne doit pas être vide."
+
+#~ msgid "New %s group has been added."
+#~ msgstr "Nouveau groupe %s a été ajouté."
+
+#~ msgid "Create a new group"
+#~ msgstr "Créer un nouveau groupe"
+
+#~ msgid "Group name:"
+#~ msgstr "Nom du groupe:"
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#~ msgid "Subgroup name can't be null."
+#~ msgstr "Le nom du groupe ne doit pas être vide!"
+
+#~ msgid "New %s subgroup has been added."
+#~ msgstr "Nouveau sous-groupe %s a été ajouté."
+
+#~ msgid "Create a new subgroup to current group"
+#~ msgstr "Créer un nouveau sous-groupe dans le groupe actuel"
+
+#~ msgid "SubGroup name:"
+#~ msgstr "Nom du sous-groupe:"
+
+#~ msgid "You must select or create a group before creating a new subgroup."
+#~ msgstr ""
+#~ "Vous devez sélectionner ou créer un groupe avant de créer un nouveau sous-"
+#~ "groupe."
+
+#~ msgid "Items "
+#~ msgstr "Eléments"
+
+#~ msgid "Item "
+#~ msgstr "Elément"
+
+#~ msgid "have been removed."
+#~ msgstr "ont été supprimés."
+
+#~ msgid "has been removed."
+#~ msgstr "a été supprimé."
+
+#~ msgid "Are your sure you want to remove the following items:"
+#~ msgstr "Êtes vous sûr de vouloir supprimer les éléments suivants:"
+
+#~ msgid "Yes"
+#~ msgstr "Oui"
+
+#~ msgid "No"
+#~ msgstr "Non"
+
+#~ msgid "Item %s has been moved to subgroup %s."
+#~ msgstr "L'élément  %s a été déplacé vers le sous-groupe %s."
+
+#~ msgid "Moved %s to unknown space."
+#~ msgstr "Déplacement de l'élément %s vers un espace inconnu."
+
+#~ msgid "Subgroup %s"
+#~ msgstr "Sous-groupe %s"
+
+#~ msgid "Item %s has been created."
+#~ msgstr "L'élément %s a été créé."
+
+#~ msgid "You must select or create a group before creating a new item."
+#~ msgstr ""
+#~ "Vous devez sélectionner ou créer un groupe avant de créer un nouvel "
+#~ "élément."
+
+#~ msgid "Items Browser - %d items in %d groups"
+#~ msgstr "Navigateur d'éléments - %d éléments répartis dans %d groupes"
+
+#~ msgid "Item %s has been updated."
+#~ msgstr "L'élément %s a été mis à jour."
+
+#~ msgid "Select a picture file"
+#~ msgstr "Sélectionner un fichier image..."
+
+#~ msgid "Item Description"
+#~ msgstr "Description de l'élément"
+
+#~ msgid "Item name:"
+#~ msgstr "Nom de l'élément:"
+
+#~ msgid "Distractors"
+#~ msgstr "Distracteurs"
+
+#~ msgid "Realistic..."
+#~ msgstr "Réaliste..."
+
+#~ msgid "Abstract..."
+#~ msgstr "Abstrait..."
+
+#~ msgid "Initialize Items Browser UI..."
+#~ msgstr "Initialisation de l'interface du navigateur d'éléments..."
+
+#~ msgid "Welcome to items browser!"
+#~ msgstr "Bienvenue dans le navigateur d'éléments!"
+
+#~ msgid "Add group"
+#~ msgstr "Ajouter groupe"
+
+#~ msgid "Add subgroup"
+#~ msgstr "Ajouter sous-groupe"
+
+#~ msgid "Groups"
+#~ msgstr "Groupes"
+
+#~ msgid "Export"
+#~ msgstr "Exporter"
+
+#~ msgid "Profil of %s %s has been updated."
+#~ msgstr "Le profil concernant %s %s a été mis à jour."
+
+#~ msgid "Patient Description"
+#~ msgstr "Description du patient"
+
+#~ msgid "Photo..."
+#~ msgstr "Photo..."
+
+#~ msgid "Firstname:"
+#~ msgstr "Prénom:"
+
+#~ msgid "Lastname:"
+#~ msgstr "Nom:"
+
+#~ msgid "Profils selected have been removed."
+#~ msgstr "Les profils sélectionnés ont été supprimés."
+
+#~ msgid "Profil selected has been removed."
+#~ msgstr "Le profil sélectionné a été supprimé."
+
+#~ msgid "Are your sure you want to delete the following patients profils:"
+#~ msgstr "Êtes-vous sûr de vouloir supprimer les profils concernant:"
+
+#~ msgid "OK"
+#~ msgstr "Ok"
+
+#~ msgid "Profil of %s %s has been created."
+#~ msgstr "Le profil concernant %s %s a été créée."
+
+#~ msgid "Welcome to patients profil browser!"
+#~ msgstr "Bienvenue dans le navigateur de profils!"
+
+#~ msgid "Graphemic"
+#~ msgstr "Graphémique"
+
+#~ msgid "Semantic"
+#~ msgstr "Sémantique"
+
+#~ msgid "Neutral"
+#~ msgstr "Neutre"
+
+#~ msgid "Undefined"
+#~ msgstr "Indéfini"
+
+#~ msgid "Can't write Eet file '%s'!"
+#~ msgstr "Impossible d'écrire un fichier Eet %s!"
+
+#~ msgid "Can't remove Eet file:'%s'!"
+#~ msgstr "Impossible de supprimer un fichier Eet: '%s'!"
+
+#~ msgid "Can't import %s!"
+#~ msgstr "Impossible d'importer un fichier Eet: '%s'!"
+
+#~ msgid "Can't export %s!"
+#~ msgstr "Impossible d'exporter un fichier Eet: '%s'!"
+
+#, fuzzy
+#~ msgid "Can't allocate list node to items Eina_List!"
+#~ msgstr "Impossible d'allouer un nœud dans la liste!"
+
+#, fuzzy
+#~ msgid "Can't get item with id: %d!"
+#~ msgstr "Impossible d'obtenir l'élément avec l'id:%d!"
+
+#, fuzzy
+#~ msgid "Test groups list load/count/subgroups...\n"
+#~ msgstr "Le groupe %s contient %d sous-groupes enregistrés."
+
+#, fuzzy
+#~ msgid "\t=>%s group has %d subgroups.\n"
+#~ msgstr "Le groupe %s contient %d sous-groupes enregistrés."
+
+#~ msgid "Can't allocate list node!"
+#~ msgstr "Impossible d'allouer un nœud dans la liste!"
+
+#~ msgid "Couldn't calloc Group"
+#~ msgstr "Impossible d'allouer de la mémoire pour une structure Group!"
+
+#~ msgid "Can't get any items from group: %s!"
+#~ msgstr "Impossible d'obtenir des éléments provenant du groupe: %s!"
+
+#~ msgid "Can't return randomized items list when not enough items in list!"
+#~ msgstr ""
+#~ "Impossible de générer une liste d'éléments, pas assez d'éléments "
+#~ "enregistrés!"
+
+#~ msgid "Can't find _module_patient_set() in module %s: %s!"
+#~ msgstr "Fonction _module_patient_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Couldn't calloc Patient_Profil struct!"
+#~ msgstr "Impossible d'allouer de la mémoire pour la structure Patient_Profil"
+
+#~ msgid "undefined"
+#~ msgstr "indéfini"
+
+#~ msgid "Couldn't open file '%s'!"
+#~ msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#~ msgid "Eet file '%s' %#x was too old, upgrading it to %#x!"
+#~ msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x!"
+
+#~ msgid ""
+#~ "Patient_Info:\n"
+#~ "\t|->Filename.....:%s(%#x)\n"
+#~ "\t|->ID...........:%d\n"
+#~ "\t|->Name.........:%s %s\n"
+#~ "\t|->Gender.......:%s\n"
+#~ "\t|->BirthDay.....:%s\n"
+#~ "\t|->Creation Date:%s\n"
+#~ "\t|->Revision Date:%s\n"
+#~ msgstr ""
+#~ "Patient_Info:\n"
+#~ "\t|->Fichier:%s(%#x)\n"
+#~ "\t|->ID:%d\n"
+#~ "\t|->Nom:%s %s\n"
+#~ "\t|->Sexe:%s\n"
+#~ "\t|->Date de naissance:%s\n"
+#~ "\t|->Créé le:%s\n"
+#~ "\t|->Révisé le:%s\n"
+
+#~ msgid "%d patients registered."
+#~ msgstr "%d de fiches patient enregistrés."
+
+#~ msgid "Can't allocate list node."
+#~ msgstr "Impossible d'allouer un noeud dans la liste."
+
+#~ msgid "Diaporama"
+#~ msgstr "Diaporama"
+
+#~ msgid "Items appears and patient must memorize it."
+#~ msgstr ""
+#~ "Ce module permet d’afficher une image puis quatre propositions écrites de "
+#~ "façon à travailler la dénomination écrite (association référent – "
+#~ "signifiant écrit) ou la reconnaissance de l’objet à l’oral si les quatre "
+#~ "propositions sont oralisées par le thérapeute."
+
+#~ msgid "DIAPORAMA"
+#~ msgstr "DIAPORAMA"
+
+#~ msgid "Sequence %d Time:%0.f secs"
+#~ msgstr "Séquence %d Temps:%0.f secs"
+
+#~ msgid "Setting distractor for item %s."
+#~ msgstr "Définir distracteur pour l'élément %s."
+
+#~ msgid "Can't generate distractors, not enough items registered!"
+#~ msgstr ""
+#~ "Impossible de générer des distracteurs, pas assez d'éléments enregistrés!"
+
+#~ msgid "Can't load Edje image from %s!"
+#~ msgstr "Impossible de charger une image Edje de %s!"
+
+#~ msgid "Denomitation"
+#~ msgstr "Dénomination"
+
+#~ msgid "Simple reading"
+#~ msgstr "Oralisation avec étiquette"
+
+#~ msgid "Pairs with distractors"
+#~ msgstr "Appariement"
+
+#~ msgid "Pairs and oralization"
+#~ msgstr "Appariement avec oralisation"
+
+#~ msgid "Rapido-Deno"
+#~ msgstr "Rapido-Déno"
+
+#~ msgid "Unknown"
+#~ msgstr "Inconnu"
+
+#~ msgid "Groups/Subgroups"
+#~ msgstr "Groupes/Sous-groupes"
+
+#~ msgid "Exercice selection"
+#~ msgstr "Sélection de l'exercice"
+
+#~ msgid "Found the intrus"
+#~ msgstr "Trouver l'intrus"
+
+#~ msgid "Items appears and patient must found the intrus."
+#~ msgstr ""
+#~ "Ce module permet de paramétrer un jeu où il s’agit de chasser parmi une "
+#~ "suite d’images l’intrus. Ce jeu de chasser l’intrus est conçu autour des "
+#~ "catégorisations sémantiques. En effet, toutes les images proposées sauf "
+#~ "une appartiennent à la même catégorie sémantique."
+
+#~ msgid "CLI"
+#~ msgstr "CLI"
+
+#~ msgid "Simple x4 items"
+#~ msgstr "x4 élements"
+
+#~ msgid "Simple x6 items"
+#~ msgstr "x6 éléments"
+
+#~ msgid "Simple x8 items"
+#~ msgstr "x8 éléments"
+
+#~ msgid "Frilexie"
+#~ msgstr "Frilexie"
+
+#~ msgid "TODO:Frilexie description...."
+#~ msgstr ""
+#~ "Frilexie est un logiciel destiné à l’entraînement des stratégies "
+#~ "d’identification du mot écrit (stratégie phonologique par segmentation et "
+#~ "transcodage et stratégie visuo-orthographique, cf. la figure ci-contre)."
+
+#~ msgid "FRILEXIE"
+#~ msgstr "FRILEXIE"
+
+#~ msgid ""
+#~ "Name:%s<br>Group:%s<br>Subgroup:%s<br>Created with:FriLogos "
+#~ "%s<br>Creation Date:%s<br>Revision Date:%s<br>"
+#~ msgstr ""
+#~ "Nom:%s<br>Groupe:%s<br>Sous-groupe:%s<br>FriLogos: %s<br>Créé le:"
+#~ "%s<br>Modifié le:%s<br>"
+
+#~ msgid "Following patients files:"
+#~ msgstr "Les fichiers patients suivants:"
+
+#~ msgid "Edit..."
+#~ msgstr "Éditer..."
+
+#~ msgid "Delete..."
+#~ msgstr "Supprimer..."
+
+#~ msgid "Initialize Patients Browser UI..."
+#~ msgstr "Initialisation de l'interface du navigateur de fiches patients..."
+
+#~ msgid "Can't create log domain!"
+#~ msgstr "Impossible de créer un domaine de log!"
+
+#~ msgid "Graphemics:"
+#~ msgstr "Graphémiques:"
+
+#~ msgid "Semantics:"
+#~ msgstr "Sémantiques:"
+
+#~ msgid "Visuals:"
+#~ msgstr "Visuels:"
+
+#~ msgid "Group selection"
+#~ msgstr "Sélection du groupe"
+
+#~ msgid "Item size"
+#~ msgstr "Taille des éléments"
+
+#~ msgid "Add item"
+#~ msgstr "Ajouter élément"
+
+#~ msgid "Import item"
+#~ msgstr "Importer l'élément"
+
+#~ msgid "Can't create Ecore_Evas buffer!"
+#~ msgstr "Impossible de construire un tampon Ecore_Evas!"
+
+#~ msgid "Can't remove %s!"
+#~ msgstr "Impossible de supprimer %s!"
+
+#~ msgid "Can't read FriLogos Eet file %s!"
+#~ msgstr "Impossible de lire le fichier FriLogos Eet %s!"
+
+#~ msgid ""
+#~ "Can't set locale, NLS isn't enabled on these FriLogos version and it "
+#~ "should be!"
+#~ msgstr ""
+#~ "Impossible de définir la locale, NLS n'est pas activé sur cette version "
+#~ "de FriLogos et il devrait l'être!"
+
+#~ msgid "Can't define item image filename!"
+#~ msgstr "Impossible de définir le nom du fichier image de l'élément!"
+
+#~ msgid "Can't clear item's distractors of an unknown type!"
+#~ msgstr "Impossible de supprimer les distracteurs d'un type inconnu!"
+
+#~ msgid "Can't add an item's distractor with an unknown type!"
+#~ msgstr "Impossible d'ajout un distracteur avec un type inconnu!"
+
+#~ msgid "\t|Graphemics->%s\n"
+#~ msgstr "\t|Graphémiques->%s\n"
+
+#~ msgid "\t|Neutrals->%s\n"
+#~ msgstr "\t|Neutres->%s\n"
+
+#~ msgid "\t|Visuals->%s\n"
+#~ msgstr "\t|Visuels->%s\n"
+
+#~ msgid "\t|Semantics->%s\n"
+#~ msgstr "\t|Sémantiques->%s\n"
+
+#~ msgid "Can't open %s."
+#~ msgstr "Impossible d'ouvrir %s."
+
+#~ msgid ""
+#~ "\n"
+#~ "Filename:%s\n"
+#~ "\t|->Patient: %s %s\n"
+#~ "\t|->BirthDay: %s\n"
+#~ "\t|->Creation Date:%s\n"
+#~ "\t|->Revision Date:%s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Nom du fichier:%s\n"
+#~ "\t|->Patient:%s %s\n"
+#~ "\t|->Date de naissance:%s\n"
+#~ "\t|->Créé le:%s\n"
+#~ "\t|->Révisé le:%s\n"
+
+#~ msgid "Not enough items generated!"
+#~ msgstr "Pas assez d'éléments générés!"
+
+#~ msgid "Playing with:%s."
+#~ msgstr "Joue avec:%s."
+
+#~ msgid "Playing with unknown patient."
+#~ msgstr "Joue avec un patient non enregistré."
+
+#~ msgid "Frilexie module"
+#~ msgstr "Module Frilexie"
+
+#~ msgid "Frilexie: label...."
+#~ msgstr ""
+#~ "S’appuyant sur le modèle cognitif des stratégies d’identification du mot "
+#~ "écrit, ce module a été élaboré de façon à pouvoir entraîner les "
+#~ "stratégies qu’elles soient phonologiques ou visuo-orthographiques."
+
+#~ msgid "INF:%s frilogos.c: 118 elm_main() Initialize EFL...\n"
+#~ msgstr "INF:%s frilogos.c: 118 elm_main() Initialisation des EFLs...\n"
+
+#~ msgid "Add patient"
+#~ msgstr "Ajouter patient"
+
+#~ msgid "Delete selected items..."
+#~ msgstr "Effacer les élements sélectionnés..."
+
+#~ msgid "Description"
+#~ msgstr "Description"
+
+#~ msgid "Export %s to %s."
+#~ msgstr "Exportation de %s vers %s."
+
+#~ msgid "Randomize items from all groups."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments à partir de tous les groupes."
+
+#~ msgid "Randomize items from group %s and subgroup %s."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments à partir du groupe %s et sous-"
+#~ "groupe %s."
+
+#~ msgid "Randomize items except %s from any groups."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments à partir de n'importe quel "
+#~ "groupe expecté le groupe %s."
+
+#~ msgid "Randomize items except %s from group %s."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments excepté %s à partir du groupe "
+#~ "%s."
+
+#~ msgid "Listing modules %s..."
+#~ msgstr "Liste des modules %s..."
+
+#~ msgid "Can't found frilogos theme!"
+#~ msgstr "Impossible de charger le thème de FriLogos!"
+
+#~ msgid "Diaporama module"
+#~ msgstr "Module Diaporama"
+
+#~ msgid "Sequence %d Index %d"
+#~ msgstr "Séquence %d Index %d"
+
+#~ msgid "Playing with all groups."
+#~ msgstr "Jouer avec tous les groupes."
+
+#~ msgid "All groups"
+#~ msgstr "Tous les groupes"
+
+#~ msgid "Can't get Edje object part: %s!"
+#~ msgstr "Impossible de charger un objet Edje: %s!"
+
+#~ msgid "Score:%d/%d"
+#~ msgstr "Score:%d/%d"
+
+#~ msgid "Sample"
+#~ msgstr "Echantillon"
+
+#~ msgid "Group %s"
+#~ msgstr "Groupe %s"
+
+#, fuzzy
+#~ msgid "Groups Selection"
+#~ msgstr "Sélection du groupe"
+
+#~ msgid "Enable timers"
+#~ msgstr "Activer minuteurs"
+
+#~ msgid "Hiding time:"
+#~ msgstr "Temps avant réponse:"
+
+#~ msgid "Timers"
+#~ msgstr "Minuteurs"
+
+#~ msgid "Show item name"
+#~ msgstr "Activer étiquettage"
+
+#~ msgid "Navigation bar"
+#~ msgstr "Barre de navigation"
+
+#~ msgid "Navigation"
+#~ msgstr "Navigation"
+
+#~ msgid "Update"
+#~ msgstr "Mettre à jour"
+
+#~ msgid "Item %s has been successfully imported."
+#~ msgstr "L'élément %s a été créé avec succés."
+
+#~ msgid "Morphological/Visual:"
+#~ msgstr "Visuels/Morphologiques:"
+
+#~ msgid "Cannot create buffer engine canvas for image load."
+#~ msgstr ""
+#~ "Impossible de créer un canevas tampon pour le chargement des images."
+
+#~ msgid "Deleting:%s"
+#~ msgstr "Suppression de:%s"
+
+#~ msgid "Can't define more than 2 images levels per item, must be 0 or 1."
+#~ msgstr ""
+#~ "Impossible de définir plus de 2 images par élément, le niveau d'image "
+#~ "doit être 0 ou 1."
+
+#~ msgid "\t|Morphologicals->%s\n"
+#~ msgstr "\tVisuels/Morphologiques->%s\n"
+
+#~ msgid "Could not load image from '%s'. error string is \"%s\"\n"
+#~ msgstr ""
+#~ "Impossible de charger l'image du fichier '%s'. le message d'erreur est "
+#~ "\"%s\"\n"
+
+#, fuzzy
+#~ msgid "Can't load '%s': %s"
+#~ msgstr "Impossible de charger '%s': %s"
+
+#~ msgid "Can't load '%s': %s!"
+#~ msgstr "Impossible de charger '%s': %s!"
+
+#~ msgid "<b>FriLogos</>Welcome to FriLogos!"
+#~ msgstr "<b>FriLogos</>Bienvenue dans FriLogos!"
+
+#~ msgid "Import a new item"
+#~ msgstr "Importer un nouvel élément"
+
+#, fuzzy
+#~ msgid "Are you sure you want to import these item?"
+#~ msgstr "Êtes vous sûr de vouloir importer les élements suivants?"
+
+#~ msgid "Select a realistic image file..."
+#~ msgstr "Sélectionner un fichier d'image réaliste..."
+
+#~ msgid "Select an abstract image file..."
+#~ msgstr "Sélectionner un fichier d'image abstrait..."
+
+#~ msgid "Could not load '%s': %s"
+#~ msgstr "Impossible de charger '%s': %s"
+
+#~ msgid "%1.0f sequencies"
+#~ msgstr "%1.0f séquences"
+
+#, fuzzy
+#~ msgid "Enable graphemics"
+#~ msgstr "Graphémique"
+
+#, fuzzy
+#~ msgid "Enable neutrals"
+#~ msgstr "Activer les minuteurs"
+
+#, fuzzy
+#~ msgid "Enable morphologicals"
+#~ msgstr "Visuel/Morphologique"
+
+#, fuzzy
+#~ msgid "Enable semantics"
+#~ msgstr "Activer les minuteurs"
+
+#~ msgid ""
+#~ "\n"
+#~ "Filename:%s\n"
+#~ "\t|->Name:%s\n"
+#~ "\t|->Locale:%s\n"
+#~ "\t|->Group:%s\n"
+#~ "\t|->SubGroup:%s\n"
+#~ "\t|->Distractor 1 %s of type %s\n"
+#~ "\t|->Distractor 2 %s of type %s\n"
+#~ "\t|->Distractor 3 %s of type %s\n"
+#~ "\t|->Distractor 4 %s of type %s\n"
+#~ "\t|->Creation Date:%s\n"
+#~ "\t|->Revision Date:%s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Nom du fichier:%s\n"
+#~ "\t|->Nom:%s\n"
+#~ "\t|->Locale:%s\n"
+#~ "\t|->Groupe:%s\n"
+#~ "\t|->Sous-groupe:%s\n"
+#~ "\t|->Distracteur 1 %s de type %s\n"
+#~ "\t|->Distracteur 2 %s de type %s\n"
+#~ "\t|->Distracteur 3 %s de type %s\n"
+#~ "\t|->Distracteur 4 %s de type %s\n"
+#~ "\t|->Date de création:%s\n"
+#~ "\t|->Date de révision:%s\n"
+
+#~ msgid "Couldn't find _get_module_icon() in module \"%s\": %s"
+#~ msgstr "Fonction _get_module_icon() non trouvée dans le module \"%s\": %s."
+
+#~ msgid "Enable distractors"
+#~ msgstr "Activer les distracteurs"
+
+#~ msgid "Generating images files from eet files..."
+#~ msgstr "Génération des fichiers images..."
+
+#, fuzzy
+#~ msgid "Patients "
+#~ msgstr "Patients"
+
+#~ msgid "Name:"
+#~ msgstr "Nom:"
+
+#~ msgid "Image file from %s has been extracted to Eet_Image struct."
+#~ msgstr "Le fichier image de %s a été extrait vers une structure Eet_Image."
+
+#~ msgid ""
+#~ "<item absize=250x70 vsize=full href=file://%s/icons/frilogos_header.png></"
+#~ "item><br><em>%s (build %s)</em></><ps></ps><b>Authors:</"
+#~ "b><br><em>Alexandre Dussart(main, plugins, website...)</em> "
+#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Remi Samier"
+#~ "(frilexie, suggestions, testings, doc)</em> <link>r.samier@gmail.com</"
+#~ "link></><br><em>Corine Berte(suggestions...)</em></><br><em>Sonia Dussart"
+#~ "(some design and items parts)</em></><br><em>Simion Ploscariu"
+#~ "(learntocount based code)</em></><ps></ps><b>Web:</b><br><link>http://www."
+#~ "frilogos.org</link></>"
+#~ msgstr ""
+#~ "<item absize=250x70 vsize=full href=file://%s/icons/frilogos_header.png></"
+#~ "item><br><em>%s (build %s)</em></><ps></ps><b>Auteurs:</"
+#~ "b><br><em>Alexandre Dussart(code principal, modules, site web...)</em> "
+#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Rémi Samier"
+#~ "(frilexie, suggestions, tests, documentation)</em> <link>r.samier@gmail."
+#~ "com</link></><br><em>Corine Berté(suggestions...)</em></><br><em>Sonia "
+#~ "Dussart(graphismes)</em></><br><em>Simion Ploscariu(basé sur le code de "
+#~ "learntocount)</em></><ps></ps><b>Site Web:</b><br><link>http://www."
+#~ "frilogos.org</link></>"
+
+#~ msgid "Initialize FriLogos..."
+#~ msgstr "Initialisation de FriLogos..."
+
+#~ msgid "No application theme found"
+#~ msgstr "Aucun théme pour l'application trouvé."
+
+#~ msgid "New"
+#~ msgstr "Nouveau"
+
+#~ msgid "Filename:%s<br>Firstname:%s</><br>Lastname:%s</>"
+#~ msgstr "Nom du fichier:%s<br>Prénom:%s</><br>Nom:%s</>"
+
+#~ msgid "Thanks to set a patient firstname."
+#~ msgstr "Merci de définir un prénom pour le patient."
+
+#~ msgid "Thanks to set a patient lastname."
+#~ msgstr "Merci de définir un nom pour le patient."
+
+#~ msgid "Informations file about %s has been added."
+#~ msgstr "Le fichier d'informations au sujet de %s a été ajouté."
+
+#~ msgid "Informations file about %s has been removed from database."
+#~ msgstr "Le fichier d'informations au sujet de %s a été supprimé."
+
+#~ msgid "First"
+#~ msgstr "Premier"
+
+#~ msgid "Next"
+#~ msgstr "Suivant"
+
+#~ msgid "Last"
+#~ msgstr "Dernier"
+
+#~ msgid "Initialize Elementary..."
+#~ msgstr "Initialisation d'Elementary..."
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Filename:%s</><br>Name:%s</><br>Locale:%s</><br>Group:%s</><br>SubGroup:"
+#~ "%s</><br>Distractor 1 %s of type %s</><br>Distractor 2 %s of type %s</"
+#~ "><br>Distractor 3 %s of type %s</><br>Distractor 4 %s of type %s</"
+#~ "><br>Creation Date:%s</><br>Revision Date:%s</>"
+#~ msgstr ""
+#~ "\n"
+#~ "Nom du fichier:%s\n"
+#~ "\t|->Nom:%s\n"
+#~ "\t|->Locale:%s\n"
+#~ "\t|->Groupe:%s\n"
+#~ "\t|->Sous-groupe:%s\n"
+#~ "\t|->Distracteur 1 %s de type %s\n"
+#~ "\t|->Distracteur 2 %s de type %s\n"
+#~ "\t|->Distracteur 3 %s de type %s\n"
+#~ "\t|->Distracteur 4 %s de type %s\n"
+#~ "\t|->Date de création:%s\n"
+#~ "\t|->Date de révision:%s\n"
+
+#~ msgid "New group"
+#~ msgstr "Nouveau groupe"
+
+#~ msgid "Adding \"%s\" group."
+#~ msgstr "Ajout du groupe \"%s\"."
+
+#~ msgid "Adding \"%s\" subgroup to \"%s\" group."
+#~ msgstr "Ajout du sous-groupe \"%s\" au groupe \"%s\"."
+
+#~ msgid "%d groups registered."
+#~ msgstr "%d groupe enregistrés."
+
+#~ msgid "Reading %s."
+#~ msgstr "Lecture de %s."
+
+#~ msgid "%d fields found."
+#~ msgstr "%d champs trouvés."
+
+#~ msgid "The Diaporama"
+#~ msgstr "Le Diaporama"
+
+#~ msgid "Answer time:"
+#~ msgstr "Temps avant réponse:"
+
+#~ msgid "Moved %s to \"%s\" subgroup."
+#~ msgstr "Déplacement du sous-groupe \"%s\" vers le groupe \"%s\"."
+
+#~ msgid "Edit name..."
+#~ msgstr "Editer le nom..."
+
+#~ msgid "Move to group..."
+#~ msgstr "Déplacer vers le groupe..."
+
+#~ msgid "Horizontal"
+#~ msgstr "Horizontal"
+
+#~ msgid ""
+#~ "<b>FriLogos</><br>For more informations:http://www.frilogos.org</"
+#~ "><br>FriLogos build date:%s</><br>Data directory:%s</><br>User data dir:"
+#~ "%s/data/FriLogos.Org/FriLogos</><br>Locale directory:%s</>"
+#~ msgstr ""
+#~ "<b>FriLogos</><br>Pour plus d'informations:http://www.frilogos.org</"
+#~ "><br>Date de compilation:%s</><br>Répertoire des données:%s</"
+#~ "><br>Répertoire utilisateur des données:%s/data/FriLogos.Org/FriLogos</"
+#~ "><br>Répertoire des traductions:%s</>"
+
+#, fuzzy
+#~ msgid "Initialize"
+#~ msgstr "Initialisation de l'interface principale..."
+
+#~ msgid "Append"
+#~ msgstr "Ajouter"
+
+#~ msgid "Can't allocate list node.\n"
+#~ msgstr "Impossible d'allouer un noeud dans la liste.\n"
+
+#~ msgid "\tCan't open %s."
+#~ msgstr "\tImpossible d'ouvrir %s."
+
+#~ msgid "All categories"
+#~ msgstr "Toutes les catégories"
+
+#, fuzzy
+#~ msgid "fileselector"
+#~ msgstr "Sélection du patient"
+
+#, fuzzy
+#~ msgid "<br>Distractor 1: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 1: %s de type %s</>"
+
+#, fuzzy
+#~ msgid "<br>Distractor 2: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 2: %s de type %s</>"
+
+#, fuzzy
+#~ msgid "<br>Distractor 3: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 3: %s de type %s</>"
+
+#, fuzzy
+#~ msgid "<br>Distractor 4: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 1: %s de type %s</>"
+
+#~ msgid "Select distractor 2"
+#~ msgstr "Activer distracteur 1"
+
+#, fuzzy
+#~ msgid "Select distractor 3"
+#~ msgstr "Activer distracteur 1"
+
+#, fuzzy
+#~ msgid "Select distractor 4"
+#~ msgstr "Activer distracteur 1"
+
+#~ msgid "Select category"
+#~ msgstr "Sélection de la catégorie"
+
+#, fuzzy
+#~ msgid "Initialize Patients Browser Interface..."
+#~ msgstr "Initialisation de l'interface principale..."
+
+#~ msgid "Initialize Ecore_Evas..."
+#~ msgstr "Initialisation d'Ecore_Evas..."
+
+#~ msgid "Unable to init Ecore_Evas."
+#~ msgstr "Impossible d'initialiser Ecore_Evas"

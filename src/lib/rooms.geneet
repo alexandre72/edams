@@ -1,0 +1,20 @@
+Sensor {
+	id: uint;
+	name : str default "undefined";
+	type : str default "undefined";
+	description : str default "undefined";
+	datasheeturl : str default "undefined";
+	picture : image compress 95;
+	soundfile :  str;
+	group: str default "undefined";
+	creation: str;
+}
+
+
+Room {
+	id : uint;
+	name : str default "undefined";
+	description : str default "undefined";
+    sensors: list of Sensor;
+	photo : image compress 95;
+}
