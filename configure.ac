@@ -8,14 +8,14 @@ m4_define([v_min], [0])
 m4_define([v_mic], [2])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
-AC_INIT([edams], [v_ver], [alexandre.dussart@laposte.net])
-AC_PREREQ([2.60])
+AC_INIT([edams],[v_ver],[alexandre.dussart@laposte.net])
+AC_PREREQ([2.69])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_PROG_MKDIR_P
 
 
@@ -23,14 +23,13 @@ AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 AC_CONFIG_HEADERS(config.h)
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])
 define([AC_LIBTOOL_LANG_GCJ_CONFIG], [:])
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])
-AC_PROG_LIBTOOL
+LT_INIT
 
 AC_C_BIGENDIAN
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_HEADER_STDC
@@ -117,7 +116,7 @@ AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
 have_elementary_win32="no"
 want_elementary_win32="auto"
 AC_ARG_ENABLE([ecore-win32],
-   [AC_HELP_STRING([--disable-ecore-win32], [disable ecore-win32 support. @<:@default=detect@:>@])],
+   [AS_HELP_STRING([--disable-ecore-win32],[disable ecore-win32 support. @<:@default=detect@:>@])],
    [want_elementary_win32=$enableval], [])
 
 if test "x$want_elementary_win32" != "xno"; then
@@ -141,7 +140,7 @@ fi
 have_elementary_x="no"
 want_elementary_x="auto"
 AC_ARG_ENABLE([ecore-x],
-   [AC_HELP_STRING([--disable-ecore-x], [disable ecore-x support. @<:@default=detect@:>@])],
+   [AS_HELP_STRING([--disable-ecore-x],[disable ecore-x support. @<:@default=detect@:>@])],
    [want_elementary_x=$enableval], [])
 
 if test "x$want_elementary_x" != "xno"; then
@@ -164,8 +163,7 @@ fi
 
 #Set edje_cc path.
 AC_ARG_WITH([edje-cc],
-   [AC_HELP_STRING([--with-edje-cc=PATH],
-                   [specify a specific path to edje_cc])],
+   [AS_HELP_STRING([--with-edje-cc=PATH],[specify a specific path to edje_cc])],
    [edje_cc=$withval;
     AC_MSG_NOTICE([edje_cc explicitly set to $edje_cc])
    ],[edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc])
@@ -185,7 +183,7 @@ have_po="no"
 ])
 AC_SUBST(LTLIBINTL)
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 edams.spec
 edams.desktop
@@ -199,6 +197,7 @@ data/icons/Makefile
 data/themes/Makefile
 data/themes/default/Makefile
 ])
+AC_OUTPUT
 
 
 ifdef([AM_GNU_GETTEXT], [AC_CONFIG_FILES([po/Makefile.in])])

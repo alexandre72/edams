@@ -55,26 +55,32 @@ const char * sensor_creation_get(const Sensor *sensor);
 /* Room */
 Room *room_new(unsigned int id, const char * name, const char * description, Eina_List * sensors, Evas_Object * photo);
 void room_free(Room *room);
-
-const char *room_filename_get(Room *room);
-void room_id_set(Room *room, unsigned int id);
-unsigned int room_id_get(const Room *room);
-void room_name_set(Room *room, const char * name);
-const char * room_name_get(const Room *room);
-void room_description_set(Room *room, const char * description);
-const char * room_description_get(const Room *room);
 void room_sensors_add(Room *room, Sensor *sensor);
 void room_sensors_del(Room *room, Sensor *sensor);
-Sensor *room_sensors_get(const Room *room, unsigned int nth);
-unsigned int room_sensors_count(const Room *room);
-Eina_List *room_sensors_list_get(const Room *room);
 void room_sensors_list_clear(Room *room);
 void room_sensors_list_set(Room *room, Eina_List *list);
+
+void room_id_set(Room *room, unsigned int id);
+void room_name_set(Room *room, const char * name);
+void room_description_set(Room *room, const char * description);
+unsigned int room_sensors_count(const Room *room);
 void room_photo_set(Room *room, Evas_Object *photo);
+
+const char *room_filename_get(Room *room);
+unsigned int room_id_get(const Room *room);
+const char * room_name_get(const Room *room);
+const char * room_description_get(const Room *room);
 Evas_Object *room_photo_get(const Room *room, Evas *evas, const char *eet_file);
+Eina_Bool room_photo_is_available_get(const Room *room);
+Sensor *room_sensors_get(const Room *room, unsigned int nth);
+Eina_List *room_sensors_list_get(const Room *room);
 
 Room *room_load(Evas *evas, const char *filename);
 Eina_Bool room_save(Room *room);
+
+Eina_List *rooms_list_get();
+Eina_List *rooms_list_free(Eina_List *rooms);
+Eina_Bool room_remove(Room *room);
 
 /* Global initializer / shutdown functions */
 void rooms_init(void);

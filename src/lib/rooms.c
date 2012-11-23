@@ -341,6 +341,8 @@ _room_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "description", description, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_LIST(_room_descriptor, Room, "sensors", sensors, _sensor_descriptor);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "photo__id", photo__id, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "creation", creation, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "revision", revision, EET_T_STRING); 
 }
 
 static inline void
@@ -370,7 +372,6 @@ room_new(unsigned int id, const char * name, const char * description, Eina_List
     room->description = eina_stringshare_add(description ? description : "undefined");
     room->sensors = sensors;
     room->photo = photo;
-    room->version = 0x0001;
     room->photo__id = -1;
 
     //Add patient profil's creation informations.
@@ -383,9 +384,18 @@ room_new(unsigned int id, const char * name, const char * description, Eina_List
 
     room->creation = eina_stringshare_add(s);
 	room->revision = NULL;
+	room->version = 0x0001;
 
     return room;
 }
+
+
+const char *
+room_filename_get(Room *room)
+{
+     return room->__eet_filename;
+}
+
 
 void
 room_free(Room *room)
@@ -474,12 +484,6 @@ inline const char *
 room_name_get(const Room *room)
 {
     return room->name;
-}
-
-const char *
-room_filename_get(Room *room)
-{
-     return room->__eet_filename;
 }
 
 
@@ -571,6 +575,43 @@ room_photo_get(const Room *room, Evas *evas, const char *eet_file)
     return room->photo;
 }
 
+inline Eina_Bool
+room_photo_is_available_get(const Room *room)
+{
+	if(!room->photo__id)
+	    return EINA_FALSE;
+	else
+    	return EINA_TRUE;
+}
+
+
+inline const char *
+room_creation_get(Room *room)
+{
+    return room->creation;
+}
+
+inline void
+room_creation_set(Room *room, const char *creation)
+{
+    EINA_SAFETY_ON_NULL_RETURN(room);
+    eina_stringshare_replace(&(room->creation), creation);
+}
+
+inline const char *
+patient_profil_revision_get(const Room *room)
+{
+    return room->revision;
+}
+
+inline void
+room_revision_set(Room *room, const char *revision)
+{
+    EINA_SAFETY_ON_NULL_RETURN(room);
+    eina_stringshare_replace(&(room->revision), revision);
+}
+
+
 Room *
 room_load(Evas *evas, const char *filename)
 {
@@ -601,6 +642,8 @@ end:
     return room;
 }
 
+
+
 Eina_Bool
 room_save(Room *room)
 {
@@ -630,6 +673,28 @@ room_save(Room *room)
     return ret;
 }
 
+
+
+//
+//Remove room informations file.
+//
+Eina_Bool 
+room_remove(Room *room)
+{
+    if(!room)
+        return EINA_FALSE;
+    
+    	//INF(_("Removing:%s"), item->filename);
+	if(ecore_file_remove(room->__eet_filename) == EINA_FALSE)
+	{
+	    fprintf(stderr, _("Can't remove Eet file:'%s'!"), room->__eet_filename);
+	    return EINA_FALSE;
+	}
+
+	return EINA_TRUE;
+}
+
+
 void
 rooms_init(void)
 {
@@ -644,3 +709,72 @@ rooms_shutdown(void)
     _room_shutdown();
 }
 
+
+
+//
+//Free rooms list.
+//
+Eina_List *rooms_list_free(Eina_List *rooms)
+{
+	if(rooms)
+	{
+		Room *room;
+
+        //Point to first node of list.
+        for(rooms = eina_list_last(rooms); rooms; rooms = eina_list_prev(rooms));
+
+        EINA_LIST_FREE(rooms, room)
+			room_free(room);
+
+        eina_list_free(rooms);
+
+        fprintf(stdout, _("%d rooms registered!"), eina_list_count(rooms));
+        return NULL;
+    }
+
+    return NULL;
+}
+
+
+//
+//Read all rooms infos files.
+//
+Eina_List *rooms_list_get()
+{
+	int id = 0;
+	const Eina_File_Direct_Info *f_info;
+	Eina_Iterator *it;
+	Eina_List *rooms = NULL;
+	Room *room = NULL;
+
+	it = eina_file_stat_ls(edams_data_path_get());
+
+   	if(it)
+   	{
+	   EINA_ITERATOR_FOREACH(it, f_info)
+	   {
+            //INF("Found %s new file.", ecore_file_file_get(f_info->path));
+			if(eina_str_has_extension(f_info->path, ".eet") == EINA_TRUE)
+			{
+				room = room_load(NULL, f_info->path);
+
+				if(room)
+				{
+					room->id = id++;
+					rooms = eina_list_append(rooms, room);
+
+					if (eina_error_get())
+					{
+						fprintf(stderr, _("Can't allocate list node!"));
+						exit(-1);
+					}
+				}
+			}
+		}
+
+	eina_iterator_free(it);
+	}
+	
+	rooms = eina_list_sort(rooms, eina_list_count(rooms), EINA_COMPARE_CB(strcoll));
+	return rooms;
+}
