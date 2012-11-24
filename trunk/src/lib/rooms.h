@@ -30,27 +30,36 @@ typedef struct _Sensor Sensor;
 typedef struct _Room Room;
 
 /* Sensor */
-Sensor *sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl, Evas_Object * picture, const char * soundfile, const char * group, const char * creation);
+Sensor *sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl, Evas_Object * picture, const char * soundfile, const char * group);
 void sensor_free(Sensor *sensor);
 
+
 void sensor_id_set(Sensor *sensor, unsigned int id);
-unsigned int sensor_id_get(const Sensor *sensor);
 void sensor_name_set(Sensor *sensor, const char * name);
-const char * sensor_name_get(const Sensor *sensor);
 void sensor_type_set(Sensor *sensor, const char * type);
-const char * sensor_type_get(const Sensor *sensor);
 void sensor_description_set(Sensor *sensor, const char * description);
-const char * sensor_description_get(const Sensor *sensor);
 void sensor_datasheeturl_set(Sensor *sensor, const char * datasheeturl);
-const char * sensor_datasheeturl_get(const Sensor *sensor);
 void sensor_picture_set(Sensor *sensor, Evas_Object *picture);
-Evas_Object *sensor_picture_get(const Sensor *sensor, Evas *evas, const char *eet_file);
 void sensor_soundfile_set(Sensor *sensor, const char * soundfile);
-const char * sensor_soundfile_get(const Sensor *sensor);
 void sensor_group_set(Sensor *sensor, const char * group);
-const char * sensor_group_get(const Sensor *sensor);
 void sensor_creation_set(Sensor *sensor, const char * creation);
+void sensor_data_set(Sensor *sensor, const char * data);
+void sensor_datatype_set(Sensor *sensor, const char * datatype);
+
+unsigned int sensor_id_get(const Sensor *sensor);
+const char * sensor_name_get(const Sensor *sensor);
+const char * sensor_type_get(const Sensor *sensor);
+const char * sensor_description_get(const Sensor *sensor);
+const char * sensor_datasheeturl_get(const Sensor *sensor);
+Evas_Object *sensor_picture_get(const Sensor *sensor, Evas *evas, const char *eet_file);
+const char * sensor_soundfile_get(const Sensor *sensor);
+const char * sensor_group_get(const Sensor *sensor);
 const char * sensor_creation_get(const Sensor *sensor);
+const char * sensor_data_get(const Sensor *sensor);
+const char * sensor_datatype_get(const Sensor *sensor);
+Eina_List *sensors_list_get();
+
+Eina_Bool sensor_save(Sensor *sensor);
 
 /* Room */
 Room *room_new(unsigned int id, const char * name, const char * description, Eina_List * sensors, Evas_Object * photo);

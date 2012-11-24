@@ -20,7 +20,7 @@
 
 
 #ifndef __MYFILESELECTOR_H
-
+#define __MYFILESELECTOR_H
 
 #include "libedams.h"
 #include "mem.h"

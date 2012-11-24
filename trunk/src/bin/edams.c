@@ -30,7 +30,7 @@
 #include "utils.h"
 #include "myfileselector.h"
 #include "rooms.h"
-
+#include "sensors.h"
 
 EAPI_MAIN int elm_main(int argc, char *argv[]);
 
@@ -280,9 +280,6 @@ quit_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 }
 
 
-//
-//Hide notification after timeout.
-//
 static void
 _notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -319,7 +316,7 @@ _notify_set(const char *msg, const char *icon)
  
     notify = elm_object_name_find(app->win, "notify", -1);
 	elm_notify_allow_events_set(notify, EINA_TRUE);    
-	elm_notify_timeout_set(notify, 5.0);
+	elm_notify_timeout_set(notify, 2.0);
 	evas_object_show(notify);
         
     label = elm_object_name_find(app->win, "notify label", -1);
@@ -373,7 +370,7 @@ _remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, v
      
      if(!it)
      {
-		_notify_set(_("Can't remove profil:no room selected!"), "elm/icon/warning-notify/default");
+		_notify_set(_("Can't remove:no room selected!"), "elm/icon/warning-notify/default");
         return;
      }
          
@@ -412,10 +409,67 @@ _room_item_del_cb(void *data, Evas_Object *obj, void *event_info)
 {
 	Room *room = (Room *)data;
 
-	printf("Delete list item and free room '%s'****\n", room_name_get(room));
 	app->rooms = rooms_list_room_remove(app->rooms, room);
 	room_free(room);
 	room = NULL;
+}
+
+Ecore_File_Monitor_Cb 
+_serialin_monitor_cb
+(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path)
+{
+	char in[PATH_MAX];
+	Sensor *sensor;
+	
+	if(event ==  ECORE_FILE_EVENT_CREATED_FILE)
+	{
+	snprintf(in, sizeof(in), "%s"DIR_SEPARATOR_S"in" , edams_serialin_data_path_get());
+
+	if(ecore_file_exists(in) == EINA_TRUE)
+	{
+		char str[256];
+		fprintf(stdout, "New serial message!\n");
+		FILE *f = fopen(in, "r");
+		fscanf (f, "%s", str);
+		
+		//Check if new sensor...
+		if((sensor = sensor_detect(str)))
+		{
+			Eina_List *l;
+			Sensor *data;
+			Eina_Bool foundin = EINA_FALSE;
+			
+			EINA_LIST_FOREACH(app->sensors, l, data)
+			{
+				if(sensor_id_get(data) == sensor_id_get(sensor))
+				{
+					foundin = EINA_TRUE;
+				}
+			}
+			
+			char s[256];
+			if(foundin == EINA_FALSE)
+			{
+				app->sensors = eina_list_append(app->sensors, sensor);
+			
+				snprintf(s, sizeof(s), _("New sensor '%s' has been created."), sensor_name_get(sensor));
+				
+				printf("%d sensors registered on serial line...\n", eina_list_count(app->sensors));
+			}
+			else
+			{
+				snprintf(s, sizeof(s), _("New data received from sensor '%s'."), sensor_name_get(sensor));
+				_notify_set(s, "elm/icon/info/default");
+			}
+		
+			_notify_set(s, "elm/icon/info/default");
+		}
+		fclose(f);
+		
+		//Remove serial message from queue.
+		ecore_file_remove(in);
+		}
+	}
 }
 
 //
@@ -431,7 +485,7 @@ elm_main(int argc, char **argv)
 	Evas_Object *sep;
 	Evas_Object *tb, *bt, *ic, *label, *notify, *bx, *list, *naviframe, *entry;
 	Eina_List *l;
-            
+   	Ecore_File_Monitor *monitor;
             
 	// Initialize important stuff like eina debug system, ecore_evas, eet, elementary...
 	#if ENABLE_NLS
@@ -479,6 +533,8 @@ elm_main(int argc, char **argv)
 
 	//Init edams.
 	edams_init();
+
+	monitor = ecore_file_monitor_add(edams_serialin_data_path_get(), _serialin_monitor_cb, NULL);
 
 	//Setup main window.
 	timestamp = time(NULL);
@@ -549,13 +605,13 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_smart_callback_add(bt, "clicked", _notify_close_bt_cb, notify);
 
-	
 	//Setup toolbar.
 	app->toolbar = elm_toolbar_add(app->win);
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-	elm_toolbar_item_append(app->toolbar,"sensors-browser", _("Sensors"), sensors_browser_new, app);
+	elm_toolbar_item_append(app->toolbar,"sensors-browser", _("Sensors Browser"), sensors_browser_new, app);
+	elm_toolbar_item_append(app->toolbar,"sensors-creator", _("Sensors Creator"), sensors_creator_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);
 	elm_toolbar_item_append(app->toolbar, "close-window", _("Quit"), quit_bt_clicked_cb, app);
@@ -604,10 +660,10 @@ elm_main(int argc, char **argv)
 	{
 		Evas_Object *ic;
 		ic = elm_icon_add(app->win);
-   			if(!elm_image_file_set(ic, room_filename_get(room), "/image/1"))		
-		elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
-		evas_object_show(ic);
-		Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), ic, ic, NULL, room);
+		//evas_object_size_hint_align_set(ic, 0.5, 0.5);
+		//elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
+		elm_image_file_set(ic, room_filename_get(room), "/image/1");
+		Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), NULL, ic, NULL, room);
 		elm_object_item_del_cb_set(it, _room_item_del_cb);
 		/*
 		Elm_Object_Item *it = elm_naviframe_item_push(app->naviframe, _("Options"), NULL, NULL, NULL, NULL);
@@ -685,6 +741,8 @@ elm_main(int argc, char **argv)
 
 	elm_run();
 	edams_shutdown(app);
+	
+	ecore_file_monitor_del(monitor);
 	
 	app->rooms = rooms_list_free(app->rooms);
 	

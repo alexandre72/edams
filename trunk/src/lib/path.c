@@ -98,10 +98,21 @@ edams_locale_path_get(void)
 //
 //
 const char *
-edams_patients_data_path_get (void)
+edams_sensors_data_path_get (void)
 {
     char s[PATH_MAX];
-    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"patients", edams_data_path_get());
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"sensors", edams_data_path_get());
+	return strdup(s);
+}
+
+//
+//
+//
+const char *
+edams_serialin_data_path_get (void)
+{
+    char s[PATH_MAX];
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"serialin", edams_data_path_get());
 	return strdup(s);
 }
 
@@ -110,10 +121,10 @@ edams_patients_data_path_get (void)
 //
 //
 const char *
-edams_items_data_path_get (void)
+edams_rooms_data_path_get (void)
 {
     char s[PATH_MAX];
-    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"items", edams_data_path_get());
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"rooms", edams_data_path_get());
 	return strdup(s);
 }
 

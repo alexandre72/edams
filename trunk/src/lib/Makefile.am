@@ -21,6 +21,7 @@ myfontselector.c \
 path.c \
 rooms.c \
 settings.c \
+sensors.c \
 serial.c \
 utils.c
 
