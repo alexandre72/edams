@@ -36,6 +36,7 @@ typedef struct
 	Evas_Object *win;
 	Evas_Object *toolbar;
 	Eina_List *rooms;
+	Eina_List *sensors;
 } App_Info;
 
 
@@ -49,6 +50,7 @@ int edams_shutdown();
 
 //sensors_browser.c: Sensors browser.
 void sensors_browser_new(void *data, Evas_Object *obj, void *event_info);
+void sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 //preferences_dlg.c: Preferences dialog.
 void preferences_dlg_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);

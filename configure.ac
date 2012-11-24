@@ -4,8 +4,8 @@
 rm -f config.cache
 
 m4_define([v_maj], [0])
-m4_define([v_min], [0])
-m4_define([v_mic], [2])
+m4_define([v_min], [1])
+m4_define([v_mic], [0])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 AC_INIT([edams],[v_ver],[alexandre.dussart@laposte.net])

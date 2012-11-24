@@ -14,7 +14,7 @@ AM_CPPFLAGS = \
 @EMOTION_CFLAGS@
 
 
-bin_PROGRAMS = edams
+bin_PROGRAMS = edams edams_server
 
 edamsdir = $(libdir)
 
@@ -23,6 +23,7 @@ about_dlg.c \
 edams.c \
 init.c \
 sensors_browser.c \
+sensors_creator.c \
 preferences_dlg.c \
 shutdown.c
 
@@ -32,3 +33,13 @@ edams_LDADD = \
 	@EDAMS_LIBS@ \
 	@EMOTION_LIBS@
 edams_LDFLAGS = 
+
+
+edamsserverdir = $(libdir)
+
+edamsserver_SOURCES = \
+edams_server.c 
+
+edamsserver_LDADD = \
+	@LTLIBINTL@
+edamsserver_LDFLAGS = 
