@@ -7,35 +7,106 @@
 #include <errno.h>    /* Error number definitions */
 #include <termios.h>  /* POSIX terminal control definitions */
 #include <sys/ioctl.h>
-#include <getopt.h>
+#include <signal.h>
 
-#include "libedams.h"
+#include <Ecore.h>
+
 
 int serialport_init(const char* serialport, int baud);
 int serialport_read_until(int fd, char* buf, char until);
 int serialport_write(int fd, const char* str);
 
 
-int main()
+int _log_dom = -1;
+
+
+static void
+do_lengthy_task(Ecore_Pipe *pipe)
 {
     int fd = 0;
 	char buf[256];
-    int baudrate = B9600;  // default
+	int baudrate = B9600;  // default
+	char *buffer;
+   /*
+   for (i = 0; i < 20; i++)
+     {
+        sleep(1);
+        buffer = malloc(sizeof(char) * i);
+        for (j = 0; j < i; j++)
+          buffer[j] = 'a' + j;
+        ecore_pipe_write(pipe, buffer, i);
+        free(buffer);
+     }
+     */
 
-	fd= serialport_init("/dev/ttyUSB0", baudrate);
+   	fd= serialport_init("/dev/ttyUSB0", baudrate);
 
 	while(1)
 	{
-		serialport_write(fd, "DEVICE;0;DHT11;INT;17.296");
+		serialport_write(fd, "DEVICE;0;DHT11;INT;17.296\n");
 		serialport_read_until(fd, buf, '\n');
-	    FILE *f = fopen("/home/alex/.local/share/data/edams/serialin/in", "w");
-		fprintf(f, "%s", buf);
-	    fclose(f);
-		sleep(3);
-	}
-
-	return 1;
+		buffer = strdup(buf);
+		ecore_pipe_write(pipe, buffer, strlen(buffer));
+		free(buffer);
+		buffer = NULL;
+		sleep(2);
+   }
+   
+   	ecore_pipe_write(pipe, "close", 5);   
 }
+
+static void
+handler(void *data, void *buf, unsigned int len)
+{
+   //printf("content: %s\n", (const char *)buf);
+   //printf("received %d bytes\n", len);
+
+   char *str = malloc(sizeof(char) * len + 1);
+   memcpy(str, buf, len);
+   str[len] = '\0';
+   printf("received %d bytes\n", len);
+   printf("content: %s\n", (const char *)str);
+   free(str);
+   if (len && !strncmp(buf, "close", len < 5 ? len : 5))
+     {
+        printf("close requested\n");
+        ecore_main_loop_quit();
+     }
+}
+
+
+int
+main(int argc, char *argv[])
+{
+   Ecore_Pipe *pipe;
+   pid_t child_pid;
+
+   ecore_init();
+   
+   pipe = ecore_pipe_add(handler, NULL);
+   
+	child_pid = fork();
+      
+   if (!child_pid)
+     {
+        ecore_pipe_read_close(pipe);
+        do_lengthy_task(pipe);
+     }
+   else
+     {
+        ecore_pipe_write_close(pipe);
+        ecore_main_loop_begin();
+     }      
+     
+	kill(child_pid, SIGKILL);
+	
+   ecore_pipe_del(pipe);
+   ecore_shutdown();
+
+   return 0;
+}
+
+
 
 
 int serialport_write(int fd, const char* str)
