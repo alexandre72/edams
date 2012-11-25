@@ -45,7 +45,7 @@ static void _notify_set(const char *msg, const char *icon);
 static char *grid_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__);
 static Evas_Object *grid_content_get(void *data, Evas_Object *obj, const char *part);
 static void grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__);
-
+static void _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 
 //
 //Update browser window title.
@@ -182,6 +182,121 @@ grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 
 
 //
+//Display ctxpopup when double-click on an patient's gengrid.
+//
+static void 
+_ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+	Evas_Object *win, *gd, *cal, *fr;
+	Evas_Object *label, *ic, *img;
+	Evas_Object *bt, *sl;
+	Evas_Object *entry;
+    Elm_Object_Item *gg_it;
+    Evas_Object *gg;
+    Eina_List *l, *l2, *l3;
+   	char s[256];
+
+   gg = (Evas_Object*) elm_object_name_find(browser, "sensors gengrid", -1);
+   l = (Eina_List*)elm_gengrid_selected_items_get(gg);
+   
+   if (!l) return;
+   EINA_LIST_FOREACH_SAFE(l, l2, l3, gg_it)
+   {
+       GenGridItem *ggi = elm_object_item_data_get(gg_it);
+   
+		win = elm_win_util_standard_add("sensor_description_dlg", _("Sensor"));
+		evas_object_data_set(win, "Gengrid Object Item", gg_it);
+		elm_win_autodel_set(win, EINA_TRUE);
+		elm_win_center(win, EINA_TRUE, EINA_TRUE);
+
+		gd = elm_grid_add(win);
+		elm_grid_size_set(gd, 100, 100);
+		elm_win_resize_object_add(win, gd);
+		evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		evas_object_show(gd);
+
+		//
+		//Image selector.
+		//
+		fr = elm_frame_add(win);
+		//elm_object_text_set(fr, );
+		elm_grid_pack(gd, fr, 1, 1, 30, 40);
+		evas_object_show(fr);
+		
+		img = elm_image_add(win);
+		evas_object_name_set(img, "photo");
+		elm_image_smooth_set(img, EINA_TRUE);
+		elm_image_aspect_fixed_set(img, EINA_TRUE);
+		elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
+
+       	if(!elm_image_file_set(img, sensor_filename_get(ggi->sensor), "/image/1"))
+		    elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
+		    
+		elm_grid_pack(gd, img, 5, 5, 25, 25);
+		evas_object_show(img);
+
+		//
+		//End of image selector.
+		//
+    
+    	label = elm_label_add(win);
+		elm_object_text_set(label, _("Name:"));
+		elm_grid_pack(gd, label, 32, 2, 30, 7);    
+		evas_object_show(label);
+		
+		entry = elm_entry_add(win);
+		elm_entry_scrollable_set(entry, EINA_TRUE);
+		elm_entry_editable_set(entry, EINA_FALSE);
+		snprintf(s, sizeof(s), "%d - %s", sensor_id_get(ggi->sensor), sensor_name_get(ggi->sensor));
+		elm_object_text_set(entry, s);
+		elm_entry_single_line_set(entry, EINA_TRUE);
+		elm_grid_pack(gd, entry, 51, 2, 40, 9);
+		evas_object_show(entry);
+
+		label = elm_label_add(win);
+		elm_object_text_set(label, _("Description:"));
+		elm_grid_pack(gd, label, 32, 15, 30, 7);    
+		evas_object_show(label);
+
+		entry = elm_entry_add(win);
+		elm_entry_scrollable_set(entry, EINA_TRUE);
+		elm_entry_editable_set(entry, EINA_FALSE);
+		elm_object_text_set(entry, sensor_description_get(ggi->sensor));
+		elm_entry_single_line_set(entry, EINA_TRUE);
+		elm_grid_pack(gd, entry, 51, 15, 40, 9);    
+		evas_object_show(entry);
+      
+        sl = elm_slider_add(win);
+   		elm_slider_horizontal_set(sl, EINA_FALSE);
+		elm_slider_span_size_set(sl, 120);
+   		elm_slider_inverted_set(sl, EINA_TRUE);
+  		evas_object_size_hint_align_set(sl, 0.5, EVAS_HINT_FILL);
+   		evas_object_size_hint_weight_set(sl, 0, EVAS_HINT_EXPAND);
+   		elm_slider_unit_format_set(sl, "%1.2f °");
+		elm_slider_min_max_set(sl, -5, 55);
+		elm_slider_value_set(sl, atof(sensor_data_get(ggi->sensor)));
+		elm_grid_pack(gd, sl, 10, 61, 90, 15);    
+		evas_object_show(sl);
+      
+		bt = elm_button_add(win);
+		evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		ic = elm_icon_add(win);
+	   	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+	   	elm_icon_standard_set(ic, "close-window");
+	   	elm_object_part_content_set(bt, "icon", ic);
+		elm_object_text_set(bt, _("Ok"));
+		elm_grid_pack(gd, bt, 40, 80, 30, 8);    
+		evas_object_show(bt);
+		evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
+			
+		evas_object_resize(win, 450, 450);
+		evas_object_show(win);
+	}
+}
+
+
+
+//
 //Create sensors browser.
 //
 void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -252,7 +367,8 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
     elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_ALWAYS);
     elm_gengrid_reorder_mode_set(grid, EINA_FALSE);   
    	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	evas_object_size_hint_min_set(grid, 600, 500);
+   	evas_object_size_hint_min_set(grid, 400, 400);
+    evas_object_smart_callback_add(grid, "clicked,double",_ggrid_clickeddouble_cb, NULL);
     elm_box_pack_end(bx, grid);
    	evas_object_show(grid);
 
@@ -310,7 +426,7 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
    	elm_gengrid_item_class_free(gic);
 
     //Resize browser window.
-   	evas_object_resize(browser, 600, 600);
+   	evas_object_resize(browser, 400, 450);
    	evas_object_show(browser);
 }
 
