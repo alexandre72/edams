@@ -137,7 +137,7 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
           return NULL;
        }
 
-    sensor->id = -1;
+    sensor->id = id;
     sensor->name = eina_stringshare_add(name ? name : "undefined");
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_sensors_data_path_get(), sensor->name);
     sensor->__eet_filename = strdup(s);
@@ -681,6 +681,7 @@ Room *
 room_load(Evas *evas, const char *filename)
 {
     Room *room = NULL;
+
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
       {
@@ -840,6 +841,7 @@ Eina_List *rooms_list_get()
 	char s[PATH_MAX];
 	
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S, edams_rooms_data_path_get());
+	fprintf(stdout, "OPENING:%s\n", s);
 	it = eina_file_stat_ls(s);
 
    	if(it)
@@ -855,7 +857,7 @@ Eina_List *rooms_list_get()
 				{
 					room->id = id++;
 					rooms = eina_list_append(rooms, room);
-
+		            //fprintf(stdout, _("INFO:Found new '%s' Eet room file.\n"), ecore_file_file_get(f_info->path));
 					if (eina_error_get())
 					{
 						fprintf(stderr, _("Can't allocate list node!"));
@@ -868,7 +870,7 @@ Eina_List *rooms_list_get()
 	eina_iterator_free(it);
 	}
 
-	fprintf(stdout, _("INFO:%d rooms list found and registered.\n"), eina_list_count(rooms));
+	fprintf(stdout, _("INFO:%d rooms found in database.\n"), eina_list_count(rooms));
 	rooms = eina_list_sort(rooms, eina_list_count(rooms), EINA_COMPARE_CB(strcoll));
 	return rooms;
 }
@@ -951,8 +953,6 @@ sensors_list_get()
 	
 	it = eina_file_stat_ls(edams_sensors_data_path_get());
 
-	fprintf(stdout, "Get all sensors from database...%s\n", edams_sensors_data_path_get());
-
    	if(it)
    	{
 	   EINA_ITERATOR_FOREACH(it, f_info)
@@ -963,7 +963,7 @@ sensors_list_get()
 
 				if(sensor)
 				{
-		            fprintf(stdout, "Found '%s' Eet sensor file\n", ecore_file_file_get(f_info->path));
+		            //fprintf(stdout, _("INFO:Found new '%s' Eet database sensor file.\n"), ecore_file_file_get(f_info->path));
 				
 					sensors = eina_list_append(sensors, sensor);
 
@@ -979,7 +979,7 @@ sensors_list_get()
 	eina_iterator_free(it);
 	}
 
-	fprintf(stdout, _("INFO:%d sensor list found in database.\n"), eina_list_count(sensors));
+	fprintf(stdout, _("INFO:%d sensors found in database.\n"), eina_list_count(sensors));
 	sensors = eina_list_sort(sensors, eina_list_count(sensors), EINA_COMPARE_CB(strcoll));
 	return sensors;
 }

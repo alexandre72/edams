@@ -41,7 +41,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
   	win = (Evas_Object *)data;
     
-	sensor = sensor_new(0,  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	sensor = sensor_new(-1,  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     sensor_name_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor name entry", -1)));
     sensor_description_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor description entry", -1)));
     sensor_type_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor type entry", -1)));

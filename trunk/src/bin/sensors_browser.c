@@ -24,6 +24,7 @@
 #include "utils.h"
 #include "myfileselector.h"
 
+
 static Elm_Gengrid_Item_Class *gic;
 
     
@@ -37,23 +38,33 @@ typedef struct _GenGridItem
 Evas_Object *browser = NULL;
 
 
+static void _title_update();
+static void _notify_timeout(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+static void _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+static void _notify_set(const char *msg, const char *icon);
+static char *grid_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__);
+static Evas_Object *grid_content_get(void *data, Evas_Object *obj, const char *part);
+static void grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__);
+
+
 //
 //Update browser window title.
 //
 static void 
-_browser_title_update()
+_title_update()
 {
     char s[128];
-    Eina_List *sensors = NULL;
+	Evas_Object *gg;
 
-    if(sensors)
-	    snprintf(s, sizeof(s), _("Sensors Browser - %d sensors"), eina_list_count(sensors));
+	gg = elm_object_name_find(browser, "sensors gengrid", -1);
+	
+    if(elm_gengrid_items_count(gg)> 0)
+	    snprintf(s, sizeof(s), _("Sensors Browser - %d sensors"), elm_gengrid_items_count(gg));
     else
 	    snprintf(s, sizeof(s), _("sensors Browser - 0 sensor"));
 	
 	elm_win_title_set(browser, s);
 }
-//endof _browser_title_update
 
 
 //
@@ -65,9 +76,6 @@ _notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
     Evas_Object *notify = (Evas_Object *)data;
     evas_object_hide(notify);
 }
-//
-//endof _bubble_timer_cb
-//
 
 
 
@@ -80,9 +88,6 @@ _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    Evas_Object *notify = data;
    evas_object_hide(notify);
 }
-//
-//endof _notify_close_bt_cb
-//
 
 
 
@@ -90,7 +95,7 @@ _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 //Show notification.
 //
 static void 
-_browser_notify_set(const char *msg, const char *icon)
+_notify_set(const char *msg, const char *icon)
 {
     Evas_Object *notify, *label, *ic, *bt;
  
@@ -111,10 +116,69 @@ _browser_notify_set(const char *msg, const char *icon)
     ic = elm_object_name_find(browser, "notify icon", -1);
     elm_image_file_set(ic, edams_edje_theme_file_get(), icon);
 }
-//
-//endof _browser_notify_set
-//
 
+
+//
+//
+//
+static char *
+grid_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+{
+   	const GenGridItem *ti = data;
+   	char buf[256];   
+   
+	snprintf(buf, sizeof(buf), "%d - %s",
+								sensor_id_get(ti->sensor), 
+								sensor_name_get(ti->sensor));
+   
+   	return strdup(buf);
+}
+
+
+//
+//
+//
+static Evas_Object *
+grid_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   const GenGridItem *ti = data;
+   
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        Evas_Object *icon = elm_bg_add(obj);
+        
+        	if(!elm_bg_file_set(icon, sensor_filename_get(ti->sensor), "/image/1"))
+				elm_bg_file_set(icon, edams_edje_theme_file_get(), "user/male");
+        evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        evas_object_show(icon);
+        return icon;
+     }
+ 
+   return NULL;
+}
+
+
+
+//
+//
+//
+static Eina_Bool
+grid_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+{
+   return EINA_FALSE;
+}
+
+
+
+//
+//
+//
+static void
+grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+{
+	GenGridItem *ggi = data;
+	FREE(ggi);
+}
 
 
 //
@@ -124,10 +188,12 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
 {
     Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp, *label, *notify;
 
+	App_Info *app = (App_Info *)data;
+
     //Setup a new window browser.
    	browser = elm_win_util_standard_add("sensorsBrowser", "");
    	elm_win_autodel_set(browser, EINA_TRUE);
-	_browser_title_update(browser);
+	_title_update();
 
 	//Setup notify for user informations.
 	notify = elm_notify_add(browser);
@@ -177,8 +243,10 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
    	 
 	//Setup gengrid to display sensors files in a nice and modern way.
    	grid = elm_gengrid_add(browser);
-   	evas_object_name_set(grid, "GenGrid");
-   	elm_gengrid_item_size_set(grid, 100, 100);
+   	evas_object_name_set(grid, "sensors gengrid");
+	elm_gengrid_filled_set(grid, EINA_TRUE);
+	elm_gengrid_align_set(grid, 0, 0);
+   	elm_gengrid_item_size_set(grid, 150, 150);
    	elm_gengrid_horizontal_set(grid, EINA_FALSE);
     elm_gengrid_multi_select_set(grid, EINA_TRUE);
     elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_ALWAYS);
@@ -200,24 +268,6 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
    	elm_box_pack_end(bx, hbx);
    	evas_object_show(hbx);
 
-    bt = elm_button_add(browser);
-    elm_object_text_set(bt, _("Add"));
-    ic = elm_icon_add(browser);
-    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(ic, "add-edit");
-    elm_object_part_content_set(bt, "icon", ic);
-    elm_box_pack_end(hbx, bt);
-    evas_object_show(bt);
-
-    bt = elm_button_add(browser);
-    elm_object_text_set(bt, _("Remove"));
-	ic = elm_icon_add(browser);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(ic,  "delete-edit");
-    elm_object_part_content_set(bt, "icon", ic);
-    elm_box_pack_end(hbx, bt);
-    evas_object_show(bt);
-
 	bt = elm_button_add(browser);
     elm_object_text_set(bt, _("Close"));
 	ic = elm_icon_add(browser);
@@ -233,7 +283,27 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
     evas_object_show(sp);
     elm_box_pack_end(bx, sp);    
    
+    //Defines gengrid item class.
+   	gic = elm_gengrid_item_class_new();
+   	gic->item_style = "default";
+   	gic->func.text_get = grid_text_get;
+   	gic->func.content_get = grid_content_get;
+   	gic->func.state_get = grid_state_get;
+   	gic->func.del = grid_del;
 
+    //Fill gengrid with patients files list.
+    Eina_List *l;
+    Sensor *sensor;
+
+    EINA_LIST_FOREACH(app->sensors, l, sensor)
+    {
+        GenGridItem *ti;
+        ti = calloc(1, sizeof(*ti));
+        ti->sensor = sensor;
+   		ti->ggitem = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
+       	//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
+	}
+   
    	//Item_class_ref is needed for gic. 
    	//Some items can be added in callbacks.
    	elm_gengrid_item_class_ref(gic);

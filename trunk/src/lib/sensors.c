@@ -29,39 +29,54 @@ Sensor*
 sensor_detect(char *s)
 {
 	char **arr;
-	int i;
 	Eina_List *l;
 	Eina_List *database;
 	Sensor *data, *sensor = NULL;
-		
-	printf("Detecting all sensors on serial line...\n");
+	unsigned int n;
 	
 	//Check if new device in trame.
 	if(strncmp(s, "DEVICE;", 7) == 0)
 	{
-	   arr = eina_str_split(s, ";", 0);
+	   arr = eina_str_split_full(s, ";", 0, &n);
 
-		for (i = 0; arr[i]; i++)
-		printf("%s\n", arr[i]);
-     
-		sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL, NULL);
-		sensor_datatype_set(sensor, arr[3]);
-		sensor_data_set(sensor, arr[4]);
-	
-		printf("Get sensors informations from sensors database...\n");
-		database = sensors_list_get();
-		EINA_LIST_FOREACH(database, l, data)
+/*
+	   	int i;
+		for (i = 0; arr[i]; i++);
 		{
-			if(strcmp(sensor_name_get(data), sensor_name_get(sensor)) == 0)
+			printf("%s\n", arr[i]);
+		}
+		
+	   	//Avoid serial parasite.
+		//Check serial transmission error.
+		if(n < 6 || strcmp(arr[5], "OK") != 0)
+		{
+			FREE(arr[0]);
+			FREE(arr);
+			return NULL;
+		}
+	   */	
+		if(n == 6 && strstr(arr[5], "OK"))
+		{
+			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL, NULL);
+			sensor_datatype_set(sensor, arr[3]);
+			sensor_data_set(sensor, arr[4]);
+
+			database = sensors_list_get();
+			EINA_LIST_FOREACH(database, l, data)
 			{
-				fprintf(stdout, "Found %s(%s)...\n", sensor_name_get(data), sensor_description_get(data));
-				sensor_description_set(sensor, sensor_description_get(data));
-				sensor_type_set(sensor, sensor_type_get(data));
-				sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));
-				//sensor_picture_set(sensor, sensor_picture_get(data));
-				break;
+				if(strcmp(sensor_name_get(data), sensor_name_get(sensor)) == 0)
+				{
+					fprintf(stdout, "INFO:Found %s(%s) device on serial buffer.\n", sensor_name_get(data), sensor_description_get(data));
+					sensor_description_set(sensor, sensor_description_get(data));
+					sensor_type_set(sensor, sensor_type_get(data));
+					sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));
+					//sensor_picture_set(sensor, sensor_picture_get(data));
+					break;
+				}
 			}
 		}
+		FREE(arr[0]);
+		FREE(arr);
 	}
 
 	return sensor; 
