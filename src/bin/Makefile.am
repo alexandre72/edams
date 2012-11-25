@@ -14,7 +14,7 @@ AM_CPPFLAGS = \
 @EMOTION_CFLAGS@
 
 
-bin_PROGRAMS = edams edams_server edamstest
+bin_PROGRAMS = edams 
 
 edamsdir = $(libdir)
 
@@ -33,25 +33,3 @@ edams_LDADD = \
 	@EDAMS_LIBS@ \
 	@EMOTION_LIBS@
 edams_LDFLAGS = 
-
-
-edamsserverdir = $(libdir)
-
-edamsserver_SOURCES = \
-edams_server.c 
-
-edamsserver_LDADD = \
-	@LTLIBINTL@
-edamsserver_LDFLAGS = 
-
-
-edamstestdir = $(libdir)
-
-edamstest_SOURCES = \
-edams_test.c
-
-edamstest_LDADD = \
-    $(top_builddir)/src/lib/libedams.la \
-	@LTLIBINTL@ \
-	@EDAMS_LIBS@
-edamstest_LDFLAGS = 

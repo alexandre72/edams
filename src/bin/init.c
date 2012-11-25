@@ -53,22 +53,16 @@ int edams_init()
 		ecore_file_mkpath(edams_data_path_get());
 	}
 
-
-    //Create rooms data directory.
+    //Create rooms database directory.
     strcpy(s, edams_rooms_data_path_get());
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 
-    //Create sensors data directory.
+    //Create sensors database directory.
     strcpy(s, edams_sensors_data_path_get());
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
-
-    //Create sensors serial in directory.
-    strcpy(s, edams_serialin_data_path_get());
-	if(ecore_file_is_dir(s) == EINA_FALSE)
-		ecore_file_mkpath(s);
-		
+	
 		
     //Create cache directory.
 	//snprintf(s, sizeof(s), "%s/edams", efreet_cache_home_get());

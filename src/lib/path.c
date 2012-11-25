@@ -105,23 +105,12 @@ edams_sensors_data_path_get (void)
 	return strdup(s);
 }
 
-//
-//
-//
-const char *
-edams_serialin_data_path_get (void)
-{
-    char s[PATH_MAX];
-    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"serialin", edams_data_path_get());
-	return strdup(s);
-}
-
 
 //
 //
 //
 const char *
-edams_rooms_data_path_get (void)
+edams_rooms_data_path_get(void)
 {
     char s[PATH_MAX];
     snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"rooms", edams_data_path_get());

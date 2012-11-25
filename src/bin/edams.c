@@ -31,6 +31,7 @@
 #include "myfileselector.h"
 #include "rooms.h"
 #include "sensors.h"
+#include "serial.h"
 
 EAPI_MAIN int elm_main(int argc, char *argv[]);
 
@@ -414,63 +415,74 @@ _room_item_del_cb(void *data, Evas_Object *obj, void *event_info)
 	room = NULL;
 }
 
-Ecore_File_Monitor_Cb 
-_serialin_monitor_cb
-(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path)
+
+
+static void
+do_lengthy_task(Ecore_Pipe *pipe)
 {
-	char in[PATH_MAX];
+    int fd = 0;
+	char buf[256];
+	//int baudrate = B9600;  // default
+	int baudrate = B115200;  // default
+
+   	//fd= serialport_init("/dev/ttyUSB0", baudrate);
+   	fd= serialport_init("/dev/ttyACM0", baudrate);
+   	
+	while(1)
+	{
+		//serialport_write(fd, "DEVICE;0;DHT11;INT;17.296\n");
+		serialport_read_until(fd, buf, '\n');
+		ecore_pipe_write(pipe, buf, strlen(buf));
+		sleep(2);
+   }
+}
+
+
+static void
+handler(void *data, void *buf, unsigned int len)
+{
 	Sensor *sensor;
 	
-	if(event ==  ECORE_FILE_EVENT_CREATED_FILE)
+	if(len < 5)
+	return;
+	
+	char *str = malloc(sizeof(char) * len + 1);
+	
+	memcpy(str, buf, len - 1);
+	str[len] = '\0';
+	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
+   
+	//Check if new sensor...
+	if((sensor = sensor_detect(str)))
 	{
-	snprintf(in, sizeof(in), "%s"DIR_SEPARATOR_S"in" , edams_serialin_data_path_get());
-
-	if(ecore_file_exists(in) == EINA_TRUE)
-	{
-		char str[256];
-		fprintf(stdout, "New serial message!\n");
-		FILE *f = fopen(in, "r");
-		fscanf (f, "%s", str);
+		Eina_List *l;
+		Sensor *data;
+		Eina_Bool foundin = EINA_FALSE;
 		
-		//Check if new sensor...
-		if((sensor = sensor_detect(str)))
+		EINA_LIST_FOREACH(app->sensors, l, data)
 		{
-			Eina_List *l;
-			Sensor *data;
-			Eina_Bool foundin = EINA_FALSE;
-			
-			EINA_LIST_FOREACH(app->sensors, l, data)
+			if(sensor_id_get(data) == sensor_id_get(sensor))
 			{
-				if(sensor_id_get(data) == sensor_id_get(sensor))
-				{
+					fprintf(stdout, _("INFO:Serial sensor '%d-%s'  with data '%s' of type '%s'...\n"), sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor), sensor_datatype_get(sensor));
 					foundin = EINA_TRUE;
-				}
+					break;
 			}
+		}
 			
-			char s[256];
-			if(foundin == EINA_FALSE)
-			{
-				app->sensors = eina_list_append(app->sensors, sensor);
-			
-				snprintf(s, sizeof(s), _("New sensor '%s' has been created."), sensor_name_get(sensor));
-				
-				printf("%d sensors registered on serial line...\n", eina_list_count(app->sensors));
-			}
-			else
-			{
-				snprintf(s, sizeof(s), _("New data received from sensor '%s'."), sensor_name_get(sensor));
-				_notify_set(s, "elm/icon/info/default");
-			}
-		
+		char s[256];
+		if(foundin == EINA_FALSE)
+		{
+			app->sensors = eina_list_append(app->sensors, sensor);
+			snprintf(s, sizeof(s), _("New sensor '%d-%s' has been created."), sensor_id_get(sensor), sensor_name_get(sensor));
+			fprintf(stdout, _("INFO:%d sensors registered on serial line...\n"), eina_list_count(app->sensors));
 			_notify_set(s, "elm/icon/info/default");
 		}
-		fclose(f);
-		
-		//Remove serial message from queue.
-		ecore_file_remove(in);
-		}
-	}
+	}   
+   
+   free(str);
 }
+
+
 
 //
 //Main.
@@ -485,7 +497,8 @@ elm_main(int argc, char **argv)
 	Evas_Object *sep;
 	Evas_Object *tb, *bt, *ic, *label, *notify, *bx, *list, *naviframe, *entry;
 	Eina_List *l;
-   	Ecore_File_Monitor *monitor;
+	Ecore_Pipe *pipe;
+	pid_t child_pid;
             
 	// Initialize important stuff like eina debug system, ecore_evas, eet, elementary...
 	#if ENABLE_NLS
@@ -533,8 +546,6 @@ elm_main(int argc, char **argv)
 
 	//Init edams.
 	edams_init();
-
-	monitor = ecore_file_monitor_add(edams_serialin_data_path_get(), _serialin_monitor_cb, NULL);
 
 	//Setup main window.
 	timestamp = time(NULL);
@@ -739,11 +750,25 @@ elm_main(int argc, char **argv)
 	//ret = settings_read("wanttoolbar");
     //INF("Test wanttoolbar setting:%s", ret);
 
-	elm_run();
+   pipe = ecore_pipe_add(handler, NULL);
+   
+	child_pid = fork();
+      
+   if (!child_pid)
+     {
+        ecore_pipe_read_close(pipe);
+        do_lengthy_task(pipe);
+     }
+   else
+     {
+        ecore_pipe_write_close(pipe);
+		elm_run();
+     }
+
 	edams_shutdown(app);
-	
-	ecore_file_monitor_del(monitor);
-	
+	ecore_pipe_del(pipe);
+	kill(child_pid, SIGKILL);
+
 	app->rooms = rooms_list_free(app->rooms);
 	
    	eina_log_domain_unregister(_log_dom);
