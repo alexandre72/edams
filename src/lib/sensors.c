@@ -39,22 +39,6 @@ sensor_detect(char *s)
 	{
 	   arr = eina_str_split_full(s, ";", 0, &n);
 
-/*
-	   	int i;
-		for (i = 0; arr[i]; i++);
-		{
-			printf("%s\n", arr[i]);
-		}
-		
-	   	//Avoid serial parasite.
-		//Check serial transmission error.
-		if(n < 6 || strcmp(arr[5], "OK") != 0)
-		{
-			FREE(arr[0]);
-			FREE(arr);
-			return NULL;
-		}
-	   */	
 		if(n == 6 && strstr(arr[5], "OK"))
 		{
 			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL, NULL);
