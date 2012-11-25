@@ -40,7 +40,7 @@ sensor_detect(char *s)
 	   arr = eina_str_split_full(s, ";", 0, &n);
 
 		if(n == 6 && strstr(arr[5], "OK"))
-		{
+		{		
 			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL, NULL);
 			sensor_datatype_set(sensor, arr[3]);
 			sensor_data_set(sensor, arr[4]);
