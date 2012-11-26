@@ -228,16 +228,11 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 		elm_image_smooth_set(img, EINA_TRUE);
 		elm_image_aspect_fixed_set(img, EINA_TRUE);
 		elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
-
        	if(!elm_image_file_set(img, sensor_filename_get(ggi->sensor), "/image/1"))
 		    elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
-		    
 		elm_grid_pack(gd, img, 5, 5, 25, 25);
 		evas_object_show(img);
-
-		//
 		//End of image selector.
-		//
     
     	label = elm_label_add(win);
 		elm_object_text_set(label, _("Name:"));
@@ -266,17 +261,22 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 		elm_grid_pack(gd, entry, 51, 15, 40, 9);    
 		evas_object_show(entry);
       
-        sl = elm_slider_add(win);
+      	if(strstr(sensor_datatype_get(ggi->sensor), "INT"))
+      	{
+		sl = elm_slider_add(win);
    		elm_slider_horizontal_set(sl, EINA_FALSE);
 		elm_slider_span_size_set(sl, 120);
    		elm_slider_inverted_set(sl, EINA_TRUE);
   		evas_object_size_hint_align_set(sl, 0.5, EVAS_HINT_FILL);
    		evas_object_size_hint_weight_set(sl, 0, EVAS_HINT_EXPAND);
+   		int x, y;
+   		sscanf(sensor_data_get(ggi->sensor), "%d.%02d", &x, &y);
    		elm_slider_unit_format_set(sl, "%1.2f °");
 		elm_slider_min_max_set(sl, -5, 55);
-		elm_slider_value_set(sl, atof(sensor_data_get(ggi->sensor)));
+		elm_slider_value_set(sl, x+y*0.01);
 		elm_grid_pack(gd, sl, 10, 61, 90, 15);    
 		evas_object_show(sl);
+		}    
       
 		bt = elm_button_add(win);
 		evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

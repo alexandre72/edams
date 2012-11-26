@@ -111,7 +111,6 @@ _debug_settings_content()
     Evas_Object *entry;
     Evas_Object *label;
     char s[PATH_MAX];
-    
 
     gd = elm_grid_add(win);
 	EXPAND(gd);
@@ -123,7 +122,13 @@ _debug_settings_content()
 	elm_object_text_set(checkb, _("Debug printf"));
 	elm_grid_pack(gd, checkb , 1, 1, 20, 10);
 	evas_object_show(checkb);
-
+	
+    checkb = elm_check_add(win);
+	evas_object_name_set(checkb, "test checkb");
+	elm_object_text_set(checkb, _("Serial buffering simulation"));
+	elm_grid_pack(gd, checkb , 40, 1, 20, 10);
+	evas_object_show(checkb);	
+	
 	label = elm_label_add(win);
 	snprintf(s, sizeof(s), _("Installation path:%s"), edams_install_path_get());
 	elm_object_text_set(label, s);
