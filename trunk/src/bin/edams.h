@@ -34,6 +34,7 @@
 typedef struct
 {
 	Evas_Object *win;
+	Evas_Object *waiting_win;
 	Evas_Object *toolbar;
 	Eina_List *rooms;
 	Eina_List *sensors;

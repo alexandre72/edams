@@ -425,12 +425,12 @@ do_lengthy_task(Ecore_Pipe *pipe)
 	//int baudrate = B9600;  // default
 	int baudrate = B115200;  // default
 
-   	//fd= serialport_init("/dev/ttyUSB0", baudrate);
-   	fd= serialport_init("/dev/ttyACM0", baudrate);
+   	//fd= serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
+   	fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
    	
 	while(1)
 	{
-		//serialport_write(fd, "DEVICE;0;DHT11;INT;17.296\n");
+		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial sample trame test.
 		serialport_read_until(fd, buf, '\n');
 		ecore_pipe_write(pipe, buf, strlen(buf));
 		sleep(2);
@@ -452,8 +452,49 @@ handler(void *data, void *buf, unsigned int len)
 	str[len] = '\0';
 	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
    
+   	//Check if system msg...
+	if(strncmp(str, "SYSTEM:", 7) == 0)
+	{
+		if(strstr(str, "STARTING"))
+		{
+			fprintf(stdout, _("INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial port...)\n"));		
+		
+			Evas_Object *bx, *pb, *bg;
+			app->waiting_win = elm_win_add(app->win, "init_win", ELM_WIN_SPLASH);
+			elm_win_title_set(app->waiting_win, _("Initialize EDAMS wait please..."));
+			elm_win_center(app->waiting_win, EINA_TRUE,  EINA_TRUE);
+
+		  	bg = elm_bg_add(app->waiting_win);
+			evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			elm_win_resize_object_add(app->win, bg );
+			evas_object_show(bg );
+
+		   bx = elm_box_add(app->waiting_win);
+		   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		   elm_win_resize_object_add(app->waiting_win, bx);
+		   evas_object_show(bx);
+
+		   pb = elm_progressbar_add(app->waiting_win);
+		   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   			evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   			elm_object_text_set(pb, _("calibrating sensors, setting serial port... "));
+   			elm_progressbar_pulse_set(pb, EINA_TRUE);
+   			elm_box_pack_end(bx, pb);
+		   elm_progressbar_pulse(pb, EINA_TRUE);
+   			evas_object_show(pb);
+	
+   			evas_object_show(app->waiting_win);
+		}
+		else if(strstr(str, "OPERATIONNAL"))
+		{
+				fprintf(stdout, _("INFO:EDAMS is ready and operationnal\n"));		
+				//Evas_Object *win;
+				//win = elm_object_name_find(app->win, "init win", -1);
+				evas_object_del(app->waiting_win);
+		}
+	}
 	//Check if new sensor...
-	if((sensor = sensor_detect(str)))
+	else if((sensor = sensor_detect(str)))
 	{
 		Eina_List *l;
 		Sensor *data;
@@ -463,7 +504,9 @@ handler(void *data, void *buf, unsigned int len)
 		{
 			if(sensor_id_get(data) == sensor_id_get(sensor))
 			{
+					//If sensor is already here, so only update sensor data.
 					fprintf(stdout, _("INFO:Serial sensor '%d-%s'  with data '%s' of type '%s'...\n"), sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor), sensor_datatype_get(sensor));
+					sensor_data_set(sensor, sensor_data_get(sensor));
 					foundin = EINA_TRUE;
 					break;
 			}
@@ -477,7 +520,9 @@ handler(void *data, void *buf, unsigned int len)
 			fprintf(stdout, _("INFO:%d sensors registered on serial line...\n"), eina_list_count(app->sensors));
 			_notify_set(s, "elm/icon/info/default");
 		}
-	}   
+	}
+
+	
    
    free(str);
 }
