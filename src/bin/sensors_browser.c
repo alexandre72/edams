@@ -267,12 +267,14 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
       		int x, y;
       	
        	 	Evas_Object *layout = elm_layout_add(win);
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/temperature");
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/tachometer");
    			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			elm_grid_pack(gd, layout, 20, 50, 20, 45);
    			evas_object_show(layout);
  
+ 
+ /*
    			elm_object_signal_emit(layout, "temp,state,known", "");
    			snprintf(s, sizeof(s), "%s°C", sensor_data_get(ggi->sensor));
         	elm_object_part_text_set(layout, "temp.text.reading", s);
@@ -284,12 +286,12 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 			double level =  (double)((x + (y*0.01)) - TEMP_MIN) /
                				(double)(TEMP_MAX - TEMP_MIN);
 
-        	printf("-******%f\n", level);
-
    			if (level < 0.0) level = 0.0;
    			else if (level > 1.0) level = 1.0;		
    			msg.val = level;
 	    	edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
+*/	    	
+	    	
 		}
 	           
 		bt = elm_button_add(win);

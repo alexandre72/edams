@@ -27,7 +27,9 @@ externals {
 }
 
 collections {
-#include "temperature.edc"
+#include "thermometer.edc"
+#include "thermometer2.edc"
+#include "tachometer.edc"
 
     group { name: "elm/icon/about-dlg/default";
       min: 48 48;
