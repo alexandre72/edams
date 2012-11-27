@@ -27,6 +27,8 @@ externals {
 }
 
 collections {
+#include "temperature.edc"
+
     group { name: "elm/icon/about-dlg/default";
       min: 48 48;
       parts {

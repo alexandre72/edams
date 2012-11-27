@@ -428,11 +428,15 @@ do_lengthy_task(Ecore_Pipe *pipe)
    	//fd= serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
    	fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
    	
-	while(1)
+	for(;;)
 	{
-		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial sample trame test.
-		serialport_read_until(fd, buf, '\n');
+		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial loopback(TX<=>RX) emulation trame test.
+		//strcpy(buf, "DEVICE;0;DS18B20;INT;17.296;OK\n");			//Sotfware emulation trame test.
+		serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
+
+
+				
 		sleep(2);
    }
 }
@@ -452,6 +456,7 @@ handler(void *data, void *buf, unsigned int len)
 	str[len] = '\0';
 	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
    
+  
    	//Check if system msg...
 	if(strncmp(str, "SYSTEM:", 7) == 0)
 	{
