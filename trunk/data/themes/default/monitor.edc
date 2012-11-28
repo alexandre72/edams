@@ -1,68 +1,121 @@
-   group {
+/*
+ * monitor.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2012 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+group {
       name: "meter/monitor";
-      images {
+      images
+      {
          image: "monitor_base.png" COMP;
          image: "monitor_show.png" COMP;
       }
-      max: 155 139;
-      parts {
-         part {
+      parts
+      {
+         part
+         {
+
             name: "base";
-            description {
+            description
+            {
                state: "default" 0.0;
+				min: 87 79;
+      			max: 155 139;
                aspect_preference: BOTH;
                align: 0.5 0.5;
-               rel1 {
-                  relative: 0.0 0.0;
-               }
-               rel2 {
-                  relative: 1.0 1.0;
-               }
-               image {
-                  normal: "monitor_base.png";
-               }
-            }
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+               image.normal: "monitor_base.png";
+	        }
          }
-         part {
+         part
+         {
             name: "monitor";
-            description {
-				state: "default" 0.0;
-               visible: 0;
-               image {
-                  normal: "monitor_show.png";
+            description
+            {
+			   	state: "default" 0.0;
+				min: 87 79;
+      			max: 145 129;
+               	visible: 0;
+				rel1.relative: 0.2 0.2;
+				rel2.relative: 1.0 1.0;
+               	image.normal: "monitor_show.png";
+            }
+            description
+            {
+				state: "show" 0.0;
+                visible:1;
+             }
+         }
+         part
+         {
+            name: "text";
+            type: TEXT;
+            scale: 1;
+            description
+            {
+
+               state: "default" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.5 0.2;
+               color: 0 0 255 255;
+               text
+               {
+                  text: "sensor";
+                  font: "Sans:style=Bold";
+                  size: 6;
+                  min: 1 1;
+                  align: 0.0 0.0;
+                  text_class: "module_small";
                }
             }
-                description
-                {      
-		            state: "show" 0.0; 
-		            inherit: "default" 0.0;		             
-                    visible:1;
-                }	
          }
-         part {
+         part
+         {
             name: "over";
             type: RECT;
-            description {
+            description
+            {
                state: "default" 0.0;
                color: 0 0 0 0;
             }
-         }         
-      }       
-       programs {
-         program {
+         }
+      }
+       programs
+       {
+         program
+         {
             name: "monitor_show";
             signal: "show";
             source: "over";
             action: STATE_SET "show" 0.0;
-		            transition: SINUSOIDAL 0.5;
+		    transition: LINEAR 0.5;
             target: "monitor";
          }
-         program {
+         program
+         {
             name: "monitor_hide";
             signal: "hide";
             source: "over";
             action: STATE_SET "default" 0.0;
-		    transition: SINUSOIDAL 0.5;
+		    transition: LINEAR 0.5;
             target: "monitor";
          }
       }

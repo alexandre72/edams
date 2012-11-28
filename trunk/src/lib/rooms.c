@@ -58,7 +58,7 @@ struct _Room {
     const char *__eet_filename;
     const char * creation;
     const char * revision;
-    unsigned int version;    
+    unsigned int version;
 };
 
 
@@ -79,13 +79,13 @@ _filename_create()
 
 	timestamp = time(NULL);
 	t = localtime(&timestamp);
-	
+
 	do
 	{
 	snprintf(s, sizeof(s), "%02d%02d%02d-%03d.eet", (int)t->tm_hour, (int)t->tm_min, (int) t->tm_sec, i);
 		i++;
 	} while(ecore_file_exists(s) == EINA_TRUE);
-	
+
 	return strdup(s);
 }
 
@@ -113,7 +113,7 @@ _sensor_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "revision", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "version", version, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "data", data, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "datatype", datatype, EET_T_STRING);    
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "datatype", datatype, EET_T_STRING);
 }
 
 static inline void
@@ -148,6 +148,7 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
     sensor->picture__id = 0;
     sensor->soundfile = eina_stringshare_add(soundfile);
     sensor->group = eina_stringshare_add(group ? group : "undefined");
+    sensor->datatype = eina_stringshare_add("INT");
 
     //Add creation date informations.
 	time_t timestamp = time(NULL);
@@ -160,7 +161,7 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
     sensor->creation = eina_stringshare_add(s);
 	sensor->revision = NULL;
 	sensor->version = 0x0001;
-	
+
     return sensor;
 }
 
@@ -254,12 +255,12 @@ sensor_name_set(Sensor *sensor, const char *name)
 	char s[PATH_MAX];
 
     EINA_SAFETY_ON_NULL_RETURN(sensor);
-    
+
     if(sensor->__eet_filename)
     	FREE(sensor->__eet_filename);
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_sensors_data_path_get(), name);
-    sensor->__eet_filename = strdup(s); 
+    sensor->__eet_filename = strdup(s);
 	eina_stringshare_replace(&(sensor->name), name);
 }
 
@@ -404,7 +405,7 @@ _room_init(void)
     EET_DATA_DESCRIPTOR_ADD_LIST(_room_descriptor, Room, "sensors", sensors, _sensor_descriptor);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "photo__id", photo__id, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "creation", creation, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "revision", revision, EET_T_STRING); 
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "revision", revision, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "version", version, EET_T_UINT);
 }
 
@@ -430,7 +431,7 @@ room_new(unsigned int id, const char * name, const char * description, Eina_List
        }
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s", edams_rooms_data_path_get(), _filename_create());
-	
+
     room->__eet_filename = strdup(s);
     room->id = id;
     room->name = eina_stringshare_add(name ? name : "undefined");
@@ -632,7 +633,7 @@ room_photo_set(Room *room, Evas_Object *photo)
 }
 
 Evas_Object *
-room_photo_get(const Room *room, Evas *evas, const char *eet_file)
+room_photo_get(Room *room, Evas *evas, const char *eet_file)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(room, NULL);
     if (room->photo) return room->photo;
@@ -695,8 +696,8 @@ room_load(Evas *evas, const char *filename)
 
    	if (room->version < 0x0001)
      	{
-     	
-        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"), 
+
+        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"),
         			room->__eet_filename,
                 	room->version, 0x0001);
 
@@ -716,7 +717,7 @@ room_save(Room *room)
     Eet_File *ef;
     Eina_Bool ret;
 	int i;
-		
+
     ef = eet_open(room->__eet_filename, EET_FILE_MODE_READ_WRITE);
     if (!ef)
        {
@@ -744,12 +745,12 @@ room_save(Room *room)
 //
 //Remove room informations file.
 //
-Eina_Bool 
+Eina_Bool
 room_remove(Room *room)
 {
     if(!room)
         return EINA_FALSE;
-    
+
     	//INF(_("Removing:%s"), item->filename);
 	if(ecore_file_remove(room->__eet_filename) == EINA_FALSE)
 	{
@@ -839,7 +840,7 @@ Eina_List *rooms_list_get()
 	Eina_List *rooms = NULL;
 	Room *room = NULL;
 	char s[PATH_MAX];
-	
+
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S, edams_rooms_data_path_get());
 	fprintf(stdout, "OPENING:%s\n", s);
 	it = eina_file_stat_ls(s);
@@ -911,7 +912,7 @@ Sensor *
 sensor_load(Evas *evas, const char *filename)
 {
     Sensor *sensor = NULL;
-    
+
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
       {
@@ -925,8 +926,8 @@ sensor_load(Evas *evas, const char *filename)
 
    	if (sensor->version < 0x0001)
      	{
-     	
-        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"), 
+
+        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"),
         			sensor->__eet_filename,
                 	sensor->version, 0x0001);
 
@@ -936,6 +937,26 @@ sensor_load(Evas *evas, const char *filename)
 end:
     eet_close(ef);
     return sensor;
+}
+
+
+Eina_Bool
+sensor_is_registered_check(Room *room, Sensor *sensor)
+{
+	Eina_List *l, *sensors;
+
+	sensors = room_sensors_list_get(room);
+
+	Sensor *data;
+	EINA_LIST_FOREACH(sensors, l, data)
+	{
+		if(sensor_id_get((Sensor*)data) == sensor_id_get(sensor))
+		{
+			return EINA_TRUE;
+		}
+	}
+
+	return EINA_FALSE;
 }
 
 
@@ -949,8 +970,7 @@ sensors_list_get()
 	Eina_Iterator *it;
 	Eina_List *sensors = NULL;
 	Sensor *sensor = NULL;
-	char s[PATH_MAX];
-	
+
 	it = eina_file_stat_ls(edams_sensors_data_path_get());
 
    	if(it)
@@ -964,7 +984,7 @@ sensors_list_get()
 				if(sensor)
 				{
 		            //fprintf(stdout, _("INFO:Found new '%s' Eet database sensor file.\n"), ecore_file_file_get(f_info->path));
-				
+
 					sensors = eina_list_append(sensors, sensor);
 
 					if (eina_error_get())
@@ -982,4 +1002,34 @@ sensors_list_get()
 	fprintf(stdout, _("INFO:%d sensors found in database.\n"), eina_list_count(sensors));
 	sensors = eina_list_sort(sensors, eina_list_count(sensors), EINA_COMPARE_CB(strcoll));
 	return sensors;
+}
+
+
+//
+//Free sensors list.
+//
+Eina_List *
+sensors_list_free(Eina_List *sensors)
+{
+	if(sensors)
+	{
+		unsigned int n = 0;
+		Sensor *sensor;
+
+        //Point to first node of list.
+        for(sensors = eina_list_last(sensors); sensors; sensors = eina_list_prev(sensors));
+
+        EINA_LIST_FREE(sensors, sensor)
+        {
+			sensor_free(sensor);
+			n++;
+		}
+
+        eina_list_free(sensors);
+
+        fprintf(stdout, _("INFO:%d sensors list freed.\n"), n);
+        return NULL;
+    }
+
+    return NULL;
 }
