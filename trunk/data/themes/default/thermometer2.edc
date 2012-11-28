@@ -57,21 +57,13 @@
             type: TEXT;
             scale: 1;
             effect: OUTLINE_SOFT_SHADOW;
-            clip_to: "temp_top";
             
             description {
                state: "default" 0.0;
                align: 0.0 0.0;
-               rel1 {
-                  relative: 1.0  0.0;
-                  to_x: "temp";
-               }
-               rel2 {
-                  relative: 1.0  0.0;
-               }
-               color: 255 255 255 0;
-               color2: 0 0 0 0;
-               color3: 0 0 0 0;
+               color: 255 255 255 255;
+               color2: 0 0 0 128;
+               color3: 0 0 0 32;
                text {
 	               text: "dsssssssss";
                   font: "Sans:style=Bold";
@@ -79,14 +71,6 @@
                   min: 1 1;
                   align: 0.0 0.0;
                }
-            }
-            
-            description {
-               state: "visible" 1.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
-               color2: 0 0 0 128;
-               color3: 0 0 0 32;
             }
          }
          part {

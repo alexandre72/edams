@@ -27,6 +27,7 @@ externals {
 }
 
 collections {
+#include "monitor.edc"
 #include "thermometer.edc"
 #include "thermometer2.edc"
 #include "tachometer.edc"

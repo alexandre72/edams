@@ -22,7 +22,7 @@ edams_SOURCES = \
 about_dlg.c \
 edams.c \
 init.c \
-sensors_browser.c \
+sensors_picker.c \
 sensors_creator.c \
 preferences_dlg.c \
 shutdown.c
