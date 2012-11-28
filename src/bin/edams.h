@@ -41,6 +41,9 @@ typedef struct
 } App_Info;
 
 
+Evas_Object*_room_naviframe_content(Room *room);
+
+
 //about.c: About dialog box.
 void about_dialog_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
