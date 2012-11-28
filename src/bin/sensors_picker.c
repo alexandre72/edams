@@ -1,5 +1,5 @@
 /*
- * sensors_browser.c
+ * sensors_picker.c
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -37,7 +37,7 @@ typedef struct _GenGridItem
 } GenGridItem;
 
 
-Evas_Object *browser = NULL;
+Evas_Object *picker = NULL;
 
 
 static void _title_update();
@@ -50,7 +50,7 @@ static void grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__);
 static void _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 
 //
-//Update browser window title.
+//Update picker window title.
 //
 static void 
 _title_update()
@@ -58,14 +58,14 @@ _title_update()
     char s[128];
 	Evas_Object *gg;
 
-	gg = elm_object_name_find(browser, "sensors gengrid", -1);
+	gg = elm_object_name_find(picker, "sensors gengrid", -1);
 	
     if(elm_gengrid_items_count(gg)> 0)
-	    snprintf(s, sizeof(s), _("Sensors Browser - %d sensors"), elm_gengrid_items_count(gg));
+	    snprintf(s, sizeof(s), _("Sensors picker - %d sensors"), elm_gengrid_items_count(gg));
     else
-	    snprintf(s, sizeof(s), _("sensors Browser - 0 sensor"));
+	    snprintf(s, sizeof(s), _("sensors picker - 0 sensor"));
 	
-	elm_win_title_set(browser, s);
+	elm_win_title_set(picker, s);
 }
 
 
@@ -101,21 +101,21 @@ _notify_set(const char *msg, const char *icon)
 {
     Evas_Object *notify, *label, *ic, *bt;
  
-	bt = elm_object_name_find(browser, "notify bt1", -1);
+	bt = elm_object_name_find(picker, "notify bt1", -1);
  	evas_object_hide(bt);
  	
-	bt = elm_object_name_find(browser, "notify bt2", -1);
+	bt = elm_object_name_find(picker, "notify bt2", -1);
   	evas_object_hide(bt);
  
-    notify = elm_object_name_find(browser, "notify", -1);
+    notify = elm_object_name_find(picker, "notify", -1);
 	elm_notify_allow_events_set(notify, EINA_FALSE);    
 	elm_notify_timeout_set(notify, 5.0);
 	evas_object_show(notify);
         
-    label = elm_object_name_find(browser, "notify label", -1);
+    label = elm_object_name_find(picker, "notify label", -1);
     elm_object_text_set(label, msg);
     
-    ic = elm_object_name_find(browser, "notify icon", -1);
+    ic = elm_object_name_find(picker, "notify icon", -1);
     elm_image_file_set(ic, edams_edje_theme_file_get(), icon);
 }
 
@@ -199,7 +199,7 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
     Eina_List *l, *l2, *l3;
    	char s[256];
 
-   gg = (Evas_Object*) elm_object_name_find(browser, "sensors gengrid", -1);
+   gg = (Evas_Object*) elm_object_name_find(picker, "sensors gengrid", -1);
    l = (Eina_List*)elm_gengrid_selected_items_get(gg);
    
    if (!l) return;
@@ -267,14 +267,12 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
       		int x, y;
       	
        	 	Evas_Object *layout = elm_layout_add(win);
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/tachometer");
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
    			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			elm_grid_pack(gd, layout, 20, 50, 20, 45);
    			evas_object_show(layout);
- 
- 
- /*
+   			
    			elm_object_signal_emit(layout, "temp,state,known", "");
    			snprintf(s, sizeof(s), "%s°C", sensor_data_get(ggi->sensor));
         	elm_object_part_text_set(layout, "temp.text.reading", s);
@@ -290,10 +288,22 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
    			else if (level > 1.0) level = 1.0;		
    			msg.val = level;
 	    	edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
-*/	    	
-	    	
-		}
-	           
+	   	}   			
+        else if(strstr(sensor_datatype_get(ggi->sensor), "BOOL"))
+        {
+       	 	Evas_Object *layout = elm_layout_add(win);
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/monitor");
+   			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+			elm_grid_pack(gd, layout, 20, 50, 20, 45);
+   			evas_object_show(layout);
+        
+			if(atoi(sensor_data_get(ggi->sensor)) == 0)
+   			elm_object_signal_emit(layout, "hide", "over");
+			else
+   			elm_object_signal_emit(layout, "show", "over");
+  		}
+      
 		bt = elm_button_add(win);
 		evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 		ic = elm_icon_add(win);
@@ -313,21 +323,21 @@ _ggrid_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 
 
 //
-//Create sensors browser.
+//Create sensors picker.
 //
-void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+void sensors_picker_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
     Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp, *label, *notify;
 
 	App_Info *app = (App_Info *)data;
 
-    //Setup a new window browser.
-   	browser = elm_win_util_standard_add("sensorsBrowser", "");
-   	elm_win_autodel_set(browser, EINA_TRUE);
+    //Setup a new window picker.
+   	picker = elm_win_util_standard_add("sensor_picker", _("Sensor's picker"));
+   	elm_win_autodel_set(picker, EINA_TRUE);
 	_title_update();
 
 	//Setup notify for user informations.
-	notify = elm_notify_add(browser);
+	notify = elm_notify_add(picker);
 	elm_notify_allow_events_set(notify, EINA_TRUE);	
    	evas_object_name_set(notify, "notify");
   	elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 0.0);   	
@@ -335,12 +345,12 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
     elm_notify_timeout_set(notify, 5.0);
     evas_object_smart_callback_add(notify, "timeout", _notify_timeout, notify); 
 
-   	bx = elm_box_add(browser);
+   	bx = elm_box_add(picker);
    	elm_object_content_set(notify, bx);
    	elm_box_horizontal_set(bx, EINA_TRUE);
    	evas_object_show(bx);
    	
-	ic = elm_image_add(browser);
+	ic = elm_image_add(picker);
   	evas_object_name_set(ic, "notify icon");   
    	evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_image_no_scale_set(ic, EINA_TRUE);
@@ -353,27 +363,27 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	elm_box_pack_end(bx, ic);
 	evas_object_show(ic);
 
-	label = elm_label_add(browser);
+	label = elm_label_add(picker);
    	evas_object_name_set(label, "notify label");
 	elm_box_pack_end(bx, label);
 	evas_object_show(label);
 
-	bt = elm_button_add(browser);
+	bt = elm_button_add(picker);
    	evas_object_name_set(bt, "notify bt1");
 	elm_box_pack_end(bx, bt);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     
-    bt = elm_button_add(browser);
+    bt = elm_button_add(picker);
    	evas_object_name_set(bt, "notify bt2");
 	elm_box_pack_end(bx, bt);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_smart_callback_add(bt, "clicked", _notify_close_bt_cb, notify);
 	    
-   	bx = elm_box_add(browser);
+   	bx = elm_box_add(picker);
    	evas_object_show(bx);
    	 
 	//Setup gengrid to display sensors files in a nice and modern way.
-   	grid = elm_gengrid_add(browser);
+   	grid = elm_gengrid_add(picker);
    	evas_object_name_set(grid, "sensors gengrid");
 	elm_gengrid_filled_set(grid, EINA_TRUE);
 	elm_gengrid_align_set(grid, 0, 0);
@@ -389,28 +399,28 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
    	evas_object_show(grid);
 
     //Add a separator bar to show user's actions like add or remove.
-    sp = elm_separator_add(browser);
+    sp = elm_separator_add(picker);
     elm_separator_horizontal_set(sp, EINA_TRUE);
     elm_box_pack_end(bx, sp);
     evas_object_show(sp);
 
-   	hbx = elm_box_add(browser);
+   	hbx = elm_box_add(picker);
    	evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	elm_box_horizontal_set(hbx, EINA_TRUE);
    	elm_box_pack_end(bx, hbx);
    	evas_object_show(hbx);
 
-	bt = elm_button_add(browser);
+	bt = elm_button_add(picker);
     elm_object_text_set(bt, _("Close"));
-	ic = elm_icon_add(browser);
+	ic = elm_icon_add(picker);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "close-window");
    	elm_object_part_content_set(bt, "icon", ic);
     elm_box_pack_end(hbx, bt);
     evas_object_show(bt);
-    evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, browser);
+    evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, picker);
     
-    sp = elm_separator_add(browser);
+    sp = elm_separator_add(picker);
     elm_separator_horizontal_set(sp, EINA_TRUE);
     evas_object_show(sp);
     elm_box_pack_end(bx, sp);    
@@ -441,9 +451,9 @@ void sensors_browser_new(void *data, Evas_Object *obj __UNUSED__, void *event_in
    	elm_gengrid_item_class_ref(gic);
    	elm_gengrid_item_class_free(gic);
 
-    //Resize browser window.
-   	evas_object_resize(browser, 400, 450);
-   	evas_object_show(browser);
+    //Resize picker window.
+   	evas_object_resize(picker, 400, 450);
+   	evas_object_show(picker);
 }
 
 

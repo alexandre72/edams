@@ -255,21 +255,27 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 static void 
 _rooms_list_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-/*
     Eina_List *its, *l;
     Elm_Object_Item *it;
-  
-    its = elm_naviframe_items_get(app->naviframe);
+    
+    
+    Room *r = elm_object_item_data_get(event_info);
+
+    Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
+    its = elm_naviframe_items_get(naviframe);
+
     EINA_LIST_FOREACH(its, l, it)
     {
-        char *s = elm_object_item_data_get(it);
-        if(strcmp(s, room) == 0)
-        {
-            elm_naviframe_item_promote(it);
-            break;
-        }
-    }
-    */
+        Room *room = elm_object_item_data_get(it);
+
+		if(room == r)
+		{
+	        elm_naviframe_item_promote(it);
+		    Evas_Object *frame = elm_object_name_find(app->win, "room frame", -1);
+			elm_object_text_set(frame, room_name_get(r));
+    	    break;
+    	}
+   }
 }
 
 
@@ -426,13 +432,13 @@ do_lengthy_task(Ecore_Pipe *pipe)
 	int baudrate = B115200;  // default
 
    	//fd= serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
-   	fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
+   	//fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
    	
 	for(;;)
 	{
 		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial loopback(TX<=>RX) emulation trame test.
-		//strcpy(buf, "DEVICE;0;DS18B20;INT;17.296;OK\n");			//Sotfware emulation trame test.
-		serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
+		strcpy(buf, "DEVICE;0;DS18B20;INT;17.296;OK\n");			//Sotfware emulation trame test.
+		//serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
 
 
@@ -671,7 +677,7 @@ elm_main(int argc, char **argv)
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-	elm_toolbar_item_append(app->toolbar,"sensors-browser", _("Sensors Browser"), sensors_browser_new, app);
+	elm_toolbar_item_append(app->toolbar,"sensors-picker", _("Sensors picker"), sensors_picker_new, app);	
 	elm_toolbar_item_append(app->toolbar,"sensors-creator", _("Sensors Creator"), sensors_creator_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);
@@ -706,6 +712,7 @@ elm_main(int argc, char **argv)
 	evas_object_show(frame);
    
 	list = elm_list_add(app->win);
+	elm_list_mode_set(list, ELM_LIST_EXPAND);
 	evas_object_name_set(list, "rooms list");
 	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -714,25 +721,6 @@ elm_main(int argc, char **argv)
 	elm_object_content_set(frame, list);	
     elm_panes_content_left_size_set(panes, 0.15);
 	elm_object_part_content_set(panes, "left", vbx2);
-	  
-    app->rooms = rooms_list_get();
-    Room *room;        
-    EINA_LIST_FOREACH(app->rooms, l, room)
-	{
-		Evas_Object *ic;
-		ic = elm_icon_add(app->win);
-		//evas_object_size_hint_align_set(ic, 0.5, 0.5);
-		//elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
-		elm_image_file_set(ic, room_filename_get(room), "/image/1");
-		Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), NULL, ic, NULL, room);
-		elm_object_item_del_cb_set(it, _room_item_del_cb);
-		/*
-		Elm_Object_Item *it = elm_naviframe_item_push(app->naviframe, _("Options"), NULL, NULL, NULL, NULL);
-		elm_naviframe_item_title_visible_set(it, EINA_FALSE);            
-    	elm_object_item_data_set(it, "");
-    	*/
-		}
-    elm_list_go(list);
 	  
 	//Table widget, contains group/subgroup genlist navigation and actions buttons like add.
    	tb = elm_table_add(app->win);
@@ -763,37 +751,42 @@ elm_main(int argc, char **argv)
     evas_object_show(bt);
     evas_object_smart_callback_add(bt, "clicked", _remove_room_bt_clicked_cb, NULL);
 
-	vbx2 = elm_box_add(app->win);
-	evas_object_size_hint_weight_set(vbx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(vbx2, -1.0, -1.0);
-	evas_object_show(vbx2);
-
 	frame = elm_frame_add(app->win);
+	evas_object_name_set(frame, "room frame");	
 	evas_object_size_hint_align_set(frame, -1.0, -1.0);
-	elm_object_text_set(frame, _("Indications"));
-	evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, 0.0);
+	evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(vbx2, frame);
+	elm_object_part_content_set(panes, "right", frame);
 	evas_object_show(frame);
 
-  	entry =  elm_entry_add(app->win);
-	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0.0);
-   	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_entry_line_wrap_set(entry, EINA_TRUE);
-	elm_entry_editable_set(entry, EINA_FALSE);
-   	elm_entry_entry_set(entry, _("<b>edams</>Welcome to edams!<br><br>"
-   	                                              "You should select or create a room to start a monitoring process."));
-	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_object_content_set(frame, entry);
-	evas_object_show(entry);
-
 	naviframe = elm_naviframe_add(app->win);
+	evas_object_name_set(naviframe, "naviframe");
 	evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(naviframe, -1.0, -1.0);
 	elm_object_text_set(naviframe, _("Options"));
-	elm_box_pack_end(vbx2, naviframe);	
 	evas_object_show(naviframe);
-	elm_object_part_content_set(panes, "right", vbx2);
+
+    app->rooms = rooms_list_get();
+    Room *room;        
+    EINA_LIST_FOREACH(app->rooms, l, room)
+	{
+		Evas_Object *ic;
+		ic = elm_icon_add(app->win);
+		//evas_object_size_hint_align_set(ic, 0.5, 0.5);
+		//elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
+		elm_image_file_set(ic, room_filename_get(room), "/image/1");
+		Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), NULL, ic, NULL, room);
+		elm_object_item_del_cb_set(it, _room_item_del_cb);
+		it = elm_naviframe_item_push(naviframe, room_name_get(room), NULL, NULL, NULL, NULL);
+		elm_naviframe_item_title_visible_set(it, EINA_FALSE);      
+    	elm_object_item_data_set(it, room);
+		}
+	Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);		
+	elm_naviframe_item_title_visible_set(it, EINA_FALSE);
+    elm_list_go(list);
+	  
+	elm_object_content_set(frame, naviframe);
+	
+	
 
 	//char *ret;
 	//settings_write("wanttoolbar", "no");
