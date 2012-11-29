@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FriLogos 0.1\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
-"POT-Creation-Date: 2012-11-22 19:59+0100\n"
-"PO-Revision-Date: 2012-10-01 19:44+0200\n"
+"POT-Creation-Date: 2012-11-29 13:42+0100\n"
+"PO-Revision-Date: 2012-11-29 13:57+0100\n"
 "Last-Translator: Alexandre Dussart <alexandre.dussart@laposte.net>\n"
 "Language-Team: français <alexandre.dussart@laposte.net>\n"
 "Language: fr\n"
@@ -19,226 +19,309 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.5\n"
 
 #: src/bin/about_dlg.c:97
-#, fuzzy
 msgid "About edams..."
-msgstr "A propos de FriLogos..."
+msgstr "A propos d'E.D.A.M.S..."
 
-#: src/bin/about_dlg.c:189 src/bin/sensors_browser.c:222
-#: src/lib/myfileselector.c:354
+#: src/bin/about_dlg.c:189 src/bin/sensors_picker.c:427
+#: src/lib/myfileselector.c:352 src/lib/myfontselector.c:369
 msgid "Close"
 msgstr "Fermer"
 
-#: src/bin/edams.c:92 src/bin/edams.c:98 src/bin/edams.c:260
-#: src/bin/preferences_dlg.c:222 src/bin/preferences_dlg.c:291
-#: src/modules/skel/settings.c:197
-msgid "Options"
-msgstr "Options"
+#: src/bin/edams.c:120
+#, c-format
+msgid "Room %s has been created."
+msgstr "La pièce %s a été créée."
 
-#: src/bin/edams.c:139
+#: src/bin/edams.c:167 src/bin/sensors_creator.c:122
+msgid "Select a picture file"
+msgstr "Sélectionner un fichier image..."
+
+#: src/bin/edams.c:185
+msgid "Room Description"
+msgstr "Description de la pièce"
+
+#: src/bin/edams.c:210 src/bin/sensors_creator.c:168
+msgid "Photo..."
+msgstr "Photo..."
+
+#: src/bin/edams.c:220 src/bin/sensors_creator.c:178
+#: src/bin/sensors_picker.c:210
+msgid "Name:"
+msgstr "Nom:"
+
+#: src/bin/edams.c:233 src/bin/sensors_creator.c:191
+#: src/bin/sensors_picker.c:224
+msgid "Description:"
+msgstr "Description:"
+
+#: src/bin/edams.c:251 src/bin/sensors_creator.c:235
+#: src/bin/sensors_picker.c:286 src/lib/utils.c:178
+msgid "Ok"
+msgstr "Ok"
+
+#: src/bin/edams.c:262 src/bin/sensors_creator.c:246
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/bin/edams.c:373
+#, c-format
+msgid "Room '%s' have been removed."
+msgstr "Pièce '%s' a été supprimée."
+
+#: src/bin/edams.c:399
+msgid "Can't remove:no room selected!"
+msgstr "Impossible de supprimer:aucune pièce sélectionnée!"
+
+#: src/bin/edams.c:412
+msgid "Are you sure to want to remove selected room?"
+msgstr "Êtes vous sûr de vouloir supprimer les pièces sélectionnées?"
+
+#: src/bin/edams.c:415
+msgid "Yes"
+msgstr "Oui"
+
+#: src/bin/edams.c:424
+msgid "No"
+msgstr "Non"
+
+#: src/bin/edams.c:480
+#, c-format
+msgid "INFO:Serial in content '%s'(%d bytes)\n"
+msgstr "INFO:Contenu série '%s'(%d octets)\n"
+
+#: src/bin/edams.c:488
+#, c-format
+msgid ""
+"INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial "
+"port...)\n"
+msgstr ""
+"INFO:Initialisation d'EDAMS(calibrage des capteurs, initialisation des "
+"variables, mise en place du port série...)\n"
+
+#: src/bin/edams.c:492
+msgid "Initialize EDAMS wait please..."
+msgstr "Initialisation d'EDAMS, attendez s'il vous plaît..."
+
+#: src/bin/edams.c:508
+msgid "calibrating sensors, setting serial port... "
+msgstr "Calibrage des capteurs, mise en place du port série..."
+
+#: src/bin/edams.c:518
+#, c-format
+msgid "INFO:EDAMS is ready and operationnal\n"
+msgstr "INFO:EDAMS est prêt et opérationnel\n"
+
+#: src/bin/edams.c:536
+#, c-format
+msgid "INFO:Serial sensor '%d-%s'  with data '%s' of type '%s'...\n"
+msgstr ""
+"INFO:Capteur '%d-%s' sur liaison série avec donnée '%s' de type '%s'...\n"
+
+#: src/bin/edams.c:547
+#, c-format
+msgid "New sensor '%d-%s' has been created."
+msgstr "Le nouveau capteur '%d-%s' a été créé."
+
+#: src/bin/edams.c:548
+#, c-format
+msgid "INFO:%d sensors registered on serial line...\n"
+msgstr "INFO:%d capteurs trouvés sur la liaison série...\n"
+
+#: src/bin/edams.c:568
+msgid "Can't add a sensor to room:no room selected!"
+msgstr "Impossible d'ajouter un capteur:aucune pièce sélectionnée!"
+
+#: src/bin/edams.c:586
+msgid "Can't clear room sensors list:no room selected!"
+msgstr "Impossible de retirer les capteurs:aucune pièce sélectionnée!"
+
+#: src/bin/edams.c:627
+#, c-format
+msgid "Room:%s"
+msgstr "Pièce:%s"
+
+#: src/bin/edams.c:633
+#, c-format
+msgid "Description:%s"
+msgstr "Description:%s"
+
+#: src/bin/edams.c:639
+#, c-format
+msgid "Sensors:"
+msgstr "Capteurs:"
+
+#: src/bin/edams.c:654
+msgid "Add a sensor..."
+msgstr "Ajouter un capteur..."
+
+#: src/bin/edams.c:664
+msgid "Remove all sensors..."
+msgstr "Supprimer les capteurs..."
+
+#: src/bin/edams.c:753
 #, c-format
 msgid "CRI:Can't init Eina!\n"
 msgstr "CRI:Impossible d'initialiser Eina!\n"
 
-#: src/bin/edams.c:150
+#: src/bin/edams.c:764
 msgid "Can't init Elementary!"
 msgstr "Impossible d'initialiser Elementary!"
 
-#: src/bin/edams.c:162
+#: src/bin/edams.c:776
 msgid "Initialize Application..."
 msgstr "Initialisation de l'application..."
 
-#: src/bin/edams.c:174
+#: src/bin/edams.c:786
 #, c-format
 msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
-msgstr ""
+msgstr "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
 
-#: src/bin/edams.c:204
-msgid "Patients"
-msgstr "Patients"
+#: src/bin/edams.c:855
+msgid "Sensors Creator"
+msgstr "Base de données des capteurs"
 
-#: src/bin/edams.c:205 src/bin/preferences_dlg.c:253
+#: src/bin/edams.c:856 src/bin/preferences_dlg.c:194
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/bin/edams.c:206
+#: src/bin/edams.c:857
 msgid "About"
 msgstr "A propos"
 
-#: src/bin/edams.c:207
+#: src/bin/edams.c:858
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/bin/edams.c:240
-msgid "Indications"
-msgstr "Indications"
+#: src/bin/edams.c:882
+msgid "Rooms"
+msgstr "Pièces"
 
-#: src/bin/edams.c:251
-#, fuzzy
-msgid ""
-"<b>edams</>Welcome to edams!<br><br>You should select or create a patient to "
-"start a session with him."
-msgstr ""
-"<b>FriLogos</>Bienvenue dans FriLogos!<br><br>Vous devez sélectionner ou "
-"créer une fiche patient pour démarrer une session."
+#: src/bin/edams.c:907
+msgid "Add"
+msgstr "Ajouter"
 
-#: src/bin/init.c:49
-#, fuzzy
+#: src/bin/edams.c:918
+msgid "Remove"
+msgstr "Supprimer"
+
+#: src/bin/init.c:51
 msgid ""
 "It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
 "some database files containing items. I'll copy some default items files, "
 "but you can easily remove them and create new ones(highly recommended)!"
 msgstr ""
-"Il apparaît que c'est la première fois que vous démarrer FriLogos. Pour être "
-"utilisé, FriLogos nécessite la présence de certains fichiers de données. Je "
+"Il apparaît que c'est la première fois que vous démarrer EDAMS. Pour être "
+"utilisé, EDAMS nécessite la présence de certains fichiers de données. Je "
 "vais copier des fichiers de données par défaut, mais il est fortement "
-"conseillé d'adapter FriLogos à ses besoins pour profiter pleinement de son "
+"conseillé d'adapter EDAMS à ses besoins pour profiter pleinement de son "
 "utilisation."
 
-#: src/bin/sensors_browser.c:50
-#, fuzzy, c-format
-msgid "Sensors Browser - %d sensors"
-msgstr "Navigateur de profils - %d patients"
+#: src/bin/preferences_dlg.c:122
+msgid "Debug printf"
+msgstr "Messages printf"
 
-#: src/bin/sensors_browser.c:52
-#, fuzzy, c-format
-msgid "sensors Browser - 0 sensor"
-msgstr "Navigateur de profils - 0 patients"
+#: src/bin/preferences_dlg.c:128
+msgid "Serial buffering simulation"
+msgstr "Simulation du tampon série"
 
-#: src/bin/sensors_browser.c:204
-msgid "Add"
-msgstr "Ajouter"
-
-#: src/bin/sensors_browser.c:213
-msgid "Remove"
-msgstr "Supprimer"
-
-#: src/bin/preferences_dlg.c:119
+#: src/bin/preferences_dlg.c:133
 #, c-format
 msgid "Installation path:%s"
 msgstr "Répertoire d'installation:%s"
 
-#: src/bin/preferences_dlg.c:120
+#: src/bin/preferences_dlg.c:139
 #, c-format
-msgid "User home dir:%s"
-msgstr "Répertoire des données utilisateur:%s"
+msgid "User home path:%s"
+msgstr "Répertoire utilisateur:%s"
 
-#: src/bin/preferences_dlg.c:121
-#, c-format
-msgid "User data path :%s"
-msgstr "Répertoire des données utilisateur:%s"
-
-#: src/bin/preferences_dlg.c:122
-#, c-format
-msgid "Locale Path:%s"
-msgstr "Répertoire des traductions:%s"
-
-#: src/bin/preferences_dlg.c:123
-#, c-format
-msgid "Modules Path:%s"
-msgstr "Répertoire des traductions:%s"
-
-#: src/bin/preferences_dlg.c:124
-#, c-format
-msgid "Patients data path:%s"
-msgstr "Répertoire des données utilisateur:%s"
-
-#: src/bin/preferences_dlg.c:125
-#, c-format
-msgid "Items data path:%s"
-msgstr "Répertoire des données utilisateur:%s"
-
-#: src/bin/preferences_dlg.c:126
+#: src/bin/preferences_dlg.c:145
 #, fuzzy, c-format
-msgid "edams Edje file Path:%s"
-msgstr "Répertoire des fichiers Edje: %s"
-
-#: src/bin/preferences_dlg.c:136
-msgid "Realistic"
-msgstr "Réaliste"
-
-#: src/bin/preferences_dlg.c:142
-msgid "Abstract"
-msgstr "Abstrait"
+msgid "User data path:%s"
+msgstr "Répertoire des données utilisateur:%s"
 
 #: src/bin/preferences_dlg.c:151
-msgid "Images Type"
-msgstr "Type d'images"
-
-#: src/bin/preferences_dlg.c:164
-msgid "Exercice"
-msgstr "Exercice"
-
-#: src/bin/preferences_dlg.c:182
-msgid "Graphemics"
-msgstr "Graphémiques"
-
-#: src/bin/preferences_dlg.c:189
-msgid "Visual"
-msgstr "Visuel"
-
-#: src/bin/preferences_dlg.c:196
-msgid "Semantics"
-msgstr "Sémantiques"
-
-#: src/bin/preferences_dlg.c:203 src/modules/skel/settings.c:175
-msgid "Exposition time:"
-msgstr "Temps d'exposition:"
-
-#: src/bin/preferences_dlg.c:204 src/modules/skel/settings.c:176
-#, c-format
-msgid "%1.0f sec"
-msgstr "%1.0f secondes"
-
-#: src/bin/preferences_dlg.c:212 src/modules/skel/settings.c:186
-msgid "Sequences:"
-msgstr "Séquences:"
-
-#: src/bin/preferences_dlg.c:213 src/modules/skel/settings.c:187
-#, c-format
-msgid "%1.0f"
-msgstr "%1.0f"
-
-#: src/bin/preferences_dlg.c:228
-msgid "Apply"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:295 src/bin/preferences_dlg.c:297
-msgid "General"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:301 src/bin/preferences_dlg.c:302
-#, fuzzy
-msgid "Modules"
+#, fuzzy, c-format
+msgid "Locale path:%s"
 msgstr "Répertoire des traductions:%s"
 
-#: src/bin/preferences_dlg.c:306 src/bin/preferences_dlg.c:307
+#: src/bin/preferences_dlg.c:157
+#, c-format
+msgid "Modules path:%s"
+msgstr "Répertoire des modules:%s"
+
+#: src/bin/preferences_dlg.c:163
+#, c-format
+msgid "Edje theme file:%s"
+msgstr "Fichier thème Edje:%s"
+
+#: src/bin/preferences_dlg.c:169
+msgid "Apply"
+msgstr "Appliquer"
+
+#: src/bin/preferences_dlg.c:232
+msgid "Options"
+msgstr "Options"
+
+#: src/bin/preferences_dlg.c:236 src/bin/preferences_dlg.c:238
+msgid "General"
+msgstr "Général"
+
+#: src/bin/preferences_dlg.c:242 src/bin/preferences_dlg.c:243
+msgid "Modules"
+msgstr "Modules"
+
+#: src/bin/preferences_dlg.c:247 src/bin/preferences_dlg.c:248
 msgid "Debug"
-msgstr ""
+msgstr "Débogguage "
+
+#: src/bin/sensors_creator.c:143
+msgid "Sensor Creator"
+msgstr "Créateur de capteurs"
+
+#: src/bin/sensors_creator.c:204
+msgid "Type:"
+msgstr "Type:"
+
+#: src/bin/sensors_creator.c:217
+msgid "Datasheet URL:"
+msgstr "URL du datasheet:"
+
+#: src/bin/sensors_picker.c:184
+msgid "Sensor"
+msgstr "Capteur"
+
+#: src/bin/sensors_picker.c:337
+msgid "Select a sensor"
+msgstr "Sélectionner un capteur"
+
+#: src/bin/sensors_picker.c:417
+msgid "Select"
+msgstr "Sélectionner"
 
 #: src/bin/shutdown.c:29
-msgid "Shutdown FriLogos..."
-msgstr "Extinction de FriLogos..."
+msgid "Shutdown Edams..."
+msgstr "Extinction d'EDAMS..."
 
-#: src/lib/mem.c:136
+#: src/lib/mem.c:133
 msgid "Dumping memory usage:"
 msgstr "Mémoire utilisé:"
 
-#: src/lib/mem.c:137
+#: src/lib/mem.c:134
 #, c-format
 msgid "Calls to malloc(): %d."
 msgstr "Appels à malloc():%d."
 
-#: src/lib/mem.c:138
+#: src/lib/mem.c:135
 #, c-format
 msgid "Calls to realloc(): %d."
 msgstr "Appels à realloc():%d."
 
-#: src/lib/mem.c:139
+#: src/lib/mem.c:136
 #, c-format
 msgid "Calls to calloc(): %d."
 msgstr "Appels à calloc():%d."
 
-#: src/lib/mem.c:140
+#: src/lib/mem.c:137
 #, c-format
 msgid "Calls to free(): %d."
 msgstr "Appels à free():%d."
@@ -271,7 +354,7 @@ msgstr "Fonction _module_desc_get() non trouvée dans le module %s: %s!"
 #: src/lib/modules.c:90
 #, c-format
 msgid "Can't find _module_theme_get() in module %s: %s!"
-msgstr "Fonction _module_them_get() non trouvée dans le module %s: %s!"
+msgstr "Fonction _module_theme_get() non trouvée dans le module %s: %s!"
 
 #: src/lib/modules.c:98
 #, c-format
@@ -331,38 +414,76 @@ msgstr "%'.1f Go"
 msgid "*FIXME*"
 msgstr "*FIXME*"
 
-#: src/lib/myfileselector.c:241
+#: src/lib/myfileselector.c:239
 msgid "Select a file..."
 msgstr "Ouvrir un fichier..."
 
-#: src/lib/myfileselector.c:282
+#: src/lib/myfileselector.c:280
 msgid "Preview"
 msgstr "Aperçu"
 
-#: src/lib/myfileselector.c:288
+#: src/lib/myfileselector.c:286
 msgid "Type :"
 msgstr "Type :"
 
-#: src/lib/myfileselector.c:300
+#: src/lib/myfileselector.c:298
 msgid "Size :"
 msgstr "Taille :"
 
-#: src/lib/myfileselector.c:312
+#: src/lib/myfileselector.c:310
 msgid "Owner :"
 msgstr "Propriétaire :"
 
-#: src/lib/myfileselector.c:324
+#: src/lib/myfileselector.c:322
 msgid "Permissions :"
 msgstr "Permissions :"
 
-#: src/lib/myfileselector.c:345
+#: src/lib/myfileselector.c:343 src/lib/myfontselector.c:360
 msgid "Open"
 msgstr "Ouvrir"
 
+#: src/lib/myfontselector.c:202
+msgid "Select a font..."
+msgstr "Sélectionner une fonte"
+
+#: src/lib/rooms.c:700 src/lib/rooms.c:930
+#, c-format
+msgid "Eet file '%s' %#x was too old, upgrading it to %#x!\n"
+msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x!\n"
+
+#: src/lib/rooms.c:757
+#, c-format
+msgid "Can't remove Eet file:'%s'!"
+msgstr "Impossible de supprimer un fichier Eet: '%s'!"
+
+#: src/lib/rooms.c:802
+#, c-format
+msgid "INFO:%d rooms list freed.\n"
+msgstr "INFO:%d pièces list freed.\n"
+
+#: src/lib/rooms.c:864 src/lib/rooms.c:992
+#, c-format
+msgid "Can't allocate list node!"
+msgstr "Impossible d'allouer un nœud dans la liste!"
+
+#: src/lib/rooms.c:874
+#, c-format
+msgid "INFO:%d rooms found in database.\n"
+msgstr "INFO:%d pièces enregistrées dans la base de données.\n"
+
+#: src/lib/rooms.c:1002
+#, c-format
+msgid "INFO:%d sensors found in database.\n"
+msgstr "INFO:%d capteurs enregistrés dans la base de données.\n"
+
+#: src/lib/rooms.c:1030
+#, c-format
+msgid "INFO:%d sensors list freed.\n"
+msgstr ""
+
 #: src/lib/settings.c:55
-#, fuzzy
 msgid "Can't read edams settings!"
-msgstr "Impossible de lire les paramètres de FriLogos!"
+msgstr "Impossible de lire les paramètres d'EDAMS!"
 
 #: src/lib/settings.c:91 src/lib/settings.c:106
 #, c-format
@@ -375,103 +496,129 @@ msgid "Can't write %s settings from %s!"
 msgstr "Impossible d'écrire le paramètre %s de %s!"
 
 #: src/lib/settings.c:159
-#, fuzzy
 msgid "Can't write edams settings!"
-msgstr "Impossible d'écrire les paramètres de FriLogos!"
+msgstr "Impossible d'écrire les paramètres d'EDAMS!"
 
 #: src/lib/utils.c:167
 msgid "Confirmation"
 msgstr "Confirmation"
 
-#: src/lib/utils.c:178
-msgid "Ok"
-msgstr "Ok"
+#~ msgid "Patients"
+#~ msgstr "Patients"
 
-#: src/modules/skel/module.c:93 src/modules/skel/module.c:128
-msgid "skel"
-msgstr ""
+#~ msgid "Indications"
+#~ msgstr "Indications"
 
-#: src/modules/skel/module.c:103
-#, c-format
-msgid "%s module"
-msgstr "%s module"
+#, fuzzy
+#~ msgid ""
+#~ "<b>edams</>Welcome to edams!<br><br>You should select or create a patient "
+#~ "to start a session with him."
+#~ msgstr ""
+#~ "<b>FriLogos</>Bienvenue dans FriLogos!<br><br>Vous devez sélectionner ou "
+#~ "créer une fiche patient pour démarrer une session."
 
-#: src/modules/skel/module.c:104
-#, c-format
-msgid "\tVersion:%d.%d.%d"
-msgstr "\tVersion:%d.%d.%d"
+#, fuzzy
+#~ msgid "Sensors Browser - %d sensors"
+#~ msgstr "Navigateur de profils - %d patients"
 
-#: src/modules/skel/module.c:108
-#, c-format
-msgid "\tBuild on:%s"
-msgstr "\tCompilé le:%s"
+#, fuzzy
+#~ msgid "sensors Browser - 0 sensor"
+#~ msgstr "Navigateur de profils - 0 patients"
 
-#: src/modules/skel/module.c:118
-msgid "skel module is only here to be a skeleton for new module!"
-msgstr ""
+#~ msgid "Patients data path:%s"
+#~ msgstr "Répertoire des données utilisateur:%s"
 
-#: src/modules/skel/module.c:268 src/modules/skel/module.c:294
-#, c-format
-msgid "Score:%d/%d Time:%0.3f secs"
-msgstr "Score:%d/%d Temps:%0.3f secs"
+#~ msgid "Items data path:%s"
+#~ msgstr "Répertoire des données utilisateur:%s"
 
-#: src/modules/skel/module.c:326
-#, fuzzy, c-format
-msgid "Items in queue:\n"
-msgstr "%d éléments dans la file d'attente."
+#, fuzzy
+#~ msgid "edams Edje file Path:%s"
+#~ msgstr "Répertoire des fichiers Edje: %s"
 
-#: src/modules/skel/module.c:377
-#, c-format
-msgid "Sequence %d"
-msgstr "Séquence %d"
+#~ msgid "Realistic"
+#~ msgstr "Réaliste"
 
-#: src/modules/skel/module.c:505
-msgid "Couldn't calloc Screen struct!"
-msgstr "Impossible d'allouer de la mémoire pour la structure Screen!"
+#~ msgid "Abstract"
+#~ msgstr "Abstrait"
 
-#: src/modules/skel/module.c:550
-msgid "Can't construct Ecore_Evas object!"
-msgstr "Impossible de construire un objet Ecore_Evas!"
+#~ msgid "Images Type"
+#~ msgstr "Type d'images"
 
-#: src/modules/skel/module.c:556
-#, c-format
-msgid "%s - Session of %s"
-msgstr "%s - Session du %s"
+#~ msgid "Exercice"
+#~ msgstr "Exercice"
 
-#: src/modules/skel/module.c:571
-msgid "Can't create Edje object!"
-msgstr "Impossible de créer un objet Edje!"
+#~ msgid "Graphemics"
+#~ msgstr "Graphémiques"
 
-#: src/modules/skel/module.c:577
-#, c-format
-msgid "Can't set Edje object file: %s!"
-msgstr "Impossible de charger un fichier Edje:%s!"
+#~ msgid "Visual"
+#~ msgstr "Visuel"
 
-#: src/modules/skel/module.c:615
-#, c-format
-msgid "Closing session of :%s\n"
-msgstr "Fermeture de la session du: %s\n"
+#~ msgid "Semantics"
+#~ msgstr "Sémantiques"
 
-#: src/modules/skel/settings.c:132
-#, c-format
-msgid "Selected patient:%s %s"
-msgstr "Patient sélectionné: %s %s"
+#~ msgid "Exposition time:"
+#~ msgstr "Temps d'exposition:"
 
-#: src/modules/skel/settings.c:209
-msgid "Start"
-msgstr "Démarrer"
+#~ msgid "%1.0f sec"
+#~ msgstr "%1.0f secondes"
 
-#: src/modules/skel/settings.c:224
-msgid "Alloc module ressources."
-msgstr "Allocation des ressources module."
+#~ msgid "Sequences:"
+#~ msgstr "Séquences:"
 
-#: src/modules/skel/settings.c:230
-msgid "Couldn't calloc Settings struct!"
-msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
+#~ msgid "%1.0f"
+#~ msgstr "%1.0f"
 
-#: src/modules/skel/settings.c:244
-msgid "Free module ressources."
-msgstr "Libération des ressources module."
+#~ msgid "%s module"
+#~ msgstr "%s module"
+
+#~ msgid "\tVersion:%d.%d.%d"
+#~ msgstr "\tVersion:%d.%d.%d"
+
+#~ msgid "\tBuild on:%s"
+#~ msgstr "\tCompilé le:%s"
+
+#~ msgid "Score:%d/%d Time:%0.3f secs"
+#~ msgstr "Score:%d/%d Temps:%0.3f secs"
+
+#, fuzzy
+#~ msgid "Items in queue:\n"
+#~ msgstr "%d éléments dans la file d'attente."
+
+#~ msgid "Sequence %d"
+#~ msgstr "Séquence %d"
+
+#~ msgid "Couldn't calloc Screen struct!"
+#~ msgstr "Impossible d'allouer de la mémoire pour la structure Screen!"
+
+#~ msgid "Can't construct Ecore_Evas object!"
+#~ msgstr "Impossible de construire un objet Ecore_Evas!"
+
+#~ msgid "%s - Session of %s"
+#~ msgstr "%s - Session du %s"
+
+#~ msgid "Can't create Edje object!"
+#~ msgstr "Impossible de créer un objet Edje!"
+
+#~ msgid "Can't set Edje object file: %s!"
+#~ msgstr "Impossible de charger un fichier Edje:%s!"
+
+#~ msgid "Closing session of :%s\n"
+#~ msgstr "Fermeture de la session du: %s\n"
+
+#~ msgid "Selected patient:%s %s"
+#~ msgstr "Patient sélectionné: %s %s"
+
+#~ msgid "Start"
+#~ msgstr "Démarrer"
+
+#~ msgid "Alloc module ressources."
+#~ msgstr "Allocation des ressources module."
+
+#~ msgid "Couldn't calloc Settings struct!"
+#~ msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
+
+#~ msgid "Free module ressources."
+#~ msgstr "Libération des ressources module."
 
 #~ msgid "FriLogos %s - Session of %02d/%02d/%d"
 #~ msgstr "FriLogos %s - Session du %02d/%02d/%d"
@@ -506,9 +653,6 @@ msgstr "Libération des ressources module."
 #~ msgid "Group name:"
 #~ msgstr "Nom du groupe:"
 
-#~ msgid "Cancel"
-#~ msgstr "Annuler"
-
 #~ msgid "Subgroup name can't be null."
 #~ msgstr "Le nom du groupe ne doit pas être vide!"
 
@@ -532,20 +676,8 @@ msgstr "Libération des ressources module."
 #~ msgid "Item "
 #~ msgstr "Elément"
 
-#~ msgid "have been removed."
-#~ msgstr "ont été supprimés."
-
 #~ msgid "has been removed."
 #~ msgstr "a été supprimé."
-
-#~ msgid "Are your sure you want to remove the following items:"
-#~ msgstr "Êtes vous sûr de vouloir supprimer les éléments suivants:"
-
-#~ msgid "Yes"
-#~ msgstr "Oui"
-
-#~ msgid "No"
-#~ msgstr "Non"
 
 #~ msgid "Item %s has been moved to subgroup %s."
 #~ msgstr "L'élément  %s a été déplacé vers le sous-groupe %s."
@@ -555,9 +687,6 @@ msgstr "Libération des ressources module."
 
 #~ msgid "Subgroup %s"
 #~ msgstr "Sous-groupe %s"
-
-#~ msgid "Item %s has been created."
-#~ msgstr "L'élément %s a été créé."
 
 #~ msgid "You must select or create a group before creating a new item."
 #~ msgstr ""
@@ -569,9 +698,6 @@ msgstr "Libération des ressources module."
 
 #~ msgid "Item %s has been updated."
 #~ msgstr "L'élément %s a été mis à jour."
-
-#~ msgid "Select a picture file"
-#~ msgstr "Sélectionner un fichier image..."
 
 #~ msgid "Item Description"
 #~ msgstr "Description de l'élément"
@@ -612,9 +738,6 @@ msgstr "Libération des ressources module."
 #~ msgid "Patient Description"
 #~ msgstr "Description du patient"
 
-#~ msgid "Photo..."
-#~ msgstr "Photo..."
-
 #~ msgid "Firstname:"
 #~ msgstr "Prénom:"
 
@@ -654,9 +777,6 @@ msgstr "Libération des ressources module."
 #~ msgid "Can't write Eet file '%s'!"
 #~ msgstr "Impossible d'écrire un fichier Eet %s!"
 
-#~ msgid "Can't remove Eet file:'%s'!"
-#~ msgstr "Impossible de supprimer un fichier Eet: '%s'!"
-
 #~ msgid "Can't import %s!"
 #~ msgstr "Impossible d'importer un fichier Eet: '%s'!"
 
@@ -678,9 +798,6 @@ msgstr "Libération des ressources module."
 #, fuzzy
 #~ msgid "\t=>%s group has %d subgroups.\n"
 #~ msgstr "Le groupe %s contient %d sous-groupes enregistrés."
-
-#~ msgid "Can't allocate list node!"
-#~ msgstr "Impossible d'allouer un nœud dans la liste!"
 
 #~ msgid "Couldn't calloc Group"
 #~ msgstr "Impossible d'allouer de la mémoire pour une structure Group!"
@@ -704,9 +821,6 @@ msgstr "Libération des ressources module."
 
 #~ msgid "Couldn't open file '%s'!"
 #~ msgstr "Impossible d'ouvrir un fichier '%s'!"
-
-#~ msgid "Eet file '%s' %#x was too old, upgrading it to %#x!"
-#~ msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x!"
 
 #~ msgid ""
 #~ "Patient_Info:\n"
@@ -863,9 +977,6 @@ msgstr "Libération des ressources module."
 #~ msgid "Can't create Ecore_Evas buffer!"
 #~ msgstr "Impossible de construire un tampon Ecore_Evas!"
 
-#~ msgid "Can't remove %s!"
-#~ msgstr "Impossible de supprimer %s!"
-
 #~ msgid "Can't read FriLogos Eet file %s!"
 #~ msgstr "Impossible de lire le fichier FriLogos Eet %s!"
 
@@ -941,9 +1052,6 @@ msgstr "Libération des ressources module."
 
 #~ msgid "Delete selected items..."
 #~ msgstr "Effacer les élements sélectionnés..."
-
-#~ msgid "Description"
-#~ msgstr "Description"
 
 #~ msgid "Export %s to %s."
 #~ msgstr "Exportation de %s vers %s."
@@ -1133,9 +1241,6 @@ msgstr "Libération des ressources module."
 #~ msgid "Patients "
 #~ msgstr "Patients"
 
-#~ msgid "Name:"
-#~ msgstr "Nom:"
-
 #~ msgid "Image file from %s has been extracted to Eet_Image struct."
 #~ msgstr "Le fichier image de %s a été extrait vers une structure Eet_Image."
 
@@ -1192,9 +1297,6 @@ msgstr "Libération des ressources module."
 
 #~ msgid "Last"
 #~ msgstr "Dernier"
-
-#~ msgid "Initialize Elementary..."
-#~ msgstr "Initialisation d'Elementary..."
 
 #, fuzzy
 #~ msgid ""
@@ -1309,9 +1411,6 @@ msgstr "Libération des ressources module."
 #, fuzzy
 #~ msgid "Select distractor 4"
 #~ msgstr "Activer distracteur 1"
-
-#~ msgid "Select category"
-#~ msgstr "Sélection de la catégorie"
 
 #, fuzzy
 #~ msgid "Initialize Patients Browser Interface..."
