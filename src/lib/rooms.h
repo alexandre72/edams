@@ -73,7 +73,6 @@ void room_sensors_add(Room *room, Sensor *sensor);
 void room_sensors_del(Room *room, Sensor *sensor);
 void room_sensors_list_clear(Room *room);
 void room_sensors_list_set(Room *room, Eina_List *list);
-Eina_Bool sensor_is_registered_check(Room *room, Sensor *sensor);
 
 void room_id_set(Room *room, unsigned int id);
 void room_name_set(Room *room, const char * name);

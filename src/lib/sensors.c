@@ -50,7 +50,7 @@ sensor_detect(char *s)
 			{
 				if(strcmp(sensor_name_get(data), sensor_name_get(sensor)) == 0)
 				{
-					fprintf(stdout, "INFO:Found %s(%s) device on serial buffer.\n", sensor_name_get(data), sensor_description_get(data));
+					//fprintf(stdout, "INFO:Found %s(%s) device on serial buffer.\n", sensor_name_get(data), sensor_description_get(data));
 					sensor_description_set(sensor, sensor_description_get(data));
 					sensor_type_set(sensor, sensor_type_get(data));
 					sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));

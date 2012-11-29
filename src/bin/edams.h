@@ -38,6 +38,7 @@ typedef struct
 	Evas_Object *toolbar;
 	Eina_List *rooms;
 	Eina_List *sensors;
+	Room *room;
 } App_Info;
 
 
