@@ -595,6 +595,8 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 			snprintf(s, sizeof(s), _("New sensor '%d-%s' has been created."), sensor_id_get(sensor), sensor_name_get(sensor));
 			//fprintf(stdout, _("INFO:%d sensors registered on serial line...\n"), eina_list_count(app->sensors));
 			_notify_set(s, "elm/icon/info/default");
+			Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
+			elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
 		}
 	}
 
