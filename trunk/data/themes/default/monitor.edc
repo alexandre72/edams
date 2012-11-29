@@ -51,15 +51,15 @@ group {
             description
             {
 			   	state: "default" 0.0;
-				min: 87 79;
-      			max: 145 129;
+      			max: 100 100;
                	visible: 0;
-				rel1.relative: 0.2 0.2;
-				rel2.relative: 1.0 1.0;
+				rel1.relative: 0.0 0.3;
+				rel2.relative: 0.7 0.7;
                	image.normal: "monitor_show.png";
             }
             description
             {
+      			max: 100 100;
 				state: "show" 0.0;
                 visible:1;
              }
@@ -102,17 +102,29 @@ group {
        {
          program
          {
-            name: "monitor_show";
-            signal: "show";
+            name: "animate,start";
+            signal: "animate";
             source: "over";
             action: STATE_SET "show" 0.0;
-		    transition: LINEAR 0.5;
+		    transition: SINUSOIDAL 1.0;
             target: "monitor";
-         }
+            after: "animate,step1";
+		}
+        program
+         {
+            name: "animate,step1";
+            signal: "animate";
+            source: "over";
+            action: STATE_SET "default" 0.0;
+		    transition: SINUSOIDAL 1.0;
+            target: "monitor";
+            after: "animate,start";
+		}
+
          program
          {
-            name: "monitor_hide";
-            signal: "hide";
+            name: "animate,end";
+            signal: "end";
             source: "over";
             action: STATE_SET "default" 0.0;
 		    transition: LINEAR 0.5;

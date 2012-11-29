@@ -46,6 +46,7 @@ struct _Sensor {
     unsigned int version;
     const char * data;
 	const char * datatype;
+	const char * style;
 };
 
 struct _Room {
@@ -114,6 +115,7 @@ _sensor_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "version", version, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "data", data, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "datatype", datatype, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "style", style, EET_T_STRING);
 }
 
 static inline void
@@ -149,6 +151,7 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
     sensor->soundfile = eina_stringshare_add(soundfile);
     sensor->group = eina_stringshare_add(group ? group : "undefined");
     sensor->datatype = eina_stringshare_add("INT");
+    sensor->style = eina_stringshare_add("default");
 
     //Add creation date informations.
 	time_t timestamp = time(NULL);
@@ -178,6 +181,7 @@ sensor_free(Sensor *sensor)
     eina_stringshare_del(sensor->creation);
     eina_stringshare_del(sensor->data);
     eina_stringshare_del(sensor->datatype);
+    eina_stringshare_del(sensor->style);
     free(sensor);
 }
 
@@ -276,6 +280,22 @@ sensor_type_set(Sensor *sensor, const char *type)
     EINA_SAFETY_ON_NULL_RETURN(sensor);
     eina_stringshare_replace(&(sensor->type), type);
 }
+
+inline void
+sensor_style_set(Sensor *sensor, const char *style)
+{
+    EINA_SAFETY_ON_NULL_RETURN(sensor);
+    eina_stringshare_replace(&(sensor->style), style);
+}
+
+
+inline const char *
+sensor_style_get(const Sensor *sensor)
+{
+    return sensor->style;
+}
+
+
 
 inline const char *
 sensor_description_get(const Sensor *sensor)
@@ -481,7 +501,7 @@ room_free(Room *room)
     	eina_stringshare_del(room->revision);
 
 	}
-    FREE(room);
+    free(room);
 }
 
 static void

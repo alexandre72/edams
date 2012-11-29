@@ -54,7 +54,7 @@ sensor_detect(char *s)
 					sensor_description_set(sensor, sensor_description_get(data));
 					sensor_type_set(sensor, sensor_type_get(data));
 					sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));
-					//sensor_picture_set(sensor, sensor_picture_get(data));
+					sensor_style_set(sensor, sensor_style_get(data));
 					break;
 				}
 			}
