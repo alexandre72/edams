@@ -113,7 +113,6 @@ _sensor_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "creation", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "revision", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "version", version, EET_T_UINT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "data", data, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "datatype", datatype, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "style", style, EET_T_STRING);
 }
@@ -152,6 +151,7 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
     sensor->group = eina_stringshare_add(group ? group : "undefined");
     sensor->datatype = eina_stringshare_add("INT");
     sensor->style = eina_stringshare_add("default");
+    sensor->data = NULL;
 
     //Add creation date informations.
 	time_t timestamp = time(NULL);
@@ -179,9 +179,10 @@ sensor_free(Sensor *sensor)
     eina_stringshare_del(sensor->soundfile);
     eina_stringshare_del(sensor->group);
     eina_stringshare_del(sensor->creation);
-    eina_stringshare_del(sensor->data);
     eina_stringshare_del(sensor->datatype);
     eina_stringshare_del(sensor->style);
+    if(sensor->__eet_filename) 	FREE(sensor->__eet_filename);
+    if(sensor->data) FREE(sensor->data);
     free(sensor);
 }
 
@@ -391,7 +392,13 @@ inline void
 sensor_data_set(Sensor *sensor, const char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(sensor);
-    eina_stringshare_replace(&(sensor->data), data);
+
+	if(sensor->data) FREE(sensor->data);
+
+	if(data)
+    	sensor->data = strdup(data);
+    else
+      	sensor->data = NULL;
 }
 
 
@@ -597,6 +604,20 @@ inline void
 room_sensors_add(Room *room, Sensor *sensor)
 {
     EINA_SAFETY_ON_NULL_RETURN(room);
+
+    Eina_List *l, *sensors;
+
+	sensors = room_sensors_list_get(room);
+
+	Sensor *data;
+	EINA_LIST_FOREACH(sensors, l, data)
+	{
+		if(sensor_id_get(data) == sensor_id_get(sensor))
+		{
+			return;
+		}
+	}
+
     room->sensors = eina_list_append(room->sensors, sensor);
 }
 
@@ -806,17 +827,13 @@ Eina_List *rooms_list_free(Eina_List *rooms)
 	if(rooms)
 	{
 		unsigned int n = 0;
-		Room *room;
+		Room *data;
 
-        //Point to first node of list.
-        for(rooms = eina_list_last(rooms); rooms; rooms = eina_list_prev(rooms));
-
-        EINA_LIST_FREE(rooms, room)
-        {
-			room_free(room);
-			n++;
-		}
-
+    	EINA_LIST_FREE(rooms, data)
+    	{
+    		n++;
+	    	room_free(data);
+	    }
         eina_list_free(rooms);
 
         fprintf(stdout, _("INFO:%d rooms list freed.\n"), n);
@@ -891,7 +908,7 @@ Eina_List *rooms_list_get()
 	eina_iterator_free(it);
 	}
 
-	fprintf(stdout, _("INFO:%d rooms found in database.\n"), eina_list_count(rooms));
+	//fprintf(stdout, _("INFO:%d rooms found in database.\n"), eina_list_count(rooms));
 	rooms = eina_list_sort(rooms, eina_list_count(rooms), EINA_COMPARE_CB(strcoll));
 	return rooms;
 }
@@ -960,26 +977,6 @@ end:
 }
 
 
-Eina_Bool
-sensor_is_registered_check(Room *room, Sensor *sensor)
-{
-	Eina_List *l, *sensors;
-
-	sensors = room_sensors_list_get(room);
-
-	Sensor *data;
-	EINA_LIST_FOREACH(sensors, l, data)
-	{
-		if(sensor_id_get((Sensor*)data) == sensor_id_get(sensor))
-		{
-			return EINA_TRUE;
-		}
-	}
-
-	return EINA_FALSE;
-}
-
-
 //
 //Read all sensors infos files.
 //
@@ -1019,7 +1016,7 @@ sensors_list_get()
 	eina_iterator_free(it);
 	}
 
-	fprintf(stdout, _("INFO:%d sensors found in database.\n"), eina_list_count(sensors));
+	//fprintf(stdout, _("INFO:%d sensors found in database.\n"), eina_list_count(sensors));
 	sensors = eina_list_sort(sensors, eina_list_count(sensors), EINA_COMPARE_CB(strcoll));
 	return sensors;
 }
@@ -1034,20 +1031,16 @@ sensors_list_free(Eina_List *sensors)
 	if(sensors)
 	{
 		unsigned int n = 0;
-		Sensor *sensor;
+		Sensor *data;
 
-        //Point to first node of list.
-        for(sensors = eina_list_last(sensors); sensors; sensors = eina_list_prev(sensors));
-
-        EINA_LIST_FREE(sensors, sensor)
-        {
-			sensor_free(sensor);
+    	EINA_LIST_FREE(sensors, data)
+    	{
 			n++;
+	    	sensor_free(data);
 		}
-
         eina_list_free(sensors);
 
-        fprintf(stdout, _("INFO:%d sensors list freed.\n"), n);
+        fprintf(stdout, _("INFO:%d sensors list freed.\n"),n);
         return NULL;
     }
 

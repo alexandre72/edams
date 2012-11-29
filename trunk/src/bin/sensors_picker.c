@@ -30,7 +30,7 @@ static Elm_Gengrid_Item_Class *gic;
 
 typedef struct _GenGridItem
 {
-    Elm_Object_Item *ggitem;
+    Elm_Object_Item *gg_it;
     Sensor *sensor;
 } GenGridItem;
 
@@ -156,8 +156,8 @@ _gg_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *pa
 static void
 _gg_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-	GenGridItem *ggi = data;
-	FREE(ggi);
+	//GenGridItem *ggi = data;
+	//FREE(ggi);
 }
 
 
@@ -168,115 +168,18 @@ _gg_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 static void
 _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *gd, *fr;
-	Evas_Object *label, *ic, *img;
-	Evas_Object *bt;
-	Evas_Object *entry;
-   	char s[256];
-
-
+	App_Info *app = data;
    	Evas_Object *gg = (Evas_Object*) elm_object_name_find(win, "sensors gengrid", -1);
    	Elm_Object_Item *it = elm_gengrid_selected_item_get(gg);
 
    if (!it) return;
 	GenGridItem *ggi = elm_object_item_data_get(it);
 
-		Evas_Object *winc = elm_win_util_standard_add("sensor_description_dlg", _("Sensor"));
-		elm_win_autodel_set(winc, EINA_TRUE);
-		elm_win_center(winc, EINA_TRUE, EINA_TRUE);
+	room_sensors_add(app->room, ggi->sensor);
+	room_save(app->room);
 
-		gd = elm_grid_add(winc);
-		elm_grid_size_set(gd, 100, 100);
-		elm_win_resize_object_add(winc, gd);
-		evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		evas_object_show(gd);
-
-		fr = elm_frame_add(winc);
-		//elm_object_text_set(fr, );
-		elm_grid_pack(gd, fr, 1, 1, 30, 40);
-		evas_object_show(fr);
-
-		img = elm_image_add(winc);
-		evas_object_name_set(img, "photo");
-		elm_image_smooth_set(img, EINA_TRUE);
-		elm_image_aspect_fixed_set(img, EINA_TRUE);
-		elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
-       	if(!elm_image_file_set(img, sensor_filename_get(ggi->sensor), "/image/1"))
-		    elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
-		elm_grid_pack(gd, img, 5, 5, 25, 25);
-		evas_object_show(img);
-
-    	label = elm_label_add(winc);
-		elm_object_text_set(label, _("Name:"));
-		elm_grid_pack(gd, label, 32, 2, 30, 7);
-		evas_object_show(label);
-
-		entry = elm_entry_add(winc);
-		elm_entry_scrollable_set(entry, EINA_TRUE);
-		elm_entry_editable_set(entry, EINA_FALSE);
-		snprintf(s, sizeof(s), "%d - %s", sensor_id_get(ggi->sensor), sensor_name_get(ggi->sensor));
-		elm_object_text_set(entry, s);
-		elm_entry_single_line_set(entry, EINA_TRUE);
-		elm_grid_pack(gd, entry, 51, 2, 40, 9);
-		evas_object_show(entry);
-
-		label = elm_label_add(winc);
-		elm_object_text_set(label, _("Description:"));
-		elm_grid_pack(gd, label, 32, 15, 30, 7);
-		evas_object_show(label);
-
-		entry = elm_entry_add(winc);
-		elm_entry_scrollable_set(entry, EINA_TRUE);
-		elm_entry_editable_set(entry, EINA_FALSE);
-		elm_object_text_set(entry, sensor_description_get(ggi->sensor));
-		elm_entry_single_line_set(entry, EINA_TRUE);
-		elm_grid_pack(gd, entry, 51, 15, 40, 9);
-		evas_object_show(entry);
-
-		bt = elm_button_add(winc);
-		evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		ic = elm_icon_add(winc);
-	   	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	   	elm_icon_standard_set(ic, "close-window");
-	   	elm_object_part_content_set(bt, "icon", ic);
-		elm_object_text_set(bt, _("Ok"));
-		elm_grid_pack(gd, bt, 40, 80, 30, 8);
-		evas_object_show(bt);
-		evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, winc);
-
-		evas_object_resize(winc, 450, 450);
-		evas_object_show(winc);
-}
-
-
-
-static void
-_select_sensor_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-	Room *room = (Room*)data;
-
-   	Evas_Object *gg = (Evas_Object*) elm_object_name_find(win, "sensors gengrid", -1);
-   	Elm_Object_Item *it = elm_gengrid_selected_item_get(gg);
-
-   if (!it) return;
-	GenGridItem *ggi = elm_object_item_data_get(it);
-
-
-	if(sensor_is_registered_check(room, ggi->sensor) == EINA_FALSE)
-	{
-		App_Info *app = evas_object_data_get(win, "app");
-
-		room_sensors_add(room, ggi->sensor);
-		room_save(room);
-
-		Evas_Object *list = (Evas_Object*)  elm_object_name_find(app->win, "rooms list", -1);
-		Elm_Object_Item *it = (Elm_Object_Item *)elm_list_selected_item_get(list);
-		elm_gengrid_item_update(it);
-
-		Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-		elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(room));
-	}
-	evas_object_del(win);
+	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
+	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
 }
 
 
@@ -285,7 +188,7 @@ _select_sensor_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *even
 //Create sensors picker.
 //
 Eina_Bool
-sensorpicker_add_to_room(App_Info *app,  Room *room)
+sensorpicker_add_to_room(App_Info *app)
 {
     Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp, *label, *notify;
 
@@ -352,7 +255,7 @@ sensorpicker_add_to_room(App_Info *app,  Room *room)
     elm_gengrid_reorder_mode_set(grid, EINA_FALSE);
    	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_min_set(grid, 400, 400);
-    evas_object_smart_callback_add(grid, "clicked,double",_gg_clickeddouble_cb, NULL);
+    evas_object_smart_callback_add(grid, "clicked,double",_gg_clickeddouble_cb, app);
     elm_box_pack_end(bx, grid);
    	evas_object_show(grid);
 
@@ -368,16 +271,6 @@ sensorpicker_add_to_room(App_Info *app,  Room *room)
    	elm_box_horizontal_set(hbx, EINA_TRUE);
    	elm_box_pack_end(bx, hbx);
    	evas_object_show(hbx);
-
-    bt =elm_button_add(win);
-    elm_object_text_set(bt,  _("Select"));
-	ic = elm_icon_add(win);
-   	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-   	elm_icon_standard_set(ic, "document-open");
-   	elm_object_part_content_set(bt, "icon", ic);
-    elm_box_pack_end(hbx, bt);
-    evas_object_show(bt );
-    evas_object_smart_callback_add(bt, "clicked", _select_sensor_bt_clicked_cb, room);
 
 	bt = elm_button_add(win);
     elm_object_text_set(bt, _("Close"));
@@ -402,7 +295,7 @@ sensorpicker_add_to_room(App_Info *app,  Room *room)
    	gic->func.state_get = _gg_state_get;
    	gic->func.del = _gg_del;
 
-	//Fill gengrid with sensors files list.
+	//Fill gengrid with detected sensors.
     Eina_List *l;
     Sensor *sensor;
     EINA_LIST_FOREACH(app->sensors, l, sensor)
@@ -410,7 +303,7 @@ sensorpicker_add_to_room(App_Info *app,  Room *room)
         GenGridItem *ti;
         ti = calloc(1, sizeof(*ti));
         ti->sensor = sensor;
-   		ti->ggitem = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
+   		ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
        	//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
 	}
 
