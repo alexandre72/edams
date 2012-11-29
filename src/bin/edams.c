@@ -450,13 +450,17 @@ do_lengthy_task(Ecore_Pipe *pipe)
 	//int baudrate = B9600;  // default
 	int baudrate = B115200;  // default
 
+
+	char *samples[] = {"DEVICE;0;DS18B20;INT;17.296;OK\n","DEVICE;1;PIR;BOOL;0;OK\n",  "DEVICE;2;PIR;BOOL;1;OK\n"};
+
    	//fd= serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
    	fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
+
 
 	for(;;)
 	{
 		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial loopback(TX<=>RX) emulation trame test.
-		//strcpy(buf, "DEVICE;0;DS18B20;INT;17,45;OK\n");			//Sotfware emulation trame test.
+		//strcpy(buf, samples[2]);			//Sotfware emulation trame test.
 		serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
 
@@ -672,21 +676,20 @@ _room_naviframe_content(Room *room)
 
 	int x = 1, y = 30;
 
-	printf("%d sensors found\n", eina_list_count(sensors));
     EINA_LIST_FOREACH(sensors, l, sensor)
     {
-        if(strstr(sensor_datatype_get(sensor), "INT"))
+        if(!strstr(sensor_style_get(sensor), "default"))
       	{
-      	    printf("SENSOR:%s with datatype %s\n", sensor_name_get(sensor), sensor_datatype_get(sensor));
+      	    //printf("SENSOR:%s with datatype %s\n", sensor_name_get(sensor), sensor_datatype_get(sensor));
 
        	 	Evas_Object *layout = elm_layout_add(app->win);
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_style_get(sensor));
    			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			elm_grid_pack(gd, layout, x, y, 20, 45);
    			evas_object_show(layout);
 
-			if(sensor_data_get(sensor))
+	        if(strstr(sensor_datatype_get(sensor), "INT"))
 			{
 				int temp_x, temp_y;
 	   			elm_object_signal_emit(layout, "temp,state,known", "");
@@ -705,8 +708,16 @@ _room_naviframe_content(Room *room)
    				msg.val = level;
 		    	edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
 			}
-	   	}
+        	else if(strstr(sensor_datatype_get(sensor), "BOOL"))
+        	{
+			  	if(atoi(sensor_data_get(sensor)) == 0)
+           			elm_object_signal_emit(layout, "end", "over");
+    	        else
+               		elm_object_signal_emit(layout, "animate", "over");
 
+               elm_object_part_text_set(layout, "text", room_name_get(room));
+			}
+	   	}
 		x = x + 40;
 	}
 
@@ -774,7 +785,7 @@ elm_main(int argc, char **argv)
     	#endif
 
 	INF(_("Initialize Application..."));
-	app = MALLOC(sizeof(*app));
+    app = calloc(1, sizeof(App_Info));
 
 	//Init edams.
 	edams_init();

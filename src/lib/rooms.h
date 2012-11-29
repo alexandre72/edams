@@ -29,11 +29,10 @@
 typedef struct _Sensor Sensor;
 typedef struct _Room Room;
 
+
 /* Sensor */
 Sensor *sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl, Evas_Object * picture, const char * soundfile, const char * group);
 void sensor_free(Sensor *sensor);
-
-
 void sensor_id_set(Sensor *sensor, unsigned int id);
 void sensor_name_set(Sensor *sensor, const char * name);
 void sensor_type_set(Sensor *sensor, const char * type);
@@ -45,6 +44,7 @@ void sensor_group_set(Sensor *sensor, const char * group);
 void sensor_creation_set(Sensor *sensor, const char * creation);
 void sensor_data_set(Sensor *sensor, const char * data);
 void sensor_datatype_set(Sensor *sensor, const char * datatype);
+void sensor_style_set(Sensor *sensor, const char * datatype);
 
 const char *sensor_filename_get(Sensor *sensor);
 unsigned int sensor_id_get(const Sensor *sensor);
@@ -58,11 +58,13 @@ const char * sensor_group_get(const Sensor *sensor);
 const char * sensor_creation_get(const Sensor *sensor);
 const char * sensor_data_get(const Sensor *sensor);
 const char * sensor_datatype_get(const Sensor *sensor);
+const char * sensor_style_get(const Sensor *sensor);
 
 Eina_Bool sensor_save(Sensor *sensor);
 
 Eina_List *sensors_list_get();
 Eina_List *sensors_list_free(Eina_List *sensors);
+
 
 /* Room */
 Room *room_new(unsigned int id, const char * name, const char * description, Eina_List * sensors, Evas_Object * photo);

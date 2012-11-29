@@ -233,50 +233,6 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 		elm_grid_pack(gd, entry, 51, 15, 40, 9);
 		evas_object_show(entry);
 
-        if(strstr(sensor_datatype_get(ggi->sensor), "INT"))
-      	{
-      		int x, y;
-
-       	 	Evas_Object *layout = elm_layout_add(winc);
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
-   			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_grid_pack(gd, layout, 20, 50, 20, 45);
-   			evas_object_show(layout);
-
-   			elm_object_signal_emit(layout, "temp,state,known", "");
-   			snprintf(s, sizeof(s), "%s°C", sensor_data_get(ggi->sensor));
-        	elm_object_part_text_set(layout, "temp.text.reading", s);
-
-        	sscanf(sensor_data_get(ggi->sensor), "%d.%02d", &x, &y);
-
-			Evas_Object *eo = elm_layout_edje_get(layout);
-	    	Edje_Message_Float msg;
-			double level =  (double)((x + (y*0.01)) - TEMP_MIN) /
-               				(double)(TEMP_MAX - TEMP_MIN);
-
-   			if (level < 0.0) level = 0.0;
-   			else if (level > 1.0) level = 1.0;
-   			msg.val = level;
-	    	edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
-	   	}
-        else if(strstr(sensor_datatype_get(ggi->sensor), "BOOL"))
-        {
-       	 	Evas_Object *layout = elm_layout_add(winc);
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/monitor");
-   			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_grid_pack(gd, layout, 20, 50, 20, 20);
-   			evas_object_show(layout);
-
-			if(atoi(sensor_data_get(ggi->sensor)) == 0)
-   			elm_object_signal_emit(layout, "hide", "over");
-			else
-   			elm_object_signal_emit(layout, "show", "over");
-
-			//elm_object_part_text_set(layout, "text", room_name_get(room));
-  		}
-
 		bt = elm_button_add(winc);
 		evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 		ic = elm_icon_add(winc);

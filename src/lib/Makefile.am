@@ -17,7 +17,6 @@ libedams_la_SOURCES = \
 mem.c \
 modules.c \
 myfileselector.c \
-myfontselector.c \
 path.c \
 rooms.c \
 settings.c \

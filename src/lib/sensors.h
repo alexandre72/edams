@@ -22,7 +22,6 @@
 #ifndef __SENSORS_H
 #define __SENSORS_H
 
-#include "rooms.h"
 #include "libedams.h"
 #include "path.h"
 #include "edams.h"

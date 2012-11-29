@@ -26,7 +26,7 @@
 #include "libedams.h"
 #include "modules.h"
 #include "rooms.h"
-
+#include "sensors.h"
 
 //
 //Define App UI. Can be used to modify it dynamicaly.
