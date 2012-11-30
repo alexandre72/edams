@@ -487,7 +487,7 @@ do_lengthy_task(Ecore_Pipe *pipe)
 		serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
 
-		sleep(2);
+		sleep(1);
    }
 }
 
@@ -495,14 +495,14 @@ do_lengthy_task(Ecore_Pipe *pipe)
 static void
 handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
-	if(len < 5)
+	if(len < 10 || !buf)
 	return;
 
 	char *str = malloc(sizeof(char) * len + 1);
 
 	memcpy(str, buf, len - 1);
 	str[len] = '\0';
-	//fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
+	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
 
 	Sensor *sensor;
    	//Check if system msg...
@@ -726,6 +726,8 @@ _room_naviframe_content(Room *room)
       	    //printf("SENSOR:%s with datatype %s\n", sensor_name_get(sensor), sensor_datatype_get(sensor));
 
        	 	Evas_Object *layout = elm_layout_add(app->win);
+			snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
+       	 	evas_object_name_set(layout, s);
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_style_get(sensor));
    			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -751,7 +753,7 @@ _room_naviframe_content(Room *room)
    				msg.val = level;
 		    	edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
 			}
-        	else if(strstr(sensor_datatype_get(sensor), "STATE"))
+        	else if(strstr(sensor_datatype_get(sensor), "BOOL"))
         	{
 			  	if(atoi(sensor_data_get(sensor)) == 0)
            			elm_object_signal_emit(layout, "end", "over");

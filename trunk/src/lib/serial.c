@@ -26,7 +26,7 @@ int serialport_write(int fd, const char* str)
 {
     int len = strlen(str);
     int n = write(fd, str, len);
-    if( n!=len ) 
+    if( n!=len )
         return -1;
     return 0;
 }
@@ -37,7 +37,7 @@ int serialport_read_until(int fd, char* buf, char until)
 {
     char b[1];
     int i=0;
-    do { 
+    do {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
@@ -47,7 +47,7 @@ int serialport_read_until(int fd, char* buf, char until)
         buf[i] = b[0]; i++;
     } while( b[0] != until );
 
-    buf[i] = 0;  // null terminate the string
+    buf[i-1] = '\0';  // null terminate the string
     return 0;
 }
 
@@ -61,7 +61,7 @@ int serialport_init(const char* serialport, int baud)
 {
     struct termios toptions;
     int fd;
-    
+
     //fprintf(stderr,"init_serialport: opening port %s @ %d bps\n",
     //        serialport,baud);
 
@@ -70,7 +70,7 @@ int serialport_init(const char* serialport, int baud)
         perror("init_serialport: Unable to open port ");
         return -1;
     }
-    
+
     if (tcgetattr(fd, &toptions) < 0) {
         perror("init_serialport: Couldn't get term attributes");
         return -1;
@@ -104,7 +104,7 @@ int serialport_init(const char* serialport, int baud)
     // see: http://unixwiz.net/techtips/termios-vmin-vtime.html
     toptions.c_cc[VMIN]  = 0;
     toptions.c_cc[VTIME] = 20;
-    
+
     if( tcsetattr(fd, TCSANOW, &toptions) < 0) {
         perror("init_serialport: Couldn't set term attributes");
         return -1;
