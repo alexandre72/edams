@@ -5,7 +5,7 @@ rm -f config.cache
 
 m4_define([v_maj], [0])
 m4_define([v_min], [4])
-m4_define([v_mic], [0])
+m4_define([v_mic], [1])
 m4_define([v_ver], [v_maj.v_min.v_mic])
 
 AC_INIT([edams],[v_ver],[alexandre.dussart@laposte.net])
@@ -193,7 +193,6 @@ src/lib/Makefile
 src/modules/Makefile
 src/modules/skel/Makefile
 data/Makefile
-data/icons/Makefile
 data/themes/Makefile
 data/themes/default/Makefile
 ])

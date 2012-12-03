@@ -20,13 +20,20 @@
 
 
 
-group {
-      name: "meter/monitor";
-      images
+group
+{
+	name: "meter/monitor";
+	images
       {
          image: "monitor_base.png" COMP;
          image: "monitor_show.png" COMP;
       }
+	data
+	{
+		item: "title" "title.text";
+		item: "action" "animate";
+	}
+
       parts
       {
          part
@@ -66,7 +73,7 @@ group {
          }
          part
          {
-            name: "text";
+            name: "title.text";
             type: TEXT;
             scale: 1;
             description

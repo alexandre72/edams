@@ -1,15 +1,24 @@
    group {
       name: "meter/thermometer";
-      images {
+      images
+      {
          image: "temp_base.png" COMP;
          image: "temp_mid.png" COMP;
          image: "temp_over.png" COMP;
       }
+		data
+		{
+			item: "tempvalue" "value.text";
+		}
+
       min: 16 16;
       max: 128 128;
-      script {
-         public message(Msg_Type:type, id, ...) {
-            if ((type == MSG_FLOAT) && (id == 1)) {
+      script
+      {
+         public message(Msg_Type:type, id, ...)
+         {
+            if ((type == MSG_FLOAT) && (id == 1))
+            {
                new Float:val;
                val = getfarg(2);
                set_drag(PART:"temp_top", 0.0, val);
@@ -70,7 +79,7 @@
             }
          }
          part {
-            name: "temp.text.reading";
+            name: "value.text";
             type: TEXT;
             scale: 1;
             effect: OUTLINE_SOFT_SHADOW;
@@ -183,7 +192,7 @@
             source: "over";
             action: STATE_SET "visible" 0.0;
             transition: LINEAR 0.3;
-            target: "temp.text.reading";
+            target: "value.text";
          }
          program {
             name: "hover2";
@@ -191,7 +200,7 @@
             source: "over";
             action: STATE_SET "default" 0.0;
             transition: LINEAR 1.0;
-            target: "temp.text.reading";
+            target: "value.text";
          }
       }
       program {

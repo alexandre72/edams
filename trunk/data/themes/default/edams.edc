@@ -32,8 +32,9 @@ collections {
 #include "thermometer.edc"
 #include "thermometer2.edc"
 #include "tachometer.edc"
-
-    group { name: "elm/icon/about-dlg/default";
+#include "counter.edc"
+    
+group { name: "elm/icon/about-dlg/default";
       min: 48 48;
       parts {
          part { name: "icon";

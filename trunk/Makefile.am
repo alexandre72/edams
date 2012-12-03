@@ -23,7 +23,7 @@ SUBDIRS = . data src po
 DESKTOP = edams.desktop
 ICON = edams.png
 
-icondir = $(datadir)/pixmaps
+icondir = $(datadir)/icons
 icon_DATA = $(ICON)
 
 desktopdir = $(datadir)/applications

@@ -1,0 +1,7 @@
+EDAMS is an application that can be used to: 
+
+-Monitor your sensors.
+-Affect sensors to one or more rooms.
+-Process data from your sensors and can set some alarms.
+-Affect different widget style to visualize sensors data.
+-Send serial cmd to interact with your microcontroller(Arduino, ATMega...)
