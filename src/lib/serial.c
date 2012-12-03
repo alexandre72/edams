@@ -19,6 +19,19 @@
  */
 
 
+#include <stdio.h>    /* Standard input/output definitions */
+#include <stdlib.h>
+#include <stdint.h>   /* Standard types */
+#include <string.h>   /* String function definitions */
+#include <unistd.h>   /* UNIX standard function definitions */
+#include <fcntl.h>    /* File control definitions */
+#include <errno.h>    /* Error number definitions */
+#include <termios.h>  /* POSIX terminal control definitions */
+#include <sys/ioctl.h>
+#include <signal.h>
+
+#include <Ecore.h>
+
 #include "serial.h"
 
 
@@ -44,12 +57,74 @@ int serialport_read_until(int fd, char* buf, char until)
             usleep( 10 * 1000 ); // wait 10 msec try again
             continue;
         }
-        buf[i] = b[0]; i++;
-    } while( b[0] != until );
+        buf[i] = b[0];
+        i++;
+    } while( b[0] != until);
 
     buf[i-1] = '\0';  // null terminate the string
     return 0;
 }
+
+//TODO:Implement EasyTransfer binary data protocol.
+/*
+typedef unsigned char byte;
+
+struct _DATA_STRUCTURE
+{
+  //char *device;
+  unsigned int id;
+  int value;
+};
+
+typedef struct _DATA_STRUCTURE DATA_STRUCTURE;
+
+DATA_STRUCTURE mydata;
+
+Eina_Bool serialport_read_data(int fd)
+{
+	int n;
+    unsigned char b;
+
+    do {
+   		n = read(fd, &b, 1);
+
+		if(b != 0x06)
+		continue;
+
+	   	n = read(fd, &b, 1);
+	   	if(b == 0x85)
+	   	{
+			printf("HEADER Ok\n");
+
+			uint8_t rx_len;
+			read(fd, &rx_len, sizeof(rx_len));
+			printf("Data size=%d =%ld?\n", rx_len, sizeof(mydata));
+
+
+			unsigned char rx_buffer[24];
+			int rx_array_inx = 0;  //index for RX parsing buffer
+
+			//rx_buffer = (uint8_t*) malloc(rx_len);
+
+			while(rx_array_inx <= 6)
+			{
+				n = read(fd, rx_buffer[rx_array_inx++], 1);
+				printf("**value=%c\n", rx_buffer[rx_array_inx]);
+			}
+
+
+			//printf("**id=%d\n", mydata->id);
+			//printf("**value=%d\n", mydata->value);
+		}
+
+	} while(1);
+
+
+    return EINA_FALSE;
+}
+*/
+
+
 
 
 

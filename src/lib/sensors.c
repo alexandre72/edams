@@ -39,19 +39,19 @@ sensor_detect(char *s)
 	{
 	   arr = eina_str_split_full(s, ";", 0, &n);
 
-		if(n == 6 && (strcmp(arr[5], "OK") == 0))
+		if(n == 5 && (strcmp(arr[4], "OK") == 0))
 		{
 
-			if(!arr[1] || !arr[2] || !arr[3] || !arr[4])
+			if(!arr[1] || !arr[2] || !arr[3])
 			{
 				FREE(arr[0]);
 				FREE(arr);
 				return sensor;
 			}
 
+
 			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL, NULL);
-			sensor_datatype_set(sensor, arr[3]);
-			sensor_data_set(sensor, arr[4]);
+			sensor_data_set(sensor, arr[3]);
 
 			database = sensors_list_get();
 			EINA_LIST_FOREACH(database, l, data)
@@ -62,7 +62,7 @@ sensor_detect(char *s)
 					sensor_description_set(sensor, sensor_description_get(data));
 					sensor_type_set(sensor, sensor_type_get(data));
 					sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));
-					sensor_style_set(sensor, sensor_style_get(data));
+					sensor_meter_set(sensor, sensor_meter_get(data));
 					break;
 				}
 			}

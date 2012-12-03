@@ -1,0 +1,60 @@
+images
+{
+   image: "counter.png" COMP;
+}
+
+fonts
+{
+   font: "DS-Digital_Bold_Italic.ttf" "digital";
+}
+
+
+    group
+    {
+        name: "meter/counter";
+		min: 100 60;
+
+		data
+		{
+			item: "value" "value.text";
+		}
+
+        parts
+        {
+	     part {
+	     name: "entry";
+                  type: IMAGE;
+                  mouse_events: 0;
+            	  description
+            	  {
+						state: "default" 0.0;
+               			aspect_preference: BOTH;
+               			image
+               			{
+                  	      normal: "counter.png";
+            			}
+                  }
+             }
+
+	     part {
+	          		name: "value.text";
+					type: TEXT;
+					mouse_events: 0;
+            	  description
+            	  {
+		        	state: "default" 0.0;
+               		color: 68 72 63 200;
+               		rel1.relative: 0.05 0.20;
+               		rel2.relative: 0.95 1.0;
+               		text
+               		{
+			     		font: "digital";
+                  	     size: 18;
+                  	     fit: 1 1;
+                  	     align: 0.5 0;
+                  	     text: "000000000000";
+               		}
+            	}
+            }
+    	}
+	}

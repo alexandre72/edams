@@ -40,11 +40,9 @@ void sensor_description_set(Sensor *sensor, const char * description);
 void sensor_datasheeturl_set(Sensor *sensor, const char * datasheeturl);
 void sensor_picture_set(Sensor *sensor, Evas_Object *picture);
 void sensor_soundfile_set(Sensor *sensor, const char * soundfile);
-void sensor_group_set(Sensor *sensor, const char * group);
 void sensor_creation_set(Sensor *sensor, const char * creation);
 void sensor_data_set(Sensor *sensor, const char * data);
-void sensor_datatype_set(Sensor *sensor, const char * datatype);
-void sensor_style_set(Sensor *sensor, const char * datatype);
+void sensor_meter_set(Sensor *sensor, const char * meter);
 
 const char *sensor_filename_get(Sensor *sensor);
 unsigned int sensor_id_get(const Sensor *sensor);
@@ -57,8 +55,7 @@ const char * sensor_soundfile_get(const Sensor *sensor);
 const char * sensor_group_get(const Sensor *sensor);
 const char * sensor_creation_get(const Sensor *sensor);
 const char * sensor_data_get(const Sensor *sensor);
-const char * sensor_datatype_get(const Sensor *sensor);
-const char * sensor_style_get(const Sensor *sensor);
+const char * sensor_meter_get(const Sensor *sensor);
 
 Eina_Bool sensor_save(Sensor *sensor);
 

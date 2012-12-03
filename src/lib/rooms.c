@@ -45,8 +45,7 @@ struct _Sensor {
 	const char * revision;
     unsigned int version;
     const char * data;
-	const char * datatype;
-	const char * style;
+	const char * meter;
 };
 
 struct _Room {
@@ -113,8 +112,7 @@ _sensor_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "creation", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "revision", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "version", version, EET_T_UINT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "datatype", datatype, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "style", style, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "meter", meter, EET_T_STRING);
 }
 
 static inline void
@@ -149,8 +147,7 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
     sensor->picture__id = 0;
     sensor->soundfile = eina_stringshare_add(soundfile);
     sensor->group = eina_stringshare_add(group ? group : "undefined");
-    sensor->datatype = eina_stringshare_add("INT");
-    sensor->style = eina_stringshare_add("default");
+    sensor->meter = eina_stringshare_add("default");
     sensor->data = NULL;
 
     //Add creation date informations.
@@ -179,8 +176,7 @@ sensor_free(Sensor *sensor)
     eina_stringshare_del(sensor->soundfile);
     eina_stringshare_del(sensor->group);
     eina_stringshare_del(sensor->creation);
-    eina_stringshare_del(sensor->datatype);
-    eina_stringshare_del(sensor->style);
+    eina_stringshare_del(sensor->meter);
     if(sensor->__eet_filename) 	FREE(sensor->__eet_filename);
     if(sensor->data) FREE(sensor->data);
     free(sensor);
@@ -283,17 +279,17 @@ sensor_type_set(Sensor *sensor, const char *type)
 }
 
 inline void
-sensor_style_set(Sensor *sensor, const char *style)
+sensor_meter_set(Sensor *sensor, const char *meter)
 {
     EINA_SAFETY_ON_NULL_RETURN(sensor);
-    eina_stringshare_replace(&(sensor->style), style);
+    eina_stringshare_replace(&(sensor->meter), meter);
 }
 
 
 inline const char *
-sensor_style_get(const Sensor *sensor)
+sensor_meter_get(const Sensor *sensor)
 {
-    return sensor->style;
+    return sensor->meter;
 }
 
 
@@ -399,20 +395,6 @@ sensor_data_set(Sensor *sensor, const char *data)
     	sensor->data = strdup(data);
     else
       	sensor->data = NULL;
-}
-
-
-inline const char *
-sensor_datatype_get(const Sensor *sensor)
-{
-    return sensor->datatype;
-}
-
-inline void
-sensor_datatype_set(Sensor *sensor, const char *datatype)
-{
-    EINA_SAFETY_ON_NULL_RETURN(sensor);
-    eina_stringshare_replace(&(sensor->datatype), datatype);
 }
 
 

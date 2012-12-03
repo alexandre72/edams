@@ -471,7 +471,7 @@ do_lengthy_task(Ecore_Pipe *pipe)
     int fd = 0;
 	char buf[256];
 	//int baudrate = B9600;  // default
-	int baudrate = B115200;  // default
+	int baudrate = 115200;  // default
 
 
 	char *samples[] = {"DS18B20","PIR","DHT11"};
@@ -482,12 +482,13 @@ do_lengthy_task(Ecore_Pipe *pipe)
 	SeedRandomizer();
 	for(;;)
 	{
+		//serialport_read_data(fd);
+
 		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial loopback(TX<=>RX) emulation trame test.
 		//snprintf(buf, sizeof(buf), "DEVICE;0;DS18B20;INT;%d.%d;OK\n", Prandom(34), Prandom(99)); //Sotfware emulation trame test.
 		serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
-
-		sleep(1);
+		sleep(3);
    }
 }
 
@@ -563,7 +564,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 			if(sensor_id_get(data) == sensor_id_get(sensor))
 			{
 					//If sensor is already here, so only update sensor data.
-					fprintf(stdout, _("INFO:Serial sensor '%d-%s'  with data '%s' of type '%s'...\n"), sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor), sensor_datatype_get(sensor));
+					fprintf(stdout, _("INFO:Serial sensor '%d-%s'  with data '%s'...\n"), sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
 
 					//Sync sensor data with room sensor data(if affected to any room!).
 					Eina_List *l2, *l3, *sensors;
@@ -721,48 +722,59 @@ _room_naviframe_content(Room *room)
     {
     	if(sensor_data_get(sensor))
     	{
-        if(!strstr(sensor_style_get(sensor), "default"))
-      	{
+       	 	if(!strstr(sensor_meter_get(sensor), "default"))
+      		{
       	    //printf("SENSOR:%s with datatype %s\n", sensor_name_get(sensor), sensor_datatype_get(sensor));
 
-       	 	Evas_Object *layout = elm_layout_add(app->win);
-			snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
-       	 	evas_object_name_set(layout, s);
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_style_get(sensor));
-   			evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_grid_pack(gd, layout, x, y, 20, 45);
-   			evas_object_show(layout);
+       	 		Evas_Object *layout = elm_layout_add(app->win);
+				snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
+       	 		evas_object_name_set(layout, s);
+				elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
+   				evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   				evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+				elm_grid_pack(gd, layout, x, y, 20, 45);
+   				evas_object_show(layout);
 
-	        if(strstr(sensor_datatype_get(sensor), "INT"))
-			{
-				int temp_x, temp_y;
-	   			elm_object_signal_emit(layout, "temp,state,known", "");
-   				snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
-    	    	elm_object_part_text_set(layout, "temp.text.reading", s);
 
-	        	sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
+				const char *t;
+				if((t = edje_object_data_get(layout, "tempvalue")))
+				{
+					int temp_x, temp_y;
+		   			elm_object_signal_emit(layout, "temp,state,known", "");
+   					snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
+    		    	elm_object_part_text_set(layout, "value.text", s);
 
-				Evas_Object *eo = elm_layout_edje_get(layout);
-		    	Edje_Message_Float msg;
-				double level =  (double)((temp_x + (temp_y*0.01)) - TEMP_MIN) /
+		        	sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
+
+					Evas_Object *eo = elm_layout_edje_get(layout);
+			    	Edje_Message_Float msg;
+					double level =  (double)((temp_x + (temp_y*0.01)) - TEMP_MIN) /
     	           				(double)(TEMP_MAX - TEMP_MIN);
 
-   				if (level < 0.0) level = 0.0;
-   				else if (level > 1.0) level = 1.0;
-   				msg.val = level;
-		    	edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
-			}
-        	else if(strstr(sensor_datatype_get(sensor), "BOOL"))
-        	{
+   					if (level < 0.0) level = 0.0;
+   					else if (level > 1.0) level = 1.0;
+   					msg.val = level;
+		    		edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
+				}
+
+				if((t = edje_object_data_get(layout, "action")))
+				{
 			  	if(atoi(sensor_data_get(sensor)) == 0)
            			elm_object_signal_emit(layout, "end", "over");
     	        else
                		elm_object_signal_emit(layout, "animate", "over");
+				}
 
-               elm_object_part_text_set(layout, "text", room_name_get(room));
-			}
-	   	}
+				if((t = edje_object_data_get(layout, "value")))
+				{
+	               elm_object_part_text_set(layout, "value.text", sensor_data_get(sensor));
+               	}
+
+				if((t = edje_object_data_get(layout, "title")))
+				{
+	               elm_object_part_text_set(layout, "title.text", room_name_get(room));
+               }
+	   		}
 	   	}
 		x = x + 20;
 	}
@@ -826,7 +838,7 @@ elm_main(int argc, char **argv)
 	//Set elm locale based on setlocale returns.
 	#if ENABLE_NLS
     	elm_language_set(locale);
-    	#endif
+    #endif
 
 	INF(_("Initialize Application..."));
     app = calloc(1, sizeof(App_Info));
@@ -843,6 +855,21 @@ elm_main(int argc, char **argv)
 	   				(int)t->tm_mday,
 	  				(int)t->tm_mon+1,
 	  				1900+(int)t->tm_year);
+
+
+	Eina_List *groups = edje_file_collection_list(edams_edje_theme_file_get());
+	if(groups)
+	{
+		char *group;
+		EINA_LIST_FOREACH(groups, l, group)
+		{
+			if(strncmp(group, "meter/" , 6) == 0)
+			{
+			app->meters = eina_list_append(app->meters, eina_stringshare_add(group));
+			}
+		}
+		edje_file_collection_list_free(groups);
+	}
 
 	app->win = elm_win_add(NULL, "edams", ELM_WIN_BASIC);
 	elm_win_title_set(app->win, s);
@@ -1046,7 +1073,11 @@ elm_main(int argc, char **argv)
 	kill(child_pid, SIGKILL);
 
 	app->rooms = rooms_list_free(app->rooms);
-	//app->sensors = sensors_list_free(app->sensors);
+	app->sensors = sensors_list_free(app->sensors);
+
+	void *data;
+	EINA_LIST_FREE(app->meters, data)
+		eina_stringshare_del(data);
 
    	eina_log_domain_unregister(_log_dom);
   	 _log_dom = -1;

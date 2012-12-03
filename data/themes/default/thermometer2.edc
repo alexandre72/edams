@@ -29,8 +29,15 @@
          image: "temp2_mid.png" COMP;
       }
 
+	data
+	{
+		item: "tempvalue" "value.text";
+	}
+
+
       min: 50 250;
       max: 50 500;
+
 
       script
       {
@@ -75,7 +82,7 @@
          }
          part
          {
-            name: "temp.text.reading";
+            name: "value.text";
             type: TEXT;
             scale: 1;
             effect: OUTLINE_SOFT_SHADOW;
@@ -89,7 +96,7 @@
                color3: 0 0 0 32;
                text
                {
-	               text: "dsssssssss";
+	               text: "NA";
                   font: "Sans:style=Bold";
                   size: 10;
                   min: 1 1;
