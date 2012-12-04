@@ -96,7 +96,7 @@
                color3: 0 0 0 32;
                text
                {
-	               text: "NA";
+	               text: "";
                   font: "Sans:style=Bold";
                   size: 10;
                   min: 1 1;

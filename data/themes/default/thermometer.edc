@@ -100,7 +100,7 @@
                color3: 0 0 0 0;
                color_class: "module_label";
                text {
-                  text: "bla";
+                  text: "";
                   font: "Sans:style=Bold";
                   size: 8;
                   min: 1 1;
