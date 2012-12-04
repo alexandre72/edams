@@ -55,7 +55,7 @@ static void _notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
 static void _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _notify_set(const char *msg, const char *icon);
 static void _room_item_del_cb(void *data, Evas_Object *obj, void *event_info);
-
+static void _sensor_data_update(Sensor *sensor);
 App_Info *app = NULL;
 
 //
@@ -471,13 +471,13 @@ do_lengthy_task(Ecore_Pipe *pipe)
     int fd = 0;
 	char buf[256];
 	//int baudrate = B9600;  // default
-	int baudrate = 115200;  // default
+	//int baudrate = 115200;  // default
 
 
 	char *samples[] = {"DS18B20","PIR","DHT11"};
 
    	//fd= serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
-   	fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
+   	//fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
 
 	SeedRandomizer();
 	for(;;)
@@ -485,8 +485,8 @@ do_lengthy_task(Ecore_Pipe *pipe)
 		//serialport_read_data(fd);
 
 		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial loopback(TX<=>RX) emulation trame test.
-		//snprintf(buf, sizeof(buf), "DEVICE;0;DS18B20;INT;%d.%d;OK\n", Prandom(34), Prandom(99)); //Sotfware emulation trame test.
-		serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
+		snprintf(buf, sizeof(buf), "DEVICE;%d;DS18B20;%d.%d;OK", Prandom(3),  Prandom(34), Prandom(99)); //Sotfware emulation trame test.
+		//serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
 		sleep(3);
    }
@@ -501,8 +501,9 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 
 	char *str = malloc(sizeof(char) * len + 1);
 
-	memcpy(str, buf, len - 1);
+	memcpy(str, buf, len);
 	str[len] = '\0';
+
 	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
 
 	Sensor *sensor;
@@ -564,26 +565,9 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 			if(sensor_id_get(data) == sensor_id_get(sensor))
 			{
 					//If sensor is already here, so only update sensor data.
-					fprintf(stdout, _("INFO:Serial sensor '%d-%s'  with data '%s'...\n"), sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
+					fprintf(stdout, _("INFO:Updating sensor '%d-%s'  with data '%s'...\n"), sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
+					_sensor_data_update(sensor);
 
-					//Sync sensor data with room sensor data(if affected to any room!).
-					Eina_List *l2, *l3, *sensors;
-					Room *room;
-					Sensor *data;
-    				EINA_LIST_FOREACH(app->rooms, l2, room)
-    				{
-					sensors = room_sensors_list_get(room);
-    					EINA_LIST_FOREACH(sensors, l3, data)
-    					{
-							if(sensor_id_get(sensor) == sensor_id_get(data))
-							{
-								sensor_data_set(data, sensor_data_get(sensor));
-							}
-    					}
-    				}
-
-					Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-					elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
 					foundin = EINA_TRUE;
 					break;
 			}
@@ -593,11 +577,10 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		if(foundin == EINA_FALSE)
 		{
 			app->sensors = eina_list_append(app->sensors, sensor);
-			snprintf(s, sizeof(s), _("New sensor '%d-%s' has been created."), sensor_id_get(sensor), sensor_name_get(sensor));
+			snprintf(s, sizeof(s), _("Added new sensor '%d-%s'."), sensor_id_get(sensor), sensor_name_get(sensor));
 			//fprintf(stdout, _("INFO:%d sensors registered on serial line...\n"), eina_list_count(app->sensors));
 			_notify_set(s, "elm/icon/info/default");
-			Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-			elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
+			_sensor_data_update(sensor);
 		}
 	}
 
@@ -637,11 +620,98 @@ _clear_sensor_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __
 
 
 
+static void
+_layout_dbclicked__cb(void *data, Evas_Object *layout, const char *emission, const char *source)
+{
+   Evas_Object *edje;
+   Evas_Coord w, h;
+
+   elm_layout_sizing_eval(layout);
+   edje = elm_layout_edje_get(layout);
+   edje_object_size_min_calc(edje, &w, &h);
+   printf("Minimum size for this theme: %dx%d\n", w, h);
+}
+
+
+
+
+static void
+_sensor_data_update(Sensor *sensor)
+{
+	//Sync sensor data with room sensor data(if affected to any room!).
+	Eina_List *l2, *l3, *sensors;
+	Room *room;
+	Sensor *data;
+
+    EINA_LIST_FOREACH(app->rooms, l2, room)
+    {
+			sensors = room_sensors_list_get(room);
+    		EINA_LIST_FOREACH(sensors, l3, data)
+    		{
+				if(sensor_id_get(sensor) == sensor_id_get(data))
+					{
+						sensor_data_set(data, sensor_data_get(sensor));
+					}
+    		}
+    }
+
+	if(sensor_data_get(sensor))
+    {
+		char s[64];
+      	printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
+		snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
+		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
+
+		const char *t;
+		if((t = elm_layout_data_get(layout, "tempvalue")))
+		{
+			int temp_x, temp_y;
+		   	elm_object_signal_emit(layout, "temp,state,known", "");
+   			snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
+    		elm_object_part_text_set(layout, "value.text", s);
+
+		    sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
+
+			Evas_Object *eo = elm_layout_edje_get(layout);
+			   Edje_Message_Float msg;
+			double level =  (double)((temp_x + (temp_y*0.01)) - TEMP_MIN) /
+    	          			(double)(TEMP_MAX - TEMP_MIN);
+
+   			if (level < 0.0) level = 0.0;
+   			else if (level > 1.0) level = 1.0;
+   			msg.val = level;
+		    edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
+		}
+
+
+		if((t = elm_layout_data_get(layout, "action")))
+		{
+			 if(atoi(sensor_data_get(sensor)) == 0)
+           		elm_object_signal_emit(layout, "end", "over");
+    	      else
+               	elm_object_signal_emit(layout, "animate", "over");
+		}
+
+		if((t = elm_layout_data_get(layout, "title")))
+			elm_object_part_text_set(layout, "title.text", room_name_get(app->room));
+
+		if((t = elm_layout_data_get(layout, "value")))
+		{
+			printf("%s\n", t);
+			elm_object_part_text_set(layout, "value.text", sensor_data_get(sensor));
+		}
+	}
+}
+
+
+
 
 Evas_Object*
 _room_naviframe_content(Room *room)
 {
+	Evas_Object *layout;
     Evas_Object *gd;
+    Evas_Object *vbx, *hbx;
 	Evas_Object *ic, *img;
  	Evas_Object *bt;
     Evas_Object *label;
@@ -649,27 +719,35 @@ _room_naviframe_content(Room *room)
 
 	if(!room) return NULL;
 
+	vbx = elm_box_add(app->win);
+	evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(vbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_show(vbx);
+
     gd = elm_grid_add(app->win);
-	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(gd, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_grid_size_set(gd, 100, 100);
+    elm_box_pack_end(vbx, gd);
     evas_object_show(gd);
 
 	img = elm_image_add(app->win);
 	elm_image_smooth_set(img, EINA_TRUE);
-	elm_image_aspect_fixed_set(img, EINA_FALSE);
+	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_FALSE, EINA_TRUE);
 
     if(!elm_image_file_set(img, room_filename_get(room), "/image/1"))
 	{
 		elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
 	}
-	elm_grid_pack(gd, img, 1, 1, 25, 25);
+        elm_grid_pack(gd, img, 1, 1, 25, 25);
+
 	evas_object_show(img);
 
 	label = elm_label_add(app->win);
 	snprintf(s, sizeof(s), _(_("Room:%s")), room_name_get(room));
 	elm_object_text_set(label, s);
-	elm_grid_pack(gd, label, 30, 1, 50, 8);
+    elm_grid_pack(gd, label, 30, 1, 50, 8);
 	evas_object_show(label);
 
 	label = elm_label_add(app->win);
@@ -683,7 +761,6 @@ _room_naviframe_content(Room *room)
 	elm_grid_pack(gd, label, 30, 15, 50, 8);
 	evas_object_show(label);
 
-
 	Eina_List *l, *sensors;
 	sensors = room_sensors_list_get(room);
 	Sensor *sensor;
@@ -695,91 +772,57 @@ _room_naviframe_content(Room *room)
 	elm_object_text_set(label, s);
 
 	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Add a sensor..."));
+	elm_object_text_set(bt, _("Add..."));
 	ic = elm_icon_add(app->win);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-   	elm_icon_standard_set(ic, "sensors-creator");
+   	elm_icon_standard_set(ic, "sensors-add");
    	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt , 55, 5, 25, 8);
+	elm_grid_pack(gd, bt , 55, 5, 20, 8);
 	evas_object_smart_callback_add(bt, "clicked", _add_sensor_to_room_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
 	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Remove all sensors..."));
+	elm_object_text_set(bt, _("Remove..."));
 	ic = elm_icon_add(app->win);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-   	elm_icon_standard_set(ic, "sensors-creator");
+   	elm_icon_standard_set(ic, "sensors-remove");
    	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt , 55, 15, 25, 8);
+	elm_grid_pack(gd, bt , 55, 15, 20, 8);
 	evas_object_smart_callback_add(bt, "clicked", _clear_sensor_from_room_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
+	hbx = elm_box_add(app->win);
+	elm_box_horizontal_set(hbx, EINA_TRUE);
+	evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_homogeneous_set(hbx, EINA_TRUE);
+    elm_box_pack_end(vbx, hbx);
+	evas_object_show(hbx);
 
 	sensors = room_sensors_list_get(room);
-	int x = 1, y = 30;
 
     EINA_LIST_FOREACH(sensors, l, sensor)
     {
-    	if(sensor_data_get(sensor))
-    	{
-       	 	if(!strstr(sensor_meter_get(sensor), "default"))
-      		{
-      	    //printf("SENSOR:%s with datatype %s\n", sensor_name_get(sensor), sensor_datatype_get(sensor));
+    	layout = elm_layout_add(app->win);
+		snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
+		evas_object_name_set(layout, s);
+		evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL,  EVAS_HINT_FILL);
+		elm_box_padding_set(hbx, 5, 5);
+    	elm_box_pack_end(hbx, layout);
+		evas_object_show(layout);
 
-       	 		Evas_Object *layout = elm_layout_add(app->win);
-				snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
-       	 		evas_object_name_set(layout, s);
-				elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
-   				evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   				evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-				elm_grid_pack(gd, layout, x, y, 20, 45);
-   				evas_object_show(layout);
+		if(!strstr(sensor_meter_get(sensor), "default"))
+	      	elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
+		else
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
 
+		//elm_object_signal_callback_add(layout, "emit,bt,doubleclicked", "", _layout_dbclicked__cb, layout);
 
-				const char *t;
-				if((t = edje_object_data_get(layout, "tempvalue")))
-				{
-					int temp_x, temp_y;
-		   			elm_object_signal_emit(layout, "temp,state,known", "");
-   					snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
-    		    	elm_object_part_text_set(layout, "value.text", s);
-
-		        	sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
-
-					Evas_Object *eo = elm_layout_edje_get(layout);
-			    	Edje_Message_Float msg;
-					double level =  (double)((temp_x + (temp_y*0.01)) - TEMP_MIN) /
-    	           				(double)(TEMP_MAX - TEMP_MIN);
-
-   					if (level < 0.0) level = 0.0;
-   					else if (level > 1.0) level = 1.0;
-   					msg.val = level;
-		    		edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
-				}
-
-				if((t = edje_object_data_get(layout, "action")))
-				{
-			  	if(atoi(sensor_data_get(sensor)) == 0)
-           			elm_object_signal_emit(layout, "end", "over");
-    	        else
-               		elm_object_signal_emit(layout, "animate", "over");
-				}
-
-				if((t = edje_object_data_get(layout, "value")))
-				{
-	               elm_object_part_text_set(layout, "value.text", sensor_data_get(sensor));
-               	}
-
-				if((t = edje_object_data_get(layout, "title")))
-				{
-	               elm_object_part_text_set(layout, "title.text", room_name_get(room));
-               }
-	   		}
-	   	}
-		x = x + 20;
 	}
 
-	return gd;
+	elm_box_recalculate(hbx);
+	return vbx;
 }
 
 
@@ -934,7 +977,7 @@ elm_main(int argc, char **argv)
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-	elm_toolbar_item_append(app->toolbar,"sensors-browser", _("Sensors Creator"), sensors_creator_new, app);
+	elm_toolbar_item_append(app->toolbar,"sensors-creator", _("Sensors Creator"), sensors_creator_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);
 	elm_toolbar_item_append(app->toolbar, "close-window", _("Quit"), quit_bt_clicked_cb, app);

@@ -702,7 +702,7 @@ room_revision_set(Room *room, const char *revision)
 
 
 Room *
-room_load(Evas *evas, const char *filename)
+room_load(Evas *evas __UNUSED__, const char *filename)
 {
     Room *room = NULL;
 

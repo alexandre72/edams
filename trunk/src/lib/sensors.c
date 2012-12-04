@@ -37,7 +37,7 @@ sensor_detect(char *s)
 	//Check if new device in trame.
 	if(strncmp(s, "DEVICE;", 7) == 0)
 	{
-	   arr = eina_str_split_full(s, ";", 0, &n);
+	   arr = eina_str_split_full(s, ";", 5, &n);
 
 		if(n == 5 && (strcmp(arr[4], "OK") == 0))
 		{
@@ -62,10 +62,13 @@ sensor_detect(char *s)
 					sensor_description_set(sensor, sensor_description_get(data));
 					sensor_type_set(sensor, sensor_type_get(data));
 					sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));
-					sensor_meter_set(sensor, sensor_meter_get(data));
+
+					if(sensor_meter_get(data))
+						sensor_meter_set(sensor, sensor_meter_get(data));
 					break;
 				}
 			}
+			sensor_meter_set(sensor, "default");
 		}
 		FREE(arr[0]);
 		FREE(arr);
