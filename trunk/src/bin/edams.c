@@ -655,12 +655,13 @@ _sensor_data_update(Sensor *sensor)
     		}
     }
 
-	if(sensor_data_get(sensor))
+	if(sensor_data_get(sensor) && (app->room))
     {
 		char s[64];
       	printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
-		snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
+		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(app->room));
 		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
+
 
 		const char *t;
 		if((t = elm_layout_data_get(layout, "tempvalue")))
@@ -804,7 +805,7 @@ _room_naviframe_content(Room *room)
     EINA_LIST_FOREACH(sensors, l, sensor)
     {
     	layout = elm_layout_add(app->win);
-		snprintf(s, sizeof(s), "%d layout", sensor_id_get(sensor));
+		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
 		evas_object_name_set(layout, s);
 		evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL,  EVAS_HINT_FILL);
