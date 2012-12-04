@@ -818,7 +818,7 @@ _room_naviframe_content(Room *room)
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
 
 		//elm_object_signal_callback_add(layout, "emit,bt,doubleclicked", "", _layout_dbclicked__cb, layout);
-
+		_sensor_data_update(sensor);
 	}
 
 	elm_box_recalculate(hbx);
