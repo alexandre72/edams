@@ -8,13 +8,12 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/bin \
 -I$(top_srcdir)/src/lib \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EDAMS_CFLAGS@ \
-@ELEMENTARY_WIN32_CFLAGS@ \
 @EMOTION_CFLAGS@
 
-
-bin_PROGRAMS = edams 
+bin_PROGRAMS = edams
 
 edamsdir = $(libdir)
 
@@ -32,4 +31,4 @@ edams_LDADD = \
 	@LTLIBINTL@ \
 	@EDAMS_LIBS@ \
 	@EMOTION_LIBS@
-edams_LDFLAGS = 
+edams_LDFLAGS =

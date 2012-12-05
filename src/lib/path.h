@@ -35,4 +35,6 @@ const char *edams_rooms_data_path_get (void);
 const char *edams_sensors_data_path_get (void);
 const char *edams_edje_theme_file_get (void);
 const char *edams_theme_path_get(void);
+const char *edams_epb_file_get (void);
+const char *edams_cfg_file_get (void);
 #endif /* __PATH_H__ */

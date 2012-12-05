@@ -7,13 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/bin \
 -I$(top_srcdir)/src/lib \
-@EDAMS_CFLAGS@ \
-@ELEMENTARY_X_CFLAGS@ \
-@ELEMENTARY_WIN32_CFLAGS@
-
-if ELEMENTARY_WINDOWS_BUILD
-AM_CPPFLAGS += -DELEMENTARY_BUILD
-endif
+@EDAMS_CFLAGS@
 
 pkgdir = $(libdir)/edams/modules/$(MODULE_ARCH)
 pkg_LTLIBRARIES = skel.la

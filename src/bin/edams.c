@@ -470,23 +470,42 @@ do_lengthy_task(Ecore_Pipe *pipe)
 {
     int fd = 0;
 	char buf[256];
-	//int baudrate = B9600;  // default
-	//int baudrate = 115200;  // default
-
-
 	char *samples[] = {"DS18B20","PIR","DHT11"};
+	Elm_Prefs_Item_Type type;
+	Eina_Value value;
+	Eina_Bool softemu = EINA_FALSE;
+	Eina_Bool hardemu = EINA_FALSE;
 
-   	//fd= serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
-   	//fd= serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
+	elm_prefs_data_value_get(app->prefs_data, "main:softemu_checkb", &type, &value);
+	softemu = eina_value_get(&value, &softemu);
+	if(elm_prefs_data_value_get(app->prefs_data, "main:hardemu_checkb", &type, &value))
+		hardemu = eina_value_get(&value, &hardemu);
+
+	printf("OPTION:software emulation(snprintf) =%s\n", softemu?"TRUE":"FALSE");
+	printf("OPTION:hardware emulation(serial loopback) =%s\n", hardemu?"TRUE":"FALSE");
+
+	if(softemu == EINA_FALSE)
+	{
+		int baudrate = 115200;  // default
+		if(hardemu == EINA_TRUE)
+	   	fd = serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
+		else
+   		fd = serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
+	}
 
 	SeedRandomizer();
 	for(;;)
 	{
-		//serialport_read_data(fd);
+		//Serial loopback(TX<=>RX) emulation trame test.
+		if(hardemu == EINA_TRUE)
+			serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n");
 
-		//serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n"); //Serial loopback(TX<=>RX) emulation trame test.
-		snprintf(buf, sizeof(buf), "DEVICE;%d;DS18B20;%d.%d;OK", Prandom(3),  Prandom(34), Prandom(99)); //Sotfware emulation trame test.
-		//serialport_read_until(fd, buf, '\n');						//Disable it when software emulation, and enable it when serial loopback emulation test.
+		//Sotfware emulation trame test.
+		if(softemu == EINA_TRUE)
+			snprintf(buf, sizeof(buf), "DEVICE;%d;DS18B20;%d.%d;OK", Prandom(3),  Prandom(34), Prandom(99));
+
+		if(softemu == EINA_FALSE)
+			serialport_read_until(fd, buf, '\n');	//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
 		sleep(3);
    }
@@ -621,7 +640,7 @@ _clear_sensor_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __
 
 
 static void
-_layout_dbclicked__cb(void *data, Evas_Object *layout, const char *emission, const char *source)
+_layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *layout, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Evas_Object *edje;
    Evas_Coord w, h;
@@ -876,19 +895,23 @@ elm_main(int argc, char **argv)
         return EXIT_FAILURE;
 	}
 
-   	elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
-   	elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-
 	//Set elm locale based on setlocale returns.
 	#if ENABLE_NLS
     	elm_language_set(locale);
     #endif
+
+   	elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   	elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
+   	elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
+	elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
 
 	INF(_("Initialize Application..."));
     app = calloc(1, sizeof(App_Info));
 
 	//Init edams.
 	edams_init();
+
+	app->prefs_data = elm_prefs_data_new(edams_cfg_file_get(), NULL, EET_FILE_MODE_READ_WRITE);
 
 	//Setup main window.
 	timestamp = time(NULL);
@@ -929,6 +952,7 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_win_resize_object_add(app->win, vbx);
 	evas_object_show(vbx);
+
 
 	//Setup notify for user informations.
 	notify = elm_notify_add(app->win);
@@ -990,7 +1014,7 @@ elm_main(int argc, char **argv)
 	elm_box_pack_end(vbx, sep);
 	evas_object_show(sep);
 
-	//Create module list panel selector.
+	//Create rooms list panel selector.
     Evas_Object *panes = elm_panes_add(app->win);
     elm_win_resize_object_add(app->win, panes);
     evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1091,12 +1115,6 @@ elm_main(int argc, char **argv)
 	evas_object_resize(app->win, 480, 500);
 	evas_object_show(app->win);
 
-
-	//char *ret;
-	//settings_write("wanttoolbar", "no");
-	//ret = settings_read("wanttoolbar");
-    //INF("Test wanttoolbar setting:%s", ret);
-
    pipe = ecore_pipe_add(handler, NULL);
 
 	child_pid = fork();
@@ -1115,13 +1133,6 @@ elm_main(int argc, char **argv)
 	edams_shutdown(app);
 	ecore_pipe_del(pipe);
 	kill(child_pid, SIGKILL);
-
-	app->rooms = rooms_list_free(app->rooms);
-	app->sensors = sensors_list_free(app->sensors);
-
-	void *data;
-	EINA_LIST_FREE(app->meters, data)
-		eina_stringshare_del(data);
 
    	eina_log_domain_unregister(_log_dom);
   	 _log_dom = -1;

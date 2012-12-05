@@ -69,98 +69,6 @@ PKG_CHECK_MODULES([EMOTION],
         [have_emotion="no"])
 AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
 
-
-#Check if cross-compilation.
-lt_enable_auto_import=""
-ELM_UNIX_DEF="#undef"
-ELM_WIN32_DEF="#undef"
-have_windows="no"
-have_dlopen="no"
-case "$host_os" in
-   mingw*)
-      PKG_CHECK_MODULES([EVIL], [evil])
-      AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
-      lt_enable_auto_import="-Wl,--enable-auto-import"
-      ELM_WIN32_DEF="#define"
-      have_windows="yes"
-dnl managed by evil
-      AC_DEFINE(HAVE_DLADDR)
-      have_dlopen="yes"
-      dlopen_libs=-ldl
-      requirement_elm="evil"
-      have_socket="no"
-      ;;
-   *)
-      ELM_UNIX_DEF="#define"
-      AC_CHECK_FUNCS(dlopen, res=yes, res=no)
-      if test "x$res" = "xyes"; then
-        AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
-        have_dlopen="yes"
-      else
-        AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
-        if test "x$res" = "xyes"; then
-          AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
-          dlopen_libs=-ldl
-          have_dlopen="yes"
-        fi
-      fi
-      have_socket="yes"
-      ;;
-esac
-AC_SUBST(dlopen_libs)
-AC_SUBST(lt_enable_auto_import)
-AC_SUBST(ELM_UNIX_DEF)
-AC_SUBST(ELM_WIN32_DEF)
-AM_CONDITIONAL([ELEMENTARY_WINDOWS_BUILD], [test "x${have_windows}" = "xyes"])
-
-have_elementary_win32="no"
-want_elementary_win32="auto"
-AC_ARG_ENABLE([ecore-win32],
-   [AS_HELP_STRING([--disable-ecore-win32],[disable ecore-win32 support. @<:@default=detect@:>@])],
-   [want_elementary_win32=$enableval], [])
-
-if test "x$want_elementary_win32" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_WIN32],
-      [ecore-win32 >= 1.2.0],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_WIN32, 1, [Windows XP support for Elementary])
-       have_elementary_win32="yes"
-       requirement_elm="ecore-win32 >= 1.2.0 ${requirement_elm}"
-      ],
-      [have_elementary_win32="no"]
-   )
-else
-    have_elementary_win32="no"
-fi
-if test "x$want_elementary_win32" = "xyes" -a "x$have_elementary_win32" = "xno"; then
-    AC_MSG_ERROR([ecore-win32 support requested, but not found by pkg-config.])
-fi
-
-
-have_elementary_x="no"
-want_elementary_x="auto"
-AC_ARG_ENABLE([ecore-x],
-   [AS_HELP_STRING([--disable-ecore-x],[disable ecore-x support. @<:@default=detect@:>@])],
-   [want_elementary_x=$enableval], [])
-
-if test "x$want_elementary_x" != "xno"; then
-   PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= 1.2.0],
-      [
-       AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
-       have_elementary_x="yes"
-       requirement_elm="ecore-x >= 1.2.0 ${requirement_elm}"
-      ],
-      [have_elementary_x="no"]
-   )
-else
-    have_elementary_x="no"
-fi
-if test "x$want_elementary_x" = "xyes" -a "x$have_elementary_x" = "xno"; then
-    AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
-fi
-
-
 #Set edje_cc path.
 AC_ARG_WITH([edje-cc],
    [AS_HELP_STRING([--with-edje-cc=PATH],[specify a specific path to edje_cc])],
@@ -168,6 +76,14 @@ AC_ARG_WITH([edje-cc],
     AC_MSG_NOTICE([edje_cc explicitly set to $edje_cc])
    ],[edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc])
 AC_SUBST(edje_cc)
+
+#Set elm_prefs_cc path.
+AC_ARG_WITH([elm_prefs_cc],
+   [AS_HELP_STRING([--with-elm-prefs-cc=PATH],[specify a specific path to elm_prefs_cc])],
+   [elm_prefs_cc=$withval;
+    AC_MSG_NOTICE([elm_prefs_cc explicitly set to $elm_prefs_cc])
+   ],[elm_prefs_cc=$(pkg-config --variable=prefix edje)/bin/elm_prefs_cc])
+AC_SUBST(elm_prefs_cc)
 
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
@@ -210,24 +126,16 @@ echo "$PACKAGE_NAME $PACKAGE_VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
-echo
-echo "Engines"
-echo "  X11..................: ${have_elementary_x}"
-echo "  Windows XP...........: ${have_elementary_win32}"
-echo
 if test "${have_emotion}" = "yes"; then
-echo "  Sound Support........: Emotion backend"
-fi
-if test "${have_windows}" = "yes"; then
-echo
-echo "Windows build"
-echo "  Elementary Win32.....: ${have_elementary_win32}"
+echo "  Sound Support........: Yes(Emotion backend)"
 fi
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
+echo "  edje_cc..............: $edje_cc"
+echo "  elm_prefs_cc.........: $elm_prefs_cc"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'su
 do')"

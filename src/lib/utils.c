@@ -88,15 +88,15 @@ get_special_folder (int csidl)
   HRESULT hr;
   LPITEMIDLIST pidl = NULL;
   BOOL b;
-  
+
   hr = SHGetSpecialFolderLocation (NULL, csidl, &pidl);
     if (hr == S_OK)
     {
         b = SHGetPathFromIDListW (pidl, wpath);
-      
+
         if(b)
             wcstombs(s, wpath, wcslen(wpath)+1);
-        
+
     CoTaskMemFree (pidl);
     }
   return s;
@@ -147,7 +147,7 @@ const char *user_home_get(void)
 //
 //Close a window by deleting evas object passing arg.
 //
-void 
+void
 window_clicked_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	evas_object_del(data);
@@ -158,7 +158,7 @@ window_clicked_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_inf
 //
 //Show a window message to inform user about something.
 //
-void 
+void
 msgbox(const char *msg)
 {
    Evas_Object *win, *popup, *ic;
@@ -173,15 +173,15 @@ msgbox(const char *msg)
    popup = elm_popup_add(win);
    evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(popup, msg);
-                       
+
    bt = elm_button_add(popup);
    elm_object_text_set(bt, _("Ok"));
    elm_object_part_content_set(popup, "button1", bt);
    ic = elm_icon_add(popup);
    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
    elm_icon_standard_set(ic, "apply-window");
-   elm_object_part_content_set(bt, "icon", ic);   
+   elm_object_part_content_set(bt, "icon", ic);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
-   
+
 	evas_object_show(popup);
 }
