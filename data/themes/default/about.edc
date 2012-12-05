@@ -1,0 +1,127 @@
+/*
+ * about.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2012 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+group {
+      name: "about";
+      images
+      {
+         image: "about1.png" COMP;
+         image: "about2.png" COMP;
+         image: "about3.png" COMP;
+      }
+      parts
+      {
+         part
+         {
+
+            name: "base";
+            description
+            {
+               state: "default" 0.0;
+               aspect_preference: BOTH;
+               align: 0 0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+               image.normal: "about1.png";
+	        }
+         }
+         part
+         {
+            name: "text";
+            description
+            {
+			   	state: "default" 0.0;
+               	visible: 1;
+				rel1.relative: 0.2 0.2;
+				rel2.relative: 0.8 0.8;
+               	image.normal: "about2.png";
+            }
+         }
+        part
+         {
+            name: "logo";
+            description
+            {
+			   	state: "default" 0.0;
+               	visible: 0;
+				rel1.relative: 0.4 0.4;
+				rel2.relative: 0.5 0.5;
+               	image.normal: "about3.png";
+            }
+            description
+            {
+				state: "show" 0.0;
+                visible:1;
+             }
+         }
+
+
+         part
+         {
+            name: "over";
+            type: RECT;
+            description
+            {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+      }
+       programs
+       {
+		program
+		{
+    	     signal: "load";
+    	     source: "";
+	         in: 2.0 0.0;
+         	after: "logo_show";
+		}
+		program
+        {
+            name: "text_show";
+            signal: "animation,start";
+            source: "";
+            action: STATE_SET "default" 0.0;
+		    transition: SINUSOIDAL 1.0;
+            target: "text";
+            after: "logo_show";
+        }
+		program
+        {
+            name: "logo_show";
+            signal: "animation,start";
+            source: "";
+            action: STATE_SET "show" 0.0;
+		    transition: LINEAR 0.5;
+            target: "logo";
+            after: "logo_hide";
+        }
+		program
+        {
+            name: "logo_hide";
+            signal: "animation,start";
+            source: "";
+            action: STATE_SET "hide" 0.0;
+		    transition: LINEAR 0.5;
+            target: "logo";
+            after: "logo_show";
+        }
+      }
+   }
