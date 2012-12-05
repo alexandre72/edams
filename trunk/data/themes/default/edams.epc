@@ -1,0 +1,49 @@
+collection
+{
+   page
+   {
+      name: "main";
+      version: 1;
+      title: "Preferences";
+      subtitle: "Example 01";
+      widget: "elm/vertical_box";
+
+      items {
+           item {
+            name: "softemu_checkb";
+            type: BOOL;
+            label: "Sofware serial emulation";
+            bool {
+               default: false;
+            }
+         }
+
+           item {
+            name: "hardemu_checkb";
+            type: BOOL;
+            label: "Hardware serial emulation(loopback)";
+
+            bool {
+               default: false;
+            }
+         }
+
+         item {
+            name: "sep";
+            type: SEPARATOR;
+         }
+
+         item {
+            name: "save";
+            type: SAVE;
+            label: "Save";
+         }
+
+         item {
+            name: "reset";
+            type: RESET;
+            label: "Reset";
+         }
+      }
+   }
+}
