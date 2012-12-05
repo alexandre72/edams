@@ -39,6 +39,7 @@ typedef struct
 	Eina_List *rooms;
 	Eina_List *sensors;
 	Eina_List *meters;
+	Elm_Prefs_Data *prefs_data;
 	Room *room;
 } App_Info;
 

@@ -40,11 +40,11 @@ struct _Sensor {
     unsigned int picture__id;
     const char * soundfile;
     const char * group;
-    const char *__eet_filename;
+    char *__eet_filename;
     const char * creation;
 	const char * revision;
     unsigned int version;
-    const char * data;
+    char * data;
 	const char * meter;
 };
 
@@ -55,7 +55,7 @@ struct _Room {
     Eina_List * sensors;
     Evas_Object * photo;
     unsigned int photo__id;
-    const char *__eet_filename;
+    char *__eet_filename;
     const char * creation;
     const char * revision;
     unsigned int version;
@@ -330,7 +330,7 @@ sensor_picture_set(Sensor *sensor, Evas_Object *picture)
 }
 
 Evas_Object *
-sensor_picture_get(const Sensor *sensor, Evas *evas, const char *eet_file)
+sensor_picture_get(Sensor *sensor, Evas *evas, const char *eet_file)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(sensor, NULL);
     if (sensor->picture) return sensor->picture;
@@ -357,7 +357,7 @@ sensor_group_get(const Sensor *sensor)
     return sensor->group;
 }
 
-inline void
+void
 sensor_group_set(Sensor *sensor, const char *group)
 {
     EINA_SAFETY_ON_NULL_RETURN(sensor);
@@ -385,7 +385,7 @@ sensor_data_get(const Sensor *sensor)
 }
 
 inline void
-sensor_data_set(Sensor *sensor, const char *data)
+sensor_data_set(Sensor *sensor, char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(sensor);
 
@@ -680,7 +680,7 @@ room_creation_get(Room *room)
     return room->creation;
 }
 
-inline void
+void
 room_creation_set(Room *room, const char *creation)
 {
     EINA_SAFETY_ON_NULL_RETURN(room);
@@ -693,7 +693,7 @@ patient_profil_revision_get(const Room *room)
     return room->revision;
 }
 
-inline void
+void
 room_revision_set(Room *room, const char *revision)
 {
     EINA_SAFETY_ON_NULL_RETURN(room);
@@ -928,7 +928,7 @@ sensor_save(Sensor *sensor)
 
 
 Sensor *
-sensor_load(Evas *evas, const char *filename)
+sensor_load(Evas *evas __UNUSED__, const char *filename)
 {
     Sensor *sensor = NULL;
 

@@ -41,15 +41,14 @@ list_cb(Eina_Module *m, void *data)
 
     file = eina_module_file_get(m);
 
-        
+
     if (!eina_module_load(m))
     {
 		ERR(_("Can't load module %s: %s"), file, eina_error_msg_get(eina_error_get()));
 		return EINA_FALSE;
     }
 
-	module = MALLOC(sizeof(*module));
-	
+    module = calloc(1, sizeof(Module_Info));
     print_infos = eina_module_symbol_get(m, "_print_module_infos");
    if (!print_infos )
    {

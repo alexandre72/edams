@@ -27,13 +27,14 @@
 int edams_shutdown(App_Info *app)
 {
 	INF(_("Shutdown Edams..."));
-	Eina_List *modules = evas_object_data_get(app->win, "modules");    
-    modules = modules_list_free(modules);
-	modules = evas_object_data_del(app->win, "modules");
+	app->rooms = rooms_list_free(app->rooms);
+	app->sensors = sensors_list_free(app->sensors);
+	void *data;
+	EINA_LIST_FREE(app->meters, data)
+		eina_stringshare_del(data);
 	rooms_shutdown();
+	elm_prefs_data_unref(app->prefs_data);
 	FREE(app);
 
-    //MALLOC_DUMP();
-    
 	return EINA_TRUE;
 }

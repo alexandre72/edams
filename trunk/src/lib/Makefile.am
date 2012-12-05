@@ -8,13 +8,11 @@ AM_CPPFLAGS = \
 -DPACKAGE_DIR=\"$(prefix)\" \
 -g -DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
 @EDAMS_CFLAGS@ \
-@ELEMENTARY_WIN32_CFLAGS@ \
 @EMOTION_CFLAGS@
 
 lib_LTLIBRARIES = libedams.la
 
 libedams_la_SOURCES = \
-mem.c \
 modules.c \
 myfileselector.c \
 path.c \
@@ -29,4 +27,4 @@ libedams_la_LIBADD = \
 @LTLIBINTL@ \
 @EMOTION_LIBS@
 
-libedams_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -avoid-version
+libedams_la_LDFLAGS = -no-undefined -avoid-version

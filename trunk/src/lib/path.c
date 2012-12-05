@@ -86,7 +86,7 @@ edams_locale_path_get(void)
 {
 #ifdef HAVE_EVIL
 	char s[PATH_MAX];
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"locale", edams_install_path_get());	
+	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"locale", edams_install_path_get());
 	return strdup(s);
 #else
 	return PACKAGE_LOCALE_DIR;
@@ -123,11 +123,36 @@ edams_rooms_data_path_get(void)
 //
 //
 const char *
+edams_cfg_file_get (void)
+{
+    char s[PATH_MAX];
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"edams.cfg", edams_data_path_get());
+	return strdup(s);
+}
+
+
+//
+//
+//
+const char *
 edams_theme_path_get(void)
 {
 	char s[PATH_MAX];
-	
+
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"themes"DIR_SEPARATOR_S"default", edams_install_path_get());
+	return strdup(s);
+}
+
+
+//
+//
+//
+const char *
+edams_epb_file_get (void)
+{
+	char s[PATH_MAX];
+
+	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"themes"DIR_SEPARATOR_S"default"DIR_SEPARATOR_S"edams.epb", edams_install_path_get());
 	return strdup(s);
 }
 
@@ -139,7 +164,7 @@ const char *
 edams_edje_theme_file_get (void)
 {
 	char s[PATH_MAX];
-	
+
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"themes"DIR_SEPARATOR_S"default"DIR_SEPARATOR_S"edams.edj", edams_install_path_get());
 	return strdup(s);
 }

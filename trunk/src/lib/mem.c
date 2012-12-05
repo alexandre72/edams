@@ -25,7 +25,7 @@
 static int malloc_count = 0;    //Count calls to MALLOC().  Count calls to MALLOC().
 static int calloc_count = 0;    //Count calls to CALLOC().  Count calls to CALLOC().
 static int realloc_count = 0;   //Count calls to REALLOC().
-static int free_count = 0;      //Count calls to FREE(). 
+static int free_count = 0;      //Count calls to FREE().
 
 
 //
@@ -37,7 +37,7 @@ _malloc(const char *var, const char *filename, unsigned long line, size_t size)
     void *temp;
 
     ++malloc_count;
-    
+
     //INF(_("Variable %s %lu bytes requested at %s:%lu."), var, size, filename, line);
 
     temp = (void *) malloc(size);
@@ -60,12 +60,12 @@ _realloc(const char *var, const char * filename, unsigned long line, void *ptr, 
     //INF(_("Variable %s (%10p -> %lu) at %s:%lu."), var, ptr, (unsigned long) size, filename, line);
     if (!ptr) {
         temp = (void *) _malloc(var, filename, line, size);
-    } 
-    else if (size == 0) 
+    }
+    else if (size == 0)
     {
         _free(var, filename, line, ptr);
         temp = NULL;
-    } else 
+    } else
     {
         temp = (void *) realloc(ptr, size);
     }
@@ -84,55 +84,6 @@ _calloc(const char *filename, unsigned long line, size_t count, size_t size)
     ++calloc_count;
     //INF(_("%lu units of %lu bytes each requested at %s:%lu."), count, size, filename, line);
     temp = (void *) calloc(count, size);
-    
+
     return (temp);
-}
-
-//LibAST implementation of free().
-void
-_free(const char * var, const char * filename, unsigned long line, void *ptr)
-{
-    ++free_count;
-    //INF(_("Variable %s (%10p) at %s:%lu"), var, ptr, filename, line);
-    if (ptr) 
-    {
-        free(ptr);
-        ptr = NULL;
-    } 
-    //else 
-   // {
-   //     ERR(_("Caught attempt to free NULL pointer!"));
-   // }
-}
-
-//
-//LibAST implementation of strdup().
-//
-char *
-_mystrdup(const char * var, const char * filename, unsigned long line, const char * str)
-{
-    register char * newstr;
-    register size_t len;
-
-    //INF(_("Variable %s (%10p) at %s:%lu."), var, str, filename, line);
-    //Copy NUL byte also.
-    len = strlen((char *) str) + 1;
-    newstr = (char *) _malloc(var, (char *) filename, line, len);
-    strcpy((char *) newstr, (char *) str);
-    return (newstr);
-}
-
-
-
-//
-//Dump listing of tracked pointers.
-//
-void
-_dump_mem(void)
-{
-    INF(_("Dumping memory usage:"));
-    INF(_("Calls to malloc(): %d."), malloc_count);
-    INF(_("Calls to realloc(): %d."), realloc_count);
-    INF(_("Calls to calloc(): %d."), calloc_count);    
-    INF(_("Calls to free(): %d."), free_count);
 }

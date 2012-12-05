@@ -44,7 +44,6 @@ extern int _log_dom;
 
 #include "gettext.h"
 
-
 #ifdef HAVE_EVIL
 #define DIR_SEPARATOR '\\'
 #define DIR_SEPARATOR_S "\\"
@@ -59,18 +58,30 @@ extern int _log_dom;
 
 #define __UNUSED__ __attribute__((unused))
 
-#ifdef HAVE_EVIL
-#define CRITICAL(...) printf( __VA_ARGS__); printf("\n");
-#define ERR(...) printf( __VA_ARGS__); printf("\n");
-#define WRN(...) printf(__VA_ARGS__); printf("\n");
-#define INF(...) printf(__VA_ARGS__); printf("\n");
-#define DBG(...) printf( __VA_ARGS__); printf("\n");
-#else
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
 #define INF(...)      EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
-#endif
+
+#define FREE(ptr)  do { _free( #ptr, __FILE__, __LINE__, (ptr)); (ptr) = NULL; } while (0)
+
+
+inline void
+_free(const char * var, const char * filename, unsigned long line, void *ptr)
+{
+    //++free_count;
+    //INF(_("Variable %s (%10p) at %s:%lu"), var, ptr, filename, line);
+    if (ptr)
+    {
+        free(ptr);
+        ptr = NULL;
+    }
+    else
+    {
+        ERR(_("Caught attempt to free NULL pointer variable %s at %s:%lu!"), var, filename, line);
+    }
+}//_free
+
 
 #endif /* __LIBEDAMS_H__ */
