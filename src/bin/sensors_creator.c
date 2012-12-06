@@ -19,11 +19,13 @@
  */
 
 
+#include <Evas.h>
+
 
 #include "edams.h"
-#include "libedams.h"
 #include "myfileselector.h"
-
+#include "utils.h"
+#include "path.h"
 
 //
 //Apply adding new sensor file.
@@ -36,11 +38,11 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
     Evas_Object *img;
     Evas_Object *eo;
 	Ecore_Evas *ee;
-	Evas *evas;     
+	Evas *evas;
 	Sensor *sensor;
 
   	win = (Evas_Object *)data;
-    
+
 	sensor = sensor_new(-1,  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     sensor_name_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor name entry", -1)));
     sensor_description_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor description entry", -1)));
@@ -49,11 +51,11 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
    	eo = NULL;
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
-	evas = ecore_evas_get(ee); 
-	
+	evas = ecore_evas_get(ee);
+
 	img = elm_object_name_find(win, "sensor image", -1);
     elm_image_file_get(img, &f, &g);
-    
+
     //Don't try to update if isn't a new item image!
     if(f &&  (eina_str_has_extension(f, ".eet") == EINA_FALSE))
     {
@@ -70,11 +72,11 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	//elm_object_item_del_cb_set(it, _sensor_item_del_cb);
 
 	if(eo)
-	{		
+	{
 		evas_object_del(eo);
     	elm_image_file_set(img, sensor_filename_get(sensor), "/image/1");
 	}
-	
+
 	evas_object_del(win);
 }
 
@@ -90,20 +92,20 @@ _action_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info 
 	MyFileSelector *myfs = (MyFileSelector *)data;
 
     sel = elm_fileselector_selected_get(myfs->fs);
-    
+
     if(sel)
     {
         if((eina_str_has_extension(sel, ".png") == EINA_TRUE) ||
             (eina_str_has_extension(sel, "jpg") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, ".jpeg") == EINA_TRUE) ||    
-            (eina_str_has_extension(sel, ".gif") == EINA_TRUE) ||                    
+            (eina_str_has_extension(sel, ".jpeg") == EINA_TRUE) ||
+            (eina_str_has_extension(sel, ".gif") == EINA_TRUE) ||
             (eina_str_has_extension(sel, ".bmp") == EINA_TRUE))
             {
                 Evas_Object *img;
 			    img = evas_object_data_get(myfs->win, "image");
                 elm_image_file_set(img, sel, NULL);
 			}
-    }    
+    }
     myfileselector_close(myfs);
 }
 
@@ -114,10 +116,10 @@ _action_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info 
 //
 static void
 _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{    
+{
     Evas_Object *img = data;
  	MyFileSelector *myfs;
- 	
+
 	myfs = myfileselector_add();
 	myfileselector_set_title(myfs, _("Select a picture file"));
 	evas_object_data_set(myfs->win, "image", img);
@@ -129,7 +131,7 @@ _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 //
 //
 //
-void 
+void
 sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd, *fr;
@@ -137,9 +139,9 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 	Evas_Object *bt;
 	Evas_Object *entry;
  	App_Info *app;
- 
+
 	app = (App_Info*)data;
- 
+
 	win = elm_win_util_standard_add("sensor_creator", _("Sensor Creator"));
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
@@ -150,17 +152,17 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 	elm_win_resize_object_add(win, gd);
 	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(gd);
-	
+
 	fr = elm_frame_add(win);
 	elm_grid_pack(gd, fr, 1, 1, 30, 40);
 	evas_object_show(fr);
-		
+
 	img = elm_image_add(win);
 	evas_object_name_set(img, "sensor image");
 	elm_image_smooth_set(img, EINA_TRUE);
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
-	elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");    
+	elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
 	elm_grid_pack(gd, img, 5, 5, 25, 25);
 	evas_object_show(img);
 
@@ -176,20 +178,20 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 
     label = elm_label_add(win);
 	elm_object_text_set(label, _("Name:"));
-	elm_grid_pack(gd, label, 32, 2, 30, 7);    
+	elm_grid_pack(gd, label, 32, 2, 30, 7);
 	evas_object_show(label);
-		
+
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "sensor name entry");	
+	evas_object_name_set(entry, "sensor name entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 51, 2, 40, 9);    
+	elm_grid_pack(gd, entry, 51, 2, 40, 9);
 	evas_object_show(entry);
 
 	label = elm_label_add(win);
 	elm_object_text_set(label, _("Description:"));
-	elm_grid_pack(gd, label, 32, 15, 30, 7);    
+	elm_grid_pack(gd, label, 32, 15, 30, 7);
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
@@ -197,12 +199,12 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 51, 15, 40, 9);    
+	elm_grid_pack(gd, entry, 51, 15, 40, 9);
 	evas_object_show(entry);
-    
+
     label = elm_label_add(win);
 	elm_object_text_set(label, _("Type:"));
-	elm_grid_pack(gd, label, 32, 30, 30, 7);    
+	elm_grid_pack(gd, label, 32, 30, 30, 7);
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
@@ -210,12 +212,12 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 51, 30, 40, 9);    
-	evas_object_show(entry);    
-    
+	elm_grid_pack(gd, entry, 51, 30, 40, 9);
+	evas_object_show(entry);
+
 	label = elm_label_add(win);
 	elm_object_text_set(label, _("Datasheet URL:"));
-	elm_grid_pack(gd, label, 32, 45, 30, 7);    
+	elm_grid_pack(gd, label, 32, 45, 30, 7);
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
@@ -223,9 +225,9 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 51, 45, 40, 9);    
-	evas_object_show(entry);    
-    
+	elm_grid_pack(gd, entry, 51, 45, 40, 9);
+	evas_object_show(entry);
+
 	bt = elm_button_add(win);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	ic = elm_icon_add(win);
@@ -233,7 +235,7 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 	elm_icon_standard_set(ic, "dialog-ok-apply");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Ok"));
-	elm_grid_pack(gd, bt, 20, 85, 20, 12);    
+	elm_grid_pack(gd, bt, 20, 85, 20, 12);
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", _add_apply_bt_clicked_cb, win);
 
@@ -247,6 +249,6 @@ sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __
     elm_grid_pack(gd, bt, 60, 85, 20, 12);
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
-	
+
 	evas_object_resize(win, 400, 250);
 }

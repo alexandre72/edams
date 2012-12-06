@@ -27,7 +27,6 @@
 
 #include "rooms.h"
 #include "libedams.h"
-#include "mem.h"
 #include "path.h"
 
 struct _Sensor {

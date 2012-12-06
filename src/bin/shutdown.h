@@ -1,5 +1,5 @@
 /*
- * edams.h
+ * shutdown.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -19,35 +19,11 @@
  */
 
 
-#ifndef __EDAMS_H__
-#define __EDAMS_H__
+#ifndef __SHUTDOWN_H
+#define __SHUTDOWN_H
 
+#include "edams.h"
 
-#include <Evas.h>
-#include <Eina.h>
+int edams_shutdown(App_Info *app);
 
-#include "libedams.h"
-#include "rooms.h"
-
-//
-//Define App UI. Can be used to modify it dynamicaly.
-//
-typedef struct
-{
-	Evas_Object *win;
-	Evas_Object *waiting_win;
-	Evas_Object *toolbar;
-	Eina_List *rooms;
-	Eina_List *sensors;
-	Eina_List *meters;
-	Elm_Prefs_Data *prefs_data;
-	Room *room;
-} App_Info;
-
-
-Evas_Object*_room_naviframe_content(Room *room);
-
-//preferences_dlg.c: Preferences dialog.
-void preferences_dlg_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-
-#endif /* __EDAMS_H__ */
+#endif

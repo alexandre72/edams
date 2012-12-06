@@ -29,7 +29,8 @@
 
 
 
-int edams_init()
+int
+edams_init()
 {
 	char s[PATH_MAX];
 	//Elm_Theme *th;
@@ -62,8 +63,8 @@ int edams_init()
     strcpy(s, edams_sensors_data_path_get());
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
-	
-		
+
+
     //Create cache directory.
 	//snprintf(s, sizeof(s), "%s/edams", efreet_cache_home_get());
 	//if(ecore_file_is_dir(s) == 0)
@@ -76,7 +77,7 @@ int edams_init()
 	//elm_finger_size_set(0);
     elm_language_set("fr_FR.UTF-8");
 	//evas_object_del(win);
-	
+
 	//Initialize rooms descriptor.
 	rooms_init();
 

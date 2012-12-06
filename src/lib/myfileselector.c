@@ -18,9 +18,11 @@
  * along with Elm Extension Pack. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "myfileselector.h"
 
+#include "libedams.h"
+#include "path.h"
+#include "utils.h"
 
 //Taken from enlightenment DR17 credits goes to his authors.
 static char * _file_user_get(uid_t st_uid);

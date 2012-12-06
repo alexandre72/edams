@@ -20,7 +20,7 @@
 
 
 #include "sensors.h"
-
+#include "libedams.h"
 
 //
 //

@@ -22,10 +22,9 @@
 #ifndef __SENSORSPICKER_H
 #define __SENSORSPICKER_H
 
+#include <Eina.h>
 #include "edams.h"
-#include "rooms.h"
-#include "sensors.h"
-#include "utils.h"
+
 
 Eina_Bool sensorpicker_add_to_room(App_Info *app);
 

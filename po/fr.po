@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FriLogos 0.1\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
-"POT-Creation-Date: 2012-11-29 13:42+0100\n"
+"POT-Creation-Date: 2012-12-06 20:07+0100\n"
 "PO-Revision-Date: 2012-11-29 13:57+0100\n"
 "Last-Translator: Alexandre Dussart <alexandre.dussart@laposte.net>\n"
 "Language-Team: français <alexandre.dussart@laposte.net>\n"
@@ -18,78 +18,75 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
-#: src/bin/about_dlg.c:97
-msgid "About edams..."
-msgstr "A propos d'E.D.A.M.S..."
+#: src/bin/about_dlg.c:39
+msgid "About E.D.A.M.S..."
+msgstr ""
 
-#: src/bin/about_dlg.c:189 src/bin/sensors_picker.c:427
-#: src/lib/myfileselector.c:352 src/lib/myfontselector.c:369
+#: src/bin/about_dlg.c:67 src/bin/sensors_picker.c:179
+#: src/lib/myfileselector.c:354
 msgid "Close"
 msgstr "Fermer"
 
-#: src/bin/edams.c:120
+#: src/bin/edams.c:125
 #, c-format
 msgid "Room %s has been created."
 msgstr "La pièce %s a été créée."
 
-#: src/bin/edams.c:167 src/bin/sensors_creator.c:122
+#: src/bin/edams.c:172 src/bin/sensors_creator.c:124
 msgid "Select a picture file"
 msgstr "Sélectionner un fichier image..."
 
-#: src/bin/edams.c:185
+#: src/bin/edams.c:190
 msgid "Room Description"
 msgstr "Description de la pièce"
 
-#: src/bin/edams.c:210 src/bin/sensors_creator.c:168
+#: src/bin/edams.c:215 src/bin/sensors_creator.c:170
 msgid "Photo..."
 msgstr "Photo..."
 
-#: src/bin/edams.c:220 src/bin/sensors_creator.c:178
-#: src/bin/sensors_picker.c:210
+#: src/bin/edams.c:225 src/bin/sensors_creator.c:180
 msgid "Name:"
 msgstr "Nom:"
 
-#: src/bin/edams.c:233 src/bin/sensors_creator.c:191
-#: src/bin/sensors_picker.c:224
+#: src/bin/edams.c:238 src/bin/sensors_creator.c:193
 msgid "Description:"
 msgstr "Description:"
 
-#: src/bin/edams.c:251 src/bin/sensors_creator.c:235
-#: src/bin/sensors_picker.c:286 src/lib/utils.c:178
+#: src/bin/edams.c:256 src/bin/sensors_creator.c:237 src/lib/utils.c:178
 msgid "Ok"
 msgstr "Ok"
 
-#: src/bin/edams.c:262 src/bin/sensors_creator.c:246
+#: src/bin/edams.c:267 src/bin/sensors_creator.c:248
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/bin/edams.c:373
+#: src/bin/edams.c:375
 #, c-format
 msgid "Room '%s' have been removed."
 msgstr "Pièce '%s' a été supprimée."
 
-#: src/bin/edams.c:399
+#: src/bin/edams.c:401
 msgid "Can't remove:no room selected!"
 msgstr "Impossible de supprimer:aucune pièce sélectionnée!"
 
-#: src/bin/edams.c:412
+#: src/bin/edams.c:414
 msgid "Are you sure to want to remove selected room?"
 msgstr "Êtes vous sûr de vouloir supprimer les pièces sélectionnées?"
 
-#: src/bin/edams.c:415
+#: src/bin/edams.c:417
 msgid "Yes"
 msgstr "Oui"
 
-#: src/bin/edams.c:424
+#: src/bin/edams.c:426
 msgid "No"
 msgstr "Non"
 
-#: src/bin/edams.c:480
+#: src/bin/edams.c:532
 #, c-format
 msgid "INFO:Serial in content '%s'(%d bytes)\n"
 msgstr "INFO:Contenu série '%s'(%d octets)\n"
 
-#: src/bin/edams.c:488
+#: src/bin/edams.c:542
 #, c-format
 msgid ""
 "INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial "
@@ -98,113 +95,109 @@ msgstr ""
 "INFO:Initialisation d'EDAMS(calibrage des capteurs, initialisation des "
 "variables, mise en place du port série...)\n"
 
-#: src/bin/edams.c:492
+#: src/bin/edams.c:547
 msgid "Initialize EDAMS wait please..."
 msgstr "Initialisation d'EDAMS, attendez s'il vous plaît..."
 
-#: src/bin/edams.c:508
+#: src/bin/edams.c:563
 msgid "calibrating sensors, setting serial port... "
 msgstr "Calibrage des capteurs, mise en place du port série..."
 
-#: src/bin/edams.c:518
+#: src/bin/edams.c:576
 #, c-format
 msgid "INFO:EDAMS is ready and operationnal\n"
 msgstr "INFO:EDAMS est prêt et opérationnel\n"
 
-#: src/bin/edams.c:536
-#, c-format
-msgid "INFO:Serial sensor '%d-%s'  with data '%s' of type '%s'...\n"
+#: src/bin/edams.c:593
+#, fuzzy, c-format
+msgid "INFO:Updating sensor '%d-%s'  with data '%s'...\n"
 msgstr ""
 "INFO:Capteur '%d-%s' sur liaison série avec donnée '%s' de type '%s'...\n"
 
-#: src/bin/edams.c:547
-#, c-format
-msgid "New sensor '%d-%s' has been created."
-msgstr "Le nouveau capteur '%d-%s' a été créé."
+#: src/bin/edams.c:605
+#, fuzzy, c-format
+msgid "Added new sensor '%d-%s'."
+msgstr "Ajouter un capteur..."
 
-#: src/bin/edams.c:548
-#, c-format
-msgid "INFO:%d sensors registered on serial line...\n"
-msgstr "INFO:%d capteurs trouvés sur la liaison série...\n"
-
-#: src/bin/edams.c:568
+#: src/bin/edams.c:621
 msgid "Can't add a sensor to room:no room selected!"
 msgstr "Impossible d'ajouter un capteur:aucune pièce sélectionnée!"
 
-#: src/bin/edams.c:586
+#: src/bin/edams.c:635
 msgid "Can't clear room sensors list:no room selected!"
 msgstr "Impossible de retirer les capteurs:aucune pièce sélectionnée!"
 
-#: src/bin/edams.c:627
+#: src/bin/edams.c:786
 #, c-format
 msgid "Room:%s"
 msgstr "Pièce:%s"
 
-#: src/bin/edams.c:633
+#: src/bin/edams.c:792
 #, c-format
 msgid "Description:%s"
 msgstr "Description:%s"
 
-#: src/bin/edams.c:639
+#: src/bin/edams.c:798
 #, c-format
 msgid "Sensors:"
 msgstr "Capteurs:"
 
-#: src/bin/edams.c:654
-msgid "Add a sensor..."
-msgstr "Ajouter un capteur..."
+#: src/bin/edams.c:813
+msgid "Add..."
+msgstr ""
 
-#: src/bin/edams.c:664
-msgid "Remove all sensors..."
-msgstr "Supprimer les capteurs..."
+#: src/bin/edams.c:823
+#, fuzzy
+msgid "Remove..."
+msgstr "Supprimer"
 
-#: src/bin/edams.c:753
+#: src/bin/edams.c:897
 #, c-format
 msgid "CRI:Can't init Eina!\n"
 msgstr "CRI:Impossible d'initialiser Eina!\n"
 
-#: src/bin/edams.c:764
+#: src/bin/edams.c:908
 msgid "Can't init Elementary!"
 msgstr "Impossible d'initialiser Elementary!"
 
-#: src/bin/edams.c:776
+#: src/bin/edams.c:922
 msgid "Initialize Application..."
 msgstr "Initialisation de l'application..."
 
-#: src/bin/edams.c:786
+#: src/bin/edams.c:934
 #, c-format
 msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
 msgstr "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
 
-#: src/bin/edams.c:855
+#: src/bin/edams.c:1019
 msgid "Sensors Creator"
 msgstr "Base de données des capteurs"
 
-#: src/bin/edams.c:856 src/bin/preferences_dlg.c:194
+#: src/bin/edams.c:1020 src/bin/preferences_dlg.c:35
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/bin/edams.c:857
+#: src/bin/edams.c:1021
 msgid "About"
 msgstr "A propos"
 
-#: src/bin/edams.c:858
+#: src/bin/edams.c:1022
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/bin/edams.c:882
+#: src/bin/edams.c:1046
 msgid "Rooms"
 msgstr "Pièces"
 
-#: src/bin/edams.c:907
+#: src/bin/edams.c:1072
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/bin/edams.c:918
+#: src/bin/edams.c:1083
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/bin/init.c:51
+#: src/bin/init.c:52
 msgid ""
 "It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
 "some database files containing items. I'll copy some default items files, "
@@ -216,292 +209,265 @@ msgstr ""
 "conseillé d'adapter EDAMS à ses besoins pour profiter pleinement de son "
 "utilisation."
 
-#: src/bin/preferences_dlg.c:122
-msgid "Debug printf"
-msgstr "Messages printf"
-
-#: src/bin/preferences_dlg.c:128
-msgid "Serial buffering simulation"
-msgstr "Simulation du tampon série"
-
-#: src/bin/preferences_dlg.c:133
-#, c-format
-msgid "Installation path:%s"
-msgstr "Répertoire d'installation:%s"
-
-#: src/bin/preferences_dlg.c:139
-#, c-format
-msgid "User home path:%s"
-msgstr "Répertoire utilisateur:%s"
-
-#: src/bin/preferences_dlg.c:145
-#, fuzzy, c-format
-msgid "User data path:%s"
-msgstr "Répertoire des données utilisateur:%s"
-
-#: src/bin/preferences_dlg.c:151
-#, fuzzy, c-format
-msgid "Locale path:%s"
-msgstr "Répertoire des traductions:%s"
-
-#: src/bin/preferences_dlg.c:157
-#, c-format
-msgid "Modules path:%s"
-msgstr "Répertoire des modules:%s"
-
-#: src/bin/preferences_dlg.c:163
-#, c-format
-msgid "Edje theme file:%s"
-msgstr "Fichier thème Edje:%s"
-
-#: src/bin/preferences_dlg.c:169
-msgid "Apply"
-msgstr "Appliquer"
-
-#: src/bin/preferences_dlg.c:232
-msgid "Options"
-msgstr "Options"
-
-#: src/bin/preferences_dlg.c:236 src/bin/preferences_dlg.c:238
-msgid "General"
-msgstr "Général"
-
-#: src/bin/preferences_dlg.c:242 src/bin/preferences_dlg.c:243
-msgid "Modules"
-msgstr "Modules"
-
-#: src/bin/preferences_dlg.c:247 src/bin/preferences_dlg.c:248
-msgid "Debug"
-msgstr "Débogguage "
-
-#: src/bin/sensors_creator.c:143
+#: src/bin/sensors_creator.c:145
 msgid "Sensor Creator"
 msgstr "Créateur de capteurs"
 
-#: src/bin/sensors_creator.c:204
+#: src/bin/sensors_creator.c:206
 msgid "Type:"
 msgstr "Type:"
 
-#: src/bin/sensors_creator.c:217
+#: src/bin/sensors_creator.c:219
 msgid "Datasheet URL:"
 msgstr "URL du datasheet:"
 
-#: src/bin/sensors_picker.c:184
-msgid "Sensor"
-msgstr "Capteur"
-
-#: src/bin/sensors_picker.c:337
+#: src/bin/sensors_picker.c:142
 msgid "Select a sensor"
 msgstr "Sélectionner un capteur"
 
-#: src/bin/sensors_picker.c:417
-msgid "Select"
-msgstr "Sélectionner"
-
-#: src/bin/shutdown.c:29
+#: src/bin/shutdown.c:30
 msgid "Shutdown Edams..."
 msgstr "Extinction d'EDAMS..."
 
-#: src/lib/mem.c:133
-msgid "Dumping memory usage:"
-msgstr "Mémoire utilisé:"
-
-#: src/lib/mem.c:134
-#, c-format
-msgid "Calls to malloc(): %d."
-msgstr "Appels à malloc():%d."
-
-#: src/lib/mem.c:135
-#, c-format
-msgid "Calls to realloc(): %d."
-msgstr "Appels à realloc():%d."
-
-#: src/lib/mem.c:136
-#, c-format
-msgid "Calls to calloc(): %d."
-msgstr "Appels à calloc():%d."
-
-#: src/lib/mem.c:137
-#, c-format
-msgid "Calls to free(): %d."
-msgstr "Appels à free():%d."
-
-#: src/lib/modules.c:47
+#: src/lib/modules.c:50
 #, c-format
 msgid "Can't load module %s: %s"
 msgstr "Impossible de charger le module %s: %s"
 
-#: src/lib/modules.c:56
+#: src/lib/modules.c:58
 #, c-format
 msgid "Can't find _print_module_infos() in module %s: %s!"
 msgstr "Fonction _print_module_infos() non trouvée dans le module %s: %s!"
 
-#: src/lib/modules.c:65
+#: src/lib/modules.c:67
 #, c-format
 msgid "Can't find _module_id_get() in module %s: %s!"
 msgstr "Fonction _module_id_get() non trouvée dans le module %s: %s!"
 
-#: src/lib/modules.c:74
+#: src/lib/modules.c:76
 #, c-format
 msgid "Can't find _module_name_get() in module %s: %s!"
 msgstr "Fonction _module_name_get() non trouvée dans le module %s: %s!"
 
-#: src/lib/modules.c:82
+#: src/lib/modules.c:84
 #, c-format
 msgid "Can't find _module_desc_get() in module %s: %s!"
 msgstr "Fonction _module_desc_get() non trouvée dans le module %s: %s!"
 
-#: src/lib/modules.c:90
+#: src/lib/modules.c:92
 #, c-format
 msgid "Can't find _module_theme_get() in module %s: %s!"
 msgstr "Fonction _module_theme_get() non trouvée dans le module %s: %s!"
 
-#: src/lib/modules.c:98
+#: src/lib/modules.c:100
 #, c-format
 msgid "Can't find _module_settings_get() in module %s: %s!"
 msgstr "Fonction _module_settings_get() non trouvée dans le module %s: %s!"
 
-#: src/lib/modules.c:171
+#: src/lib/modules.c:173
 msgid "Can't get modules list!"
 msgstr "Impossible d'obtenir la liste des modules!"
 
-#: src/lib/myfileselector.c:49
+#: src/lib/myfileselector.c:51
 #, c-format
 msgid "You"
 msgstr "Vous"
 
-#: src/lib/myfileselector.c:101
+#: src/lib/myfileselector.c:103
 #, c-format
 msgid "Protected"
 msgstr "Protégé"
 
-#: src/lib/myfileselector.c:103 src/lib/myfileselector.c:112
-#: src/lib/myfileselector.c:121
+#: src/lib/myfileselector.c:105 src/lib/myfileselector.c:114
+#: src/lib/myfileselector.c:123
 #, c-format
 msgid "Read Only"
 msgstr "Lecture Seule"
 
-#: src/lib/myfileselector.c:110 src/lib/myfileselector.c:119
+#: src/lib/myfileselector.c:112 src/lib/myfileselector.c:121
 #, c-format
 msgid "Forbidden"
 msgstr "Interdit"
 
-#: src/lib/myfileselector.c:128
+#: src/lib/myfileselector.c:130
 msgid "Read-Write"
 msgstr "Lecture-Ecriture"
 
-#: src/lib/myfileselector.c:139
+#: src/lib/myfileselector.c:141
 #, c-format
 msgid "%'.0f Bytes"
 msgstr "%'.0f Octets"
 
-#: src/lib/myfileselector.c:143
+#: src/lib/myfileselector.c:145
 #, c-format
 msgid "%'.0f KB"
 msgstr "%'.0f Ko"
 
-#: src/lib/myfileselector.c:147
+#: src/lib/myfileselector.c:149
 #, c-format
 msgid "%'.0f MB"
 msgstr "%'.0f Mo"
 
-#: src/lib/myfileselector.c:151
+#: src/lib/myfileselector.c:153
 #, c-format
 msgid "%'.1f GB"
 msgstr "%'.1f Go"
 
-#: src/lib/myfileselector.c:178
+#: src/lib/myfileselector.c:180
 msgid "*FIXME*"
 msgstr "*FIXME*"
 
-#: src/lib/myfileselector.c:239
+#: src/lib/myfileselector.c:241
 msgid "Select a file..."
 msgstr "Ouvrir un fichier..."
 
-#: src/lib/myfileselector.c:280
+#: src/lib/myfileselector.c:282
 msgid "Preview"
 msgstr "Aperçu"
 
-#: src/lib/myfileselector.c:286
+#: src/lib/myfileselector.c:288
 msgid "Type :"
 msgstr "Type :"
 
-#: src/lib/myfileselector.c:298
+#: src/lib/myfileselector.c:300
 msgid "Size :"
 msgstr "Taille :"
 
-#: src/lib/myfileselector.c:310
+#: src/lib/myfileselector.c:312
 msgid "Owner :"
 msgstr "Propriétaire :"
 
-#: src/lib/myfileselector.c:322
+#: src/lib/myfileselector.c:324
 msgid "Permissions :"
 msgstr "Permissions :"
 
-#: src/lib/myfileselector.c:343 src/lib/myfontselector.c:360
+#: src/lib/myfileselector.c:345
 msgid "Open"
 msgstr "Ouvrir"
 
-#: src/lib/myfontselector.c:202
-msgid "Select a font..."
-msgstr "Sélectionner une fonte"
-
-#: src/lib/rooms.c:700 src/lib/rooms.c:930
+#: src/lib/rooms.c:722 src/lib/rooms.c:948
 #, c-format
 msgid "Eet file '%s' %#x was too old, upgrading it to %#x!\n"
 msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x!\n"
 
-#: src/lib/rooms.c:757
+#: src/lib/rooms.c:779
 #, c-format
 msgid "Can't remove Eet file:'%s'!"
 msgstr "Impossible de supprimer un fichier Eet: '%s'!"
 
-#: src/lib/rooms.c:802
+#: src/lib/rooms.c:820
 #, c-format
 msgid "INFO:%d rooms list freed.\n"
 msgstr "INFO:%d pièces list freed.\n"
 
-#: src/lib/rooms.c:864 src/lib/rooms.c:992
+#: src/lib/rooms.c:882 src/lib/rooms.c:990
 #, c-format
 msgid "Can't allocate list node!"
 msgstr "Impossible d'allouer un nœud dans la liste!"
 
-#: src/lib/rooms.c:874
-#, c-format
-msgid "INFO:%d rooms found in database.\n"
-msgstr "INFO:%d pièces enregistrées dans la base de données.\n"
-
-#: src/lib/rooms.c:1002
-#, c-format
-msgid "INFO:%d sensors found in database.\n"
-msgstr "INFO:%d capteurs enregistrés dans la base de données.\n"
-
-#: src/lib/rooms.c:1030
+#: src/lib/rooms.c:1024
 #, c-format
 msgid "INFO:%d sensors list freed.\n"
 msgstr ""
 
-#: src/lib/settings.c:55
-msgid "Can't read edams settings!"
-msgstr "Impossible de lire les paramètres d'EDAMS!"
-
-#: src/lib/settings.c:91 src/lib/settings.c:106
-#, c-format
-msgid "Can't read %s settings from %s!"
-msgstr "Impossible de lire le paramètre %s de %s!"
-
-#: src/lib/settings.c:128
-#, c-format
-msgid "Can't write %s settings from %s!"
-msgstr "Impossible d'écrire le paramètre %s de %s!"
-
-#: src/lib/settings.c:159
-msgid "Can't write edams settings!"
-msgstr "Impossible d'écrire les paramètres d'EDAMS!"
-
 #: src/lib/utils.c:167
 msgid "Confirmation"
 msgstr "Confirmation"
+
+#~ msgid "About edams..."
+#~ msgstr "A propos d'E.D.A.M.S..."
+
+#~ msgid "New sensor '%d-%s' has been created."
+#~ msgstr "Le nouveau capteur '%d-%s' a été créé."
+
+#~ msgid "INFO:%d sensors registered on serial line...\n"
+#~ msgstr "INFO:%d capteurs trouvés sur la liaison série...\n"
+
+#~ msgid "Remove all sensors..."
+#~ msgstr "Supprimer les capteurs..."
+
+#~ msgid "Debug printf"
+#~ msgstr "Messages printf"
+
+#~ msgid "Serial buffering simulation"
+#~ msgstr "Simulation du tampon série"
+
+#~ msgid "Installation path:%s"
+#~ msgstr "Répertoire d'installation:%s"
+
+#~ msgid "User home path:%s"
+#~ msgstr "Répertoire utilisateur:%s"
+
+#, fuzzy
+#~ msgid "User data path:%s"
+#~ msgstr "Répertoire des données utilisateur:%s"
+
+#, fuzzy
+#~ msgid "Locale path:%s"
+#~ msgstr "Répertoire des traductions:%s"
+
+#~ msgid "Modules path:%s"
+#~ msgstr "Répertoire des modules:%s"
+
+#~ msgid "Edje theme file:%s"
+#~ msgstr "Fichier thème Edje:%s"
+
+#~ msgid "Apply"
+#~ msgstr "Appliquer"
+
+#~ msgid "Options"
+#~ msgstr "Options"
+
+#~ msgid "General"
+#~ msgstr "Général"
+
+#~ msgid "Modules"
+#~ msgstr "Modules"
+
+#~ msgid "Debug"
+#~ msgstr "Débogguage "
+
+#~ msgid "Sensor"
+#~ msgstr "Capteur"
+
+#~ msgid "Select"
+#~ msgstr "Sélectionner"
+
+#~ msgid "Dumping memory usage:"
+#~ msgstr "Mémoire utilisé:"
+
+#~ msgid "Calls to malloc(): %d."
+#~ msgstr "Appels à malloc():%d."
+
+#~ msgid "Calls to realloc(): %d."
+#~ msgstr "Appels à realloc():%d."
+
+#~ msgid "Calls to calloc(): %d."
+#~ msgstr "Appels à calloc():%d."
+
+#~ msgid "Calls to free(): %d."
+#~ msgstr "Appels à free():%d."
+
+#~ msgid "Select a font..."
+#~ msgstr "Sélectionner une fonte"
+
+#~ msgid "INFO:%d rooms found in database.\n"
+#~ msgstr "INFO:%d pièces enregistrées dans la base de données.\n"
+
+#~ msgid "INFO:%d sensors found in database.\n"
+#~ msgstr "INFO:%d capteurs enregistrés dans la base de données.\n"
+
+#~ msgid "Can't read edams settings!"
+#~ msgstr "Impossible de lire les paramètres d'EDAMS!"
+
+#~ msgid "Can't read %s settings from %s!"
+#~ msgstr "Impossible de lire le paramètre %s de %s!"
+
+#~ msgid "Can't write %s settings from %s!"
+#~ msgstr "Impossible d'écrire le paramètre %s de %s!"
+
+#~ msgid "Can't write edams settings!"
+#~ msgstr "Impossible d'écrire les paramètres d'EDAMS!"
 
 #~ msgid "Patients"
 #~ msgstr "Patients"

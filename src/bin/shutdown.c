@@ -21,10 +21,11 @@
 
 
 
-#include "edams.h"
+#include "shutdown.h"
 
 
-int edams_shutdown(App_Info *app)
+int
+edams_shutdown(App_Info *app)
 {
 	INF(_("Shutdown Edams..."));
 	app->rooms = rooms_list_free(app->rooms);
