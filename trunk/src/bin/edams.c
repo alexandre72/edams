@@ -815,7 +815,7 @@ _room_naviframe_content(Room *room)
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
    	elm_icon_standard_set(ic, "sensors-add");
    	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt , 55, 5, 20, 8);
+	elm_grid_pack(gd, bt , 55, 5, 20, 12);
 	evas_object_smart_callback_add(bt, "clicked", _add_sensor_to_room_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
@@ -825,7 +825,7 @@ _room_naviframe_content(Room *room)
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
    	elm_icon_standard_set(ic, "sensors-remove");
    	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt , 55, 15, 20, 8);
+	elm_grid_pack(gd, bt , 55, 15, 20, 12);
 	evas_object_smart_callback_add(bt, "clicked", _clear_sensor_from_room_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
@@ -1144,13 +1144,12 @@ elm_main(int argc, char **argv)
 		elm_run();
      }
 
-	edams_shutdown(app);
 	ecore_pipe_del(pipe);
 	kill(child_pid, SIGKILL);
 
+	edams_shutdown(app);
    	eina_log_domain_unregister(_log_dom);
   	 _log_dom = -1;
-
 	eina_shutdown();
 	ecore_evas_shutdown();
 	ecore_shutdown();

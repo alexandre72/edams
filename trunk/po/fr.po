@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: FriLogos 0.1\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
 "POT-Creation-Date: 2012-12-06 20:07+0100\n"
-"PO-Revision-Date: 2012-11-29 13:57+0100\n"
+"PO-Revision-Date: 2012-12-06 20:17+0100\n"
 "Last-Translator: Alexandre Dussart <alexandre.dussart@laposte.net>\n"
 "Language-Team: français <alexandre.dussart@laposte.net>\n"
 "Language: fr\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/bin/about_dlg.c:39
 msgid "About E.D.A.M.S..."
-msgstr ""
+msgstr "A propos d'E.D.A.M.S..."
 
 #: src/bin/about_dlg.c:67 src/bin/sensors_picker.c:179
 #: src/lib/myfileselector.c:354
@@ -84,7 +84,7 @@ msgstr "Non"
 #: src/bin/edams.c:532
 #, c-format
 msgid "INFO:Serial in content '%s'(%d bytes)\n"
-msgstr "INFO:Contenu série '%s'(%d octets)\n"
+msgstr "INFO:Contenu tampon série '%s'(%d octets)\n"
 
 #: src/bin/edams.c:542
 #, c-format
@@ -109,15 +109,14 @@ msgid "INFO:EDAMS is ready and operationnal\n"
 msgstr "INFO:EDAMS est prêt et opérationnel\n"
 
 #: src/bin/edams.c:593
-#, fuzzy, c-format
+#, c-format
 msgid "INFO:Updating sensor '%d-%s'  with data '%s'...\n"
-msgstr ""
-"INFO:Capteur '%d-%s' sur liaison série avec donnée '%s' de type '%s'...\n"
+msgstr "INFO:Capteur '%d-%s' avec donnée '%s'...\n"
 
 #: src/bin/edams.c:605
-#, fuzzy, c-format
+#, c-format
 msgid "Added new sensor '%d-%s'."
-msgstr "Ajouter un capteur..."
+msgstr "Ajoute capteur '%d-%s'"
 
 #: src/bin/edams.c:621
 msgid "Can't add a sensor to room:no room selected!"
@@ -144,12 +143,11 @@ msgstr "Capteurs:"
 
 #: src/bin/edams.c:813
 msgid "Add..."
-msgstr ""
+msgstr "Ajouter..."
 
 #: src/bin/edams.c:823
-#, fuzzy
 msgid "Remove..."
-msgstr "Supprimer"
+msgstr "Supprimer..."
 
 #: src/bin/edams.c:897
 #, c-format
@@ -171,7 +169,7 @@ msgstr "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
 
 #: src/bin/edams.c:1019
 msgid "Sensors Creator"
-msgstr "Base de données des capteurs"
+msgstr "Création Capteurs"
 
 #: src/bin/edams.c:1020 src/bin/preferences_dlg.c:35
 msgid "Preferences"
@@ -358,7 +356,7 @@ msgstr "Impossible de supprimer un fichier Eet: '%s'!"
 #: src/lib/rooms.c:820
 #, c-format
 msgid "INFO:%d rooms list freed.\n"
-msgstr "INFO:%d pièces list freed.\n"
+msgstr "INFO:libération mémoire de %d dans la liste des pièces.\n"
 
 #: src/lib/rooms.c:882 src/lib/rooms.c:990
 #, c-format
@@ -368,7 +366,7 @@ msgstr "Impossible d'allouer un nœud dans la liste!"
 #: src/lib/rooms.c:1024
 #, c-format
 msgid "INFO:%d sensors list freed.\n"
-msgstr ""
+msgstr "INFO:libération mémoire de %d dans la liste des capteurs.\n"
 
 #: src/lib/utils.c:167
 msgid "Confirmation"

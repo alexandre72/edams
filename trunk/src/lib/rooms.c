@@ -1009,6 +1009,7 @@ sensors_list_get()
 Eina_List *
 sensors_list_free(Eina_List *sensors)
 {
+
 	if(sensors)
 	{
 		unsigned int n = 0;
