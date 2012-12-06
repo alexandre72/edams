@@ -167,4 +167,10 @@
                }
             }
          }
+
+    	program
+    	{
+            name: "emit,bt,doubleclicked";
+            action: SIGNAL_EMIT "bt,doubleclicked" "";
+        }
       }

@@ -20,8 +20,11 @@
 
 
 #include "modules.h"
-#include "edams.h"
 
+#include "edams.h"
+#include "libedams.h"
+#include "path.h"
+#include "rooms.h"
 
 static Eina_List *modules = NULL;
 

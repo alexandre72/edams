@@ -22,9 +22,7 @@
 #ifndef __SENSORS_H
 #define __SENSORS_H
 
-#include "libedams.h"
-#include "path.h"
-#include "edams.h"
+#include "rooms.h"
 
 Sensor *sensors_detect(char *s);
 

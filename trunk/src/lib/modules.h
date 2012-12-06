@@ -26,16 +26,11 @@
 #include <Eet.h>
 #include <Evas.h>
 
-#include "libedams.h"
-#include "mem.h"
-#include "path.h"
-#include "rooms.h"
-#include "settings.h"
 
 //#include "edams.h"
 
 //Define Module Infos.
-typedef struct 
+typedef struct
 {
 	Evas_Object *settings;
 	char *id;
@@ -46,8 +41,8 @@ typedef struct
 
 
 //Modules data functions.
-extern Module_Info *module_free(Module_Info *module);
-extern Eina_List *modules_list_get(Evas_Object *obj);
-extern Eina_List *modules_list_free(Eina_List *modules);
+Module_Info *module_free(Module_Info *module);
+Eina_List *modules_list_get(Evas_Object *obj);
+Eina_List *modules_list_free(Eina_List *modules);
 
 #endif /* __MODULE_H__ */

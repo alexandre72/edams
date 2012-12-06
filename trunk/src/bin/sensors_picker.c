@@ -21,9 +21,9 @@
 
 #include "sensors_picker.h"
 
-
-static const int TEMP_MIN =  -30;
-static const int TEMP_MAX =  50;
+#include "sensors.h"
+#include "utils.h"
+#include "path.h"
 
 static Elm_Gengrid_Item_Class *gic;
 
@@ -37,65 +37,11 @@ typedef struct _GenGridItem
 
 Evas_Object *win = NULL;
 
-static void _notify_timeout(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-static void _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-static void _notify_set(const char *msg, const char *icon);
 static char *_gg_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__);
 static Evas_Object *_gg_content_get(void *data, Evas_Object *obj, const char *part);
 static void _gg_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__);
 static void _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static Eina_Bool _gg_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__);
-
-
-//
-//Hide notification after timeout.
-//
-static void
-_notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-    Evas_Object *notify = (Evas_Object *)data;
-    evas_object_hide(notify);
-}
-
-
-
-//
-//Hide notification when clicking on notify close button.
-//
-static void
-_notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Evas_Object *notify = data;
-   evas_object_hide(notify);
-}
-
-
-
-//
-//Show notification.
-//
-static void
-_notify_set(const char *msg, const char *icon)
-{
-    Evas_Object *notify, *label, *ic, *bt;
-
-	bt = elm_object_name_find(win, "notify bt1", -1);
- 	evas_object_hide(bt);
-
-	bt = elm_object_name_find(win, "notify bt2", -1);
-  	evas_object_hide(bt);
-
-    notify = elm_object_name_find(win, "notify", -1);
-	elm_notify_allow_events_set(notify, EINA_FALSE);
-	elm_notify_timeout_set(notify, 5.0);
-	evas_object_show(notify);
-
-    label = elm_object_name_find(win, "notify label", -1);
-    elm_object_text_set(label, msg);
-
-    ic = elm_object_name_find(win, "notify icon", -1);
-    elm_image_file_set(ic, edams_edje_theme_file_get(), icon);
-}
 
 
 //
@@ -190,55 +136,12 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 Eina_Bool
 sensorpicker_add_to_room(App_Info *app)
 {
-    Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp, *label, *notify;
+    Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
 
     //Setup a new window.
    	win = elm_win_util_standard_add("sensor_picker", _("Select a sensor"));
    	evas_object_data_set(win, "app", app);
    	elm_win_autodel_set(win, EINA_TRUE);
-
-	//Setup notify for user informations.
-	notify = elm_notify_add(win);
-	elm_notify_allow_events_set(notify, EINA_TRUE);
-   	evas_object_name_set(notify, "notify");
-  	elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 0.0);
-   	evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_notify_timeout_set(notify, 5.0);
-    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, notify);
-
-   	bx = elm_box_add(win);
-   	elm_object_content_set(notify, bx);
-   	elm_box_horizontal_set(bx, EINA_TRUE);
-   	evas_object_show(bx);
-
-	ic = elm_image_add(win);
-  	evas_object_name_set(ic, "notify icon");
-   	evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_image_no_scale_set(ic, EINA_TRUE);
-   elm_image_resizable_set(ic, EINA_FALSE, EINA_TRUE);
-   elm_image_smooth_set(ic, EINA_FALSE);
-   elm_image_orient_set(ic, ELM_IMAGE_FLIP_HORIZONTAL);
-   elm_image_aspect_fixed_set(ic, EINA_TRUE);
-   elm_image_fill_outside_set(ic, EINA_TRUE);
-   elm_image_editable_set(ic, EINA_TRUE);
-	elm_box_pack_end(bx, ic);
-	evas_object_show(ic);
-
-	label = elm_label_add(win);
-   	evas_object_name_set(label, "notify label");
-	elm_box_pack_end(bx, label);
-	evas_object_show(label);
-
-	bt = elm_button_add(win);
-   	evas_object_name_set(bt, "notify bt1");
-	elm_box_pack_end(bx, bt);
-	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-    bt = elm_button_add(win);
-   	evas_object_name_set(bt, "notify bt2");
-	elm_box_pack_end(bx, bt);
-	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_smart_callback_add(bt, "clicked", _notify_close_bt_cb, notify);
 
    	bx = elm_box_add(win);
    	evas_object_show(bx);

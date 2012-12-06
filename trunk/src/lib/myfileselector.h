@@ -22,23 +22,19 @@
 #ifndef __MYFILESELECTOR_H
 #define __MYFILESELECTOR_H
 
-#include "libedams.h"
-#include "mem.h"
-#include "path.h"
-#include "utils.h"
-
+#include <Evas.h>
 
 typedef struct
 {
 	Evas_Object *win;
 	Evas_Object *fs;
     Evas_Object *preview_img;
-    Evas_Object *preview_frame;    
+    Evas_Object *preview_frame;
 	Evas_Object *filename_entry;
-	Evas_Object *permissions_entry;	
-	Evas_Object *owner_entry;	
-	Evas_Object *size_entry;	
-	Evas_Object *mimetype_entry;	
+	Evas_Object *permissions_entry;
+	Evas_Object *owner_entry;
+	Evas_Object *size_entry;
+	Evas_Object *mimetype_entry;
 	Evas_Object *cancel_bt;
 	Evas_Object *action_bt;
 } MyFileSelector;

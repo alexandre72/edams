@@ -28,11 +28,16 @@
 
 #include "edams.h"
 #include "utils.h"
+#include "init.h"
 #include "myfileselector.h"
+#include "path.h"
 #include "rooms.h"
 #include "sensors.h"
 #include "serial.h"
 #include "sensors_picker.h"
+#include "sensors_creator.h"
+#include "shutdown.h"
+#include "about_dlg.h"
 
 
 
@@ -56,6 +61,7 @@ static void _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *e
 static void _notify_set(const char *msg, const char *icon);
 static void _room_item_del_cb(void *data, Evas_Object *obj, void *event_info);
 static void _sensor_data_update(Sensor *sensor);
+static void _sensor_meter_update(Sensor *sensor);
 App_Info *app = NULL;
 
 //
@@ -642,13 +648,7 @@ _clear_sensor_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __
 static void
 _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *layout, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *edje;
-   Evas_Coord w, h;
-
-   elm_layout_sizing_eval(layout);
-   edje = elm_layout_edje_get(layout);
-   edje_object_size_min_calc(edje, &w, &h);
-   printf("Minimum size for this theme: %dx%d\n", w, h);
+   printf("Double clicked on layout!!!\n");
 }
 
 
@@ -724,6 +724,24 @@ _sensor_data_update(Sensor *sensor)
 }
 
 
+
+static void
+_sensor_meter_update(Sensor *sensor)
+{
+	char s[64];
+
+	if(app->room)
+	{
+		printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
+		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(app->room));
+		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
+
+		if(!sensor_meter_get(sensor) || strstr(sensor_meter_get(sensor), "default"))
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
+		else
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
+	}
+}
 
 
 Evas_Object*
@@ -832,12 +850,8 @@ _room_naviframe_content(Room *room)
     	elm_box_pack_end(hbx, layout);
 		evas_object_show(layout);
 
-		if(!strstr(sensor_meter_get(sensor), "default"))
-	      	elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
-		else
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
-
-		//elm_object_signal_callback_add(layout, "emit,bt,doubleclicked", "", _layout_dbclicked__cb, layout);
+		elm_object_signal_callback_add(layout, "emit,bt,doubleclicked", "", _layout_dbclicked__cb, layout);
+		_sensor_meter_update(sensor);
 		_sensor_data_update(sensor);
 	}
 
