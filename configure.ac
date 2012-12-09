@@ -106,8 +106,6 @@ edams.desktop
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
-src/modules/Makefile
-src/modules/skel/Makefile
 data/Makefile
 data/themes/Makefile
 data/themes/default/Makefile
