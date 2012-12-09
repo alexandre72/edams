@@ -35,8 +35,6 @@ struct _Sensor {
     const char * type;
     const char * description;
     const char * datasheeturl;
-    Evas_Object * picture;
-    unsigned int picture__id;
     const char * soundfile;
     const char * group;
     char *__eet_filename;
@@ -52,8 +50,6 @@ struct _Room {
     const char * name;
     const char * description;
     Eina_List * sensors;
-    Evas_Object * photo;
-    unsigned int photo__id;
     char *__eet_filename;
     const char * creation;
     const char * revision;
@@ -105,7 +101,6 @@ _sensor_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "type", type, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "description", description, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "datasheeturl", datasheeturl, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "picture__id", picture__id, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "soundfile", soundfile, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "group", group, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "creation", creation, EET_T_STRING);
@@ -123,7 +118,7 @@ _sensor_shutdown(void)
 }
 
 Sensor *
-sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl, Evas_Object * picture, const char * soundfile, const char * group)
+sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl, const char * soundfile, const char * group)
 {
 	char s[PATH_MAX];
 
@@ -142,8 +137,6 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
     sensor->type = eina_stringshare_add(type ? type : "undefined");
     sensor->description = eina_stringshare_add(description ? description : "undefined");
     sensor->datasheeturl = eina_stringshare_add(datasheeturl ? datasheeturl : "undefined");
-    sensor->picture = picture;
-    sensor->picture__id = 0;
     sensor->soundfile = eina_stringshare_add(soundfile);
     sensor->group = eina_stringshare_add(group ? group : "undefined");
     sensor->meter = eina_stringshare_add("default");
@@ -161,6 +154,7 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
 	sensor->revision = NULL;
 	sensor->version = 0x0001;
 
+
     return sensor;
 }
 
@@ -171,70 +165,22 @@ sensor_free(Sensor *sensor)
     eina_stringshare_del(sensor->type);
     eina_stringshare_del(sensor->description);
     eina_stringshare_del(sensor->datasheeturl);
-    if (sensor->picture) evas_object_del(sensor->picture);
     eina_stringshare_del(sensor->soundfile);
     eina_stringshare_del(sensor->group);
     eina_stringshare_del(sensor->creation);
     eina_stringshare_del(sensor->meter);
     if(sensor->__eet_filename) 	FREE(sensor->__eet_filename);
-    if(sensor->data) FREE(sensor->data);
+    eina_stringshare_del(sensor->data);
     free(sensor);
 }
 
-static void
-_load_sensor_images(Sensor *sensor, Evas *evas, const char *filename)
-{
-    Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
-    if (!ef)
-       {
-          fprintf(stderr, "ERROR: could not open '%s' for read!\n", filename);
-          return;
-       }
-
-    if (sensor->picture__id)
-       {
-          char picture_buf[256];
-          unsigned int picture_w, picture_h;
-          int picture_alpha, picture_compress, picture_quality, picture_lossy;
-          void *picture_data;
-          sprintf(picture_buf, "/image/%d", sensor->picture__id);
-          picture_data = eet_data_image_read(ef, picture_buf, &picture_w, &picture_h, &picture_alpha, &picture_compress, &picture_quality, &picture_lossy);
-          if (picture_data)
-             {
-                sensor->picture = evas_object_image_add(evas);
-                evas_object_image_size_set(sensor->picture, picture_w, picture_h);
-                evas_object_image_alpha_set(sensor->picture, picture_alpha);
-                evas_object_image_data_set(sensor->picture, picture_data);
-             }
-       }
-
-    eet_close(ef);
-}
-
-static int
-_write_sensor_images(Sensor *sensor, Eet_File *ef, int image_id)
-{
-    if (sensor->picture)
-       {
-          char picture_buf[256];
-          int picture_w, picture_h;
-          int picture_alpha;
-          void *picture_data;
-          sensor->picture__id = image_id;
-          sprintf(picture_buf, "/image/%d", image_id++);
-          evas_object_image_size_get(sensor->picture, &picture_w, &picture_h);
-          picture_alpha = evas_object_image_alpha_get(sensor->picture);
-          picture_data = evas_object_image_data_get(sensor->picture, EINA_FALSE);
-          eet_data_image_write(ef, picture_buf, picture_data, picture_w, picture_h, picture_alpha, 1, 95, 0);
-       }
-    return image_id;
-}
 
 inline unsigned int
 sensor_id_get(const Sensor *sensor)
 {
     return sensor->id;
 }
+
 
 inline void
 sensor_id_set(Sensor *sensor, unsigned int id)
@@ -320,22 +266,27 @@ sensor_datasheeturl_set(Sensor *sensor, const char *datasheeturl)
 }
 
 void
-sensor_picture_set(Sensor *sensor, Evas_Object *picture)
+sensor_image_set(Sensor *sensor, Evas_Object *image)
 {
     EINA_SAFETY_ON_NULL_RETURN(sensor);
-    if (sensor->picture) evas_object_del(sensor->picture);
-    sensor->picture__id = 0;
-    sensor->picture = picture;
+
+    Eet_File *ef = eet_open(sensor->__eet_filename, EET_FILE_MODE_WRITE);
+    if (!ef)
+      {
+        fprintf(stderr, "ERROR: could not open '%s' for writing!\n", sensor->__eet_filename);
+        return;
+      }
+
+    int image_w, image_h;
+    int image_alpha;
+    void *image_data;
+    evas_object_image_size_get(image, &image_w, &image_h);
+    image_alpha = evas_object_image_alpha_get(image);
+    image_data = evas_object_image_data_get(image, EINA_FALSE);
+  	eet_data_image_write(ef, "/image/0", image_data, image_w, image_h, image_alpha, 1, 95, 0);
+   	eet_close(ef);
 }
 
-Evas_Object *
-sensor_picture_get(Sensor *sensor, Evas *evas, const char *eet_file)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(sensor, NULL);
-    if (sensor->picture) return sensor->picture;
-    _load_sensor_images(sensor, evas, eet_file);
-    return sensor->picture;
-}
 
 inline const char *
 sensor_soundfile_get(const Sensor *sensor)
@@ -391,7 +342,7 @@ sensor_data_set(Sensor *sensor, char *data)
 	if(sensor->data) FREE(sensor->data);
 
 	if(data)
-    	sensor->data = strdup(data);
+	    eina_stringshare_replace(&(sensor->data), data);
     else
       	sensor->data = NULL;
 }
@@ -411,7 +362,6 @@ _room_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "name", name, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "description", description, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_LIST(_room_descriptor, Room, "sensors", sensors, _sensor_descriptor);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "photo__id", photo__id, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "creation", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "revision", revision, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_room_descriptor, Room, "version", version, EET_T_UINT);
@@ -426,7 +376,7 @@ _room_shutdown(void)
 }
 
 Room *
-room_new(unsigned int id, const char * name, const char * description, Eina_List * sensors, Evas_Object * photo)
+room_new(unsigned int id, const char * name, const char * description, Eina_List * sensors)
 {
 	char s[PATH_MAX];
 
@@ -445,8 +395,6 @@ room_new(unsigned int id, const char * name, const char * description, Eina_List
     room->name = eina_stringshare_add(name ? name : "undefined");
     room->description = eina_stringshare_add(description ? description : "undefined");
     room->sensors = sensors;
-    room->photo = photo;
-    room->photo__id = -1;
 
     //Add creation date informations.
 	time_t timestamp = time(NULL);
@@ -484,7 +432,6 @@ room_free(Room *room)
           EINA_LIST_FREE(room->sensors, sensors_elem)
              sensor_free(sensors_elem);
        	}
-    	if (room->photo) evas_object_del(room->photo);
 	    eina_stringshare_del(room->creation);
     	eina_stringshare_del(room->revision);
 
@@ -492,54 +439,6 @@ room_free(Room *room)
     free(room);
 }
 
-static void
-_load_room_images(Room *room, Evas *evas, const char *filename)
-{
-    Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
-    if (!ef)
-       {
-          fprintf(stderr, "ERROR: could not open '%s' for read!\n", filename);
-          return;
-       }
-
-    if (room->photo__id)
-       {
-          char photo_buf[256];
-          unsigned int photo_w, photo_h;
-          int photo_alpha, photo_compress, photo_quality, photo_lossy;
-          void *photo_data;
-          sprintf(photo_buf, "/image/%d", room->photo__id);
-          photo_data = eet_data_image_read(ef, photo_buf, &photo_w, &photo_h, &photo_alpha, &photo_compress, &photo_quality, &photo_lossy);
-          if (photo_data)
-             {
-                room->photo = evas_object_image_add(evas);
-                evas_object_image_size_set(room->photo, photo_w, photo_h);
-                evas_object_image_alpha_set(room->photo, photo_alpha);
-                evas_object_image_data_set(room->photo, photo_data);
-             }
-       }
-
-    eet_close(ef);
-}
-
-static int
-_write_room_images(Room *room, Eet_File *ef, int image_id)
-{
-    if (room->photo)
-       {
-          char photo_buf[256];
-          int photo_w, photo_h;
-          int photo_alpha;
-          void *photo_data;
-          room->photo__id = image_id;
-          sprintf(photo_buf, "/image/%d", image_id++);
-          evas_object_image_size_get(room->photo, &photo_w, &photo_h);
-          photo_alpha = evas_object_image_alpha_get(room->photo);
-          photo_data = evas_object_image_data_get(room->photo, EINA_FALSE);
-          eet_data_image_write(ef, photo_buf, photo_data, photo_w, photo_h, photo_alpha, 1, 95, 0);
-       }
-    return image_id;
-}
 
 inline unsigned int
 room_id_get(const Room *room)
@@ -646,30 +545,25 @@ room_sensors_list_set(Room *room, Eina_List *list)
 }
 
 void
-room_photo_set(Room *room, Evas_Object *photo)
+room_image_set(Room *room, Evas_Object *image)
 {
     EINA_SAFETY_ON_NULL_RETURN(room);
-    if (room->photo) evas_object_del(room->photo);
-    room->photo__id = 0;
-    room->photo = photo;
-}
 
-Evas_Object *
-room_photo_get(Room *room, Evas *evas, const char *eet_file)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(room, NULL);
-    if (room->photo) return room->photo;
-    _load_room_images(room, evas, eet_file);
-    return room->photo;
-}
+    Eet_File *ef = eet_open(room->__eet_filename, EET_FILE_MODE_WRITE);
+    if (!ef)
+      {
+        fprintf(stderr, "ERROR: could not open '%s' for writing!\n", room->__eet_filename);
+        return;
+      }
 
-inline Eina_Bool
-room_photo_is_available_get(const Room *room)
-{
-	if(!room->photo__id)
-	    return EINA_FALSE;
-	else
-    	return EINA_TRUE;
+	int image_w, image_h;
+	int image_alpha;
+	void *image_data;
+	evas_object_image_size_get(image, &image_w, &image_h);
+	image_alpha = evas_object_image_alpha_get(image);
+	image_data = evas_object_image_data_get(image, EINA_FALSE);
+	eet_data_image_write(ef, "/image/0", image_data, image_w, image_h, image_alpha, 1, 95, 0);
+	eet_close(ef);
 }
 
 
@@ -701,7 +595,7 @@ room_revision_set(Room *room, const char *revision)
 
 
 Room *
-room_load(Evas *evas __UNUSED__, const char *filename)
+room_load(const char *filename)
 {
     Room *room = NULL;
 
@@ -738,7 +632,6 @@ room_save(Room *room)
 {
     Eet_File *ef;
     Eina_Bool ret;
-	int i;
 
     ef = eet_open(room->__eet_filename, EET_FILE_MODE_READ_WRITE);
     if (!ef)
@@ -747,15 +640,6 @@ room_save(Room *room)
           return EINA_FALSE;
        }
 
-    i = 1;
-    i = _write_room_images(room, ef, i);
-    if (room->sensors)
-       {
-          Sensor *sensor;
-          Eina_List *sensor_list;
-          EINA_LIST_FOREACH(room->sensors, sensor_list, sensor)
-             i = _write_sensor_images(sensor, ef, i);
-       }
     ret = !!eet_data_write(ef, _room_descriptor, ROOM_ENTRY, room, EINA_TRUE);
     eet_close(ef);
 
@@ -870,7 +754,7 @@ Eina_List *rooms_list_get()
             //INF("Found %s new file.", ecore_file_file_get(f_info->path));
 			if(eina_str_has_extension(f_info->path, ".eet") == EINA_TRUE)
 			{
-				room = room_load(NULL, f_info->path);
+				room = room_load(f_info->path);
 
 				if(room)
 				{
@@ -907,18 +791,14 @@ sensor_save(Sensor *sensor)
 {
     Eet_File *ef;
     Eina_Bool ret;
-	int i;
-	char s[PATH_MAX];
 
     ef = eet_open(sensor->__eet_filename, EET_FILE_MODE_READ_WRITE);
     if (!ef)
        {
-          fprintf(stderr, "ERROR: could not open '%s' for write!\n", s);
+          fprintf(stderr, "ERROR: could not open '%s' for write!\n", sensor->__eet_filename);
           return EINA_FALSE;
        }
 
-    i = 1;
-    i = _write_sensor_images(sensor, ef, i);
     ret = !!eet_data_write(ef, _sensor_descriptor, SENSOR_ENTRY, sensor, EINA_TRUE);
     eet_close(ef);
 
@@ -927,7 +807,7 @@ sensor_save(Sensor *sensor)
 
 
 Sensor *
-sensor_load(Evas *evas __UNUSED__, const char *filename)
+sensor_load(const char *filename)
 {
     Sensor *sensor = NULL;
 
@@ -977,7 +857,7 @@ sensors_list_get()
 	   {
 			if(eina_str_has_extension(f_info->path, ".eet") == EINA_TRUE)
 			{
-				sensor = sensor_load(NULL, f_info->path);
+				sensor = sensor_load(f_info->path);
 
 				if(sensor)
 				{
@@ -1027,4 +907,35 @@ sensors_list_free(Eina_List *sensors)
     }
 
     return NULL;
+}
+
+
+
+Sensor *
+sensor_clone(const Sensor *src)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(src, NULL);
+
+    Sensor *dst = calloc(1, sizeof(Sensor));
+    if (!dst)
+       {
+          fprintf(stderr, "ERROR: could not calloc Sensor\n");
+          return NULL;
+       }
+
+    dst->__eet_filename = strdup(src->__eet_filename);
+    dst->name = eina_stringshare_add(src->name);
+    dst->type = eina_stringshare_add(src->type);
+    dst->description = eina_stringshare_add(src->description);
+    dst->datasheeturl = eina_stringshare_add(src->datasheeturl);
+    dst->soundfile = eina_stringshare_add(src->soundfile);
+    dst->group = eina_stringshare_add(src->group);
+    dst->data = eina_stringshare_add(src->data);
+    dst->meter = eina_stringshare_add(src->meter);
+    dst->version = src->version;
+    dst->id = src->id;
+    dst->creation = eina_stringshare_add(src->creation);
+    dst->revision = eina_stringshare_add(src->revision);
+
+	return dst;
 }

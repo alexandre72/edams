@@ -33,11 +33,6 @@
 #include <Efreet.h>
 #endif
 
-#ifdef HAVE_EVIL
-#include <windows.h>
-#include <shlobj.h>
-#endif
-
 #undef EINA_LOG_DOMAIN_DEFAULT
 #define EINA_LOG_DOMAIN_DEFAULT _log_dom
 extern int _log_dom;

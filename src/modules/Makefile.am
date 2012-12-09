@@ -1,4 +1,0 @@
-AUTOMAKE_OPTIONS     = 1.6 foreign
-MAINTAINERCLEANFILES = Makefile.in
-
-SUBDIRS =  #skel

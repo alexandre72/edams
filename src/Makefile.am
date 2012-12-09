@@ -1,4 +1,4 @@
 AUTOMAKE_OPTIONS     = 1.6 foreign
 MAINTAINERCLEANFILES = Makefile.in Makefile
 
-SUBDIRS = lib bin modules
+SUBDIRS = lib bin

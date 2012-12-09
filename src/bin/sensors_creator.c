@@ -43,7 +43,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
   	win = (Evas_Object *)data;
 
-	sensor = sensor_new(-1,  NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	sensor = sensor_new(-1,  NULL, NULL, NULL, NULL, NULL, NULL);
     sensor_name_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor name entry", -1)));
     sensor_description_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor description entry", -1)));
     sensor_type_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor type entry", -1)));
@@ -61,9 +61,9 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
     {
 		eo = evas_object_image_filled_add(evas);
 		evas_object_image_file_set(eo, f, NULL);
-    	evas_object_image_alpha_set(eo, EINA_TRUE);
+    		evas_object_image_alpha_set(eo, EINA_TRUE);
 		evas_object_image_scale(eo, 50, 50);
-		sensor_picture_set(sensor, eo);
+		sensor_image_set(sensor, eo);
     }
     sensor_save(sensor);
 
@@ -74,7 +74,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	if(eo)
 	{
 		evas_object_del(eo);
-    	elm_image_file_set(img, sensor_filename_get(sensor), "/image/1");
+    	elm_image_file_set(img, sensor_filename_get(sensor), "/image/0");
 	}
 
 	evas_object_del(win);
@@ -132,15 +132,12 @@ _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 //
 //
 void
-sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd, *fr;
 	Evas_Object *label, *ic, *img;
 	Evas_Object *bt;
 	Evas_Object *entry;
- 	App_Info *app;
-
-	app = (App_Info*)data;
 
 	win = elm_win_util_standard_add("sensor_creator", _("Sensor Creator"));
 	elm_win_autodel_set(win, EINA_TRUE);

@@ -13,7 +13,6 @@ AM_CPPFLAGS = \
 lib_LTLIBRARIES = libedams.la
 
 libedams_la_SOURCES = \
-modules.c \
 myfileselector.c \
 path.c \
 rooms.c \

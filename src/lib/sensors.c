@@ -50,7 +50,7 @@ sensor_detect(char *s)
 			}
 
 
-			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL, NULL);
+			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL);
 			sensor_data_set(sensor, arr[3]);
 
 			database = sensors_list_get();

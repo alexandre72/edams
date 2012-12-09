@@ -26,6 +26,5 @@
 void evas_object_image_scale(Evas_Object *obj, int width, int height);
 void window_clicked_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 const char *user_home_get(void);
-char *trimwhitespace(char *str);
 void msgbox(const char *msg);
 #endif /* __UTILS_H__ */
