@@ -11,12 +11,13 @@ fonts
 
     group
     {
-		min: 100 60;
-		max: 200 120;
+		min: 100 100;
+		max: 100 100;
         name: "meter/counter";
 		data
 		{
 			item: "value" "value.text";
+			item: "title" "title.text";
 		}
 
         parts
@@ -55,6 +56,29 @@ fonts
                		}
             	}
             }
+
+         part
+         {
+            name: "title.text";
+            type: TEXT;
+            scale: 1;
+            description
+            {
+
+               state: "default" 0.0;
+               rel1.relative: 0 0.6;
+               rel2.relative: 1.0 0.8;
+               color: 0 0 255 255;
+               text
+               {
+                  text: "sensor";
+                  font: "Sans:style=Bold";
+                  size: 9;
+                  min: 1 1;
+                  align: 0.5 0.0;
+               }
+            }
+         }
     	}
 
     	program

@@ -11,8 +11,8 @@
 			item: "tempvalue" "value.text";
 		}
 
-      min: 16 16;
-      max: 128 128;
+      min: 100 100;
+      max: 100 100;
       script
       {
          public message(Msg_Type:type, id, ...)
@@ -89,18 +89,18 @@
                state: "default" 0.0;
                align: 1.0 0.0;
                rel1 {
-                  relative: 1.0  0.0;
+                  relative: 0.5  0.0;
                   to_x: "temp";
                }
                rel2 {
-                  relative: 1.0  0.0;
+                  relative: 0.5  0.0;
                }
                color: 255 255 255 0;
                color2: 0 0 0 0;
                color3: 0 0 0 0;
                color_class: "module_label";
                text {
-                  text: "";
+                  text: "NA";
                   font: "Sans:style=Bold";
                   size: 8;
                   min: 1 1;

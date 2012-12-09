@@ -30,27 +30,25 @@
 #include "path.h"
 
 struct _Sensor {
+    char *__eet_filename;
     unsigned int id;
     const char * name;
     const char * type;
     const char * description;
     const char * datasheeturl;
-    const char * soundfile;
-    const char * group;
-    char *__eet_filename;
+    char * data;
+	const char * meter;
     const char * creation;
 	const char * revision;
     unsigned int version;
-    char * data;
-	const char * meter;
 };
 
 struct _Room {
+    char *__eet_filename;
     unsigned int id;
     const char * name;
     const char * description;
     Eina_List * sensors;
-    char *__eet_filename;
     const char * creation;
     const char * revision;
     unsigned int version;
@@ -101,8 +99,6 @@ _sensor_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "type", type, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "description", description, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "datasheeturl", datasheeturl, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "soundfile", soundfile, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "group", group, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "creation", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "revision", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_sensor_descriptor, Sensor, "version", version, EET_T_UINT);
@@ -118,7 +114,7 @@ _sensor_shutdown(void)
 }
 
 Sensor *
-sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl, const char * soundfile, const char * group)
+sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl)
 {
 	char s[PATH_MAX];
 
@@ -133,12 +129,10 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
     sensor->id = id;
     sensor->name = eina_stringshare_add(name ? name : "undefined");
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_sensors_data_path_get(), sensor->name);
-    sensor->__eet_filename = strdup(s);
+    sensor->__eet_filename = eina_stringshare_add(s);
     sensor->type = eina_stringshare_add(type ? type : "undefined");
     sensor->description = eina_stringshare_add(description ? description : "undefined");
     sensor->datasheeturl = eina_stringshare_add(datasheeturl ? datasheeturl : "undefined");
-    sensor->soundfile = eina_stringshare_add(soundfile);
-    sensor->group = eina_stringshare_add(group ? group : "undefined");
     sensor->meter = eina_stringshare_add("default");
     sensor->data = NULL;
 
@@ -161,17 +155,19 @@ sensor_new(unsigned int id, const char * name, const char * type, const char * d
 void
 sensor_free(Sensor *sensor)
 {
-    eina_stringshare_del(sensor->name);
-    eina_stringshare_del(sensor->type);
-    eina_stringshare_del(sensor->description);
-    eina_stringshare_del(sensor->datasheeturl);
-    eina_stringshare_del(sensor->soundfile);
-    eina_stringshare_del(sensor->group);
-    eina_stringshare_del(sensor->creation);
-    eina_stringshare_del(sensor->meter);
-    if(sensor->__eet_filename) 	FREE(sensor->__eet_filename);
-    eina_stringshare_del(sensor->data);
-    free(sensor);
+	if(sensor)
+	{
+	    eina_stringshare_del(sensor->__eet_filename);
+    	eina_stringshare_del(sensor->name);
+    	eina_stringshare_del(sensor->type);
+    	eina_stringshare_del(sensor->description);
+    	eina_stringshare_del(sensor->datasheeturl);
+    	eina_stringshare_del(sensor->data);
+    	eina_stringshare_del(sensor->meter);
+    	eina_stringshare_del(sensor->creation);
+    	eina_stringshare_del(sensor->revision);
+    	FREE(sensor);
+    }
 }
 
 
@@ -202,11 +198,8 @@ sensor_name_set(Sensor *sensor, const char *name)
 
     EINA_SAFETY_ON_NULL_RETURN(sensor);
 
-    if(sensor->__eet_filename)
-    	FREE(sensor->__eet_filename);
-
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_sensors_data_path_get(), name);
-    sensor->__eet_filename = strdup(s);
+    eina_stringshare_replace(&(sensor->__eet_filename), s);
 	eina_stringshare_replace(&(sensor->name), name);
 }
 
@@ -289,32 +282,6 @@ sensor_image_set(Sensor *sensor, Evas_Object *image)
 
 
 inline const char *
-sensor_soundfile_get(const Sensor *sensor)
-{
-    return sensor->soundfile;
-}
-
-inline void
-sensor_soundfile_set(Sensor *sensor, const char *soundfile)
-{
-    EINA_SAFETY_ON_NULL_RETURN(sensor);
-    eina_stringshare_replace(&(sensor->soundfile), soundfile);
-}
-
-inline const char *
-sensor_group_get(const Sensor *sensor)
-{
-    return sensor->group;
-}
-
-void
-sensor_group_set(Sensor *sensor, const char *group)
-{
-    EINA_SAFETY_ON_NULL_RETURN(sensor);
-    eina_stringshare_replace(&(sensor->group), group);
-}
-
-inline const char *
 sensor_creation_get(const Sensor *sensor)
 {
     return sensor->creation;
@@ -339,12 +306,7 @@ sensor_data_set(Sensor *sensor, char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(sensor);
 
-	if(sensor->data) FREE(sensor->data);
-
-	if(data)
-	    eina_stringshare_replace(&(sensor->data), data);
-    else
-      	sensor->data = NULL;
+eina_stringshare_replace(&(sensor->data), data);
 }
 
 
@@ -389,8 +351,7 @@ room_new(unsigned int id, const char * name, const char * description, Eina_List
        }
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s", edams_rooms_data_path_get(), _filename_create());
-
-    room->__eet_filename = strdup(s);
+    room->__eet_filename = eina_stringshare_add(s);
     room->id = id;
     room->name = eina_stringshare_add(name ? name : "undefined");
     room->description = eina_stringshare_add(description ? description : "undefined");
@@ -424,6 +385,7 @@ room_free(Room *room)
 {
 	if(room)
 	{
+	    eina_stringshare_del(room->__eet_filename);
 	    eina_stringshare_del(room->name);
     	eina_stringshare_del(room->description);
     	if (room->sensors)
@@ -435,8 +397,8 @@ room_free(Room *room)
 	    eina_stringshare_del(room->creation);
     	eina_stringshare_del(room->revision);
 
+	    FREE(room);
 	}
-    free(room);
 }
 
 
@@ -923,19 +885,17 @@ sensor_clone(const Sensor *src)
           return NULL;
        }
 
-    dst->__eet_filename = strdup(src->__eet_filename);
+    dst->__eet_filename = eina_stringshare_add(src->__eet_filename);
+    dst->id = src->id;
     dst->name = eina_stringshare_add(src->name);
     dst->type = eina_stringshare_add(src->type);
     dst->description = eina_stringshare_add(src->description);
     dst->datasheeturl = eina_stringshare_add(src->datasheeturl);
-    dst->soundfile = eina_stringshare_add(src->soundfile);
-    dst->group = eina_stringshare_add(src->group);
     dst->data = eina_stringshare_add(src->data);
     dst->meter = eina_stringshare_add(src->meter);
-    dst->version = src->version;
-    dst->id = src->id;
     dst->creation = eina_stringshare_add(src->creation);
     dst->revision = eina_stringshare_add(src->revision);
+    dst->version = src->version;
 
 	return dst;
 }
