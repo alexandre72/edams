@@ -73,7 +73,7 @@ _gg_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *icon = elm_bg_add(obj);
 
-        	if(!elm_bg_file_set(icon, sensor_filename_get(ti->sensor), "/image/1"))
+        	if(!elm_bg_file_set(icon, sensor_filename_get(ti->sensor), "/image/0"))
 				elm_bg_file_set(icon, edams_edje_theme_file_get(), "user/male");
         evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         evas_object_show(icon);
@@ -137,6 +137,9 @@ Eina_Bool
 sensorpicker_add_to_room(App_Info *app)
 {
     Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
+
+	//if(win)
+		//return;
 
     //Setup a new window.
    	win = elm_win_util_standard_add("sensor_picker", _("Select a sensor"));
@@ -203,11 +206,14 @@ sensorpicker_add_to_room(App_Info *app)
     Sensor *sensor;
     EINA_LIST_FOREACH(app->sensors, l, sensor)
     {
-        GenGridItem *ti;
-        ti = calloc(1, sizeof(*ti));
-        ti->sensor = sensor;
-   		ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
-       	//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
+    	if(sensor_name_get(sensor))
+    	{
+	        GenGridItem *ti;
+    	    ti = calloc(1, sizeof(*ti));
+    	    ti->sensor = sensor;
+   			ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
+    	   	//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
+		}
 	}
 
    	//Item_class_ref is needed for gic.

@@ -23,34 +23,13 @@
 
 
 
-#ifdef HAVE_EVIL
-static const char *
-_find_program_in_path ()
-{
-  wchar_t wfilename[PATH_MAX];
-  char s[PATH_MAX];
-
-  GetModuleFileNameW (NULL, wfilename, PATH_MAX);
-
-  wcstombs(s, wfilename, wcslen(wfilename)+1);
-  return strdup(s);
- }
-#endif
-
-
 
 // Return FriLogos installation directory. useful to get global installation data path.
 // @return char pointer containing installation directory.
 const char *
 edams_install_path_get (void)
 {
-#ifdef HAVE_EVIL
-	char s[MAX_PATH];
-	snprintf(s, sizeof(s), ecore_file_dir_get(_find_program_in_path()));
-	return strdup(s);
-#else
 	return PACKAGE_DIR;
-#endif
 }
 
 
@@ -60,12 +39,7 @@ const char *
 edams_data_path_get(void)
 {
 	char s[PATH_MAX];
-#ifdef HAVE_EVIL
-	SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA,  NULL,  0, s);
-	strcat(s, DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S);
-#else
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"data"DIR_SEPARATOR_S"edams", efreet_data_home_get());
-#endif
 	return strdup(s);
 }
 
@@ -84,13 +58,7 @@ edams_modules_path_get(void)
 const char *
 edams_locale_path_get(void)
 {
-#ifdef HAVE_EVIL
-	char s[PATH_MAX];
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"locale", edams_install_path_get());
-	return strdup(s);
-#else
 	return PACKAGE_LOCALE_DIR;
-#endif
 }
 
 

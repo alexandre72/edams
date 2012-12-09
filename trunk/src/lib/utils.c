@@ -27,31 +27,6 @@
 #include "gettext.h"
 
 
-//
-//Strip white spaces of a string.
-//
-char *
-trimwhitespace(char *str)
-{
-  char *end;
-
-  // Trim leading space
-  while(isspace(*str)) str++;
-
-  if(*str == 0)  // All spaces?
-    return str;
-
-  // Trim trailing space
-  end = str + strlen(str) - 1;
-  while(end > str && isspace(*end)) end--;
-
-  // Write new null terminator
-  *(end+1) = 0;
-
-  return str;
-}
-
-
 //Keep aspect ratio.
 void
 evas_object_image_scale(Evas_Object *obj, int width, int height)
@@ -77,69 +52,11 @@ evas_object_image_scale(Evas_Object *obj, int width, int height)
 
 
 //
-//Return home user dir in a portable way.
-//
-#ifdef HAVE_EVIL
-static char *
-get_special_folder (int csidl)
-{
-  char *s = NULL;
-  wchar_t wpath[PATH_MAX];
-  HRESULT hr;
-  LPITEMIDLIST pidl = NULL;
-  BOOL b;
-
-  hr = SHGetSpecialFolderLocation (NULL, csidl, &pidl);
-    if (hr == S_OK)
-    {
-        b = SHGetPathFromIDListW (pidl, wpath);
-
-        if(b)
-            wcstombs(s, wpath, wcslen(wpath)+1);
-
-    CoTaskMemFree (pidl);
-    }
-  return s;
-}
-#endif
-
-
-
-//
 //
 //
 const char *user_home_get(void)
 {
-#ifdef HAVE_EVIL
-	char *home;
-	home = strdup (getenv ("HOME"));
-
-	if(!home)
-	{
-	  FREE (home);
-	  home = NULL;
-	}
-
-	if (home)
-	{
-      		char *p;
-		while ((p = strchr (home, '/')) != NULL)
-		*p = '\\';
-    	}
-
-	if (!home)
-	{
-		if (getenv ("USERPROFILE") != NULL)
-		    home = strdup (getenv ("USERPROFILE"));
-	}
-
-	if (!home)
-		home = get_special_folder (CSIDL_PROFILE);
-
-    return home;
-#else
     return(getenv ("HOME"));
-#endif
 }
 
 

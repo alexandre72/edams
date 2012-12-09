@@ -81,7 +81,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
   	win = (Evas_Object *)data;
 
-	room = room_new(0,  NULL, NULL, NULL, NULL);
+	room = room_new(0,  NULL, NULL, NULL);
 
     room_name_set(room, elm_object_text_get(elm_object_name_find(win, "room name entry", -1)));
 
@@ -99,7 +99,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 		evas_object_image_file_set(eo, f, NULL);
     	evas_object_image_alpha_set(eo, EINA_TRUE);
 		evas_object_image_scale(eo, 50, 50);
-		room_photo_set(room, eo);
+		room_image_set(room, eo);
     }
     room_save(room);
 
@@ -119,7 +119,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	if(eo)
 	{
 		evas_object_del(eo);
-    	elm_image_file_set(img, room_filename_get(room), "/image/1");
+    	elm_image_file_set(img, room_filename_get(room), "/image/0");
 	}
 
     snprintf(s, sizeof(s), _("Room %s has been created."),
@@ -601,7 +601,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		char s[256];
 		if(foundin == EINA_FALSE)
 		{
-			app->sensors = eina_list_append(app->sensors, sensor);
+			app->sensors = eina_list_append(app->sensors, sensor_clone(sensor));
 			snprintf(s, sizeof(s), _("Added new sensor '%d-%s'."), sensor_id_get(sensor), sensor_name_get(sensor));
 			//fprintf(stdout, _("INFO:%d sensors registered on serial line...\n"), eina_list_count(app->sensors));
 			_notify_set(s, "elm/icon/info/default");
@@ -635,12 +635,11 @@ _clear_sensor_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __
 		_notify_set(_("Can't clear room sensors list:no room selected!"), "elm/icon/warning-notify/default");
         return;
      }
-
 	room_sensors_list_clear(app->room);
 	room_save(app->room);
 
-	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
+	Evas_Object *hbx = elm_object_name_find(app->win, "meters hbx", -1);
+	elm_box_unpack_all(hbx);
 }
 
 
@@ -774,7 +773,7 @@ _room_naviframe_content(Room *room)
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_FALSE, EINA_TRUE);
 
-    if(!elm_image_file_set(img, room_filename_get(room), "/image/1"))
+    if(!elm_image_file_set(img, room_filename_get(room), "/image/0"))
 	{
 		elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
 	}
@@ -830,6 +829,7 @@ _room_naviframe_content(Room *room)
     evas_object_show(bt);
 
 	hbx = elm_box_add(app->win);
+	evas_object_name_set(hbx, "meters hbx");
 	elm_box_horizontal_set(hbx, EINA_TRUE);
 	evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1112,7 +1112,7 @@ elm_main(int argc, char **argv)
 		ic = elm_icon_add(app->win);
 		//evas_object_size_hint_align_set(ic, 0.5, 0.5);
 		//elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
-		elm_image_file_set(ic, room_filename_get(room), "/image/1");
+		elm_image_file_set(ic, room_filename_get(room), "/image/0");
 		Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), NULL, ic, NULL, room);
 		elm_object_item_del_cb_set(it, _room_item_del_cb);
 		it = elm_naviframe_item_push(naviframe, room_name_get(room), NULL, NULL, _room_naviframe_content(room), NULL);
