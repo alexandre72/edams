@@ -513,7 +513,7 @@ do_lengthy_task(Ecore_Pipe *pipe)
 		if(softemu == EINA_FALSE)
 			serialport_read_until(fd, buf, '\n');	//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
-		sleep(3);
+		sleep(2);
    }
 }
 
@@ -590,9 +590,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 			if(sensor_id_get(data) == sensor_id_get(sensor))
 			{
 					//If sensor is already here, so only update sensor data.
-					fprintf(stdout, _("INFO:Updating sensor '%d-%s'  with data '%s'...\n"), sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
 					_sensor_data_update(sensor);
-
 					foundin = EINA_TRUE;
 					break;
 			}
@@ -607,9 +605,11 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 			_notify_set(s, "elm/icon/info/default");
 			_sensor_data_update(sensor);
 		}
+
+		sensor_free(sensor);
 	}
 
-   free(str);
+   FREE(str);
 }
 
 
@@ -638,8 +638,9 @@ _clear_sensor_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __
 	room_sensors_list_clear(app->room);
 	room_save(app->room);
 
-	Evas_Object *hbx = elm_object_name_find(app->win, "meters hbx", -1);
-	elm_box_unpack_all(hbx);
+	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
+	elm_object_item_part_content_unset(naviframe, "default");
+	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
 }
 
 
@@ -657,67 +658,74 @@ static void
 _sensor_data_update(Sensor *sensor)
 {
 	//Sync sensor data with room sensor data(if affected to any room!).
-	Eina_List *l2, *l3, *sensors;
+	Eina_List *l, *l2, *sensors;
 	Room *room;
 	Sensor *data;
 
-    EINA_LIST_FOREACH(app->rooms, l2, room)
+    EINA_LIST_FOREACH(app->rooms, l, room)
     {
-			sensors = room_sensors_list_get(room);
-    		EINA_LIST_FOREACH(sensors, l3, data)
-    		{
-				if(sensor_id_get(sensor) == sensor_id_get(data))
-					{
-						sensor_data_set(data, sensor_data_get(sensor));
-					}
-    		}
+		sensors = room_sensors_list_get(room);
+    	EINA_LIST_FOREACH(sensors, l2, data)
+    	{
+			if(sensor_id_get(sensor) == sensor_id_get(data))
+			{
+				sensor_data_set(data, sensor_data_get(sensor));
+			}
+    	}
     }
 
-	if(sensor_data_get(sensor) && (app->room))
+	//Updata data sensor meter affected to room(can be affected on different rooms).
+	if(sensor_data_get(sensor))
     {
-		char s[64];
-      	printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
-		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(app->room));
-		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
+    	EINA_LIST_FOREACH(app->rooms, l, room)
+    	{
+			char s[64];
+			snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
+			Evas_Object * layout = elm_object_name_find(app->win, s, -1);
+
+			if(layout)
+			{
+				const char *t;
+				if((t = elm_layout_data_get(layout, "tempvalue")))
+				{
+					int temp_x, temp_y;
+			   		elm_object_signal_emit(layout, "temp,state,known", "");
+   					snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
+    				elm_object_part_text_set(layout, "value.text", s);
+
+			    	sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
+
+					Evas_Object *eo = elm_layout_edje_get(layout);
+					Edje_Message_Float msg;
+					double level =  (double)((temp_x + (temp_y*0.01)) - TEMP_MIN) /
+    		          			(double)(TEMP_MAX - TEMP_MIN);
+
+   					if (level < 0.0) level = 0.0;
+   					else if (level > 1.0) level = 1.0;
+   					msg.val = level;
+			    	edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
+				}
 
 
-		const char *t;
-		if((t = elm_layout_data_get(layout, "tempvalue")))
-		{
-			int temp_x, temp_y;
-		   	elm_object_signal_emit(layout, "temp,state,known", "");
-   			snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
-    		elm_object_part_text_set(layout, "value.text", s);
+				if((t = elm_layout_data_get(layout, "action")))
+				{
+				 	if(atoi(sensor_data_get(sensor)) == 0)
+    	       			elm_object_signal_emit(layout, "end", "over");
+    		      	else
+    	          	 	elm_object_signal_emit(layout, "animate", "over");
+				}
 
-		    sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
+				if((t = elm_layout_data_get(layout, "title")))
+				{
+					snprintf(s, sizeof(s), "%d - %s", sensor_id_get(sensor), sensor_name_get(sensor));
+					elm_object_part_text_set(layout, "title.text", s);
+				}
 
-			Evas_Object *eo = elm_layout_edje_get(layout);
-			   Edje_Message_Float msg;
-			double level =  (double)((temp_x + (temp_y*0.01)) - TEMP_MIN) /
-    	          			(double)(TEMP_MAX - TEMP_MIN);
-
-   			if (level < 0.0) level = 0.0;
-   			else if (level > 1.0) level = 1.0;
-   			msg.val = level;
-		    edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
-		}
-
-
-		if((t = elm_layout_data_get(layout, "action")))
-		{
-			 if(atoi(sensor_data_get(sensor)) == 0)
-           		elm_object_signal_emit(layout, "end", "over");
-    	      else
-               	elm_object_signal_emit(layout, "animate", "over");
-		}
-
-		if((t = elm_layout_data_get(layout, "title")))
-			elm_object_part_text_set(layout, "title.text", room_name_get(app->room));
-
-		if((t = elm_layout_data_get(layout, "value")))
-		{
-			printf("%s\n", t);
-			elm_object_part_text_set(layout, "value.text", sensor_data_get(sensor));
+				if((t = elm_layout_data_get(layout, "value")))
+				{
+					elm_object_part_text_set(layout, "value.text", sensor_data_get(sensor));
+				}
+			}
 		}
 	}
 }
@@ -729,17 +737,23 @@ _sensor_meter_update(Sensor *sensor)
 {
 	char s[64];
 
-	if(app->room)
-	{
-		printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
-		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(app->room));
-		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
+	printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
 
+	Eina_List *l;
+	Room *room;
+    EINA_LIST_FOREACH(app->rooms, l, room)
+    {
+		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
+		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
+		elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
+
+/*
 		if(!sensor_meter_get(sensor) || strstr(sensor_meter_get(sensor), "default"))
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer");
 		else
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
-	}
+*/
+    }
 }
 
 
@@ -834,8 +848,6 @@ _room_naviframe_content(Room *room)
 	evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_box_homogeneous_set(hbx, EINA_TRUE);
-    elm_box_pack_end(vbx, hbx);
-	evas_object_show(hbx);
 
 	sensors = room_sensors_list_get(room);
 
@@ -844,18 +856,17 @@ _room_naviframe_content(Room *room)
     	layout = elm_layout_add(app->win);
 		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
 		evas_object_name_set(layout, s);
-		evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL,  EVAS_HINT_FILL);
-		elm_box_padding_set(hbx, 5, 5);
-    	elm_box_pack_end(hbx, layout);
-		evas_object_show(layout);
-
-		elm_object_signal_callback_add(layout, "emit,bt,doubleclicked", "", _layout_dbclicked__cb, layout);
 		_sensor_meter_update(sensor);
 		_sensor_data_update(sensor);
+		evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+		elm_box_padding_set(hbx, 2, 0);
+    	elm_box_pack_end(hbx, layout);
+		evas_object_show(layout);
 	}
+    elm_box_pack_end(vbx, hbx);
+	evas_object_show(hbx);
 
-	elm_box_recalculate(hbx);
 	return vbx;
 }
 

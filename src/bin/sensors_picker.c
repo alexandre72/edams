@@ -20,8 +20,8 @@
 
 
 #include "sensors_picker.h"
-
 #include "sensors.h"
+#include "rooms.h"
 #include "utils.h"
 #include "path.h"
 
@@ -102,8 +102,9 @@ _gg_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *pa
 static void
 _gg_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-	//GenGridItem *ggi = data;
-	//FREE(ggi);
+	GenGridItem *ti = data;
+	sensor_free(ti->sensor);
+	FREE(ti);
 }
 
 
@@ -121,10 +122,11 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    if (!it) return;
 	GenGridItem *ggi = elm_object_item_data_get(it);
 
-	room_sensors_add(app->room, ggi->sensor);
+	room_sensors_add(app->room, sensor_clone(ggi->sensor));
 	room_save(app->room);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
+	elm_object_item_part_content_unset(naviframe, "default");
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
 }
 
@@ -210,7 +212,7 @@ sensorpicker_add_to_room(App_Info *app)
     	{
 	        GenGridItem *ti;
     	    ti = calloc(1, sizeof(*ti));
-    	    ti->sensor = sensor;
+    	    ti->sensor = sensor_clone(sensor);
    			ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
     	   	//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
 		}

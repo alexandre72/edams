@@ -29,8 +29,6 @@ Sensor*
 sensor_detect(char *s)
 {
 	char **arr;
-	Eina_List *l;
-	Eina_List *database;
 	Sensor *data, *sensor = NULL;
 	unsigned int n;
 
@@ -50,9 +48,11 @@ sensor_detect(char *s)
 			}
 
 
-			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL, NULL, NULL);
+			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL);
 			sensor_data_set(sensor, arr[3]);
 
+			Eina_List *l;
+			Eina_List *database;
 			database = sensors_list_get();
 			EINA_LIST_FOREACH(database, l, data)
 			{
@@ -62,13 +62,11 @@ sensor_detect(char *s)
 					sensor_description_set(sensor, sensor_description_get(data));
 					sensor_type_set(sensor, sensor_type_get(data));
 					sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));
-
-					if(sensor_meter_get(data))
-						sensor_meter_set(sensor, sensor_meter_get(data));
+					sensor_meter_set(sensor, sensor_meter_get(data));
 					break;
 				}
 			}
-			sensor_meter_set(sensor, "default");
+			sensors_list_free(database);
 		}
 		FREE(arr[0]);
 		FREE(arr);

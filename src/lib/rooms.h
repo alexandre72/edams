@@ -31,15 +31,17 @@ typedef struct _Room Room;
 
 
 /* Sensor */
-Sensor *sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl, const char * soundfile, const char * group);
+Sensor *sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl);
 void sensor_free(Sensor *sensor);
+Sensor *sensor_clone(const Sensor *src);
+
+
 void sensor_id_set(Sensor *sensor, unsigned int id);
 void sensor_name_set(Sensor *sensor, const char * name);
 void sensor_type_set(Sensor *sensor, const char * type);
 void sensor_description_set(Sensor *sensor, const char * description);
 void sensor_datasheeturl_set(Sensor *sensor, const char * datasheeturl);
 void sensor_image_set(Sensor *sensor, Evas_Object *image);
-void sensor_soundfile_set(Sensor *sensor, const char * soundfile);
 void sensor_creation_set(Sensor *sensor, const char * creation);
 void sensor_data_set(Sensor *sensor, char * data);
 void sensor_meter_set(Sensor *sensor, const char * meter);
@@ -50,8 +52,6 @@ const char * sensor_name_get(const Sensor *sensor);
 const char * sensor_type_get(const Sensor *sensor);
 const char * sensor_description_get(const Sensor *sensor);
 const char * sensor_datasheeturl_get(const Sensor *sensor);
-const char * sensor_soundfile_get(const Sensor *sensor);
-const char * sensor_group_get(const Sensor *sensor);
 const char * sensor_creation_get(const Sensor *sensor);
 const char * sensor_data_get(const Sensor *sensor);
 const char * sensor_meter_get(const Sensor *sensor);
