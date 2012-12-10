@@ -663,7 +663,6 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 	char *meter = elm_object_item_text_get(event_info);
 	Sensor *sensor = data;
 	sensor_meter_set(sensor, meter);
-	sensor_save(sensor);
    _sensor_meter_update(sensor);
 }
 
@@ -795,6 +794,8 @@ _sensor_meter_update(Sensor *sensor)
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/counter");
 		else
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
+
+		room_save(room);
     }
 }
 
