@@ -482,13 +482,14 @@ do_lengthy_task(Ecore_Pipe *pipe)
 	Eina_Bool softemu = EINA_FALSE;
 	Eina_Bool hardemu = EINA_FALSE;
 
-	elm_prefs_data_value_get(app->prefs_data, "main:softemu_checkb", &type, &value);
-	softemu = eina_value_get(&value, &softemu);
+	if(elm_prefs_data_value_get(app->prefs_data, "main:softemu_checkb", &type, &value))
+		softemu = eina_value_get(&value, &softemu);
+
 	if(elm_prefs_data_value_get(app->prefs_data, "main:hardemu_checkb", &type, &value))
 		hardemu = eina_value_get(&value, &hardemu);
 
-	printf("OPTION:software emulation(snprintf) =%s\n", softemu?"TRUE":"FALSE");
-	printf("OPTION:hardware emulation(serial loopback) =%s\n", hardemu?"TRUE":"FALSE");
+	//fprintf(stdout, _("OPTION:software emulation(snprintf) =%s\n"), softemu?"TRUE":"FALSE");
+	//fprintf(stdout, _("OPTION:hardware emulation(serial loopback) =%s\n"), hardemu?"TRUE":"FALSE");
 
 	if(softemu == EINA_FALSE)
 	{
@@ -600,6 +601,8 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		if(foundin == EINA_FALSE)
 		{
 			app->sensors = eina_list_append(app->sensors, sensor_clone(sensor));
+			app->sensors = eina_list_sort(app->sensors, eina_list_count(app->sensors), EINA_COMPARE_CB(sensors_list_sort_cb));
+
 			snprintf(s, sizeof(s), _("Added new sensor '%d-%s'."), sensor_id_get(sensor), sensor_name_get(sensor));
 			//fprintf(stdout, _("INFO:%d sensors registered on serial line...\n"), eina_list_count(app->sensors));
 			_notify_set(s, "elm/icon/info/default");
@@ -645,10 +648,50 @@ _clear_sensor_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __
 
 
 
+
 static void
-_layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *layout, const char *emission __UNUSED__, const char *source __UNUSED__)
+_dismissed(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   printf("Double clicked on layout!!!\n");
+   evas_object_del(obj);
+}
+
+
+
+static void
+_ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+	char *meter = elm_object_item_text_get(event_info);
+	Sensor *sensor = data;
+	sensor_meter_set(sensor, meter);
+	sensor_save(sensor);
+   _sensor_meter_update(sensor);
+}
+
+
+
+static void
+_layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Evas_Object *ctxpopup, *ic;
+   Elm_Object_Item *it;
+   Evas_Coord x,y;
+   Sensor *sensor = (Sensor*)data;
+
+   ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+
+	Eina_List *l;
+	char *meter;
+    EINA_LIST_FOREACH(app->meters, l, meter)
+    {
+
+       it = elm_ctxpopup_item_append(ctxpopup, meter, NULL, _ctxpopup_item_cb, sensor);
+    }
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_object_size_hint_max_set(ctxpopup, 240, 240);
+   evas_object_move(ctxpopup, x, y);
+   evas_object_show(ctxpopup);
 }
 
 
@@ -689,7 +732,6 @@ _sensor_data_update(Sensor *sensor)
 				if((t = elm_layout_data_get(layout, "tempvalue")))
 				{
 					int temp_x, temp_y;
-			   		elm_object_signal_emit(layout, "temp,state,known", "");
    					snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
     				elm_object_part_text_set(layout, "value.text", s);
 
@@ -725,6 +767,9 @@ _sensor_data_update(Sensor *sensor)
 				{
 					elm_object_part_text_set(layout, "value.text", sensor_data_get(sensor));
 				}
+
+
+				elm_object_signal_emit(layout, "updated", "over");
 			}
 		}
 	}
@@ -737,7 +782,7 @@ _sensor_meter_update(Sensor *sensor)
 {
 	char s[64];
 
-	printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
+	//printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
 
 	Eina_List *l;
 	Room *room;
@@ -745,14 +790,11 @@ _sensor_meter_update(Sensor *sensor)
     {
 		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
 		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
-		elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer2");
 
-/*
 		if(!sensor_meter_get(sensor) || strstr(sensor_meter_get(sensor), "default"))
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/thermometer");
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/counter");
 		else
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
-*/
     }
 }
 
@@ -791,7 +833,7 @@ _room_naviframe_content(Room *room)
 	{
 		elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
 	}
-        elm_grid_pack(gd, img, 1, 1, 25, 25);
+        elm_grid_pack(gd, img, 1, 1, 40, 40);
 
 	evas_object_show(img);
 
@@ -811,16 +853,6 @@ _room_naviframe_content(Room *room)
 	snprintf(s, sizeof(s), _(_("Sensors:")));
 	elm_grid_pack(gd, label, 30, 15, 50, 8);
 	evas_object_show(label);
-
-	Eina_List *l, *sensors;
-	sensors = room_sensors_list_get(room);
-	Sensor *sensor;
-    EINA_LIST_FOREACH(sensors, l, sensor)
-    {
-		strcat(s, sensor_name_get(sensor));
-		strcat(s, ",");
-    }
-	elm_object_text_set(label, s);
 
 	bt = elm_button_add(app->win);
 	elm_object_text_set(bt, _("Add..."));
@@ -849,8 +881,9 @@ _room_naviframe_content(Room *room)
 	evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_box_homogeneous_set(hbx, EINA_TRUE);
 
+	Eina_List *l, *sensors;
+	Sensor *sensor;
 	sensors = room_sensors_list_get(room);
-
     EINA_LIST_FOREACH(sensors, l, sensor)
     {
     	layout = elm_layout_add(app->win);
@@ -858,12 +891,15 @@ _room_naviframe_content(Room *room)
 		evas_object_name_set(layout, s);
 		_sensor_meter_update(sensor);
 		_sensor_data_update(sensor);
-		evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 		elm_box_padding_set(hbx, 2, 0);
     	elm_box_pack_end(hbx, layout);
 		evas_object_show(layout);
+
+		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, sensor);
+
 	}
+	elm_box_recalculate(hbx);
     elm_box_pack_end(vbx, hbx);
 	evas_object_show(hbx);
 
@@ -957,7 +993,7 @@ elm_main(int argc, char **argv)
 		{
 			if(strncmp(group, "meter/" , 6) == 0)
 			{
-			app->meters = eina_list_append(app->meters, eina_stringshare_add(group));
+				app->meters = eina_list_append(app->meters, eina_stringshare_add(group));
 			}
 		}
 		edje_file_collection_list_free(groups);

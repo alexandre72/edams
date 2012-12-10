@@ -104,6 +104,26 @@ group
                color: 0 0 0 0;
             }
          }
+         part
+         {
+            name: "update";
+            description
+            {
+               state: "default" 0.0;
+            	max: 44 11;
+               aspect_preference: BOTH;
+	           image.normal: "updated.png";
+               visible: 0;
+           }
+           description
+            {
+            max: 44 11;
+               state: "show" 0.0;
+				align: 0.5 0.5;
+               visible: 1;
+               color: 0 0 0 0;
+            }
+         }
       }
        programs
        {
@@ -136,6 +156,22 @@ group
             action: STATE_SET "default" 0.0;
 		    transition: LINEAR 0.5;
             target: "monitor";
+         }
+        program
+         {
+            name: "updated,start";
+            signal: "updated";
+            source: "over";
+            action: STATE_SET "show" 0.0;
+    	    transition: SINUSOIDAL 3.0;
+            target: "update";
+            after: "hover2";
+         }
+         program {
+            name: "hover2";
+            source: "over";
+            action: STATE_SET "default" 0.0;
+            target: "update";
          }
       }
    }

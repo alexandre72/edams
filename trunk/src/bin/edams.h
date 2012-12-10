@@ -45,6 +45,7 @@ typedef struct
 } App_Info;
 
 
+
 Evas_Object*_room_naviframe_content(Room *room);
 
 //preferences_dlg.c: Preferences dialog.
