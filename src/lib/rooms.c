@@ -62,6 +62,36 @@ static Eet_Data_Descriptor *_sensor_descriptor = NULL;
 static Eet_Data_Descriptor *_room_descriptor = NULL;
 
 
+static int
+_rooms_list_sort_cb(const void *d1, const void *d2)
+{
+    const char *txt = room_name_get((Room*)d1);
+    const char *txt2 = room_name_get((Room*)d2);
+
+    if(!txt) return(1);
+    if(!txt2) return(-1);
+
+    return(strcoll(txt, txt2));
+}
+
+
+
+int
+sensors_list_sort_cb(const void *d1, const void *d2)
+{
+    unsigned int id1 = sensor_id_get((Sensor *)d1);
+    unsigned int id2 = sensor_id_get((Sensor *)d2);
+
+	if(id1 == id2)
+		return 0;
+	else if(id1 < id2)
+		return -1;
+	else
+		return 1;
+}
+
+
+
 static char *
 _filename_create()
 {
@@ -461,6 +491,7 @@ room_sensors_add(Room *room, Sensor *sensor)
 	}
 
     room->sensors = eina_list_append(room->sensors, sensor);
+	room->sensors = eina_list_sort(room->sensors, eina_list_count(room->sensors), EINA_COMPARE_CB(sensors_list_sort_cb));
 }
 
 inline void
@@ -468,6 +499,7 @@ room_sensors_del(Room *room, Sensor *sensor)
 {
     EINA_SAFETY_ON_NULL_RETURN(room);
     room->sensors = eina_list_remove(room->sensors, sensor);
+	room->sensors = eina_list_sort(room->sensors, eina_list_count(room->sensors), EINA_COMPARE_CB(sensors_list_sort_cb));
 }
 
 inline Sensor *
@@ -496,7 +528,8 @@ inline Eina_List *
 room_sensors_list_get(const Room *room)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(room, NULL);
-    return room->sensors;
+
+    return eina_list_sort(room->sensors, eina_list_count(room->sensors), EINA_COMPARE_CB(sensors_list_sort_cb));
 }
 
 inline void
@@ -693,6 +726,7 @@ rooms_list_room_remove(Eina_List *rooms, Room *room)
 
 
 
+
 //
 //Read all rooms infos files.
 //
@@ -736,7 +770,7 @@ Eina_List *rooms_list_get()
 	}
 
 	//fprintf(stdout, _("INFO:%d rooms found in database.\n"), eina_list_count(rooms));
-	rooms = eina_list_sort(rooms, eina_list_count(rooms), EINA_COMPARE_CB(strcoll));
+	rooms = eina_list_sort(rooms, eina_list_count(rooms), EINA_COMPARE_CB(_rooms_list_sort_cb));
 	return rooms;
 }
 
@@ -840,7 +874,7 @@ sensors_list_get()
 	}
 
 	//fprintf(stdout, _("INFO:%d sensors found in database.\n"), eina_list_count(sensors));
-	sensors = eina_list_sort(sensors, eina_list_count(sensors), EINA_COMPARE_CB(strcoll));
+	sensors = eina_list_sort(sensors, eina_list_count(sensors), EINA_COMPARE_CB(sensors_list_sort_cb));
 	return sensors;
 }
 

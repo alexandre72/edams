@@ -30,6 +30,8 @@ typedef struct _Sensor Sensor;
 typedef struct _Room Room;
 
 
+
+
 /* Sensor */
 Sensor *sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl);
 void sensor_free(Sensor *sensor);
@@ -61,7 +63,7 @@ Sensor *sensor_load(const char *filename);
 
 Eina_List *sensors_list_get();
 Eina_List *sensors_list_free(Eina_List *sensors);
-
+int sensors_list_sort_cb(const void *d1, const void *d2);
 
 /* Room */
 Room *room_new(unsigned int id, const char * name, const char * description, Eina_List * sensors);
