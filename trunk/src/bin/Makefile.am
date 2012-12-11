@@ -21,6 +21,7 @@ edams_SOURCES = \
 about_dlg.c \
 edams.c \
 init.c \
+map.c \
 sensors_picker.c \
 sensors_creator.c \
 preferences_dlg.c \

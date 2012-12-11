@@ -27,6 +27,7 @@
 #include <Ecore_File.h>
 
 #include "edams.h"
+#include "map.h"
 #include "utils.h"
 #include "init.h"
 #include "myfileselector.h"
@@ -505,7 +506,7 @@ do_lengthy_task(Ecore_Pipe *pipe)
 	{
 		//Serial loopback(TX<=>RX) emulation trame test.
 		if(hardemu == EINA_TRUE)
-			serialport_write(fd, "DEVICE;0;DS18B20;INT;17.296;OK\n");
+			serialport_write(fd, "DEVICE;0;DS18B20;17.296;OK\n");
 
 		//Sotfware emulation trame test.
 		if(softemu == EINA_TRUE)
@@ -772,6 +773,8 @@ _sensor_data_update(Sensor *sensor)
 			}
 		}
 	}
+
+	map_data_update(sensor);
 }
 
 
@@ -1065,6 +1068,7 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
 	elm_toolbar_item_append(app->toolbar,"sensors-creator", _("Sensors Creator"), sensors_creator_new, app);
+	elm_toolbar_item_append(app->toolbar,"", _("Rooms Map"), map_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);
 	elm_toolbar_item_append(app->toolbar, "close-window", _("Quit"), quit_bt_clicked_cb, app);
