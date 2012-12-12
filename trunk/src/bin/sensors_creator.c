@@ -229,7 +229,7 @@ sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	ic = elm_icon_add(win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "dialog-ok-apply");
+	elm_icon_standard_set(ic, "apply-window");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Ok"));
 	elm_grid_pack(gd, bt, 20, 85, 20, 12);
@@ -240,9 +240,9 @@ sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	ic = elm_icon_add(win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "dialog-cancel");
+	elm_icon_standard_set(ic, "window-close");
 	elm_object_part_content_set(bt, "icon", ic);
-	elm_object_text_set(bt, _("Cancel"));
+	elm_object_text_set(bt, _("Close"));
     elm_grid_pack(gd, bt, 60, 85, 20, 12);
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);

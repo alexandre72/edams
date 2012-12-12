@@ -252,7 +252,7 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	ic = elm_icon_add(win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "dialog-ok-apply");
+	elm_icon_standard_set(ic, "apply-window");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Ok"));
 	elm_grid_pack(gd, bt, 20, 85, 20, 12);
@@ -263,9 +263,9 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	ic = elm_icon_add(win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "dialog-cancel");
+	elm_icon_standard_set(ic, "window-close");
 	elm_object_part_content_set(bt, "icon", ic);
-	elm_object_text_set(bt, _("Cancel"));
+	elm_object_text_set(bt, _("Close"));
     elm_grid_pack(gd, bt, 60, 85, 20, 12);
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
@@ -427,7 +427,7 @@ _remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, v
    	elm_object_text_set(bt, _("No"));
    	ic = elm_icon_add(app->win);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(ic, "close-window");
+    elm_icon_standard_set(ic, "window-close");
     elm_object_part_content_set(bt, "icon", ic);
 	evas_object_show(bt);
 }
@@ -1069,10 +1069,10 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
 	elm_toolbar_item_append(app->toolbar,"sensors-creator", _("Sensors Creator"), sensors_creator_new, app);
-	elm_toolbar_item_append(app->toolbar,"", _("Rooms Map"), map_new, app);
+	elm_toolbar_item_append(app->toolbar, "map", _("Rooms Map"), map_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);
-	elm_toolbar_item_append(app->toolbar, "close-window", _("Quit"), quit_bt_clicked_cb, app);
+	elm_toolbar_item_append(app->toolbar, "close-application", _("Quit"), quit_bt_clicked_cb, app);
 	elm_box_pack_end(vbx, app->toolbar);
 	evas_object_show(app->toolbar);
 
