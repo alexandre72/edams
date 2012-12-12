@@ -1062,6 +1062,7 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_smart_callback_add(bt, "clicked", _notify_close_bt_cb, notify);
 
+
 	//Setup toolbar.
 	app->toolbar = elm_toolbar_add(app->win);
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
@@ -1171,6 +1172,8 @@ elm_main(int argc, char **argv)
 		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
     	elm_object_item_data_set(it, room);
 	}
+
+	//map_new(app, app->win, NULL);
 
 	Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);

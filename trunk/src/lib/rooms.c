@@ -218,7 +218,7 @@ sensor_id_set(Sensor *sensor, unsigned int id)
 inline const char *
 sensor_name_get(const Sensor *sensor)
 {
-    return sensor->name;
+    return elm_entry_markup_to_utf8(sensor->name);
 }
 
 inline void
@@ -448,7 +448,7 @@ room_id_set(Room *room, unsigned int id)
 inline const char *
 room_name_get(const Room *room)
 {
-    return room->name;
+    return  elm_entry_markup_to_utf8(room->name);
 }
 
 
