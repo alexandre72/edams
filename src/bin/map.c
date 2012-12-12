@@ -119,15 +119,15 @@ map_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 			evas_object_grid_pack(grid, text, 0, 0, 100, 30);
 			evas_object_show(text);
 
-			Eina_List *l2, *sensors;
-			Sensor *sensor;
-			sensors = room_sensors_list_get(room);
+			Eina_List *l2, *devices;
+			Device *device;
+			devices = room_devices_list_get(room);
 			int z = 0;
-    		EINA_LIST_FOREACH(sensors, l2, sensor)
+    		EINA_LIST_FOREACH(devices, l2, device)
     		{
  				Evas_Object *edje;
 				edje = edje_object_add(evas);
-				snprintf(s, sizeof(s), "%d %s edje", sensor_id_get(sensor), room_name_get(room));
+				snprintf(s, sizeof(s), "%d %s edje", device_id_get(device), room_name_get(room));
 				evas_object_name_set(edje, s);
 
 				if (!edje)
@@ -136,7 +136,7 @@ map_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 					return NULL;
 				}
 
-				if(!sensor_meter_get(sensor) || strstr(sensor_meter_get(sensor), "default"))
+				if(!device_meter_get(device) || strstr(device_meter_get(device), "default"))
 				{
 					if (!edje_object_file_set(edje, edams_edje_theme_file_get(), "meter/counter"))
 					{
@@ -149,7 +149,7 @@ map_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 				}
 				else
 				{
-					if (!edje_object_file_set(edje, edams_edje_theme_file_get(), sensor_meter_get(sensor)))
+					if (!edje_object_file_set(edje, edams_edje_theme_file_get(), device_meter_get(device)))
 					{
 						int err = edje_object_load_error_get(edje);
 						const char *errmsg = edje_load_error_str(err);
@@ -192,12 +192,12 @@ map_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
 
 void
-map_data_update(Sensor *sensor)
+map_data_update(Device *device)
 {
-	//Sync sensor data with room sensor data(if affected to any room!).
-	Eina_List *l, *l2, *sensors;
+	//Sync device data with room device data(if affected to any room!).
+	Eina_List *l, *l2, *devices;
 	Room *room;
-	Sensor *data;
+	Device *data;
 
 	if(!app)
 	return;
@@ -205,24 +205,24 @@ map_data_update(Sensor *sensor)
 
     EINA_LIST_FOREACH(app->rooms, l, room)
     {
-		sensors = room_sensors_list_get(room);
-    	EINA_LIST_FOREACH(sensors, l2, data)
+		devices = room_devices_list_get(room);
+    	EINA_LIST_FOREACH(devices, l2, data)
     	{
-			if(sensor_id_get(sensor) == sensor_id_get(data))
+			if(device_id_get(device) == device_id_get(data))
 			{
-				sensor_data_set(data, sensor_data_get(sensor));
+				device_data_set(data, device_data_get(device));
 			}
     	}
     }
 
 
-	//Updata data sensor meter affected to room(can be affected on different rooms).
-	if(sensor_data_get(sensor))
+	//Updata data device meter affected to room(can be affected on different rooms).
+	if(device_data_get(device))
     {
     	EINA_LIST_FOREACH(app->rooms, l, room)
     	{
 			char s[64];
-			snprintf(s, sizeof(s), "%d %s edje", sensor_id_get(sensor), room_name_get(room));
+			snprintf(s, sizeof(s), "%d %s edje", device_id_get(device), room_name_get(room));
 			Evas_Object * edje = evas_object_name_find(evas, s);
 
 			if(edje)
@@ -232,10 +232,10 @@ map_data_update(Sensor *sensor)
 				if((t = edje_object_data_get(edje, "tempvalue")))
 				{
 					int temp_x, temp_y;
-   					snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
+   					snprintf(s, sizeof(s), "%s°C", device_data_get(device));
     				edje_object_part_text_set(edje, "value.text", s);
 
-			    	sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
+			    	sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
 					Edje_Message_Float msg;
 					double level =  (double)((temp_x + (temp_y*0.01)) - TEMP_MIN) /
     		          			(double)(TEMP_MAX - TEMP_MIN);
@@ -249,7 +249,7 @@ map_data_update(Sensor *sensor)
 
 				if((t = edje_object_data_get(edje, "action")))
 				{
-				 	if(atoi(sensor_data_get(sensor)) == 0)
+				 	if(atoi(device_data_get(device)) == 0)
     	       			edje_object_signal_emit(edje, "end", "over");
     		      	else
     	          	 	edje_object_signal_emit(edje, "animate", "over");
@@ -257,12 +257,12 @@ map_data_update(Sensor *sensor)
 
 				if((t = edje_object_data_get(edje, "title")))
 				{
-					snprintf(s, sizeof(s), "%d - %s", sensor_id_get(sensor), sensor_name_get(sensor));
+					snprintf(s, sizeof(s), "%d - %s", device_id_get(device), device_name_get(device));
 					edje_object_part_text_set(edje, "title.text", s);
 				}
 								if((t = edje_object_data_get(edje, "value")))
 				{
-					edje_object_part_text_set(edje, "value.text", sensor_data_get(sensor));
+					edje_object_part_text_set(edje, "value.text", device_data_get(device));
 				}
 
 				edje_object_signal_emit(edje, "updated", "over");

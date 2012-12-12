@@ -1,5 +1,5 @@
 /*
- * sensors_creator.h
+ * devices_creator.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -19,11 +19,11 @@
  */
 
 
-#ifndef __SENSORSCREATOR_H
-#define __SENSORSCREATOR_H
+#ifndef __DEVICESCREATOR_H
+#define __DEVICESCREATOR_H
 
 #include <Evas.h>
 
-void sensors_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+void devices_creator_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 #endif

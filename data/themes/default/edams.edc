@@ -4,9 +4,9 @@ images {
     image: "icons/info-notify.png" COMP;
     image: "icons/question-notify.png" COMP;
     image: "icons/warning-notify.png" COMP;
-    image: "icons/sensors-add.png" COMP;
-    image: "icons/sensors-remove.png" COMP;
-    image: "icons/sensors-creator.png" COMP;
+    image: "icons/device-add.png" COMP;
+    image: "icons/device-remove.png" COMP;
+    image: "icons/devices-creator.png" COMP;
     image: "icons/preferences-browser.png" COMP;
     image: "icons/map.png" COMP;
     image: "icons/apply-window.png" COMP;
@@ -145,7 +145,7 @@ group { name: "elm/icon/about-dlg/default";
       }
    }
 
-  group { name: "elm/icon/sensors-remove/default";
+  group { name: "elm/icon/device-remove/default";
       min: 48 48;
       parts {
          part {
@@ -155,7 +155,7 @@ group { name: "elm/icon/about-dlg/default";
                aspect: 1 1;
                aspect_preference: BOTH;
                image {
-                  normal: "icons/sensors-remove.png";
+                  normal: "icons/device-remove.png";
                   middle: DEFAULT;
                }
                fill {
@@ -164,7 +164,7 @@ group { name: "elm/icon/about-dlg/default";
          }
       }
    }
-  group { name: "elm/icon/sensors-add/default";
+  group { name: "elm/icon/device-add/default";
       min: 48 48;
       parts {
          part {
@@ -174,7 +174,7 @@ group { name: "elm/icon/about-dlg/default";
                aspect: 1 1;
                aspect_preference: BOTH;
                image {
-                  normal: "icons/sensors-add.png";
+                  normal: "icons/device-add.png";
                   middle: DEFAULT;
                }
                fill {
@@ -183,7 +183,7 @@ group { name: "elm/icon/about-dlg/default";
          }
       }
    }
-  group { name: "elm/icon/sensors-creator/default";
+  group { name: "elm/icon/devices-creator/default";
       min: 48 48;
       parts {
          part {
@@ -193,7 +193,7 @@ group { name: "elm/icon/about-dlg/default";
                aspect: 1 1;
                aspect_preference: BOTH;
                image {
-                  normal: "icons/sensors-creator.png";
+                  normal: "icons/devices-creator.png";
                   middle: DEFAULT;
                }
                fill {

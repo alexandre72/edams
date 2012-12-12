@@ -1,5 +1,5 @@
 /*
- * sensors_picker.h
+ * device.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -19,13 +19,11 @@
  */
 
 
-#ifndef __SENSORSPICKER_H
-#define __SENSORSPICKER_H
+#ifndef __DEVICE_H
+#define __DEVICE_H
 
-#include <Eina.h>
-#include "edams.h"
+#include "rooms.h"
 
-
-Eina_Bool sensorpicker_add_to_room(App_Info *app);
+Device *devices_detect(char *s);
 
 #endif

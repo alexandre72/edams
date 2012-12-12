@@ -29,7 +29,7 @@ edams_shutdown(App_Info *app)
 {
 	INF(_("Shutdown Edams..."));
 	app->rooms = rooms_list_free(app->rooms);
-	app->sensors = sensors_list_free(app->sensors);
+	app->devices = devices_list_free(app->devices);
 	void *data;
 	EINA_LIST_FREE(app->meters, data)
 		eina_stringshare_del(data);

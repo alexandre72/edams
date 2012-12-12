@@ -26,5 +26,5 @@
 #include <edams.h>
 
 void map_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-void map_data_update(Sensor *sensor);
+void map_data_update(Device *device);
 #endif
