@@ -22,8 +22,8 @@ about_dlg.c \
 edams.c \
 init.c \
 map.c \
-sensors_picker.c \
-sensors_creator.c \
+devices_picker.c \
+devices_creator.c \
 preferences_dlg.c \
 shutdown.c
 

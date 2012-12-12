@@ -16,7 +16,7 @@ libedams_la_SOURCES = \
 myfileselector.c \
 path.c \
 rooms.c \
-sensors.c \
+device.c \
 serial.c \
 utils.c
 

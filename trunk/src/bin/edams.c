@@ -33,10 +33,10 @@
 #include "myfileselector.h"
 #include "path.h"
 #include "rooms.h"
-#include "sensors.h"
+#include "device.h"
 #include "serial.h"
-#include "sensors_picker.h"
-#include "sensors_creator.h"
+#include "devices_picker.h"
+#include "devices_creator.h"
 #include "shutdown.h"
 #include "about_dlg.h"
 
@@ -61,8 +61,8 @@ static void _notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
 static void _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _notify_set(const char *msg, const char *icon);
 static void _room_item_del_cb(void *data, Evas_Object *obj, void *event_info);
-static void _sensor_data_update(Sensor *sensor);
-static void _sensor_meter_update(Sensor *sensor);
+static void _device_data_update(Device *device);
+static void _device_meter_update(Device *device);
 App_Info *app = NULL;
 
 //
@@ -533,7 +533,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 
 	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
 
-	Sensor *sensor;
+	Device *device;
    	//Check if system msg...
 	if(strncmp(str, "SYSTEM;", 7) == 0)
 	{
@@ -541,7 +541,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		{
 			if(!app->waiting_win)
 			{
-			fprintf(stdout, _("INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial port...)\n"));
+			fprintf(stdout, _("INFO:Initialize EDAMS(calibrating devices, init vars, setting serial port...)\n"));
 
 			Evas_Object *bx, *pb, *bg;
 
@@ -562,7 +562,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		   pb = elm_progressbar_add(app->waiting_win);
 		   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    			evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   			elm_object_text_set(pb, _("calibrating sensors, setting serial port... "));
+   			elm_object_text_set(pb, _("calibrating devices, setting serial port... "));
    			elm_progressbar_pulse_set(pb, EINA_TRUE);
    			elm_box_pack_end(bx, pb);
 		   elm_progressbar_pulse(pb, EINA_TRUE);
@@ -580,19 +580,19 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 			}
 		}
 	}
-	//Check if new sensor...
-	else if((sensor = sensor_detect(str)))
+	//Check if new device...
+	else if((device = device_detect(str)))
 	{
 		Eina_List *l;
-		Sensor *data;
+		Device *data;
 		Eina_Bool foundin = EINA_FALSE;
 
-		EINA_LIST_FOREACH(app->sensors, l, data)
+		EINA_LIST_FOREACH(app->devices, l, data)
 		{
-			if(sensor_id_get(data) == sensor_id_get(sensor))
+			if(device_id_get(data) == device_id_get(device))
 			{
-					//If sensor is already here, so only update sensor data.
-					_sensor_data_update(sensor);
+					//If device is already here, so only update device data.
+					_device_data_update(device);
 					foundin = EINA_TRUE;
 					break;
 			}
@@ -601,16 +601,16 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		char s[256];
 		if(foundin == EINA_FALSE)
 		{
-			app->sensors = eina_list_append(app->sensors, sensor_clone(sensor));
-			app->sensors = eina_list_sort(app->sensors, eina_list_count(app->sensors), EINA_COMPARE_CB(sensors_list_sort_cb));
+			app->devices = eina_list_append(app->devices, device_clone(device));
+			app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(devices_list_sort_cb));
 
-			snprintf(s, sizeof(s), _("Added new sensor '%d-%s'."), sensor_id_get(sensor), sensor_name_get(sensor));
-			//fprintf(stdout, _("INFO:%d sensors registered on serial line...\n"), eina_list_count(app->sensors));
+			snprintf(s, sizeof(s), _("Added new device '%d-%s'."), device_id_get(device), device_name_get(device));
+			//fprintf(stdout, _("INFO:%d devices registered on serial line...\n"), eina_list_count(app->devices));
 			_notify_set(s, "elm/icon/info/default");
-			_sensor_data_update(sensor);
+			_device_data_update(device);
 		}
 
-		sensor_free(sensor);
+		device_free(device);
 	}
 
    FREE(str);
@@ -618,28 +618,28 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 
 
 static void
-_add_sensor_to_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_device_to_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
      if(!app->room)
      {
-		_notify_set(_("Can't add a sensor to room:no room selected!"), "elm/icon/warning-notify/default");
+		_notify_set(_("Can't add a device to room:no room selected!"), "elm/icon/warning-notify/default");
         return;
      }
 
-	sensorpicker_add_to_room(app);
+	devicespicker_add_to_room(app);
 }
 
 
 
 static void
-_clear_sensor_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_clear_device_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
      if(!app->room)
      {
-		_notify_set(_("Can't clear room sensors list:no room selected!"), "elm/icon/warning-notify/default");
+		_notify_set(_("Can't clear room devices list:no room selected!"), "elm/icon/warning-notify/default");
         return;
      }
-	room_sensors_list_clear(app->room);
+	room_devices_list_clear(app->room);
 	room_save(app->room);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
@@ -662,9 +662,9 @@ static void
 _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
 	char *meter = elm_object_item_text_get(event_info);
-	Sensor *sensor = data;
-	sensor_meter_set(sensor, meter);
-   _sensor_meter_update(sensor);
+	Device *device = data;
+	device_meter_set(device, meter);
+   _device_meter_update(device);
 }
 
 
@@ -675,7 +675,7 @@ _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *obj, const char *emiss
    Evas_Object *ctxpopup, *ic;
    Elm_Object_Item *it;
    Evas_Coord x,y;
-   Sensor *sensor = (Sensor*)data;
+   Device *device = (Device*)data;
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
@@ -685,7 +685,7 @@ _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *obj, const char *emiss
     EINA_LIST_FOREACH(app->meters, l, meter)
     {
 
-       it = elm_ctxpopup_item_append(ctxpopup, meter, NULL, _ctxpopup_item_cb, sensor);
+       it = elm_ctxpopup_item_append(ctxpopup, meter, NULL, _ctxpopup_item_cb, device);
     }
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
@@ -698,32 +698,32 @@ _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *obj, const char *emiss
 
 
 static void
-_sensor_data_update(Sensor *sensor)
+_device_data_update(Device *device)
 {
-	//Sync sensor data with room sensor data(if affected to any room!).
-	Eina_List *l, *l2, *sensors;
+	//Sync device data with room device data(if affected to any room!).
+	Eina_List *l, *l2, *devices;
 	Room *room;
-	Sensor *data;
+	Device *data;
 
     EINA_LIST_FOREACH(app->rooms, l, room)
     {
-		sensors = room_sensors_list_get(room);
-    	EINA_LIST_FOREACH(sensors, l2, data)
+		devices = room_devices_list_get(room);
+    	EINA_LIST_FOREACH(devices, l2, data)
     	{
-			if(sensor_id_get(sensor) == sensor_id_get(data))
+			if(device_id_get(device) == device_id_get(data))
 			{
-				sensor_data_set(data, sensor_data_get(sensor));
+				device_data_set(data, device_data_get(device));
 			}
     	}
     }
 
-	//Updata data sensor meter affected to room(can be affected on different rooms).
-	if(sensor_data_get(sensor))
+	//Updata data device meter affected to room(can be affected on different rooms).
+	if(device_data_get(device))
     {
     	EINA_LIST_FOREACH(app->rooms, l, room)
     	{
 			char s[64];
-			snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
+			snprintf(s, sizeof(s), "%d %s layout", device_id_get(device), room_name_get(room));
 			Evas_Object * layout = elm_object_name_find(app->win, s, -1);
 
 			if(layout)
@@ -732,10 +732,10 @@ _sensor_data_update(Sensor *sensor)
 				if((t = elm_layout_data_get(layout, "tempvalue")))
 				{
 					int temp_x, temp_y;
-   					snprintf(s, sizeof(s), "%s°C", sensor_data_get(sensor));
+   					snprintf(s, sizeof(s), "%s°C", device_data_get(device));
     				elm_object_part_text_set(layout, "value.text", s);
 
-			    	sscanf(sensor_data_get(sensor), "%d.%02d", &temp_x, &temp_y);
+			    	sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
 
 					Evas_Object *eo = elm_layout_edje_get(layout);
 					Edje_Message_Float msg;
@@ -751,7 +751,7 @@ _sensor_data_update(Sensor *sensor)
 
 				if((t = elm_layout_data_get(layout, "action")))
 				{
-				 	if(atoi(sensor_data_get(sensor)) == 0)
+				 	if(atoi(device_data_get(device)) == 0)
     	       			elm_object_signal_emit(layout, "end", "over");
     		      	else
     	          	 	elm_object_signal_emit(layout, "animate", "over");
@@ -759,13 +759,13 @@ _sensor_data_update(Sensor *sensor)
 
 				if((t = elm_layout_data_get(layout, "title")))
 				{
-					snprintf(s, sizeof(s), "%d - %s", sensor_id_get(sensor), sensor_name_get(sensor));
+					snprintf(s, sizeof(s), "%d - %s", device_id_get(device), device_name_get(device));
 					elm_object_part_text_set(layout, "title.text", s);
 				}
 
 				if((t = elm_layout_data_get(layout, "value")))
 				{
-					elm_object_part_text_set(layout, "value.text", sensor_data_get(sensor));
+					elm_object_part_text_set(layout, "value.text", device_data_get(device));
 				}
 
 
@@ -774,29 +774,29 @@ _sensor_data_update(Sensor *sensor)
 		}
 	}
 
-	map_data_update(sensor);
+	map_data_update(device);
 }
 
 
 
 static void
-_sensor_meter_update(Sensor *sensor)
+_device_meter_update(Device *device)
 {
 	char s[64];
 
-	//printf("SENSOR:%d-%s with data %s\n", sensor_id_get(sensor), sensor_name_get(sensor), sensor_data_get(sensor));
+	//printf("SENSOR:%d-%s with data %s\n", device_id_get(device), device_name_get(device), device_data_get(device));
 
 	Eina_List *l;
 	Room *room;
     EINA_LIST_FOREACH(app->rooms, l, room)
     {
-		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
+		snprintf(s, sizeof(s), "%d %s layout", device_id_get(device), room_name_get(room));
 		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
 
-		if(!sensor_meter_get(sensor) || strstr(sensor_meter_get(sensor), "default"))
+		if(!device_meter_get(device) || strstr(device_meter_get(device), "default"))
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/counter");
 		else
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), sensor_meter_get(sensor));
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), device_meter_get(device));
 
 		room_save(room);
     }
@@ -854,7 +854,7 @@ _room_naviframe_content(Room *room)
 	evas_object_show(label);
 
 	label = elm_label_add(app->win);
-	snprintf(s, sizeof(s), _(_("Sensors:")));
+	snprintf(s, sizeof(s), _(_("Devices:")));
 	elm_grid_pack(gd, label, 30, 15, 50, 8);
 	evas_object_show(label);
 
@@ -862,20 +862,20 @@ _room_naviframe_content(Room *room)
 	elm_object_text_set(bt, _("Add..."));
 	ic = elm_icon_add(app->win);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-   	elm_icon_standard_set(ic, "sensors-add");
+   	elm_icon_standard_set(ic, "device-add");
    	elm_object_part_content_set(bt, "icon", ic);
 	elm_grid_pack(gd, bt , 55, 5, 20, 12);
-	evas_object_smart_callback_add(bt, "clicked", _add_sensor_to_room_bt_clicked_cb, NULL);
+	evas_object_smart_callback_add(bt, "clicked", _add_device_to_room_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
 	bt = elm_button_add(app->win);
 	elm_object_text_set(bt, _("Remove..."));
 	ic = elm_icon_add(app->win);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-   	elm_icon_standard_set(ic, "sensors-remove");
+   	elm_icon_standard_set(ic, "device-remove");
    	elm_object_part_content_set(bt, "icon", ic);
 	elm_grid_pack(gd, bt , 55, 15, 20, 12);
-	evas_object_smart_callback_add(bt, "clicked", _clear_sensor_from_room_bt_clicked_cb, NULL);
+	evas_object_smart_callback_add(bt, "clicked", _clear_device_from_room_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
 	hbx = elm_box_add(app->win);
@@ -885,22 +885,22 @@ _room_naviframe_content(Room *room)
 	evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_box_homogeneous_set(hbx, EINA_TRUE);
 
-	Eina_List *l, *sensors;
-	Sensor *sensor;
-	sensors = room_sensors_list_get(room);
-    EINA_LIST_FOREACH(sensors, l, sensor)
+	Eina_List *l, *devices;
+	Device *device;
+	devices = room_devices_list_get(room);
+    EINA_LIST_FOREACH(devices, l, device)
     {
     	layout = elm_layout_add(app->win);
-		snprintf(s, sizeof(s), "%d %s layout", sensor_id_get(sensor), room_name_get(room));
+		snprintf(s, sizeof(s), "%d %s layout", device_id_get(device), room_name_get(room));
 		evas_object_name_set(layout, s);
-		_sensor_meter_update(sensor);
-		_sensor_data_update(sensor);
+		_device_meter_update(device);
+		_device_data_update(device);
 		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 		elm_box_padding_set(hbx, 2, 0);
     	elm_box_pack_end(hbx, layout);
 		evas_object_show(layout);
 
-		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, sensor);
+		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, device);
 
 	}
 	elm_box_recalculate(hbx);
@@ -1068,7 +1068,7 @@ elm_main(int argc, char **argv)
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-	elm_toolbar_item_append(app->toolbar,"sensors-creator", _("Sensors Creator"), sensors_creator_new, app);
+	elm_toolbar_item_append(app->toolbar,"devices-creator", _("Devices Creator"), devices_creator_new, app);
 	elm_toolbar_item_append(app->toolbar, "map", _("Rooms Map"), map_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);

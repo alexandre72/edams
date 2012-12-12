@@ -1,5 +1,5 @@
 /*
- * sensorspicker.c
+ * devicespicker.c
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -19,8 +19,8 @@
  */
 
 
-#include "sensors_picker.h"
-#include "sensors.h"
+#include "devices_picker.h"
+#include "device.h"
 #include "rooms.h"
 #include "utils.h"
 #include "path.h"
@@ -31,7 +31,7 @@ static Elm_Gengrid_Item_Class *gic;
 typedef struct _GenGridItem
 {
     Elm_Object_Item *gg_it;
-    Sensor *sensor;
+    Device *device;
 } GenGridItem;
 
 
@@ -54,8 +54,8 @@ _gg_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED_
    	char buf[256];
 
 	snprintf(buf, sizeof(buf), "%d - %s",
-								sensor_id_get(ti->sensor),
-								sensor_name_get(ti->sensor));
+								device_id_get(ti->device),
+								device_name_get(ti->device));
 
    	return strdup(buf);
 }
@@ -73,7 +73,7 @@ _gg_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *icon = elm_bg_add(obj);
 
-        	if(!elm_bg_file_set(icon, sensor_filename_get(ti->sensor), "/image/0"))
+        	if(!elm_bg_file_set(icon, device_filename_get(ti->device), "/image/0"))
 				elm_bg_file_set(icon, edams_edje_theme_file_get(), "user/male");
         evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         evas_object_show(icon);
@@ -103,7 +103,7 @@ static void
 _gg_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
 	GenGridItem *ti = data;
-	sensor_free(ti->sensor);
+	device_free(ti->device);
 	FREE(ti);
 }
 
@@ -116,13 +116,13 @@ static void
 _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	App_Info *app = data;
-   	Evas_Object *gg = (Evas_Object*) elm_object_name_find(win, "sensors gengrid", -1);
+   	Evas_Object *gg = (Evas_Object*) elm_object_name_find(win, "devices gengrid", -1);
    	Elm_Object_Item *it = elm_gengrid_selected_item_get(gg);
 
    if (!it) return;
 	GenGridItem *ggi = elm_object_item_data_get(it);
 
-	room_sensors_add(app->room, sensor_clone(ggi->sensor));
+	room_devices_add(app->room, device_clone(ggi->device));
 	room_save(app->room);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
@@ -133,10 +133,10 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
 
 //
-//Create sensors picker.
+//Create devices picker.
 //
 Eina_Bool
-sensorpicker_add_to_room(App_Info *app)
+devicespicker_add_to_room(App_Info *app)
 {
     Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
 
@@ -144,16 +144,16 @@ sensorpicker_add_to_room(App_Info *app)
 		//return;
 
     //Setup a new window.
-   	win = elm_win_util_standard_add("sensor_picker", _("Select a sensor"));
+   	win = elm_win_util_standard_add("device_picker", _("Select a device"));
    	evas_object_data_set(win, "app", app);
    	elm_win_autodel_set(win, EINA_TRUE);
 
    	bx = elm_box_add(win);
    	evas_object_show(bx);
 
-	//Setup gengrid to display sensors files in a nice and modern way.
+	//Setup gengrid to display devices files in a nice and modern way.
    	grid = elm_gengrid_add(win);
-   	evas_object_name_set(grid, "sensors gengrid");
+   	evas_object_name_set(grid, "devices gengrid");
 	elm_gengrid_filled_set(grid, EINA_TRUE);
 	elm_gengrid_align_set(grid, 0, 0);
    	elm_gengrid_item_size_set(grid, 150, 150);
@@ -203,16 +203,16 @@ sensorpicker_add_to_room(App_Info *app)
    	gic->func.state_get = _gg_state_get;
    	gic->func.del = _gg_del;
 
-	//Fill gengrid with detected sensors.
+	//Fill gengrid with detected devices.
     Eina_List *l;
-    Sensor *sensor;
-    EINA_LIST_FOREACH(app->sensors, l, sensor)
+    Device *device;
+    EINA_LIST_FOREACH(app->devices, l, device)
     {
-    	if(sensor_name_get(sensor))
+    	if(device_name_get(device))
     	{
 	        GenGridItem *ti;
     	    ti = calloc(1, sizeof(*ti));
-    	    ti->sensor = sensor_clone(sensor);
+    	    ti->device = device_clone(device);
    			ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
     	   	//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
 		}

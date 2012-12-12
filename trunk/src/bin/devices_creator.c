@@ -1,5 +1,5 @@
 /*
- * sensors_creator.c
+ * devices_creator.c
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -28,7 +28,7 @@
 #include "path.h"
 
 //
-//Apply adding new sensor file.
+//Apply adding new device file.
 //
 static void
 _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -39,21 +39,21 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
     Evas_Object *eo;
 	Ecore_Evas *ee;
 	Evas *evas;
-	Sensor *sensor;
+	Device *device;
 
   	win = (Evas_Object *)data;
 
-	sensor = sensor_new(-1,  NULL, NULL, NULL, NULL);
-    sensor_name_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor name entry", -1)));
-    sensor_description_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor description entry", -1)));
-    sensor_type_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor type entry", -1)));
-    sensor_datasheeturl_set(sensor, elm_object_text_get(elm_object_name_find(win, "sensor datasheeturl entry", -1)));
+	device = device_new(-1,  NULL, NULL, NULL, NULL);
+    device_name_set(device, elm_object_text_get(elm_object_name_find(win, "device name entry", -1)));
+    device_description_set(device, elm_object_text_get(elm_object_name_find(win, "device description entry", -1)));
+    device_type_set(device, elm_object_text_get(elm_object_name_find(win, "device type entry", -1)));
+    device_datasheeturl_set(device, elm_object_text_get(elm_object_name_find(win, "device datasheeturl entry", -1)));
 
    	eo = NULL;
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
 	evas = ecore_evas_get(ee);
 
-	img = elm_object_name_find(win, "sensor image", -1);
+	img = elm_object_name_find(win, "device image", -1);
     elm_image_file_get(img, &f, &g);
 
     //Don't try to update if isn't a new item image!
@@ -63,18 +63,18 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 		evas_object_image_file_set(eo, f, NULL);
     		evas_object_image_alpha_set(eo, EINA_TRUE);
 		evas_object_image_scale(eo, 50, 50);
-		sensor_image_set(sensor, eo);
+		device_image_set(device, eo);
     }
-    sensor_save(sensor);
+    device_save(device);
 
-	//Evas_Object *list = elm_object_name_find(app->win, "sensor list", -1);
-	//Elm_Object_Item *it = elm_list_item_append(list, sensor_name_get(sensor), NULL, NULL, NULL, sensor);
-	//elm_object_item_del_cb_set(it, _sensor_item_del_cb);
+	//Evas_Object *list = elm_object_name_find(app->win, "device list", -1);
+	//Elm_Object_Item *it = elm_list_item_append(list, device_name_get(device), NULL, NULL, NULL, device);
+	//elm_object_item_del_cb_set(it, _device_item_del_cb);
 
 	if(eo)
 	{
 		evas_object_del(eo);
-    	elm_image_file_set(img, sensor_filename_get(sensor), "/image/0");
+    	elm_image_file_set(img, device_filename_get(device), "/image/0");
 	}
 
 	evas_object_del(win);
@@ -132,14 +132,14 @@ _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 //
 //
 void
-sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+devices_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd, *fr;
 	Evas_Object *label, *ic, *img;
 	Evas_Object *bt;
 	Evas_Object *entry;
 
-	win = elm_win_util_standard_add("sensor_creator", _("Sensor Creator"));
+	win = elm_win_util_standard_add("device_creator", _("Device Creator"));
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
 	evas_object_show(win);
@@ -155,7 +155,7 @@ sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_show(fr);
 
 	img = elm_image_add(win);
-	evas_object_name_set(img, "sensor image");
+	evas_object_name_set(img, "device image");
 	elm_image_smooth_set(img, EINA_TRUE);
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
@@ -179,7 +179,7 @@ sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "sensor name entry");
+	evas_object_name_set(entry, "device name entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
@@ -192,7 +192,7 @@ sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "sensor description entry");
+	evas_object_name_set(entry, "device description entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
@@ -205,7 +205,7 @@ sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "sensor type entry");
+	evas_object_name_set(entry, "device type entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
@@ -218,7 +218,7 @@ sensors_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "sensor datasheeturl entry");
+	evas_object_name_set(entry, "device datasheeturl entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);

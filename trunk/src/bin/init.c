@@ -25,7 +25,7 @@
 #include "edams.h"
 #include "utils.h"
 #include "path.h"
-#include "sensors.h"
+#include "device.h"
 
 
 
@@ -59,8 +59,8 @@ edams_init()
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 
-    //Create sensors database directory.
-    strcpy(s, edams_sensors_data_path_get());
+    //Create devices database directory.
+    strcpy(s, edams_devices_data_path_get());
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 

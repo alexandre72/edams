@@ -1,5 +1,5 @@
 /*
- * sensors.c
+ * devices.c
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -19,17 +19,17 @@
  */
 
 
-#include "sensors.h"
+#include "device.h"
 #include "libedams.h"
 
 //
 //
 //
-Sensor*
-sensor_detect(char *s)
+Device*
+device_detect(char *s)
 {
 	char **arr;
-	Sensor *data, *sensor = NULL;
+	Device *data, *device = NULL;
 	unsigned int n;
 
 	//Check if new device in trame.
@@ -44,33 +44,33 @@ sensor_detect(char *s)
 			{
 				FREE(arr[0]);
 				FREE(arr);
-				return sensor;
+				return device;
 			}
 
 
-			sensor = sensor_new(atoi(arr[1]), arr[2], NULL, NULL, NULL);
-			sensor_data_set(sensor, arr[3]);
+			device = device_new(atoi(arr[1]), arr[2], NULL, NULL, NULL);
+			device_data_set(device, arr[3]);
 
 			Eina_List *l;
 			Eina_List *database;
-			database = sensors_list_get();
+			database = devices_list_get();
 			EINA_LIST_FOREACH(database, l, data)
 			{
-				if(strcmp(sensor_name_get(data), sensor_name_get(sensor)) == 0)
+				if(strcmp(device_name_get(data), device_name_get(device)) == 0)
 				{
-					//fprintf(stdout, "INFO:Found %s(%s) device on serial buffer.\n", sensor_name_get(data), sensor_description_get(data));
-					sensor_description_set(sensor, sensor_description_get(data));
-					sensor_type_set(sensor, sensor_type_get(data));
-					sensor_datasheeturl_set(sensor, sensor_datasheeturl_get(data));
-					sensor_meter_set(sensor, sensor_meter_get(data));
+					//fprintf(stdout, "INFO:Found %s(%s) device on serial buffer.\n", device_name_get(data), device_description_get(data));
+					device_description_set(device, device_description_get(data));
+					device_type_set(device, device_type_get(data));
+					device_datasheeturl_set(device, device_datasheeturl_get(data));
+					device_meter_set(device, device_meter_get(data));
 					break;
 				}
 			}
-			sensors_list_free(database);
+			devices_list_free(database);
 		}
 		FREE(arr[0]);
 		FREE(arr);
 	}
 
-	return sensor;
+	return device;
 }

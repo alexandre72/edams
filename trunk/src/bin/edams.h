@@ -38,7 +38,7 @@ typedef struct
 	Evas_Object *waiting_win;
 	Evas_Object *toolbar;
 	Eina_List *rooms;
-	Eina_List *sensors;
+	Eina_List *devices;
 	Eina_List *meters;
 	Elm_Prefs_Data *prefs_data;
 	Room *room;

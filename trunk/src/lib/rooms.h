@@ -26,65 +26,65 @@
 #include <Eet.h>
 #include <Evas.h>
 
-typedef struct _Sensor Sensor;
+typedef struct _Device Device;
 typedef struct _Room Room;
 
 
 
 
-/* Sensor */
-Sensor *sensor_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl);
-void sensor_free(Sensor *sensor);
-Sensor *sensor_clone(const Sensor *src);
+/* Device */
+Device *device_new(unsigned int id, const char * name, const char * type, const char * description, const char * datasheeturl);
+void device_free(Device *device);
+Device *device_clone(const Device *src);
 
 
-void sensor_id_set(Sensor *sensor, unsigned int id);
-void sensor_name_set(Sensor *sensor, const char * name);
-void sensor_type_set(Sensor *sensor, const char * type);
-void sensor_description_set(Sensor *sensor, const char * description);
-void sensor_datasheeturl_set(Sensor *sensor, const char * datasheeturl);
-void sensor_image_set(Sensor *sensor, Evas_Object *image);
-void sensor_creation_set(Sensor *sensor, const char * creation);
-void sensor_data_set(Sensor *sensor, char * data);
-void sensor_meter_set(Sensor *sensor, const char * meter);
+void device_id_set(Device *device, unsigned int id);
+void device_name_set(Device *device, const char * name);
+void device_type_set(Device *device, const char * type);
+void device_description_set(Device *device, const char * description);
+void device_datasheeturl_set(Device *device, const char * datasheeturl);
+void device_image_set(Device *device, Evas_Object *image);
+void device_creation_set(Device *device, const char * creation);
+void device_data_set(Device *device, char * data);
+void device_meter_set(Device *device, const char * meter);
 
-const char *sensor_filename_get(Sensor *sensor);
-unsigned int sensor_id_get(const Sensor *sensor);
-const char * sensor_name_get(const Sensor *sensor);
-const char * sensor_type_get(const Sensor *sensor);
-const char * sensor_description_get(const Sensor *sensor);
-const char * sensor_datasheeturl_get(const Sensor *sensor);
-const char * sensor_creation_get(const Sensor *sensor);
-const char * sensor_data_get(const Sensor *sensor);
-const char * sensor_meter_get(const Sensor *sensor);
+const char *device_filename_get(Device *device);
+unsigned int device_id_get(const Device *device);
+const char * device_name_get(const Device *device);
+const char * device_type_get(const Device *device);
+const char * device_description_get(const Device *device);
+const char * device_datasheeturl_get(const Device *device);
+const char * device_creation_get(const Device *device);
+const char * device_data_get(const Device *device);
+const char * device_meter_get(const Device *device);
 
-Eina_Bool sensor_save(Sensor *sensor);
-Sensor *sensor_load(const char *filename);
+Eina_Bool device_save(Device *device);
+Device *device_load(const char *filename);
 
-Eina_List *sensors_list_get();
-Eina_List *sensors_list_free(Eina_List *sensors);
-int sensors_list_sort_cb(const void *d1, const void *d2);
+Eina_List *devices_list_get();
+Eina_List *devices_list_free(Eina_List *devices);
+int devices_list_sort_cb(const void *d1, const void *d2);
 
 /* Room */
-Room *room_new(unsigned int id, const char * name, const char * description, Eina_List * sensors);
+Room *room_new(unsigned int id, const char * name, const char * description, Eina_List * devices);
 void room_free(Room *room);
-void room_sensors_add(Room *room, Sensor *sensor);
-void room_sensors_del(Room *room, Sensor *sensor);
-void room_sensors_list_clear(Room *room);
-void room_sensors_list_set(Room *room, Eina_List *list);
+void room_devices_add(Room *room, Device *device);
+void room_devices_del(Room *room, Device *device);
+void room_devices_list_clear(Room *room);
+void room_devices_list_set(Room *room, Eina_List *list);
 
 void room_id_set(Room *room, unsigned int id);
 void room_name_set(Room *room, const char * name);
 void room_description_set(Room *room, const char * description);
-unsigned int room_sensors_count(const Room *room);
+unsigned int room_devices_count(const Room *room);
 void room_image_set(Room *room, Evas_Object *image);
 
 const char *room_filename_get(Room *room);
 unsigned int room_id_get(const Room *room);
 const char * room_name_get(const Room *room);
 const char * room_description_get(const Room *room);
-Sensor *room_sensors_get(const Room *room, unsigned int nth);
-Eina_List *room_sensors_list_get(const Room *room);
+Device *room_devices_get(const Room *room, unsigned int nth);
+Eina_List *room_devices_list_get(const Room *room);
 
 Room *room_load(const char *filename);
 Eina_Bool room_save(Room *room);
