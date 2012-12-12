@@ -184,7 +184,7 @@ sensorpicker_add_to_room(App_Info *app)
     elm_object_text_set(bt, _("Close"));
 	ic = elm_icon_add(win);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "close-window");
+	elm_icon_standard_set(ic, "window-close");
    	elm_object_part_content_set(bt, "icon", ic);
     elm_box_pack_end(hbx, bt);
     evas_object_show(bt);
