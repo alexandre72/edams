@@ -26,7 +26,7 @@
 #include "myfileselector.h"
 #include "utils.h"
 #include "path.h"
-
+#include "device.h"
 //
 //Apply adding new device file.
 //
@@ -43,10 +43,9 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
   	win = (Evas_Object *)data;
 
-	device = device_new(-1,  NULL, NULL, NULL, NULL);
+	device = device_new(-1,  NULL);
     device_name_set(device, elm_object_text_get(elm_object_name_find(win, "device name entry", -1)));
     device_description_set(device, elm_object_text_get(elm_object_name_find(win, "device description entry", -1)));
-    device_type_set(device, elm_object_text_get(elm_object_name_find(win, "device type entry", -1)));
     device_datasheeturl_set(device, elm_object_text_get(elm_object_name_find(win, "device datasheeturl entry", -1)));
 
    	eo = NULL;

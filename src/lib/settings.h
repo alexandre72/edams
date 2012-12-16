@@ -23,19 +23,15 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
-#include <Eet.h>
-#include <Ecore_Evas.h>
+typedef struct
+{
+	char *cosm_apikey;
+	Eina_Bool softemu;
+	Eina_Bool hardemu;
+	Eina_Bool debugprintf;
+} Settings;
 
-#include "libedams.h"
-#include "path.h"
-#include "rooms.h"
-
-//settings.c: Settings functions.
-int setting_write(const char *setting, const int value);
-int setting_int_read(const char *setting);
-int file_setting_write(const char *file, const char *setting,  const int value);
-int file_setting_int_read(const char *file, const char *setting);
-Eina_Bool setting_bool_read(const char *setting);
-const char *edams_settings_file_get(void);
-
+const Settings *edams_settings_get(void);
+Settings *edams_settings_free(Settings *settings);
+const void edams_settings_write(Settings *settings);
 #endif /* __SETTINGS_H__ */

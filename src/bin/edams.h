@@ -27,7 +27,9 @@
 #include <Eina.h>
 
 #include "libedams.h"
-#include "rooms.h"
+#include "location.h"
+#include "settings.h"
+
 
 //
 //Define App UI. Can be used to modify it dynamicaly.
@@ -37,16 +39,16 @@ typedef struct
 	Evas_Object *win;
 	Evas_Object *waiting_win;
 	Evas_Object *toolbar;
-	Eina_List *rooms;
+	Eina_List *locations;
 	Eina_List *devices;
 	Eina_List *meters;
-	Elm_Prefs_Data *prefs_data;
-	Room *room;
+	Location *location;
+	Settings *settings;
 } App_Info;
 
 
 
-Evas_Object*_room_naviframe_content(Room *room);
+Evas_Object*_location_naviframe_content(Location *location);
 
 //preferences_dlg.c: Preferences dialog.
 void preferences_dlg_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);

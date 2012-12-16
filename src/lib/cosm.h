@@ -1,5 +1,5 @@
 /*
- * map.h
+ * cosm.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -19,12 +19,14 @@
  */
 
 
-#ifndef __MAP_H
-#define __MAP_H
+#ifndef __COSM_H
+#define __COSM_H
 
-#include <Evas.h>
-#include "edams.h"
+#include "location.h"
+#include "device.h"
 
-void map_new(void *data, Evas_Object *obj, void *event_info);
-void map_data_update(App_Info *app, Widget *widget);
+Eina_Bool cosm_apikey_set(const char *key);
+Eina_Bool cosm_device_feed_add(Location *location);
+Eina_Bool cosm_device_datastream_update(Location *location, Device *device);
+
 #endif

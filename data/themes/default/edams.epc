@@ -9,37 +9,84 @@ collection
       widget: "elm/vertical_box";
 
       items {
-           item {
+         item
+         {
+            name: "cosmapikey_entry";
+            type: TEXT;
+            editable: 1;
+
+            textarea
+            {
+               placeholder: "";
+               default: "Cosm API key";
+               deny: "^[0-9]*$";
+            }
+         }
+
+         item
+         {
+            name: "mapfile_entry";
+            type: TEXT;
+            editable: 1;
+
+            textarea
+            {
+               placeholder: "";
+               default: "";
+               deny: "^[0-9]*$";
+            }
+         }
+
+           item
+           {
             name: "softemu_checkb";
             type: BOOL;
             label: "Sofware serial emulation";
-            bool {
+            bool
+            {
                default: false;
             }
          }
 
-           item {
+           item
+           {
             name: "hardemu_checkb";
             type: BOOL;
             label: "Hardware serial emulation(loopback)";
 
-            bool {
+            bool
+            {
                default: false;
             }
          }
 
-         item {
+           item
+           {
+            name: "debugprintf_checkb";
+            type: BOOL;
+            label: "Debug printf";
+
+            bool
+            {
+               default: false;
+            }
+         }
+
+         item
+         {
             name: "sep";
             type: SEPARATOR;
          }
 
-         item {
+         item
+         {
             name: "save";
             type: SAVE;
             label: "Save";
          }
 
-         item {
+         item
+         {
             name: "reset";
             type: RESET;
             label: "Reset";
