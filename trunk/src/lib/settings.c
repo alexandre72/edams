@@ -18,153 +18,103 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
-
+#include <Eina.h>
+#include <Eet.h>
 #include "settings.h"
+#include "edams.h"
+#include "path.h"
 
 
 //
 //
 //
-const char *edams_settings_file_get(void)
+const Settings *edams_settings_get(void)
 {
-	char s[PATH_MAX];
-	snprintf(s, sizeof(s), "%s%ssettings.eet", edams_data_path_get(), DIR_SEPARATOR_S);
-  	 return strdup(s);
-}
+	Eet_File *ef;
 
+	fprintf(stdout, _("Reading applications settings...\n"));
+    Settings *settings = calloc(1, sizeof(Settings));
 
+	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ);
 
-//
-//Read a edams setting from file.
-//
-int setting_int_read(const char *setting)
-{
-  	Eet_File *ef;
-  	char *ret;
+	char *ret;
 	int size;
+	settings->cosm_apikey = NULL;
+	settings->softemu = EINA_FALSE;
+	settings->hardemu = EINA_FALSE;
+	settings->debugprintf = EINA_FALSE;
 
-    if(!setting)
-        return -1;
+   	ret = eet_read(ef, "edams/cosm_apikey", &size);
+   	if(ret)
+   	{
+		settings->cosm_apikey = eina_stringshare_add(ret);
+   		FREE(ret);
+   	}
 
-    if(!(ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ)))
-    {
-        ERR(_("Can't read edams settings!"));
-		eet_close(ef);
-		return -1;
-	}
+   	ret = eet_read(ef, "edams/softemu", &size);
+   	if(ret)
+   	{
+		settings->softemu = atoi(ret) ? EINA_TRUE : EINA_FALSE;
+   		FREE(ret);
+   	}
 
-	ret = eet_read(ef, setting, &size);
-   	eet_close(ef);
-	if(ret)
-	{
-	    int i = atoi(ret);
-	    //INF(_("Setting %s set to value %d", setting, i);
-    	return i;
-    }
-	else
-    {
-        ERR("Can't read %s field from edams settings file.", setting);
-        return -1;
-    }
-}
+   	ret = eet_read(ef, "edams/hardemu", &size);
+   	if(ret)
+   	{
+		settings->hardemu = atoi(ret) ? EINA_TRUE : EINA_FALSE;
+   		FREE(ret);
+   	}
 
+   	ret = eet_read(ef, "edams/debugprintf", &size);
+   	if(ret)
+   	{
+		settings->debugprintf = atoi(ret) ? EINA_TRUE : EINA_FALSE;
+   		FREE(ret);
+   	}
 
-
-//
-//Read a setting from file.
-//
-int file_setting_int_read(const char *file, const char *setting)
-{
-  	Eet_File *ef;
-  	char *ret;
-	int size;
-
-    if(!file || !setting)
-        return -1;
-
-    if(!(ef = eet_open(file, EET_FILE_MODE_READ)))
-    {
-        ERR(_("Can't read %s settings from %s!"), setting, file);
-		eet_close(ef);
-		return -1;
-	}
-
-	ret = eet_read(ef, setting, &size);
-   	eet_close(ef);
-	if(ret)
-	{
-	    int i = atoi(ret);
-	    //INF(_("Setting %s set to value %d", setting, i);
-    	return i;
-    }
-	else
-    {
-        ERR(_("Can't read %s settings from %s!"), setting, file);
-        return -1;
-    }
-}
-
-
-
-//
-//Write a setting to a file.
-//
-int file_setting_write(const char *file, const char *setting,  const int value)
-{
-  	Eet_File *ef;
-  	char s[100];
-
-    if(!file || !setting)
-        return -1;
-
-    eina_convert_itoa(value, s);
-
-    if(!(ef = eet_open(file, EET_FILE_MODE_READ_WRITE)))
-    {
-        ERR(_("Can't write %s settings from %s!"), setting, file);
-		eet_close(ef);
-		return -1;
-	}
-	//INF(_("Setting %s set to value %d", setting, i);
-	eet_write(ef, setting, s, strlen(s) + 1, 1);
-
-	eet_sync(ef);
 	eet_close(ef);
 
-	return 0;
+	fprintf(stdout, _("OPTION:Cosm data handling=>%s\n"), settings->cosm_apikey?"ENABLE":"DISABLE");
+	fprintf(stdout, _("OPTION:Software emulation(snprintf)=>%s\n"), settings->softemu?"ENABLE":"DISABLE");
+	fprintf(stdout, _("OPTION:Hardware emulation(serial loopback)=>%s\n"), settings->hardemu?"ENABLE":"DISABLE");
+	fprintf(stdout, _("OPTION:Debug with printf=>%s\n"), settings->debugprintf?"ENABLE":"DISABLE");
+
+	return settings;
+}
+
+const void
+edams_settings_write(Settings *settings)
+{
+	Eet_File *ef;
+
+	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_WRITE);
+
+   	eet_write(ef, "edams/cosm_apikey", settings->cosm_apikey, strlen(settings->cosm_apikey)+1, 0);
+
+	if(settings->softemu == EINA_TRUE)
+	   	eet_write(ef, "edams/softemu", "1", strlen("1")+1, 0);
+	else
+	   	eet_write(ef, "edams/softemu", "0", strlen("0")+1, 0);
+
+	if(settings->hardemu == EINA_TRUE)
+	   	eet_write(ef, "edams/hardemu", "1", strlen("1")+1, 0);
+	else
+	   	eet_write(ef, "edams/hardemu", "0", strlen("0")+1, 0);
+
+	if(settings->debugprintf == EINA_TRUE)
+	   	eet_write(ef, "edams/debugprintf", "1", strlen("1")+1, 0);
+	else
+	   	eet_write(ef, "edams/debugprintf", "0", strlen("0")+1, 0);
+
+	eet_close(ef);
 }
 
 
 
-
-//
-//Write a edams setting to file.
-//
-int setting_write(const char *setting,  const int value)
+Settings *edams_settings_free(Settings *settings)
 {
-  	Eet_File *ef;
-  	char s[100];
 
-    if(!setting)
-        return -1;
-
-    eina_convert_itoa(value, s);
-
-    if(!(ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE)))
-    {
-        ERR(_("Can't write edams settings!"));
-		eet_close(ef);
-		return -1;
-	}
-	//INF(_("Setting %s set to value %d", setting, i);
-	eet_write(ef, setting, s, strlen(s) + 1, 1);
-
-	eet_sync(ef);
-	eet_close(ef);
-
-	return 0;
+	eina_stringshare_del(settings->cosm_apikey);
+	FREE(settings);
+	return NULL;
 }

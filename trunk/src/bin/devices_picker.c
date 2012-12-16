@@ -21,7 +21,7 @@
 
 #include "devices_picker.h"
 #include "device.h"
-#include "rooms.h"
+#include "location.h"
 #include "utils.h"
 #include "path.h"
 
@@ -121,13 +121,14 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
    if (!it) return;
 	GenGridItem *ggi = elm_object_item_data_get(it);
-
-	room_devices_add(app->room, device_clone(ggi->device));
-	room_save(app->room);
+	Widget *widget;
+	widget = widget_new("default", device_id_get(ggi->device));
+	location_widgets_add(app->location, widget);
+	location_save(app->location);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
 	elm_object_item_part_content_unset(naviframe, "default");
-	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
+	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _location_naviframe_content(app->location));
 }
 
 
@@ -136,7 +137,7 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 //Create devices picker.
 //
 Eina_Bool
-devicespicker_add_to_room(App_Info *app)
+devicespicker_add_to_location(App_Info *app)
 {
     Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
 

@@ -78,10 +78,10 @@ edams_devices_data_path_get (void)
 //
 //
 const char *
-edams_rooms_data_path_get(void)
+edams_locations_data_path_get(void)
 {
     char s[PATH_MAX];
-    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"rooms", edams_data_path_get());
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"locations", edams_data_path_get());
 	return strdup(s);
 }
 
@@ -91,10 +91,10 @@ edams_rooms_data_path_get(void)
 //
 //
 const char *
-edams_cfg_file_get (void)
+edams_settings_file_get (void)
 {
     char s[PATH_MAX];
-    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"edams.cfg", edams_data_path_get());
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"settings.eet", edams_data_path_get());
 	return strdup(s);
 }
 

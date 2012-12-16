@@ -32,14 +32,14 @@
 #include "init.h"
 #include "myfileselector.h"
 #include "path.h"
-#include "rooms.h"
+#include "location.h"
 #include "device.h"
 #include "serial.h"
 #include "devices_picker.h"
 #include "devices_creator.h"
 #include "shutdown.h"
 #include "about_dlg.h"
-
+#include "cosm.h"
 
 
 static const int TEMP_MIN =  -30;
@@ -53,20 +53,20 @@ int _log_dom = -1;
 
 //Widgets callbacks.
 static void quit_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-static void _rooms_list_selected_cb(void *data, Evas_Object *obj, void *event_info);
-static void _remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-static void _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+static void _locations_list_selected_cb(void *data, Evas_Object *obj, void *event_info);
+static void _remove_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+static void _add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 static void _notify_timeout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _notify_close_bt_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _notify_set(const char *msg, const char *icon);
-static void _room_item_del_cb(void *data, Evas_Object *obj, void *event_info);
-static void _device_data_update(Device *device);
-static void _device_meter_update(Device *device);
+static void _location_item_del_cb(void *data, Evas_Object *obj, void *event_info);
+static void _device_widget_data_update(Widget *widget);
+static void _device_widget_layout_update(Widget *widget);
 App_Info *app = NULL;
 
 //
-//Update current selected room informations.
+//Update current selected location informations.
 //
 static void
 _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -78,19 +78,26 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
     Evas_Object *eo;
 	Ecore_Evas *ee;
 	Evas *evas;
-	Room *room;
+	Location *location;
 
   	win = (Evas_Object *)data;
 
-	room = room_new(0,  NULL, NULL, NULL);
+	location = location_new(0,  NULL, NULL);
 
-    room_name_set(room, elm_object_text_get(elm_object_name_find(win, "room name entry", -1)));
+    location_name_set(location, elm_object_text_get(elm_object_name_find(win, "location name entry", -1)));
+
+	double lon;
+	double lat;
+	elm_map_region_get(elm_object_name_find(win, "location map", -1), &lon, &lat);
+
+	location_longitude_set(location, lon);
+  	location_latitude_set(location, lat);
 
    	eo = NULL;
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
 	evas = ecore_evas_get(ee);
 
-	img = elm_object_name_find(win, "room image", -1);
+	img = elm_object_name_find(win, "location image", -1);
     elm_image_file_get(img, &f, &g);
 
     //Don't try to update if isn't a new item image!
@@ -100,31 +107,33 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 		evas_object_image_file_set(eo, f, NULL);
     	evas_object_image_alpha_set(eo, EINA_TRUE);
 		evas_object_image_scale(eo, 50, 50);
-		room_image_set(room, eo);
+		location_image_set(location, eo);
     }
-    room_save(room);
+	cosm_device_feed_add(location);
 
-	//Append room to rooms list.
-	Evas_Object *list = elm_object_name_find(app->win, "rooms list", -1);
-	Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), NULL, NULL, NULL, room);
-	elm_object_item_del_cb_set(it, _room_item_del_cb);
+    location_save(location);
+
+	//Append location to locations list.
+	Evas_Object *list = elm_object_name_find(app->win, "locations list", -1);
+	Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), NULL, NULL, NULL, location);
+	elm_object_item_del_cb_set(it, _location_item_del_cb);
 	elm_list_item_bring_in(it);
 
-	//Append room to naviframe and set it contents.
+	//Append location to naviframe and set it contents.
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	it = elm_naviframe_item_push(naviframe, room_name_get(room), NULL, NULL, _room_naviframe_content(room), NULL);
+	it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content(location), NULL);
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);
-    elm_object_item_data_set(it, room);
+    elm_object_item_data_set(it, location);
 	elm_naviframe_item_promote(it);
 
 	if(eo)
 	{
 		evas_object_del(eo);
-    	elm_image_file_set(img, room_filename_get(room), "/image/0");
+    	elm_image_file_set(img, location_filename_get(location), "/image/0");
 	}
 
-    snprintf(s, sizeof(s), _("Room %s has been created."),
-    						room_name_get(room));
+    snprintf(s, sizeof(s), _("Location %s has been created."),
+    						location_name_get(location));
 	_notify_set(s, "elm/icon/info/default");
     evas_object_del(win);
 }
@@ -181,14 +190,14 @@ _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 //Display ctxpopup when double-click on an patient's gengrid.
 //
 static void
-_add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd, *fr;
 	Evas_Object *label, *ic, *img;
 	Evas_Object *bt;
 	Evas_Object *entry;
 
-	win = elm_win_util_standard_add("rooms_description_dlg", _("Room Description"));
+	win = elm_win_util_standard_add("locations_description_dlg", _("Location Description"));
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
 	evas_object_show(win);
@@ -204,7 +213,7 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	evas_object_show(fr);
 
 	img = elm_image_add(win);
-	evas_object_name_set(img, "room image");
+	evas_object_name_set(img, "location image");
 	elm_image_smooth_set(img, EINA_TRUE);
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
@@ -232,7 +241,7 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	elm_grid_pack(gd, entry, 51, 2, 40, 9);
-	evas_object_name_set(entry, "room name entry");
+	evas_object_name_set(entry, "location name entry");
 	evas_object_show(entry);
 
 	label = elm_label_add(win);
@@ -241,12 +250,19 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	evas_object_show(label);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "room description entry");
+	evas_object_name_set(entry, "location description entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 51, 15, 40, 9);
+	elm_grid_pack(gd, entry, 45, 15, 40, 9);
 	evas_object_show(entry);
+
+   	Evas_Object *map = elm_map_add(win);
+	evas_object_name_set(entry, "location map");
+   	elm_win_resize_object_add(win, map);
+   	evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_grid_pack(gd, map, 0, 51, 50, 30);
+   	evas_object_show(map);
 
 	bt = elm_button_add(win);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -270,25 +286,25 @@ _add_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
 
-	evas_object_resize(win, 400, 250);
+	evas_object_resize(win, 500, 500);
 }
 
 
 
 static void
-_rooms_list_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_locations_list_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
     Eina_List *its, *l;
     Elm_Object_Item *it;
 
-   app->room = elm_object_item_data_get(event_info);
+   app->location = elm_object_item_data_get(event_info);
 
     Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
     its = elm_naviframe_items_get(naviframe);
 
     EINA_LIST_FOREACH(its, l, it)
     {
-		if(app->room == elm_object_item_data_get(it))
+		if(app->location == elm_object_item_data_get(it))
 		{
 	        elm_naviframe_item_promote(it);
     	    break;
@@ -361,45 +377,46 @@ _remove_apply_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
    char buf[256];
    Evas_Object *list;
    Elm_Object_Item *it;
-   Room *room;
+   Location *location;
 
 	Evas_Object *notify = (Evas_Object *)data;
 	evas_object_hide(notify);
 
-	list = (Evas_Object*)  elm_object_name_find(app->win, "rooms list", -1);
+	list = (Evas_Object*)  elm_object_name_find(app->win, "locations list", -1);
 	it = (Elm_Object_Item *)elm_list_selected_item_get(list);
 
 	if(it)
 	{
-	   	room = elm_object_item_data_get(it);
+	   	location = elm_object_item_data_get(it);
 
-		snprintf(buf, sizeof(buf), _("Room '%s' have been removed."), room_name_get(room));
+		snprintf(buf, sizeof(buf), _("Location '%s' have been removed."), location_name_get(location));
 		elm_object_item_del(it);
+
+		location_remove(location);
 
 		Evas_Object *naviframe = (Evas_Object*)  elm_object_name_find(app->win, "naviframe", -1);
 		elm_naviframe_item_pop(naviframe);
 
-		room_remove(room);
 		_notify_set(buf, "elm/icon/info/default");
 	}
 }
 
 
 //
-//Remove currently selected room.
+//Remove currently selected location.
 //
 static void
-_remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_remove_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    	Evas_Object *notify, *ic, *bt, *label, *list;
     Elm_Object_Item *it;
 
-	list = (Evas_Object*)  elm_object_name_find(app->win, "rooms list", -1);
+	list = (Evas_Object*)  elm_object_name_find(app->win, "locations list", -1);
 	it = (Elm_Object_Item *)elm_list_selected_item_get(list);
 
      if(!it)
      {
-		_notify_set(_("Can't remove:no room selected!"), "elm/icon/warning-notify/default");
+		_notify_set(_("Can't remove:no location selected!"), "elm/icon/warning-notify/default");
         return;
      }
 
@@ -412,7 +429,7 @@ _remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, v
     elm_image_file_set(ic, edams_edje_theme_file_get(), "elm/icon/info-notify/default");
 
    	label = elm_object_name_find(app->win, "notify label", -1);
-    elm_object_text_set(label, _("Are you sure to want to remove selected room?"));
+    elm_object_text_set(label, _("Are you sure to want to remove selected location?"));
 
     bt = elm_object_name_find(app->win, "notify bt1", -1);
     elm_object_text_set(bt, _("Yes"));
@@ -434,13 +451,13 @@ _remove_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, v
 
 
 static void
-_room_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_location_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
- 	Room *room = (Room *)data;
+ 	Location *location = (Location *)data;
 
-	app->rooms = rooms_list_room_remove(app->rooms, room);
-	room_free(room);
-	room = NULL;
+	app->locations = locations_list_location_remove(app->locations, location);
+	location_free(location);
+	location = NULL;
 }
 
 
@@ -478,24 +495,11 @@ do_lengthy_task(Ecore_Pipe *pipe)
     int fd = 0;
 	char buf[256];
 	char *samples[] = {"DS18B20","PIR","DHT11"};
-	Elm_Prefs_Item_Type type;
-	Eina_Value value;
-	Eina_Bool softemu = EINA_FALSE;
-	Eina_Bool hardemu = EINA_FALSE;
 
-	if(elm_prefs_data_value_get(app->prefs_data, "main:softemu_checkb", &type, &value))
-		softemu = eina_value_get(&value, &softemu);
-
-	if(elm_prefs_data_value_get(app->prefs_data, "main:hardemu_checkb", &type, &value))
-		hardemu = eina_value_get(&value, &hardemu);
-
-	//fprintf(stdout, _("OPTION:software emulation(snprintf) =%s\n"), softemu?"TRUE":"FALSE");
-	//fprintf(stdout, _("OPTION:hardware emulation(serial loopback) =%s\n"), hardemu?"TRUE":"FALSE");
-
-	if(softemu == EINA_FALSE)
+	if(app->settings->softemu == EINA_FALSE)
 	{
 		int baudrate = 115200;  // default
-		if(hardemu == EINA_TRUE)
+		if(app->settings->hardemu == EINA_TRUE)
 	   	fd = serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
 		else
    		fd = serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
@@ -505,14 +509,14 @@ do_lengthy_task(Ecore_Pipe *pipe)
 	for(;;)
 	{
 		//Serial loopback(TX<=>RX) emulation trame test.
-		if(hardemu == EINA_TRUE)
+		if(app->settings->hardemu == EINA_TRUE)
 			serialport_write(fd, "DEVICE;0;DS18B20;17.296;OK\n");
 
 		//Sotfware emulation trame test.
-		if(softemu == EINA_TRUE)
+		if(app->settings->softemu == EINA_TRUE)
 			snprintf(buf, sizeof(buf), "DEVICE;%d;DS18B20;%d.%d;OK", Prandom(3),  Prandom(34), Prandom(99));
 
-		if(softemu == EINA_FALSE)
+		if(app->settings->softemu == EINA_FALSE)
 			serialport_read_until(fd, buf, '\n');	//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
 		sleep(2);
@@ -531,7 +535,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 	memcpy(str, buf, len);
 	str[len] = '\0';
 
-	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
+	//fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
 
 	Device *device;
    	//Check if system msg...
@@ -580,37 +584,39 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 			}
 		}
 	}
-	//Check if new device...
+	//Check if device message...
 	else if((device = device_detect(str)))
 	{
+		//Don't try to registered again if device is already here.
+		Device *data = devices_list_device_with_id_get(app->devices, device_id_get(device));
+
+		if(data)
+			device_data_set(data, device_data_get(device));
+		else
+			app->devices = eina_list_append(app->devices, device);
+
 		Eina_List *l;
-		Device *data;
-		Eina_Bool foundin = EINA_FALSE;
-
-		EINA_LIST_FOREACH(app->devices, l, data)
+		Location *location;
+		EINA_LIST_FOREACH(app->locations, l, location)
 		{
-			if(device_id_get(data) == device_id_get(device))
+			Eina_List *l2, *widgets;
+			Widget *widget;
+
+			widgets = location_widgets_list_get(location);
+
+			EINA_LIST_FOREACH(widgets, l2, widget)
 			{
+				//Update device widget affected to it's location.
+				if(widget_device_id_get(widget) == device_id_get(device))
+				{
 					//If device is already here, so only update device data.
-					_device_data_update(device);
-					foundin = EINA_TRUE;
-					break;
+					_device_widget_data_update(widget);
+					map_data_update(app, widget);
+					cosm_device_datastream_update(location, device);
+				}
 			}
+
 		}
-
-		char s[256];
-		if(foundin == EINA_FALSE)
-		{
-			app->devices = eina_list_append(app->devices, device_clone(device));
-			app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(devices_list_sort_cb));
-
-			snprintf(s, sizeof(s), _("Added new device '%d-%s'."), device_id_get(device), device_name_get(device));
-			//fprintf(stdout, _("INFO:%d devices registered on serial line...\n"), eina_list_count(app->devices));
-			_notify_set(s, "elm/icon/info/default");
-			_device_data_update(device);
-		}
-
-		device_free(device);
 	}
 
    FREE(str);
@@ -618,33 +624,33 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 
 
 static void
-_add_device_to_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_device_to_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-     if(!app->room)
+     if(!app->location)
      {
-		_notify_set(_("Can't add a device to room:no room selected!"), "elm/icon/warning-notify/default");
+		_notify_set(_("Can't add a device to location:no location selected!"), "elm/icon/warning-notify/default");
         return;
      }
 
-	devicespicker_add_to_room(app);
+	devicespicker_add_to_location(app);
 }
 
 
 
 static void
-_clear_device_from_room_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_clear_widget_from_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-     if(!app->room)
+     if(!app->location)
      {
-		_notify_set(_("Can't clear room devices list:no room selected!"), "elm/icon/warning-notify/default");
+		_notify_set(_("Can't clear location devices list:no location selected!"), "elm/icon/warning-notify/default");
         return;
      }
-	room_devices_list_clear(app->room);
-	room_save(app->room);
+	location_widgets_list_clear(app->location);
+	location_save(app->location);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	elm_object_item_part_content_unset(naviframe, "default");
-	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _room_naviframe_content(app->room));
+	//elm_object_item_part_content_unset(naviframe, NULL);
+	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe) , NULL, _location_naviframe_content(app->location));
 }
 
 
@@ -662,9 +668,10 @@ static void
 _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
 	char *meter = elm_object_item_text_get(event_info);
-	Device *device = data;
-	device_meter_set(device, meter);
-   _device_meter_update(device);
+	Widget *widget = data;
+	widget_name_set(widget, meter);
+	_device_widget_layout_update(widget);
+	location_save(app->location);
 }
 
 
@@ -672,10 +679,9 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 static void
 _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *ctxpopup, *ic;
-   Elm_Object_Item *it;
+   Evas_Object *ctxpopup;
    Evas_Coord x,y;
-   Device *device = (Device*)data;
+   Widget *widget = (Widget*)data;
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
@@ -684,8 +690,7 @@ _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *obj, const char *emiss
 	char *meter;
     EINA_LIST_FOREACH(app->meters, l, meter)
     {
-
-       it = elm_ctxpopup_item_append(ctxpopup, meter, NULL, _ctxpopup_item_cb, device);
+       elm_ctxpopup_item_append(ctxpopup, meter, NULL, _ctxpopup_item_cb, widget);
     }
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
@@ -695,35 +700,21 @@ _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object *obj, const char *emiss
 }
 
 
-
-
 static void
-_device_data_update(Device *device)
+_device_widget_data_update(Widget *widget)
 {
-	//Sync device data with room device data(if affected to any room!).
-	Eina_List *l, *l2, *devices;
-	Room *room;
-	Device *data;
+	//Update data device meter affected to location(can be affected on different locations).
+	Device *device = devices_list_device_with_id_get(app->devices, widget_device_id_get(widget));
 
-    EINA_LIST_FOREACH(app->rooms, l, room)
+	if(device)
     {
-		devices = room_devices_list_get(room);
-    	EINA_LIST_FOREACH(devices, l2, data)
-    	{
-			if(device_id_get(device) == device_id_get(data))
-			{
-				device_data_set(data, device_data_get(device));
-			}
-    	}
-    }
+    	Eina_List *l;
+    	Location *location;
 
-	//Updata data device meter affected to room(can be affected on different rooms).
-	if(device_data_get(device))
-    {
-    	EINA_LIST_FOREACH(app->rooms, l, room)
+    	EINA_LIST_FOREACH(app->locations, l, location)
     	{
 			char s[64];
-			snprintf(s, sizeof(s), "%d %s layout", device_id_get(device), room_name_get(room));
+			snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget),  device_id_get(device), location_name_get(location));
 			Evas_Object * layout = elm_object_name_find(app->win, s, -1);
 
 			if(layout)
@@ -773,38 +764,36 @@ _device_data_update(Device *device)
 			}
 		}
 	}
-
-	map_data_update(device);
 }
 
 
 
 static void
-_device_meter_update(Device *device)
+_device_widget_layout_update(Widget *widget)
 {
 	char s[64];
 
 	//printf("SENSOR:%d-%s with data %s\n", device_id_get(device), device_name_get(device), device_data_get(device));
 
 	Eina_List *l;
-	Room *room;
-    EINA_LIST_FOREACH(app->rooms, l, room)
+	Location *location;
+  	EINA_LIST_FOREACH(app->locations, l, location)
     {
-		snprintf(s, sizeof(s), "%d %s layout", device_id_get(device), room_name_get(room));
+		snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
 		Evas_Object * layout = elm_object_name_find(app->win, s, -1);
 
-		if(!device_meter_get(device) || strstr(device_meter_get(device), "default"))
+		if(strstr(widget_name_get(widget), "default"))
 			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/counter");
 		else
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), device_meter_get(device));
+			elm_layout_file_set(layout, edams_edje_theme_file_get(), widget_name_get(widget));
 
-		room_save(room);
-    }
+		location_save(location);
+	}
 }
 
 
 Evas_Object*
-_room_naviframe_content(Room *room)
+_location_naviframe_content(Location *location)
 {
 	Evas_Object *layout;
     Evas_Object *gd;
@@ -814,7 +803,7 @@ _room_naviframe_content(Room *room)
     Evas_Object *label;
     char s[256];
 
-	if(!room) return NULL;
+	if(!location) return NULL;
 
 	vbx = elm_box_add(app->win);
 	evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -833,22 +822,22 @@ _room_naviframe_content(Room *room)
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_FALSE, EINA_TRUE);
 
-    if(!elm_image_file_set(img, room_filename_get(room), "/image/0"))
+    if(!elm_image_file_set(img, location_filename_get(location), "/image/0"))
 	{
 		elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
 	}
-        elm_grid_pack(gd, img, 1, 1, 40, 40);
+    elm_grid_pack(gd, img, 1, 1, 40, 40);
 
 	evas_object_show(img);
 
 	label = elm_label_add(app->win);
-	snprintf(s, sizeof(s), _(_("Room:%s")), room_name_get(room));
+	snprintf(s, sizeof(s), _(_("Location:%s")), location_name_get(location));
 	elm_object_text_set(label, s);
     elm_grid_pack(gd, label, 30, 1, 50, 8);
 	evas_object_show(label);
 
 	label = elm_label_add(app->win);
-	snprintf(s, sizeof(s), _(_("Description:%s")), room_description_get(room));
+	snprintf(s, sizeof(s), _(_("Description:%s")), location_description_get(location));
 	elm_object_text_set(label, s);
 	elm_grid_pack(gd, label, 30, 8, 50, 8);
 	evas_object_show(label);
@@ -865,7 +854,7 @@ _room_naviframe_content(Room *room)
    	elm_icon_standard_set(ic, "device-add");
    	elm_object_part_content_set(bt, "icon", ic);
 	elm_grid_pack(gd, bt , 55, 5, 20, 12);
-	evas_object_smart_callback_add(bt, "clicked", _add_device_to_room_bt_clicked_cb, NULL);
+	evas_object_smart_callback_add(bt, "clicked", _add_device_to_location_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
 	bt = elm_button_add(app->win);
@@ -875,7 +864,7 @@ _room_naviframe_content(Room *room)
    	elm_icon_standard_set(ic, "device-remove");
    	elm_object_part_content_set(bt, "icon", ic);
 	elm_grid_pack(gd, bt , 55, 15, 20, 12);
-	evas_object_smart_callback_add(bt, "clicked", _clear_device_from_room_bt_clicked_cb, NULL);
+	evas_object_smart_callback_add(bt, "clicked", _clear_widget_from_location_bt_clicked_cb, NULL);
     evas_object_show(bt);
 
 	hbx = elm_box_add(app->win);
@@ -885,24 +874,23 @@ _room_naviframe_content(Room *room)
 	evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_box_homogeneous_set(hbx, EINA_TRUE);
 
-	Eina_List *l, *devices;
-	Device *device;
-	devices = room_devices_list_get(room);
-    EINA_LIST_FOREACH(devices, l, device)
+	Eina_List *l, *widgets;
+	Widget *widget;
+	widgets = location_widgets_list_get(location);
+    EINA_LIST_FOREACH(widgets, l, widget)
     {
-    	layout = elm_layout_add(app->win);
-		snprintf(s, sizeof(s), "%d %s layout", device_id_get(device), room_name_get(room));
-		evas_object_name_set(layout, s);
-		_device_meter_update(device);
-		_device_data_update(device);
-		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-		elm_box_padding_set(hbx, 2, 0);
-    	elm_box_pack_end(hbx, layout);
-		evas_object_show(layout);
-
-		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, device);
-
+	    	layout = elm_layout_add(app->win);
+			snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
+			evas_object_name_set(layout, s);
+			_device_widget_layout_update(widget);
+			_device_widget_data_update(widget);
+			evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+			elm_box_padding_set(hbx, 2, 0);
+    		elm_box_pack_end(hbx, layout);
+			evas_object_show(layout);
+			elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, widget);
 	}
+
 	elm_box_recalculate(hbx);
     elm_box_pack_end(vbx, hbx);
 	evas_object_show(hbx);
@@ -975,8 +963,7 @@ elm_main(int argc, char **argv)
 
 	//Init edams.
 	edams_init();
-
-	app->prefs_data = elm_prefs_data_new(edams_cfg_file_get(), NULL, EET_FILE_MODE_READ_WRITE);
+	app->settings = edams_settings_get();
 
 	//Setup main window.
 	timestamp = time(NULL);
@@ -1069,7 +1056,7 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
 	elm_toolbar_item_append(app->toolbar,"devices-creator", _("Devices Creator"), devices_creator_new, app);
-	elm_toolbar_item_append(app->toolbar, "map", _("Rooms Map"), map_new, app);
+	elm_toolbar_item_append(app->toolbar, "map", _("Locations Map"), map_new, app);
 	elm_toolbar_item_append(app->toolbar,"preferences-browser", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar,"about-dlg", _("About"), about_dialog_new, app);
 	elm_toolbar_item_append(app->toolbar, "close-application", _("Quit"), quit_bt_clicked_cb, app);
@@ -1081,7 +1068,7 @@ elm_main(int argc, char **argv)
 	elm_box_pack_end(vbx, sep);
 	evas_object_show(sep);
 
-	//Create rooms list panel selector.
+	//Create locations list panel selector.
     Evas_Object *panes = elm_panes_add(app->win);
     elm_win_resize_object_add(app->win, panes);
     evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1096,7 +1083,7 @@ elm_main(int argc, char **argv)
 
    	frame = elm_frame_add(app->win);
 	evas_object_size_hint_align_set(frame, -1.0, -1.0);
-	elm_object_text_set(frame, _("Rooms"));
+	elm_object_text_set(frame, _("Locations"));
 	evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_box_pack_end(vbx2, frame);
@@ -1105,10 +1092,10 @@ elm_main(int argc, char **argv)
 	list = elm_list_add(app->win);
 	elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
 	elm_list_mode_set(list, ELM_LIST_EXPAND);
-	evas_object_name_set(list, "rooms list");
+	evas_object_name_set(list, "locations list");
 	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_smart_callback_add(list, "selected", _rooms_list_selected_cb, NULL);
+	evas_object_smart_callback_add(list, "selected", _locations_list_selected_cb, NULL);
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
     elm_panes_content_left_size_set(panes, 0.15);
@@ -1130,7 +1117,7 @@ elm_main(int argc, char **argv)
    	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    	elm_table_pack(tb, bt, 0, 0, 1, 1);
     evas_object_show(bt);
-    evas_object_smart_callback_add(bt, "clicked", _add_room_bt_clicked_cb, NULL);
+    evas_object_smart_callback_add(bt, "clicked", _add_location_bt_clicked_cb, NULL);
 
 	bt = elm_button_add(app->win);
     elm_object_text_set(bt, _("Remove"));
@@ -1141,10 +1128,10 @@ elm_main(int argc, char **argv)
    	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    	elm_table_pack(tb, bt, 0, 1, 1, 1);
     evas_object_show(bt);
-    evas_object_smart_callback_add(bt, "clicked", _remove_room_bt_clicked_cb, NULL);
+    evas_object_smart_callback_add(bt, "clicked", _remove_location_bt_clicked_cb, NULL);
 
 	frame = elm_frame_add(app->win);
-	evas_object_name_set(frame, "room frame");
+	evas_object_name_set(frame, "location frame");
 	evas_object_size_hint_align_set(frame, -1.0, -1.0);
 	evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1157,23 +1144,21 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(naviframe);
 
-    app->rooms = rooms_list_get();
-    Room *room;
-    EINA_LIST_FOREACH(app->rooms, l, room)
+    app->locations = locations_list_get();
+    Location *location;
+    EINA_LIST_FOREACH(app->locations, l, location)
 	{
 		Evas_Object *ic;
 		ic = elm_icon_add(app->win);
 		//evas_object_size_hint_align_set(ic, 0.5, 0.5);
 		//elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
-		elm_image_file_set(ic, room_filename_get(room), "/image/0");
-		Elm_Object_Item *it = elm_list_item_append(list, room_name_get(room), NULL, ic, NULL, room);
-		elm_object_item_del_cb_set(it, _room_item_del_cb);
-		it = elm_naviframe_item_push(naviframe, room_name_get(room), NULL, NULL, _room_naviframe_content(room), NULL);
+		elm_image_file_set(ic, location_filename_get(location), "/image/0");
+		Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), NULL, ic, NULL, location);
+		elm_object_item_del_cb_set(it, _location_item_del_cb);
+		it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content(location), NULL);
 		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
-    	elm_object_item_data_set(it, room);
+    	elm_object_item_data_set(it, location);
 	}
-
-	//map_new(app, app->win, NULL);
 
 	Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);

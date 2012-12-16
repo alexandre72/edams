@@ -54,8 +54,8 @@ edams_init()
 		ecore_file_mkpath(edams_data_path_get());
 	}
 
-    //Create rooms database directory.
-    strcpy(s, edams_rooms_data_path_get());
+    //Create locations database directory.
+    strcpy(s, edams_locations_data_path_get());
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 
@@ -78,8 +78,9 @@ edams_init()
     elm_language_set("fr_FR.UTF-8");
 	//evas_object_del(win);
 
-	//Initialize rooms descriptor.
-	rooms_init();
+	//Initialize locations descriptor.
+	locations_init();
+	devices_init();
 
 	return 0;
 }

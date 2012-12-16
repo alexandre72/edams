@@ -19,22 +19,22 @@
  */
 
 
-
-
 #include "shutdown.h"
-
+#include "settings.h"
+#include "device.h"
 
 int
 edams_shutdown(App_Info *app)
 {
 	INF(_("Shutdown Edams..."));
-	app->rooms = rooms_list_free(app->rooms);
+	app->locations = locations_list_free(app->locations);
 	app->devices = devices_list_free(app->devices);
 	void *data;
 	EINA_LIST_FREE(app->meters, data)
 		eina_stringshare_del(data);
-	rooms_shutdown();
-	elm_prefs_data_unref(app->prefs_data);
+	locations_shutdown();
+	devices_shutdown();
+	edams_settings_free(app->settings);
 	FREE(app);
 
 	return EINA_TRUE;

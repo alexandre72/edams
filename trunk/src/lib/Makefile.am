@@ -15,9 +15,11 @@ lib_LTLIBRARIES = libedams.la
 libedams_la_SOURCES = \
 myfileselector.c \
 path.c \
-rooms.c \
+location.c \
 device.c \
 serial.c \
+settings.c \
+cosm.c \
 utils.c
 
 libedams_la_LIBADD = \
