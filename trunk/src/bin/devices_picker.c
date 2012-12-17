@@ -144,6 +144,9 @@ devicespicker_add_to_location(App_Info *app)
 	//if(win)
 		//return;
 
+	if(!app->location)
+		return;
+
     //Setup a new window.
    	win = elm_win_util_standard_add("device_picker", _("Select a device"));
    	evas_object_data_set(win, "app", app);

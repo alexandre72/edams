@@ -57,6 +57,15 @@ _apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 
 	}
 
+	if((elm_check_state_get(elm_object_name_find(win, "debugprintf checkb", -1))) == EINA_TRUE)
+	{
+		 app->settings->debugprintf = EINA_TRUE;
+	}
+	else
+	{
+		 app->settings->debugprintf = EINA_FALSE;
+	}
+
     edams_settings_write(app->settings);
 	app->settings = edams_settings_get();
 
@@ -72,7 +81,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 {
 	Evas_Object *win, *gd, *fr;
 	Evas_Object *label, *ic, *bx, *frame;
-	Evas_Object *bt, *radio, *group;
+	Evas_Object *bt, *radio, *group, *ck;
 	Evas_Object *entry;
 
 	App_Info *app = (App_Info*)data;
@@ -140,6 +149,14 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
     elm_object_text_set(frame, _("Serial Emulation"));
   	elm_grid_pack(gd, frame , 0, 40, 100, 40);
     evas_object_show(frame);
+
+
+    ck = elm_check_add(win);
+	evas_object_name_set(ck, "debugprintf checkb");
+    elm_object_text_set(ck, _("Debug with printf"));
+  	elm_grid_pack(gd, ck , 0, 85, 100, 10);
+    evas_object_show(ck);
+
 
 	bt = elm_button_add(win);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
