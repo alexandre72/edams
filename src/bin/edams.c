@@ -302,7 +302,7 @@ _add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
 	evas_object_name_set(entry, "location map entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_object_text_set(entry, "Jockey Club Brasileiro");
+	elm_object_text_set(entry, "Le Mans France");
 	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0);
 	elm_grid_pack(gd, entry, 60, 50, 20, 8);
