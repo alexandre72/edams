@@ -117,6 +117,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	Evas_Object *list = elm_object_name_find(app->win, "locations list", -1);
 	Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), NULL, NULL, NULL, location);
 	elm_object_item_del_cb_set(it, _location_item_del_cb);
+	elm_list_go(list);
 	elm_list_item_bring_in(it);
 
 	//Append location to naviframe and set it contents.
