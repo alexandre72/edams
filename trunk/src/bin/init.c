@@ -82,5 +82,7 @@ edams_init()
 	locations_init();
 	devices_init();
 
+    ecore_con_url_pipeline_set(EINA_FALSE);
+
 	return 0;
 }

@@ -34,23 +34,29 @@ static void waiting_win_create();
 
 //Add new device's datastream.
 Eina_Bool
-cosm_device_datastream_update(Location *location, Device *device)
+cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 {
 	char s[512];
    	Eina_Bool r;
    	Settings *settings;
 
-    ecore_con_url_pipeline_set(EINA_FALSE);
+	//Don't add cosm device datastream if no feed!
+	if(location_cosm_feedid_get(location) == 0)
+		return EINA_FALSE;
 
-	cosm_url = ecore_con_url_custom_new(location_cosm_feed_get(location), "PUT");
+	snprintf(s, sizeof(s), "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
+	cosm_url = ecore_con_url_custom_new(s, "PUT");
    	if (!cosm_url)
      {
-        fprintf(stdout, "error when creating ecore con url object.\n");
+     	if(app->settings->debugprintf)
+	        fprintf(stdout, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
 		return EINA_FALSE;
      }
-	//ecore_con_url_verbose_set(cosm_url, EINA_TRUE);
-	settings = edams_settings_get();
-	cosm_apikey_set(settings->cosm_apikey);
+
+	//if(app->settings->debugprintf)
+		ecore_con_url_verbose_set(cosm_url, EINA_TRUE);
+
+	cosm_apikey_set(app->settings->cosm_apikey);
    	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, NULL);
 
 	snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\"}]"),
@@ -61,10 +67,10 @@ cosm_device_datastream_update(Location *location, Device *device)
 	r = ecore_con_url_post(cosm_url, s, strlen(s), "text/json");
 	if (!r)
      {
-        fprintf(stdout, "Couldn't realize url put request!\n");
+        if(app->settings->debugprintf)
+	    	fprintf(stdout, _("ERROR: Couldn't realize url PUT request!\n"));
 		return r;
      }
-	edams_settings_free(settings);
 	return EINA_TRUE;
 }
 
@@ -72,44 +78,47 @@ cosm_device_datastream_update(Location *location, Device *device)
 
 //Add new location feed.
 Eina_Bool
-cosm_device_feed_add(Location *location)
+cosm_location_feed_add(App_Info *app, Location *location)
 {
 	char s[256];
    	Eina_Bool r;
    	Settings *settings;
 
 	//Don't add cosm url feed if already there...
-	if(location_cosm_feed_get(location))
+	if(location_cosm_feedid_get(location) != 0)
 		return EINA_FALSE;
 
 	waiting_win_create();
-	snprintf(s, sizeof(s), _("Creating cosm feed '%s'..."), location_name_get(location));
+	snprintf(s, sizeof(s), _("Creating cosm feed for '%s'..."), location_name_get(location));
 	Evas_Object *pb = elm_object_name_find(waiting_win, "pb",-1);
    	elm_object_text_set(pb, s);
    	evas_object_show(waiting_win);
 
    	cosm_url = ecore_con_url_custom_new("http://api.cosm.com/v2/feeds", "POST");
-	ecore_con_url_verbose_set(cosm_url, EINA_TRUE);
+
+	if(app->settings->debugprintf)
+		ecore_con_url_verbose_set(cosm_url, EINA_TRUE);
+
    	if (!cosm_url)
      {
-        fprintf(stdout, "error when creating ecore con url object.\n");
+     	if(app->settings->debugprintf)
+	        fprintf(stdout, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
 		return EINA_FALSE;
      }
 	ecore_con_url_data_set(cosm_url, location);
    	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_add_complete_cb, NULL);
 
-	settings = edams_settings_get();
-	cosm_apikey_set(settings->cosm_apikey);
-
+	cosm_apikey_set(app->settings->cosm_apikey);
 
 	snprintf(s, sizeof(s), "{\"title\":\"%s data\", \"version\":\"1.0.0\"}", location_name_get(location));
   	r = ecore_con_url_post(cosm_url, s, strlen(s), NULL);
 	if (!r)
      {
-        fprintf(stdout, "Couldn't realize url post request!\n");
+        if(app->settings->debugprintf)
+	    	fprintf(stdout, _("ERROR: Couldn't realize url PUT request!\n"));
 		return r;
      }
-	edams_settings_free(settings);
+
 	return EINA_TRUE;
 }
 
@@ -131,12 +140,12 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, v
    char *str;
 
    headers = ecore_con_url_response_headers_get(url_complete->url_con);
-/*
+
    EINA_LIST_FOREACH(headers, l, str)
    {
 		printf("%s", str);
 	}
-*/
+
 	ecore_event_handler_del(url_event);
 	return EINA_FALSE;
  }
@@ -155,14 +164,13 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *even
    {
 		if(strncmp(str, "Location:", 9) == 0)
 		{
-			unsigned int n;
-			char **arr;
-			Location *location = ecore_con_url_data_get(cosm_url);
-			arr = eina_str_split_full(str, ":", 2, &n);
-	     	location_cosm_feed_set(location, s);
-			location_save(location);
-			FREE(arr[0]);
-			FREE(arr);
+			unsigned int feedid;
+			if (sscanf(str, "Location: http://api.cosm.com/v2/feeds/%d", &feedid)==1)
+			{
+                Location *location = ecore_con_url_data_get(cosm_url);
+		     	location_cosm_feedid_set(location, feedid);
+				location_save(location);
+			}
      	}
 	}
 

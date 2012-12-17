@@ -70,7 +70,7 @@ void location_image_set(Location *location, Evas_Object *image);
 void location_exposure_set(Location *location, Exposure_Flags exposure);
 void location_latitude_set(Location *location, double latitude);
 void location_longitude_set(Location *location, double longitude);
-void location_cosm_feed_set(Location *location, const char *cosm_feed);
+void location_cosm_feedid_set(Location *location, unsigned int cosm_feedid);
 
 const char *location_filename_get(Location *location);
 unsigned int location_id_get(const Location *location);
@@ -79,10 +79,11 @@ const char * location_description_get(const Location *location);
 Exposure_Flags location_exposure_get(const Location *location);
 double location_latitude_get(const Location *location);
 double location_longitude_get(const Location *location);
-const char *location_cosm_feed_get(const Location *location);
+unsigned int location_cosm_feedid_get(const Location *location);
 
 Eina_List *locations_list_get();
 Eina_List * locations_list_free(Eina_List *locations);
+Eina_List *locations_list_location_remove(Eina_List *locations, Location *location);
 
 /* Global initializer / shutdown functions */
 void locations_init(void);
