@@ -11,7 +11,7 @@
  *
  * EDAMS is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PAR TICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -22,11 +22,11 @@
 #ifndef __COSM_H
 #define __COSM_H
 
-#include "location.h"
 #include "device.h"
+#include "edams.h"
 
 Eina_Bool cosm_apikey_set(const char *key);
-Eina_Bool cosm_device_feed_add(Location *location);
-Eina_Bool cosm_device_datastream_update(Location *location, Device *device);
+Eina_Bool cosm_location_feed_add(App_Info *app,  Location *location);
+Eina_Bool cosm_device_datastream_update(App_Info *app, Location *location, Device *device);
 
 #endif

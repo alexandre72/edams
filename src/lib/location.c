@@ -49,7 +49,7 @@ struct _Location
 	double elevation; 				//The elevation of the location.
     const char *creation;			//Creation date of location Eet file.
     const char *revision;			//Revision date of location Eet file.
-	const char *cosm_feed;			//The cosm url feed location e.g.g 'http://api.cosm.com/v2/feeds/0001'.
+	unsigned int cosm_feedid;			//The cosm url feed location e.g.g 'http://api.cosm.com/v2/feeds/0001'.
     unsigned int version;			//Version of location Eet file.
     Eina_List * widgets;
 };
@@ -209,7 +209,7 @@ _location_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "creation", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "revision", revision, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "version", version, EET_T_UINT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "cosm_feed", cosm_feed, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "cosm_feedid", cosm_feedid, EET_T_UINT);
 }
 
 static inline void
@@ -250,8 +250,8 @@ location_new(unsigned int id, const char * name, const char * description)
 
     location->creation = eina_stringshare_add(s);
 	location->revision = NULL;
-	location->version = 0x0001;
-    location->cosm_feed = NULL;
+	location->version = 0x0002;
+    location->cosm_feedid = 0;
 
     return location;
 }
@@ -280,7 +280,6 @@ location_free(Location *location)
        	}
 	    eina_stringshare_del(location->creation);
     	eina_stringshare_del(location->revision);
-    	eina_stringshare_del(location->cosm_feed);
 	    FREE(location);
 	}
 }
@@ -370,17 +369,17 @@ location_longitude_set(Location *location, double longitude)
 }
 
 
-inline const char *
-location_cosm_feed_get(const Location *location)
+inline unsigned int
+location_cosm_feedid_get(const Location *location)
 {
-    return location->cosm_feed;
+    return location->cosm_feedid;
 }
 
 inline void
-location_cosm_feed_set(Location *location, const char *cosm_feed)
+location_cosm_feedid_set(Location *location, unsigned cosm_feedid)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
-	eina_stringshare_replace(&(location->cosm_feed), cosm_feed);
+	location->cosm_feedid =  cosm_feedid;
 }
 
 
@@ -504,14 +503,14 @@ location_load(const char *filename)
     if (!location) goto end;
     location->__eet_filename = eina_stringshare_add(filename);
 
-   	if (location->version < 0x0001)
+   	if (location->version < 0x0002)
      	{
 
         	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"),
         			location->__eet_filename,
-                	location->version, 0x0001);
+                	location->version, 0x0002);
 
-        	location->version = 0x0001;
+        	location->version = 0x0002;
      	}
 
 end:

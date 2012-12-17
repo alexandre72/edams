@@ -88,10 +88,11 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
 	double lon;
 	double lat;
-	elm_map_region_get(elm_object_name_find(win, "location map", -1), &lon, &lat);
-
-	location_longitude_set(location, lon);
-  	location_latitude_set(location, lat);
+   	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
+	//Elm_Map_Name *name= evas_object_data_get(map, "name Elm_Map_Name");
+   	//elm_map_name_region_get(name, &lon, &lat);
+	//location_longitude_set(location, lon);
+  	//location_latitude_set(location, lat);
 
    	eo = NULL;
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
@@ -109,8 +110,7 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 		evas_object_image_scale(eo, 50, 50);
 		location_image_set(location, eo);
     }
-	cosm_device_feed_add(location);
-
+	cosm_location_feed_add(app, location);
     location_save(location);
 
 	//Append location to locations list.
@@ -182,6 +182,39 @@ _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 	myfileselector_set_title(myfs, _("Select a picture file"));
 	evas_object_data_set(myfs->win, "image", img);
     evas_object_smart_callback_add(myfs->action_bt, "clicked", _action_bt_clicked_cb, myfs);
+}
+
+
+static void
+_name_loaded(void *data, Evas_Object *obj, void *ev)
+{
+	double lon, lat;
+   	Evas_Object *win =  (Evas_Object *)data;
+
+   	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
+	Elm_Map_Name *name= evas_object_data_get(map, "name Elm_Map_Name");
+
+   	elm_map_name_region_get(name, &lon, &lat);
+	elm_map_region_bring_in(map, lon, lat);
+}
+
+
+static void
+_bt_route(void *data, Evas_Object *obj, void *ev)
+{
+   	Evas_Object *map;
+   	char *address;
+	Evas_Object *win = (Evas_Object *)data;
+	Elm_Map_Name *name;
+
+   map = elm_object_name_find(win, "location map", -1);;
+   address = (char *)elm_object_text_get(elm_object_name_find(win, "location map entry", -1));
+
+   name = elm_map_name_add(map, address, 0, 0, NULL, NULL);
+   evas_object_data_set(map, "name Elm_Map_Name", name);
+
+   evas_object_smart_callback_add(map, "name,loaded", _name_loaded, win);
+   //evas_object_smart_callback_add(map, "route,loaded", _route_loaded, data);
 }
 
 
@@ -258,11 +291,29 @@ _add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
 	evas_object_show(entry);
 
    	Evas_Object *map = elm_map_add(win);
-	evas_object_name_set(entry, "location map");
+	evas_object_name_set(map, "location map");
+	elm_map_zoom_set(map, 12);
    	elm_win_resize_object_add(win, map);
    	evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_grid_pack(gd, map, 0, 51, 50, 30);
    	evas_object_show(map);
+
+	entry = elm_entry_add(win);
+	evas_object_name_set(entry, "location map entry");
+	elm_entry_scrollable_set(entry, EINA_TRUE);
+	elm_entry_single_line_set(entry, EINA_TRUE);
+	elm_object_text_set(entry, "Jockey Club Brasileiro");
+	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0);
+	elm_grid_pack(gd, entry, 60, 50, 20, 8);
+	evas_object_show(entry);
+
+  	bt = elm_button_add(win);
+   	elm_object_text_set(bt, _("Go to"));
+   	evas_object_show(bt);
+	elm_grid_pack(gd, bt, 80, 50, 10, 10);
+   	evas_object_smart_callback_add(bt, "clicked", _bt_route, win);
+   	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
 
 	bt = elm_button_add(win);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -388,11 +439,10 @@ _remove_apply_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	if(it)
 	{
 	   	location = elm_object_item_data_get(it);
+		location_remove(location);
 
 		snprintf(buf, sizeof(buf), _("Location '%s' have been removed."), location_name_get(location));
 		elm_object_item_del(it);
-
-		location_remove(location);
 
 		Evas_Object *naviframe = (Evas_Object*)  elm_object_name_find(app->win, "naviframe", -1);
 		elm_naviframe_item_pop(naviframe);
@@ -612,7 +662,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 					//If device is already here, so only update device data.
 					_device_widget_data_update(widget);
 					map_data_update(app, widget);
-					cosm_device_datastream_update(location, device);
+					cosm_device_datastream_update(app, location, device);
 				}
 			}
 
