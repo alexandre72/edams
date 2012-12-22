@@ -28,12 +28,19 @@
 //
 //
 //
-const Settings *edams_settings_get(void)
+const Settings
+*edams_settings_get(void)
 {
 	Eet_File *ef;
 
-	fprintf(stdout, _("Reading applications settings...\n"));
+	fprintf(stdout, _("Read applications settings...\n"));
     Settings *settings = calloc(1, sizeof(Settings));
+
+	if(!settings)
+	{
+		fprintf(stderr, _("ERROR:Couldn't calloc Settings struct!\n"));
+		return NULL;
+	}
 
 	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ);
 
@@ -42,7 +49,7 @@ const Settings *edams_settings_get(void)
 	settings->cosm_apikey = NULL;
 	settings->softemu = EINA_FALSE;
 	settings->hardemu = EINA_FALSE;
-	settings->debugprintf = EINA_FALSE;
+	settings->debug = EINA_FALSE;
 
    	ret = eet_read(ef, "edams/cosm_apikey", &size);
    	if(ret)
@@ -65,24 +72,24 @@ const Settings *edams_settings_get(void)
    		FREE(ret);
    	}
 
-   	ret = eet_read(ef, "edams/debugprintf", &size);
+   	ret = eet_read(ef, "edams/debug", &size);
    	if(ret)
    	{
-		settings->debugprintf = atoi(ret) ? EINA_TRUE : EINA_FALSE;
+		settings->debug = atoi(ret) ? EINA_TRUE : EINA_FALSE;
    		FREE(ret);
    	}
 
 	eet_close(ef);
 
-	fprintf(stdout, _("OPTION:Cosm data handling=>%s\n"), settings->cosm_apikey?"ENABLE":"DISABLE");
-	fprintf(stdout, _("OPTION:Software emulation(snprintf)=>%s\n"), settings->softemu?"ENABLE":"DISABLE");
-	fprintf(stdout, _("OPTION:Hardware emulation(serial loopback)=>%s\n"), settings->hardemu?"ENABLE":"DISABLE");
-	fprintf(stdout, _("OPTION:Debug with printf=>%s\n"), settings->debugprintf?"ENABLE":"DISABLE");
+	fprintf(stdout, _("OPTION:Cosm data handling=>%s\n"), settings->cosm_apikey?_("ENABLE"):_("DISABLE"));
+	fprintf(stdout, _("OPTION:Software emulation(snprintf)=>%s\n"), settings->softemu?_("ENABLE"):_("DISABLE"));
+	fprintf(stdout, _("OPTION:Hardware emulation(serial loopback)=>%s\n"), settings->hardemu?_("ENABLE"):_("DISABLE"));
+	fprintf(stdout, _("OPTION:Debug with printf=>%s\n"), settings->debug?_("ENABLE"):_("DISABLE"));
 
 	return settings;
 }
 
-const void
+void
 edams_settings_write(Settings *settings)
 {
 	Eet_File *ef;
@@ -101,10 +108,10 @@ edams_settings_write(Settings *settings)
 	else
 	   	eet_write(ef, "edams/hardemu", "0", strlen("0")+1, 0);
 
-	if(settings->debugprintf == EINA_TRUE)
-	   	eet_write(ef, "edams/debugprintf", "1", strlen("1")+1, 0);
+	if(settings->debug == EINA_TRUE)
+	   	eet_write(ef, "edams/debugf", "1", strlen("1")+1, 0);
 	else
-	   	eet_write(ef, "edams/debugprintf", "0", strlen("0")+1, 0);
+	   	eet_write(ef, "edams/debugf", "0", strlen("0")+1, 0);
 
 	eet_close(ef);
 }

@@ -18,24 +18,27 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #ifndef __EDAMS_H__
 #define __EDAMS_H__
 
-
 #include <Evas.h>
 #include <Eina.h>
+#include <xPL.h>
 
 #include "libedams.h"
 #include "location.h"
 #include "settings.h"
 
+#define XPL_VERSION "20091005"
 
 //
-//Define App UI. Can be used to modify it dynamicaly.
+//Define App UI struct.
 //
 typedef struct
 {
+	int argc;
+	char **argv;
+
 	Evas_Object *win;
 	Evas_Object *waiting_win;
 	Evas_Object *toolbar;
@@ -44,13 +47,13 @@ typedef struct
 	Eina_List *meters;
 	Location *location;
 	Settings *settings;
+
+	xPL_ServicePtr 	edamsService ;
+	xPL_MessagePtr 	edamsMessageStat ;
+	xPL_MessagePtr 	edamsMessageTrig ;
 } App_Info;
 
 
-
 Evas_Object*_location_naviframe_content(Location *location);
-
-//preferences_dlg.c: Preferences dialog.
-void preferences_dlg_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 #endif /* __EDAMS_H__ */

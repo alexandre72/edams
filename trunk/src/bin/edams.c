@@ -40,7 +40,7 @@
 #include "shutdown.h"
 #include "about_dlg.h"
 #include "cosm.h"
-
+#include "preferences_dlg.h"
 
 static const int TEMP_MIN =  -30;
 static const int TEMP_MAX =  50;
@@ -89,10 +89,10 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	double lon;
 	double lat;
    	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
-	//Elm_Map_Name *name= evas_object_data_get(map, "name Elm_Map_Name");
-   	//elm_map_name_region_get(name, &lon, &lat);
-	//location_longitude_set(location, lon);
-  	//location_latitude_set(location, lat);
+	Elm_Map_Name *name= evas_object_data_get(map, "name Elm_Map_Name");
+   	elm_map_name_region_get(name, &lon, &lat);
+	location_longitude_set(location, lon);
+  	location_latitude_set(location, lat);
 
    	eo = NULL;
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
@@ -187,7 +187,7 @@ _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
 
 static void
-_name_loaded(void *data, Evas_Object *obj, void *ev)
+_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
 	double lon, lat;
    	Evas_Object *win =  (Evas_Object *)data;
@@ -546,19 +546,34 @@ do_lengthy_task(Ecore_Pipe *pipe)
     int fd = 0;
 	char buf[256];
 	char *samples[] = {"DS18B20","PIR","DHT11"};
+	int baudrate = 57600;  // default
 
-	if(app->settings->softemu == EINA_FALSE)
-	{
-		int baudrate = 115200;  // default
-		if(app->settings->hardemu == EINA_TRUE)
-	   	fd = serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
-		else
+	if(app->settings->softemu == EINA_FALSE && app->settings->hardemu == EINA_FALSE)
    		fd = serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
-	}
+
+	if(app->settings->hardemu == EINA_TRUE)
+	   	fd = serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
 
 	SeedRandomizer();
 	for(;;)
 	{
+			serialport_read_until(fd, buf, '\n');
+			if(strncmp(buf, "sensor.basic", strlen("sensor.basic")) == 0)
+			{
+				printf("reading xpl sensor device msg...!\n");
+				serialport_read_until(fd, buf, '}');
+
+				char *s;
+				while(s = gets(buf))
+				{
+
+				}
+
+				printf("%s\n", buf);
+				printf("parsing of xpl msg done!!!\n");
+			}
+
+	/*
 		//Serial loopback(TX<=>RX) emulation trame test.
 		if(app->settings->hardemu == EINA_TRUE)
 			serialport_write(fd, "DEVICE;0;DS18B20;17.296;OK\n");
@@ -570,7 +585,8 @@ do_lengthy_task(Ecore_Pipe *pipe)
 		if(app->settings->softemu == EINA_FALSE)
 			serialport_read_until(fd, buf, '\n');	//Disable it when software emulation, and enable it when serial loopback emulation test.
 		ecore_pipe_write(pipe, buf, strlen(buf));
-		sleep(2);
+		*/
+		sleep(1);
    }
 }
 
@@ -586,7 +602,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 	memcpy(str, buf, len);
 	str[len] = '\0';
 
-	//fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
+	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
 
 	Device *device;
    	//Check if system msg...
@@ -966,55 +982,21 @@ elm_main(int argc, char **argv)
 	Ecore_Pipe *pipe;
 	pid_t child_pid;
 
-	// Initialize important stuff like eina debug system, ecore_evas, eet, elementary...
-	#if ENABLE_NLS
-    const char *locale = setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_NAME, edams_locale_path_get());
-	bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
-	textdomain(PACKAGE_NAME);
-	#endif
+	//Allocate and initialize App_Info struct.
+	fprintf(stdout, _("Allocate App_Info ...\n"));
+	app = calloc(1, sizeof(App_Info));
 
-   	_log_dom = eina_log_domain_register("edams",  EINA_COLOR_CYAN);
-
-   	if (_log_dom < 0)
-     	{
-        	CRITICAL("Can't register log domain 'edams'!");
-        	return EXIT_FAILURE;
-     	}
-
-	if (!eina_init())
+	if(!app)
 	{
-		fprintf(stderr, _("CRI:Can't init Eina!\n"));
-               	return EXIT_FAILURE;
+		fprintf(stderr, _("ERROR:Couldn't calloc App_Info struct!\n"));
+		exit(-1);
 	}
-
-	eet_init();
-	ecore_init();
-	ecore_evas_init();
-	edje_init();
-
-	if (!elm_init(argc, argv))
-	{
-		CRITICAL(_("Can't init Elementary!"));
-        return EXIT_FAILURE;
-	}
-
-	//Set elm locale based on setlocale returns.
-	#if ENABLE_NLS
-    	elm_language_set(locale);
-    #endif
-
-   	elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   	elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
-   	elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-	elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
-
-	INF(_("Initialize Application..."));
-    app = calloc(1, sizeof(App_Info));
-
-	//Init edams.
-	edams_init();
+	app->argc = argc;
+	app->argv = argv;
 	app->settings = edams_settings_get();
+
+	//Initialize edams.
+	edams_init(app);
 
 	//Setup main window.
 	timestamp = time(NULL);
@@ -1239,15 +1221,6 @@ elm_main(int argc, char **argv)
 	kill(child_pid, SIGKILL);
 
 	edams_shutdown(app);
-   	eina_log_domain_unregister(_log_dom);
-  	 _log_dom = -1;
-	eina_shutdown();
-	ecore_evas_shutdown();
-	ecore_shutdown();
-	eet_shutdown();
-	edje_shutdown();
-	elm_shutdown();
-	exit(0);
 
 	return EXIT_SUCCESS;
 }

@@ -23,10 +23,44 @@
 #include "settings.h"
 #include "device.h"
 
+
+static int efl_shutdown(App_Info *app);
+static int xpl_shutdown(App_Info *app);
+
+
+static int
+xpl_shutdown(App_Info *app)
+{
+	fprintf(stdout, _("Shutdown xPL...\n"));
+	xPL_setServiceEnabled(app->edamsService, FALSE) ;
+	xPL_releaseService(app->edamsService) ;
+	xPL_shutdown() ;
+
+	return 0;
+}
+
+
+static int
+efl_shutdown(App_Info *app)
+{
+	fprintf(stdout, _("Shutdown Enlightenment Foundation Libraries...\n"));
+	eina_shutdown();
+	ecore_evas_shutdown();
+	ecore_shutdown();
+	eet_shutdown();
+	edje_shutdown();
+	elm_shutdown();
+
+	return 0;
+}
+
+
 int
 edams_shutdown(App_Info *app)
 {
-	INF(_("Shutdown Edams..."));
+	xpl_shutdown(app);
+
+	fprintf(stdout, _("Free allocated memory...\n"));
 	app->locations = locations_list_free(app->locations);
 	app->devices = devices_list_free(app->devices);
 	void *data;
@@ -36,6 +70,8 @@ edams_shutdown(App_Info *app)
 	devices_shutdown();
 	edams_settings_free(app->settings);
 	FREE(app);
+
+	efl_shutdown(app);
 
 	return EINA_TRUE;
 }

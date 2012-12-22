@@ -48,12 +48,12 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 	cosm_url = ecore_con_url_custom_new(s, "PUT");
    	if (!cosm_url)
      {
-     	if(app->settings->debugprintf)
+     	if(app->settings->debug)
 	        fprintf(stdout, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
 		return EINA_FALSE;
      }
 
-	if(app->settings->debugprintf)
+	if(app->settings->debug)
 		ecore_con_url_verbose_set(cosm_url, EINA_TRUE);
 
 	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
@@ -67,7 +67,7 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 	r = ecore_con_url_post(cosm_url, s, strlen(s), "text/json");
 	if (!r)
      {
-        if(app->settings->debugprintf)
+        if(app->settings->debug)
 	    	fprintf(stdout, _("ERROR: Couldn't realize url PUT request!\n"));
 		return r;
      }
@@ -96,12 +96,12 @@ cosm_location_feed_add(App_Info *app, Location *location)
 
    	cosm_url = ecore_con_url_custom_new("http://api.cosm.com/v2/feeds", "POST");
 
-	if(app->settings->debugprintf)
+	if(app->settings->debug)
 		ecore_con_url_verbose_set(cosm_url, EINA_TRUE);
 
    	if (!cosm_url)
      {
-     	if(app->settings->debugprintf)
+     	if(app->settings->debug)
 	        fprintf(stdout, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
 		return EINA_FALSE;
      }
@@ -109,14 +109,20 @@ cosm_location_feed_add(App_Info *app, Location *location)
 
 	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
 
-	snprintf(s, sizeof(s), ("{\"title\":\"%s data\", \"version\":\"1.0.0\", \"location\": { \"disposition\":\"fixed\", \"name\":\"%s\", \"lat\":0.0050400, \"exposure\":\"indoor\", \"lon\":1.4544545, \"domain\":\"physical\"}}"),
+	char *locale = setlocale(LC_NUMERIC, NULL);
+	setlocale(LC_NUMERIC, "POSIX");
+	snprintf(s, sizeof(s), ("{\"title\":\"%s data\", \"version\":\"1.0.0\", \"location\": { \"disposition\":\"fixed\", \"name\":\"%s\", \"lat\":%'.2f, \"exposure\":\"indoor\", \"lon\":%'.2f, \"domain\":\"physical\"}}"),
 					location_name_get(location),
-					location_name_get(location));
+					location_name_get(location),
+					location_latitude_get(location),
+					location_longitude_get(location));
+	printf("PUT %s\n", s);
+	setlocale(LC_NUMERIC, locale);
 
   	r = ecore_con_url_post(cosm_url, s, strlen(s), NULL);
 	if (!r)
      {
-        if(app->settings->debugprintf)
+        if(app->settings->debug)
 	    	fprintf(stdout, _("ERROR: Couldn't realize url PUT request!\n"));
 		return r;
      }

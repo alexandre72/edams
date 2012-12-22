@@ -28,10 +28,10 @@ typedef struct
 	char *cosm_apikey;
 	Eina_Bool softemu;
 	Eina_Bool hardemu;
-	Eina_Bool debugprintf;
+	Eina_Bool debug;
 } Settings;
 
 const Settings *edams_settings_get(void);
 Settings *edams_settings_free(Settings *settings);
-const void edams_settings_write(Settings *settings);
+void edams_settings_write(Settings *settings);
 #endif /* __SETTINGS_H__ */

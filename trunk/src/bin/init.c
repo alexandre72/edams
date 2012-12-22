@@ -18,39 +18,102 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
 #include "edams.h"
 #include "utils.h"
 #include "path.h"
 #include "device.h"
 
 
+static int xpl_init(App_Info *app);
+static int paths_init(App_Info *app);
+static int efl_init(App_Info *app);
 
-int
-edams_init()
+
+static int
+xpl_init(App_Info *app)
 {
-	char s[PATH_MAX];
-	//Elm_Theme *th;
+	fprintf(stdout, _("Initialize xPL service...\n"));
 
-	//TODO:splash screen.
-	//Evas_Object *win;
-	//win = elm_win_add(NULL, "init", ELM_WIN_SPLASH);
-	//elm_win_borderless_set(win, EINA_FALSE);
-    	//elm_win_shaped_set(win, EINA_TRUE);
-	//elm_win_alpha_set(win, EINA_TRUE);
-	//elm_win_title_set(win, _("Initialize"));
-	//evas_object_show(win);
-	//evas_object_resize(win, 400, 400);
+	if(app->settings->debug)
+		xPL_setDebugging(TRUE) ;
+
+	//initializing xPL up.
+	if ( !xPL_initialize(xPL_getParsedConnectionType()) )
+		return 0 ;
+
+	//Creating an xpl service.
+	app->edamsService = xPL_createService("edams", "xpl", "vesta");
+	xPL_setServiceVersion(app->edamsService, XPL_VERSION);
+
+	//Adding responder(s).
+	//Ajout fonction écoute sensor.basic (état senseur SdB)
+	//xPL_addServiceListener(app->edamsService, edamsMessageSensorBasicHandler, xPL_MESSAGE_TRIGGER, "sensor", "basic", NULL) ;
+	//Ajout fonction écoute hvac.basic (commande VMC)
+	//xPL_addServiceListener(DomosService, DomosMessageHvacBasicHandler, xPL_MESSAGE_COMMAND, "hvac", "basic", NULL) ;
+
+	//Creating a message to send
+	//DomosMessageStat = xPL_createBroadcastMessage(DomosService, xPL_MESSAGE_STATUS) ;
+	//DomosMessageTrig = xPL_createBroadcastMessage(DomosService, xPL_MESSAGE_TRIGGER) ;
+
+	// Enable the service
+	xPL_setServiceEnabled(app->edamsService, TRUE);
+
+	return 0;
+}
+
+
+
+static int
+efl_init(App_Info *app)
+{
+	fprintf(stdout, _("Initialize Enlightenment Foundation Libraries...\n"));
+
+	if (!eina_init())
+	{
+		fprintf(stderr, _("Couldn't init Eina!"));
+		return EXIT_FAILURE;
+	}
+
+	eet_init();
+	ecore_init();
+    ecore_con_url_pipeline_set(EINA_FALSE);
+	ecore_evas_init();
+	edje_init();
+
+	if (!elm_init(app->argc, app->argv))
+	{
+		fprintf(stderr, _("Couldn't init Elementary!"));
+        return EXIT_FAILURE;
+	}
+    //Setting elementary options.
+   	elm_theme_extension_add(NULL, edams_edje_theme_file_get());
+    elm_language_set("fr_FR.UTF-8");
+	#if ENABLE_NLS
+    	elm_language_set(setlocale(LC_ALL, NULL));
+    #endif
+
+   	elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   	elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
+   	elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
+	elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
+
+    return 0;
+}
+
+
+static int
+paths_init(App_Info *app)
+{
+	fprintf(stdout, _("Checking EDAMS useful paths...\n"));
+
+	char s[PATH_MAX];
 
 	//If no configurations path then create a new one in user home's.
 	strcpy(s, edams_data_path_get());
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 	{
-		msgbox(_("It appears that it's the first time you run EDAMS. To be used, EDAMS needs some database files containing items. I'll copy some default items files, but you can easily remove them and create new ones(highly recommended)!"));
-
+		if(app->settings->debug)
+		fprintf(stdout, _("It appears that it's the first time you run EDAMS. To be used, EDAMS needs some database files containing items. I'll copy some default items files, but you can easily remove them and create new ones(highly recommended)!"));
 		ecore_file_mkpath(edams_data_path_get());
 	}
 
@@ -64,25 +127,33 @@ edams_init()
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 
+	return 0;
+}
 
-    //Create cache directory.
-	//snprintf(s, sizeof(s), "%s/edams", efreet_cache_home_get());
-	//if(ecore_file_is_dir(s) == 0)
-	//	ecore_file_mkpath(s);
 
-    	//Settings elementary options.
-   	elm_theme_extension_add(NULL, edams_edje_theme_file_get() );
+static int
+i18n_init(App_Info *app)
+{
+	#if ENABLE_NLS
+    setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE_NAME, edams_locale_path_get());
+	bind_textdomain_codeset(PACKAGE_NAME, "UTF-8");
+	textdomain(PACKAGE_NAME);
+	#endif
 
-	//elm_scale_set(1.50);
-	//elm_finger_size_set(0);
-    elm_language_set("fr_FR.UTF-8");
-	//evas_object_del(win);
+    return 0;
+}
 
-	//Initialize locations descriptor.
+
+
+int
+edams_init(App_Info *app)
+{
+	i18n_init(app);
+	efl_init(app);
+	paths_init(app);
 	locations_init();
 	devices_init();
-
-    ecore_con_url_pipeline_set(EINA_FALSE);
-
+	xpl_init(app);
 	return 0;
 }
