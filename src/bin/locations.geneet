@@ -1,0 +1,11 @@
+Widget {
+	name : str default "default";
+	device_id : uint;
+}
+
+Location {
+	id : uint;
+	name : str default "undefined";
+	description : str default "undefined";
+    	widgets: list of Widget;
+}

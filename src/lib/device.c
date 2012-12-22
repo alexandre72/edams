@@ -29,7 +29,7 @@ struct _Device
     const char *__eet_filename;		//Filename name of device, generated and based on device's name.
     unsigned int id;				//Id of device e.g. '104'.
     const char *name;				//Name of device 'DS18B20'.
-    Type_Flags type;				//Type of device e.g. 'DEVICE|HUMIDITY|TEMPERATURE'.
+    Type_Flags type;				//Type of device e.g. 'HUMIDITY'.
     const char *description;		//Description of device e.g.'I2C sensor'.
     const char *datasheeturl;		//URL Datasheet of device e.g. 'http///alldatasheet.com/ds18b20.html'.
     const char *data;				//Current data of device.
@@ -45,6 +45,7 @@ struct _Device
 
 static const char DEVICE_ENTRY[] = "device";
 static Eet_Data_Descriptor *_device_descriptor = NULL;
+
 
 
 
@@ -219,6 +220,112 @@ device_type_set(Device *device, const Type_Flags type)
 {
     EINA_SAFETY_ON_NULL_RETURN(device);
     device->type = type;
+
+	switch(type)
+	{
+		default:
+		case UNKNOWN:
+		case GENERIC:
+					device_units_set(device, _(""));
+					device_unit_symbol_set(device, "");
+					device_unit_format_set(device, "%d");
+					break;
+		case BATTERY:
+					device_units_set(device, _("Percent"));
+					device_unit_symbol_set(device, "%");
+					device_unit_format_set(device, "%d%%");
+					break;
+		case COUNT:
+					device_units_set(device, _(""));
+					device_unit_symbol_set(device, "");
+					device_unit_format_set(device, "%d");
+					break;
+		case CURRENT:
+					device_units_set(device, _("Amps"));
+					device_unit_symbol_set(device, "A");
+					device_unit_format_set(device, "%d A");
+					break;
+		case DIRECTION:
+					device_units_set(device, _("Degrees"));
+					device_unit_symbol_set(device, "°");
+					device_unit_format_set(device, "%d °");
+					break;
+		case DISTANCE:
+					device_units_set(device, _("Meters"));
+					device_unit_symbol_set(device, "m");
+					device_unit_format_set(device, "%d m");
+					break;
+		case ENERGY:
+					device_units_set(device, _("Kilowatt hours"));
+					device_unit_symbol_set(device, "kWh");
+					device_unit_format_set(device, "%d kWh");
+					break;
+		case FAN:
+					device_units_set(device, _("Rotation/min"));
+					device_unit_symbol_set(device, "RPM");
+					device_unit_format_set(device, "%d RPM");
+					break;
+		case HUMIDITY:
+					device_units_set(device, _(""));
+					device_unit_symbol_set(device, "");
+					device_unit_format_set(device, "%d/100");
+					break;
+		case INPUT:
+					device_units_set(device, _(""));
+					device_unit_symbol_set(device, "");
+					device_unit_format_set(device, "%d");
+					break;
+		case OUPUT:
+					device_units_set(device, _(""));
+					device_unit_symbol_set(device, "");
+					device_unit_format_set(device, "%d");
+					break;
+		case POWER:
+					device_units_set(device, _("Kilowatt"));
+					device_unit_symbol_set(device, "kW");
+					device_unit_format_set(device, "%d kW");
+					break;
+		case PRESSURE:
+					device_units_set(device, _("Pascals"));
+					device_unit_symbol_set(device, "N/m2");
+					device_unit_format_set(device, "%d N/m2");
+					break;
+		case SETPOINT:
+					device_units_set(device, _("Celsius"));
+					device_unit_symbol_set(device, "°C");
+					device_unit_format_set(device, "%d °C");
+					break;
+		case SPEED:
+					device_units_set(device, _("Miles per Hour"));
+					device_unit_symbol_set(device, "Mph");
+					device_unit_format_set(device, "%d Mph");
+					break;
+		case TEMP:
+					device_units_set(device, _("Celsius"));
+					device_unit_symbol_set(device, "°C");
+					device_unit_format_set(device, "%d °C");
+					break;
+		case UV:
+					device_units_set(device, _(""));
+					device_unit_symbol_set(device, "");
+					device_unit_format_set(device, "%d");
+					break;
+		case VOLTAGE:
+					device_units_set(device, _("Volts"));
+					device_unit_symbol_set(device, "V");
+					device_unit_format_set(device, "%d V");
+					break;
+		case VOLUME:
+					device_units_set(device, _("Cubic meter"));
+					device_unit_symbol_set(device, "m3");
+					device_unit_format_set(device, "%d m3");
+					break;
+		case WEIGHT:
+					device_units_set(device, _("Kilograms"));
+					device_unit_symbol_set(device, "kg");
+					device_unit_format_set(device, "%d kg");
+					break;
+	}
 }
 
 inline void
@@ -552,21 +659,20 @@ device_detect(char *s)
 	Device *data, *device = NULL;
 	unsigned int n;
 
+/*
+sensor.basic
+{
+device=1
+type=temp
+current=22
+}
+*/
+
 	//Check if new device in trame.
-	if(strncmp(s, "DEVICE;", 7) == 0)
+	if(strncmp(s, "sensor.basic", strlen("sensor.basic")) == 0)
 	{
-	   arr = eina_str_split_full(s, ";", 5, &n);
-
-		if(n == 5 && (strcmp(arr[4], "OK") == 0))
-		{
-
-			if(!arr[1] || !arr[2] || !arr[3])
-			{
-				FREE(arr[0]);
-				FREE(arr);
-				return NULL;
-			}
-
+		printf("Device Sensor detected!\n");
+/*
 			//Create new device *only* if device isn't already registered(filename already here)!
 			char s[PATH_MAX];
 			snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s-%s.eet" , edams_locations_data_path_get(), arr[1], arr[2]);
@@ -591,13 +697,12 @@ device_detect(char *s)
 				devices_list_free(database);
 				device_save(device);
 			}
+
 			else
 			{
 				device_data_set(device, arr[3]);
 			}
-		}
-		FREE(arr[0]);
-		FREE(arr);
+		*/
 	}
 
 

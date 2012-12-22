@@ -22,6 +22,6 @@
 #ifndef __INIT_H
 #define __INIT_H
 
-int edams_init();
+int edams_init(App_Info *app);
 
 #endif

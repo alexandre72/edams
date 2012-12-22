@@ -51,7 +51,7 @@ map_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    	ee = ecore_evas_new(NULL, 0, 0, geometry.w, geometry.h, NULL);
 	if (!ee)
 	{
-		CRITICAL(_("Can't construct Ecore_Evas object!"));
+		fprintf(stderr, _("Can't construct Evas object!\n"));
 		return;
 	}
     printf("Using %s engine!\n", ecore_evas_engine_name_get(ee));
@@ -71,7 +71,7 @@ map_new(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
     Evas_Load_Error err = evas_object_image_load_error_get(bg);
     if (err != EVAS_LOAD_ERROR_NONE)
     {
-		ERR(_("Can't load Edje image from %s!"), "house.png");
+		fprintf(stderr, _("Can't load Edje image from %s!"), "house.png");
 		evas_object_del(bg);
    		bg  = evas_object_rectangle_add(evas);
     }

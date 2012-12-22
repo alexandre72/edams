@@ -29,25 +29,26 @@ typedef struct _Device Device;
 typedef enum _Type_Flags
 {
 	UNKNOWN			= (0),
-	SENSOR			= (1 << 1),
-	COMMAND  		= (1 << 2),
-	HUMIDITY		= (1 << 10),
-	TEMPERATURE		= (1 << 11),
-	PRESSURE		= (1 << 13),
-	PIR  			= (1 << 14),
-	GAS  			= (1 << 15),
-	DISTANCE		= (1 << 16),
-	SHOCK  			= (1 << 17),
-	FLOW  			= (1 << 18),
-	MICROPHONE		= (1 << 19),
-	CAMERA			= (1 << 13),
-	RELAY  			= (1 << 20),
-	TRANSISTOR		= (1 << 21),
-	SWITCH 			= (1 << 22),
-	IC  			= (1 << 23),
-	LED  			= (1 << 24),
-	LCD  			= (1 << 25),
-	BUZZER			= (1 << 26)
+	BATTERY			= (1),      //battery - a battery level in percent.
+	COUNT			= (2),     	//count - a counter value (door openings, rain fall, etc)
+	CURRENT			= (3),	   	//current - a current value in Amps.
+	DIRECTION		= (4),    	//direction - direction, represented as degrees from north (0-360, 0=north, 180=south, etc)
+	DISTANCE		= (5),    	//distance - distance measurments. Default unit of measure is meters.
+	ENERGY			= (6),    	//energy - consumption of energy over a preiod of time in kWh (kilowatt hours)
+	FAN				= (7),    	//fan - a fan speed in RPM
+	GENERIC			= (8),      //generic - a generic analogue value who's units of measurement are application specific
+	HUMIDITY		= (9),    	//humidity - a relative humidity percentage (0 to 100, no percent sign)
+	INPUT			= (10),    	//input - a switch that can either be current=HIGH (on), current=LOW (off) or current=PULSE (representing a button press)
+	OUPUT			= (11),    	//output - a change in an output state with values of LOW and HIGH
+	POWER			= (12),    	//power - instantaneous energy consumption level in kW
+	PRESSURE		= (13),    	//pressure - a pressure value in Pascals (N/m2)
+	SETPOINT		= (14),    	//setpoint - a thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius.
+	SPEED			= (15),   	// speed - a generic speed. Default unit of measure is Miles per Hour.
+	TEMP			= (16),	//temp - a temperature value in degrees. Default unit of measure is centigrade/celsius.
+	UV				= (17),    	//uv - UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index
+	VOLTAGE			= (18), //voltage - a voltage value in Volts.
+	VOLUME			= (19),    	//volume - a volume in m3. Often used as a measure of gas and water consumption.
+	WEIGHT			= (20)    	//weight - the default unit is kilograms (yes, kilograms are a unit of mass, not weight)
 }Type_Flags;
 
 

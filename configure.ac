@@ -19,7 +19,7 @@ AC_SEARCH_LIBS([strerror],[cposix])
 AC_PROG_MKDIR_P
 
 
-AM_INIT_AUTOMAKE([1.6 dist-bzip2])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2])
 AC_CONFIG_HEADERS(config.h)
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
@@ -77,13 +77,8 @@ AC_ARG_WITH([edje-cc],
    ],[edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc])
 AC_SUBST(edje_cc)
 
-#Set elm_prefs_cc path.
-AC_ARG_WITH([elm_prefs_cc],
-   [AS_HELP_STRING([--with-elm-prefs-cc=PATH],[specify a specific path to elm_prefs_cc])],
-   [elm_prefs_cc=$withval;
-    AC_MSG_NOTICE([elm_prefs_cc explicitly set to $elm_prefs_cc])
-   ],[elm_prefs_cc=$(pkg-config --variable=prefix edje)/bin/elm_prefs_cc])
-AC_SUBST(elm_prefs_cc)
+
+AC_SEARCH_LIBS([xPL_initialize], [xPL], [have_xpllib="yes"],  [have_xpllib="no"])
 
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
@@ -126,6 +121,9 @@ echo
 echo "Configuration Options Summary:"
 if test "${have_emotion}" = "yes"; then
 echo "  Sound Support........: Yes(Emotion backend)"
+fi
+if test "${have_xpllib}" = "yes"; then
+echo "  xPLLib Support.......: Yes"
 fi
 echo
 echo "Compilation............: make (or gmake)"

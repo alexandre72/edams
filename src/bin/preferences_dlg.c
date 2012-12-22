@@ -57,13 +57,13 @@ _apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 
 	}
 
-	if((elm_check_state_get(elm_object_name_find(win, "debugprintf checkb", -1))) == EINA_TRUE)
+	if((elm_check_state_get(elm_object_name_find(win, "debug checkb", -1))) == EINA_TRUE)
 	{
-		 app->settings->debugprintf = EINA_TRUE;
+		 app->settings->debug = EINA_TRUE;
 	}
 	else
 	{
-		 app->settings->debugprintf = EINA_FALSE;
+		 app->settings->debug = EINA_FALSE;
 	}
 
     edams_settings_write(app->settings);
@@ -79,7 +79,7 @@ _apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 void
 preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *win, *gd, *fr;
+	Evas_Object *win, *gd;
 	Evas_Object *label, *ic, *bx, *frame;
 	Evas_Object *bt, *radio, *group, *ck;
 	Evas_Object *entry;
@@ -97,10 +97,6 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	elm_win_resize_object_add(win, gd);
 	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(gd);
-
-	//fr = elm_frame_add(win);
-	//elm_grid_pack(gd, fr, 1, 1, 30, 40);
-	//evas_object_show(fr);
 
     label = elm_label_add(win);
 	elm_object_text_set(label, _("Cosm API Key:"));
@@ -152,7 +148,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 
 
     ck = elm_check_add(win);
-	evas_object_name_set(ck, "debugprintf checkb");
+	evas_object_name_set(ck, "debug checkb");
     elm_object_text_set(ck, _("Debug with printf"));
   	elm_grid_pack(gd, ck , 0, 85, 100, 10);
     evas_object_show(ck);
