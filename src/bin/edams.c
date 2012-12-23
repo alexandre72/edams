@@ -210,14 +210,14 @@ _bt_route(void *data, Evas_Object *obj, void *ev)
 	Evas_Object *win = (Evas_Object *)data;
 	Elm_Map_Name *name;
 
-   map = elm_object_name_find(win, "location map", -1);;
-   address = (char *)elm_object_text_get(elm_object_name_find(win, "location map entry", -1));
+	map = elm_object_name_find(win, "location map", -1);;
+	address = (char *)elm_object_text_get(elm_object_name_find(win, "location map entry", -1));
 
-   name = elm_map_name_add(map, address, 0, 0, NULL, NULL);
-   evas_object_data_set(map, "name Elm_Map_Name", name);
+	name = elm_map_name_add(map, address, 0, 0, NULL, NULL);
+	elm_map_zoom_set(map, 12);
+	evas_object_data_set(map, "name Elm_Map_Name", name);
 
-   evas_object_smart_callback_add(map, "name,loaded", _name_loaded, win);
-   //evas_object_smart_callback_add(map, "route,loaded", _route_loaded, data);
+	evas_object_smart_callback_add(map, "name,loaded", _name_loaded, win);
 }
 
 
@@ -228,12 +228,12 @@ _bt_route(void *data, Evas_Object *obj, void *ev)
 static void
 _add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *win, *gd, *fr;
+	Evas_Object *win, *gd, *frame, *bx, *bx2;
 	Evas_Object *label, *ic, *img;
 	Evas_Object *bt;
 	Evas_Object *entry;
 
-	win = elm_win_util_standard_add("locations_description_dlg", _("Location Description"));
+	win = elm_win_util_standard_add("locations_description_dlg", _("Add a location"));
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
 	evas_object_show(win);
@@ -244,9 +244,13 @@ _add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
 	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(gd);
 
-	fr = elm_frame_add(win);
-	elm_grid_pack(gd, fr, 1, 1, 30, 40);
-	evas_object_show(fr);
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("Photo"));
+	elm_grid_pack(gd, frame, 1, 1, 26, 26);
+	evas_object_show(frame);
+
+	bx = elm_box_add(win);
+	evas_object_show(bx);
 
 	img = elm_image_add(win);
 	evas_object_name_set(img, "location image");
@@ -254,90 +258,113 @@ _add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
 	elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
-	elm_grid_pack(gd, img, 5, 5, 25, 25);
+	evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_pack_end(bx, img);
 	evas_object_show(img);
 
 	bt = elm_button_add(win);
-	elm_object_text_set(bt, _("Photo..."));
+	elm_object_text_set(bt, _("Open..."));
 	ic = elm_icon_add(win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "document-open");
 	elm_object_part_content_set(bt, "icon", ic);
 	evas_object_smart_callback_add(bt, "clicked",  _photo_bt_clicked_cb, img);
-	elm_grid_pack(gd, bt, 1, 31, 30, 12);
+	elm_box_pack_end(bx, bt);
 	evas_object_show(bt);
 
-    label = elm_label_add(win);
-	elm_object_text_set(label, _("Name:"));
-	elm_grid_pack(gd, label, 32, 2, 30, 7);
-	evas_object_show(label);
+	elm_object_content_set(frame, bx);
+
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("Name:"));
+	elm_grid_pack(gd, frame, 32, 1, 40, 12);
+	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
+	evas_object_name_set(entry,"location name entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 51, 2, 40, 9);
-	evas_object_name_set(entry, "location name entry");
 	evas_object_show(entry);
+	elm_object_content_set(frame, entry);
 
-	label = elm_label_add(win);
-	elm_object_text_set(label, _("Description:"));
-	elm_grid_pack(gd, label, 32, 15, 30, 7);
-	evas_object_show(label);
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("Description:"));
+	elm_grid_pack(gd, frame, 32, 15, 40, 12);
+	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
 	evas_object_name_set(entry, "location description entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 45, 15, 40, 9);
 	evas_object_show(entry);
+	elm_object_content_set(frame, entry);
+
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("Geolocalization:"));
+	elm_grid_pack(gd, frame, 0, 30, 99, 50);
+	evas_object_show(frame);
+
+	bx = elm_box_add(win);
+	evas_object_show(bx);
 
    	Evas_Object *map = elm_map_add(win);
 	evas_object_name_set(map, "location map");
-	elm_map_zoom_set(map, 12);
+	elm_map_zoom_set(map, 1);
    	elm_win_resize_object_add(win, map);
    	evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_grid_pack(gd, map, 0, 51, 50, 30);
+	evas_object_size_hint_align_set(map, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   	elm_box_pack_end(bx, map);
    	evas_object_show(map);
+
+	bx2 = elm_box_add(win);
+	elm_box_horizontal_set(bx2, EINA_TRUE);
+	elm_box_pack_end(bx, bx2);
+	evas_object_show(bx2);
 
 	entry = elm_entry_add(win);
 	evas_object_name_set(entry, "location map entry");
-	elm_entry_scrollable_set(entry, EINA_TRUE);
+	elm_entry_scrollable_set(entry, EINA_FALSE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	elm_object_text_set(entry, "Le Mans France");
-	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0);
-	elm_grid_pack(gd, entry, 60, 50, 20, 8);
+	elm_box_pack_end(bx2, entry);
 	evas_object_show(entry);
 
   	bt = elm_button_add(win);
    	elm_object_text_set(bt, _("Go to"));
    	evas_object_show(bt);
-	elm_grid_pack(gd, bt, 80, 50, 10, 10);
+	elm_box_pack_end(bx2, bt);
    	evas_object_smart_callback_add(bt, "clicked", _bt_route, win);
-   	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
+
+	elm_object_content_set(frame, bx);
+
+	bx = elm_box_add(win);
+	elm_box_horizontal_set(bx, EINA_TRUE);
+	elm_box_homogeneous_set(bx, EINA_TRUE);
+	elm_grid_pack(gd, bx, 1, 90, 99, 10);
+	evas_object_show(bx);
 
 	bt = elm_button_add(win);
-	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	ic = elm_icon_add(win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "apply-window");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Ok"));
-	elm_grid_pack(gd, bt, 20, 85, 20, 12);
+	elm_box_pack_end(bx, bt);
 	evas_object_show(bt);
+	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
 	evas_object_smart_callback_add(bt, "clicked", _add_apply_bt_clicked_cb, win);
 
 	bt = elm_button_add(win);
-	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	ic = elm_icon_add(win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "window-close");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Close"));
-    elm_grid_pack(gd, bt, 60, 85, 20, 12);
+	elm_box_pack_end(bx, bt);
 	evas_object_show(bt);
+	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
 
 	evas_object_resize(win, 500, 500);

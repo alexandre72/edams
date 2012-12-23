@@ -59,10 +59,14 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
    	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, location);
 
-	snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\"}]"),
+	snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\"}, \"unit\": {\"label\": \"%s\", \"symbol\": \"%s\"}]}"),
 							device_id_get(device),
 							device_name_get(device),
-							device_data_get(device));
+							device_data_get(device),
+							device_units_get(device),
+							device_unit_symbol_get(device));
+
+
 
 	r = ecore_con_url_post(cosm_url, s, strlen(s), "text/json");
 	if (!r)
@@ -116,7 +120,6 @@ cosm_location_feed_add(App_Info *app, Location *location)
 					location_name_get(location),
 					location_latitude_get(location),
 					location_longitude_get(location));
-	printf("PUT %s\n", s);
 	setlocale(LC_NUMERIC, locale);
 
   	r = ecore_con_url_post(cosm_url, s, strlen(s), NULL);
