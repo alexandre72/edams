@@ -22,10 +22,10 @@
 #ifndef __DEVICESPICKER_H
 #define __DEVICESPICKER_H
 
+#include <Evas.h>
 #include <Eina.h>
-#include "edams.h"
+#include "libedams.h"
 
-
-Eina_Bool devicespicker_add_to_room(App_Info *app);
+void devicespicker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 #endif

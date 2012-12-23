@@ -49,7 +49,7 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
    	if (!cosm_url)
      {
      	if(app->settings->debug)
-	        fprintf(stdout, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
+	        fprintf(stderr, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
 		return EINA_FALSE;
      }
 
@@ -68,7 +68,7 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 	if (!r)
      {
         if(app->settings->debug)
-	    	fprintf(stdout, _("ERROR: Couldn't realize url PUT request!\n"));
+	    	fprintf(stderr, _("ERROR: Couldn't realize url PUT request!\n"));
 		return r;
      }
 	return EINA_TRUE;
@@ -102,7 +102,7 @@ cosm_location_feed_add(App_Info *app, Location *location)
    	if (!cosm_url)
      {
      	if(app->settings->debug)
-	        fprintf(stdout, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
+	        fprintf(stderr, _("ERROR: Couldn't create Ecore_Con_Url object!\n"));
 		return EINA_FALSE;
      }
    	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_add_complete_cb, location);
@@ -123,7 +123,7 @@ cosm_location_feed_add(App_Info *app, Location *location)
 	if (!r)
      {
         if(app->settings->debug)
-	    	fprintf(stdout, _("ERROR: Couldn't realize url PUT request!\n"));
+	    	fprintf(stderr, _("ERROR: Couldn't realize url PUT request!\n"));
 		return r;
      }
 

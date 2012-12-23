@@ -23,6 +23,7 @@
 #define __DEVICE_H
 
 #include "location.h"
+#include "xPL.h"
 
 typedef struct _Device Device;
 
@@ -43,14 +44,18 @@ typedef enum _Type_Flags
 	POWER			= (12),    	//power - instantaneous energy consumption level in kW
 	PRESSURE		= (13),    	//pressure - a pressure value in Pascals (N/m2)
 	SETPOINT		= (14),    	//setpoint - a thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius.
-	SPEED			= (15),   	// speed - a generic speed. Default unit of measure is Miles per Hour.
-	TEMP			= (16),	//temp - a temperature value in degrees. Default unit of measure is centigrade/celsius.
+	SPEED			= (15),   	//speed - a generic speed. Default unit of measure is Miles per Hour.
+	TEMP			= (16),		//temp - a temperature value in degrees. Default unit of measure is centigrade/celsius.
 	UV				= (17),    	//uv - UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index
-	VOLTAGE			= (18), //voltage - a voltage value in Volts.
+	VOLTAGE			= (18), 	//voltage - a voltage value in Volts.
 	VOLUME			= (19),    	//volume - a volume in m3. Often used as a measure of gas and water consumption.
 	WEIGHT			= (20)    	//weight - the default unit is kilograms (yes, kilograms are a unit of mass, not weight)
 }Type_Flags;
 
+
+
+//Conversion funcs.
+Type_Flags deviceStrtoType(const char *s);
 
 Device *device_new(unsigned int id, const char * name);
 void device_free(Device *device);
@@ -93,4 +98,4 @@ int devices_list_sort_cb(const void *d1, const void *d2);
 /* Global initializer / shutdown functions */
 void devices_init(void);
 void devices_shutdown(void);
-#endif
+#endif /*__DEVICE_H*/

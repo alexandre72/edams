@@ -20,7 +20,15 @@ device.c \
 serial.c \
 settings.c \
 cosm.c \
-utils.c
+utils.c \
+xPL-config.c \
+xPL-hub.c \
+xPL-io.c \
+xPL-listeners.c \
+xPL-message.c \
+xPL-service.c \
+xPL-store.c \
+xPL-utils.c
 
 libedams_la_LIBADD = \
 @EDAMS_LIBS@ \

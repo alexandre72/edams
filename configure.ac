@@ -35,19 +35,6 @@ AC_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
 
-case "$host_os" in
-  mingw32ce* | cegcc*)
-    MODULE_ARCH="$host_os-$host_cpu"
-    MODULE_EDJE="$host_os-$host_cpu"
-    ;;
-  *)
-    MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
-    ;;
-esac
-AC_SUBST(release_info)
-AC_SUBST(MODULE_ARCH)
-AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
-
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
@@ -76,10 +63,6 @@ AC_ARG_WITH([edje-cc],
     AC_MSG_NOTICE([edje_cc explicitly set to $edje_cc])
    ],[edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc])
 AC_SUBST(edje_cc)
-
-
-AC_SEARCH_LIBS([xPL_initialize], [xPL], [have_xpllib="yes"],  [have_xpllib="no"])
-
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
 AM_GNU_GETTEXT_VERSION([0.17])
@@ -121,9 +104,6 @@ echo
 echo "Configuration Options Summary:"
 if test "${have_emotion}" = "yes"; then
 echo "  Sound Support........: Yes(Emotion backend)"
-fi
-if test "${have_xpllib}" = "yes"; then
-echo "  xPLLib Support.......: Yes"
 fi
 echo
 echo "Compilation............: make (or gmake)"

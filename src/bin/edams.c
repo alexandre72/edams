@@ -48,8 +48,6 @@ static const int TEMP_MAX =  50;
 
 EAPI_MAIN int elm_main(int argc, char *argv[]);
 
-int _log_dom = -1;
-
 
 //Widgets callbacks.
 static void quit_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
@@ -64,6 +62,10 @@ static void _location_item_del_cb(void *data, Evas_Object *obj, void *event_info
 static void _device_widget_data_update(Widget *widget);
 static void _device_widget_layout_update(Widget *widget);
 App_Info *app = NULL;
+
+//xPL sensor.basic listener.
+void edamsMessageSensorBasicHandler(xPL_ServicePtr theService, xPL_MessagePtr theMessage, xPL_ObjectPtr userValue);
+
 
 //
 //Update current selected location informations.
@@ -512,195 +514,111 @@ _location_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 
-
-static void
-SeedRandomizer(void)
+void
+edamsMessageSensorBasicHandler(xPL_ServicePtr theService, xPL_MessagePtr theMessage, xPL_ObjectPtr userValue)
 {
-    srand((unsigned int)time((time_t *)NULL));
-}
+	char buf[256]="0";
+	xPL_NameValueListPtr ListNomsValeursPtr ;
 
-static int
-Prandom(int max)
-{
- //  return ((rand() % (int)(((max) + 1) - (min))) + (min));
-//	return (int)(rand() / (double)RAND_MAX * (max - 1));;
-// return rand() * (max / RAND_MAX);
+	Ecore_Pipe *pipe = (Ecore_Pipe*) userValue;
 
-    int partSize   = (max == RAND_MAX ? 0 : (RAND_MAX - max) / (max + 1));
-    int maxUsefull = partSize * max + (partSize - 1);
-    int draw;
+	ListNomsValeursPtr = xPL_getMessageBody(theMessage) ;
 
-    do {
+	snprintf(buf, sizeof(buf), "%s.%s.%s", xPL_getNamedValue(ListNomsValeursPtr, "device"), xPL_getNamedValue(ListNomsValeursPtr, "type"), xPL_getNamedValue(ListNomsValeursPtr, "current"));
 
-        draw = rand();
-    } while (draw > maxUsefull);
-
-    return draw / partSize;
-
+	ecore_pipe_write(pipe, buf, strlen(buf));
 }
 
 
 static void
 do_lengthy_task(Ecore_Pipe *pipe)
 {
-    int fd = 0;
-	char buf[256];
-	char *samples[] = {"DS18B20","PIR","DHT11"};
-	int baudrate = 57600;  // default
 
-	if(app->settings->softemu == EINA_FALSE && app->settings->hardemu == EINA_FALSE)
-   		fd = serialport_init("/dev/ttyACM0", baudrate);	//ARDUINO
 
-	if(app->settings->hardemu == EINA_TRUE)
-	   	fd = serialport_init("/dev/ttyUSB0", baudrate);	//CPL2103
-
-	SeedRandomizer();
 	for(;;)
 	{
-			serialport_read_until(fd, buf, '\n');
-			if(strncmp(buf, "sensor.basic", strlen("sensor.basic")) == 0)
-			{
-				printf("reading xpl sensor device msg...!\n");
-				serialport_read_until(fd, buf, '}');
-
-				char *s;
-				while(s = gets(buf))
-				{
-
-				}
-
-				printf("%s\n", buf);
-				printf("parsing of xpl msg done!!!\n");
-			}
-
-	/*
-		//Serial loopback(TX<=>RX) emulation trame test.
-		if(app->settings->hardemu == EINA_TRUE)
-			serialport_write(fd, "DEVICE;0;DS18B20;17.296;OK\n");
-
-		//Sotfware emulation trame test.
-		if(app->settings->softemu == EINA_TRUE)
-			snprintf(buf, sizeof(buf), "DEVICE;%d;DS18B20;%d.%d;OK", Prandom(3),  Prandom(34), Prandom(99));
-
-		if(app->settings->softemu == EINA_FALSE)
-			serialport_read_until(fd, buf, '\n');	//Disable it when software emulation, and enable it when serial loopback emulation test.
-		ecore_pipe_write(pipe, buf, strlen(buf));
-		*/
+		xPL_processMessages(100) ;
 		sleep(1);
    }
 }
 
 
+
 static void
-handler(void *data __UNUSED__, void *buf, unsigned int len)
+handler(void *data, void *buf, unsigned int len)
 {
-	if(len < 10 || !buf)
-	return;
+	char s[PATH_MAX]="0";
+	char id[255];
+	char name[255];
+	char type[255];
+	char sval[4] = "0" ;
+	Device *device;
 
 	char *str = malloc(sizeof(char) * len + 1);
-
 	memcpy(str, buf, len);
 	str[len] = '\0';
+	sscanf(str, "%[^'.'].%[^'.'].%[^'.'].%s", name, id, type, sval);
+	free(str);
 
-	fprintf(stdout, _("INFO:Serial in content '%s'(%d bytes)\n"), (const char *)str, len);
+	device = devices_list_device_with_id_get(app->devices, atoi(id));
 
-	Device *device;
-   	//Check if system msg...
-	if(strncmp(str, "SYSTEM;", 7) == 0)
+	if(!device)
 	{
-		if(strstr(str, "STARTING"))
+		//Create new device file *only* if device isn't already registered(filename already here)!
+		snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s-%s.eet" , edams_locations_data_path_get(), id, name);
+		if(!(device = device_load(s)))
 		{
-			if(!app->waiting_win)
+			device = device_new(atoi(id), name);
+			device_type_set(device,  deviceStrtoType(type));
+			Eina_List *l;
+			Eina_List *database;
+			database = devices_database_list_get();
+			Device *data;
+			EINA_LIST_FOREACH(database, l, data)
 			{
-			fprintf(stdout, _("INFO:Initialize EDAMS(calibrating devices, init vars, setting serial port...)\n"));
-
-			Evas_Object *bx, *pb, *bg;
-
-			app->waiting_win = elm_win_add(app->win, "init_win", ELM_WIN_SPLASH);
-			elm_win_title_set(app->waiting_win, _("Initialize EDAMS wait please..."));
-			elm_win_center(app->waiting_win, EINA_TRUE,  EINA_TRUE);
-
-		  	bg = elm_bg_add(app->waiting_win);
-			evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-			elm_win_resize_object_add(app->win, bg );
-			evas_object_show(bg );
-
-		   bx = elm_box_add(app->waiting_win);
-		   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		   elm_win_resize_object_add(app->waiting_win, bx);
-		   evas_object_show(bx);
-
-		   pb = elm_progressbar_add(app->waiting_win);
-		   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
-   			evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   			elm_object_text_set(pb, _("calibrating devices, setting serial port... "));
-   			elm_progressbar_pulse_set(pb, EINA_TRUE);
-   			elm_box_pack_end(bx, pb);
-		   elm_progressbar_pulse(pb, EINA_TRUE);
-   			evas_object_show(pb);
-
-   			evas_object_show(app->waiting_win);
-   			}
-		}
-		else if(strstr(str, "OPERATIONNAL"))
-		{
-			if(app->waiting_win)
-			{
-				fprintf(stdout, _("INFO:EDAMS is ready and operationnal\n"));
-				evas_object_del(app->waiting_win);
-			}
-		}
-	}
-	//Check if device message...
-	else if((device = device_detect(str)))
-	{
-		//Don't try to registered again if device is already here.
-		Device *data = devices_list_device_with_id_get(app->devices, device_id_get(device));
-
-		if(data)
-			device_data_set(data, device_data_get(device));
-		else
-			app->devices = eina_list_append(app->devices, device);
-
-		Eina_List *l;
-		Location *location;
-		EINA_LIST_FOREACH(app->locations, l, location)
-		{
-			Eina_List *l2, *widgets;
-			Widget *widget;
-
-			widgets = location_widgets_list_get(location);
-
-			EINA_LIST_FOREACH(widgets, l2, widget)
-			{
-				//Update device widget affected to it's location.
-				if(widget_device_id_get(widget) == device_id_get(device))
+				if(strcmp(device_name_get(data), device_name_get(device)) == 0)
 				{
-					//If device is already here, so only update device data.
-					_device_widget_data_update(widget);
-					map_data_update(app, widget);
-					cosm_device_datastream_update(app, location, device);
+					device_description_set(device, device_description_get(data));
+					device_type_set(device, device_type_get(data));
+					device_datasheeturl_set(device, device_datasheeturl_get(data));
+					break;
 				}
 			}
 
+		devices_list_free(database);
+		device_save(device);
 		}
+		app->devices = eina_list_append(app->devices, device);
+	}
+	device_data_set(device, sval);
+
+	Eina_List *l;
+	Location *location;
+	EINA_LIST_FOREACH(app->locations, l, location)
+	{
+		Eina_List *l2, *widgets;
+		Widget *widget;
+
+		widgets = location_widgets_list_get(location);
+
+		EINA_LIST_FOREACH(widgets, l2, widget)
+		{
+			//Update device widget affected to it's location.
+			if(widget_device_id_get(widget) == device_id_get(device))
+			{
+				//If device is already here, so only update device data.
+				_device_widget_data_update(widget);
+				map_data_update(app, widget);
+				cosm_device_datastream_update(app, location, device);
+			}
+		}
+
 	}
 
-   FREE(str);
+	if(app->settings->debug)
+	   fprintf(stdout, _("Sensors registered:%d\n"), eina_list_count(app->devices));
 }
 
-
-static void
-_add_device_to_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-     if(!app->location)
-     {
-		_notify_set(_("Can't add a device to location:no location selected!"), "elm/icon/warning-notify/default");
-        return;
-     }
-
-	devicespicker_add_to_location(app);
-}
 
 
 
@@ -787,6 +705,7 @@ _device_widget_data_update(Widget *widget)
 			if(layout)
 			{
 				const char *t;
+				//Special layout case(example:temperature values are floats).
 				if((t = elm_layout_data_get(layout, "tempvalue")))
 				{
 					int temp_x, temp_y;
@@ -823,10 +742,9 @@ _device_widget_data_update(Widget *widget)
 
 				if((t = elm_layout_data_get(layout, "value")))
 				{
-					elm_object_part_text_set(layout, "value.text", device_data_get(device));
+					snprintf(s, sizeof(s), device_unit_format_get(device), device_data_get(device));
+					elm_object_part_text_set(layout, "value.text", s);
 				}
-
-
 				elm_object_signal_emit(layout, "updated", "over");
 			}
 		}
@@ -921,7 +839,7 @@ _location_naviframe_content(Location *location)
    	elm_icon_standard_set(ic, "device-add");
    	elm_object_part_content_set(bt, "icon", ic);
 	elm_grid_pack(gd, bt , 55, 5, 20, 12);
-	evas_object_smart_callback_add(bt, "clicked", _add_device_to_location_bt_clicked_cb, NULL);
+	evas_object_smart_callback_add(bt, "clicked", devicespicker_add, app);
     evas_object_show(bt);
 
 	bt = elm_button_add(app->win);
@@ -964,6 +882,9 @@ _location_naviframe_content(Location *location)
 
 	return vbx;
 }
+
+
+
 
 
 //
@@ -1202,7 +1123,8 @@ elm_main(int argc, char **argv)
 	evas_object_resize(app->win, 480, 500);
 	evas_object_show(app->win);
 
-   pipe = ecore_pipe_add(handler, NULL);
+	pipe = ecore_pipe_add(handler, NULL);
+	xPL_addServiceListener(app->edamsService, edamsMessageSensorBasicHandler, xPL_MESSAGE_TRIGGER, "sensor", "basic", (xPL_ObjectPtr)pipe);
 
 	child_pid = fork();
 
