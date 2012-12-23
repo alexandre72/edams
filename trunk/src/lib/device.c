@@ -22,7 +22,7 @@
 #include "device.h"
 #include "libedams.h"
 #include "path.h"
-
+#include "edams.h"
 
 struct _Device
 {
@@ -228,102 +228,102 @@ device_type_set(Device *device, const Type_Flags type)
 		case GENERIC:
 					device_units_set(device, _(""));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%d");
+					device_unit_format_set(device, "%s");
 					break;
 		case BATTERY:
 					device_units_set(device, _("Percent"));
 					device_unit_symbol_set(device, "%");
-					device_unit_format_set(device, "%d%%");
+					device_unit_format_set(device, "%s%%");
 					break;
 		case COUNT:
 					device_units_set(device, _(""));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%d");
+					device_unit_format_set(device, "%s");
 					break;
 		case CURRENT:
 					device_units_set(device, _("Amps"));
 					device_unit_symbol_set(device, "A");
-					device_unit_format_set(device, "%d A");
+					device_unit_format_set(device, "%s A");
 					break;
 		case DIRECTION:
 					device_units_set(device, _("Degrees"));
 					device_unit_symbol_set(device, "°");
-					device_unit_format_set(device, "%d °");
+					device_unit_format_set(device, "%s °");
 					break;
 		case DISTANCE:
 					device_units_set(device, _("Meters"));
 					device_unit_symbol_set(device, "m");
-					device_unit_format_set(device, "%d m");
+					device_unit_format_set(device, "%s m");
 					break;
 		case ENERGY:
 					device_units_set(device, _("Kilowatt hours"));
 					device_unit_symbol_set(device, "kWh");
-					device_unit_format_set(device, "%d kWh");
+					device_unit_format_set(device, "%s kWh");
 					break;
 		case FAN:
 					device_units_set(device, _("Rotation/min"));
 					device_unit_symbol_set(device, "RPM");
-					device_unit_format_set(device, "%d RPM");
+					device_unit_format_set(device, "%s RPM");
 					break;
 		case HUMIDITY:
 					device_units_set(device, _(""));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%d/100");
+					device_unit_format_set(device, "%s/100");
 					break;
 		case INPUT:
 					device_units_set(device, _(""));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%d");
+					device_unit_format_set(device, "%s");
 					break;
 		case OUPUT:
 					device_units_set(device, _(""));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%d");
+					device_unit_format_set(device, "%s");
 					break;
 		case POWER:
 					device_units_set(device, _("Kilowatt"));
 					device_unit_symbol_set(device, "kW");
-					device_unit_format_set(device, "%d kW");
+					device_unit_format_set(device, "%s kW");
 					break;
 		case PRESSURE:
 					device_units_set(device, _("Pascals"));
 					device_unit_symbol_set(device, "N/m2");
-					device_unit_format_set(device, "%d N/m2");
+					device_unit_format_set(device, "%s N/m2");
 					break;
 		case SETPOINT:
 					device_units_set(device, _("Celsius"));
 					device_unit_symbol_set(device, "°C");
-					device_unit_format_set(device, "%d °C");
+					device_unit_format_set(device, "%s °C");
 					break;
 		case SPEED:
 					device_units_set(device, _("Miles per Hour"));
 					device_unit_symbol_set(device, "Mph");
-					device_unit_format_set(device, "%d Mph");
+					device_unit_format_set(device, "%s Mph");
 					break;
 		case TEMP:
 					device_units_set(device, _("Celsius"));
 					device_unit_symbol_set(device, "°C");
-					device_unit_format_set(device, "%d °C");
+					device_unit_format_set(device, "%s °C");
 					break;
 		case UV:
 					device_units_set(device, _(""));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%d");
+					device_unit_format_set(device, "%s");
 					break;
 		case VOLTAGE:
 					device_units_set(device, _("Volts"));
 					device_unit_symbol_set(device, "V");
-					device_unit_format_set(device, "%d V");
+					device_unit_format_set(device, "%s V");
 					break;
 		case VOLUME:
 					device_units_set(device, _("Cubic meter"));
 					device_unit_symbol_set(device, "m3");
-					device_unit_format_set(device, "%d m3");
+					device_unit_format_set(device, "%s m3");
 					break;
 		case WEIGHT:
 					device_units_set(device, _("Kilograms"));
 					device_unit_symbol_set(device, "kg");
-					device_unit_format_set(device, "%d kg");
+					device_unit_format_set(device, "%s kg");
 					break;
 	}
 }
@@ -648,65 +648,27 @@ devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
 	return NULL;
 }
 
-
-//
-//
-//
-Device*
-device_detect(char *s)
+Type_Flags deviceStrtoType(const char *s)
 {
-	char **arr;
-	Device *data, *device = NULL;
-	unsigned int n;
-
-/*
-sensor.basic
-{
-device=1
-type=temp
-current=22
-}
-*/
-
-	//Check if new device in trame.
-	if(strncmp(s, "sensor.basic", strlen("sensor.basic")) == 0)
-	{
-		printf("Device Sensor detected!\n");
-/*
-			//Create new device *only* if device isn't already registered(filename already here)!
-			char s[PATH_MAX];
-			snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s-%s.eet" , edams_locations_data_path_get(), arr[1], arr[2]);
-			if(!(device = device_load(s)))
-			{
-				device = device_new(atoi(arr[1]), arr[2]);
-				device_data_set(device, arr[3]);
-
-				Eina_List *l;
-				Eina_List *database;
-				database = devices_database_list_get();
-				EINA_LIST_FOREACH(database, l, data)
-				{
-					if(strcmp(device_name_get(data), device_name_get(device)) == 0)
-					{
-						device_description_set(device, device_description_get(data));
-						device_type_set(device, device_type_get(data));
-						device_datasheeturl_set(device, device_datasheeturl_get(data));
-						break;
-					}
-				}
-				devices_list_free(database);
-				device_save(device);
-			}
-
-			else
-			{
-				device_data_set(device, arr[3]);
-			}
-		*/
-	}
-
-
-	//fprintf(stdout, "INFO:Found %d-%s(%s) device on serial buffer.\n",device_id_get(device), device_name_get(device), device_description_get(device));
-
-	return device;
+	if(strcmp(s, "battery") == 0) 	return BATTERY;
+	if(strcmp(s, "count") == 0)		return COUNT;
+	if(strcmp(s ,"current") == 0)	return CURRENT;
+	if(strcmp(s, "direction") == 0)	return DIRECTION;
+	if(strcmp(s, "distance") == 0)	return DISTANCE;
+	if(strcmp(s, "energy") == 0)	return ENERGY;
+	if(strcmp(s, "fan") == 0)		return FAN;
+	if(strcmp(s, "generic") == 0)	return GENERIC;
+	if(strcmp(s, "humidity") == 0)	return HUMIDITY;
+	if(strcmp(s, "input") == 0)		return INPUT;
+	if(strcmp(s, "output") == 0)	return OUPUT;
+	if(strcmp(s, "power") == 0)		return POWER;
+	if(strcmp(s, "pressure") == 0)	return PRESSURE;
+	if(strcmp(s, "setpoint") == 0)	return SETPOINT;
+	if(strcmp(s, "speed") == 0)		return SPEED;
+	if(strcmp(s, "temp") == 0)		return TEMP;
+	if(strcmp(s, "uv") == 0)		return UV;
+	if(strcmp(s, "voltage") == 0)	return VOLTAGE;
+	if(strcmp(s, "volume") == 0)	return VOLUME;
+	if(strcmp(s, "weight") == 0)	return WEIGHT;
+	else							return GENERIC;
 }

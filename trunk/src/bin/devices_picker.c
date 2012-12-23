@@ -24,6 +24,7 @@
 #include "location.h"
 #include "utils.h"
 #include "path.h"
+#include "edams.h"
 
 static Elm_Gengrid_Item_Class *gic;
 
@@ -119,7 +120,7 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    	Evas_Object *gg = (Evas_Object*) elm_object_name_find(win, "devices gengrid", -1);
    	Elm_Object_Item *it = elm_gengrid_selected_item_get(gg);
 
-   if (!it) return;
+   	if (!it) return;
 	GenGridItem *ggi = elm_object_item_data_get(it);
 	Widget *widget;
 	widget = widget_new("default", device_id_get(ggi->device));
@@ -136,20 +137,19 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 //
 //Create devices picker.
 //
-Eina_Bool
-devicespicker_add_to_location(App_Info *app)
+void
+devicespicker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
     Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
-
-	//if(win)
-		//return;
+	App_Info *app = (App_Info *) data;
 
 	if(!app->location)
-		return;
+		return EINA_FALSE;
 
     //Setup a new window.
    	win = elm_win_util_standard_add("device_picker", _("Select a device"));
    	evas_object_data_set(win, "app", app);
+   	elm_win_center(win, EINA_TRUE, EINA_TRUE);
    	elm_win_autodel_set(win, EINA_TRUE);
 
    	bx = elm_box_add(win);
@@ -210,16 +210,15 @@ devicespicker_add_to_location(App_Info *app)
 	//Fill gengrid with detected devices.
     Eina_List *l;
     Device *device;
+	printf("Sensors registered:%d\n", eina_list_count(app->devices));
+
     EINA_LIST_FOREACH(app->devices, l, device)
     {
-    	if(device_name_get(device))
-    	{
-	        GenGridItem *ti;
-    	    ti = calloc(1, sizeof(*ti));
-    	    ti->device = device_clone(device);
-   			ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
-    	   	//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
-		}
+		GenGridItem *ti;
+		ti = calloc(1, sizeof(*ti));
+		ti->device = device_clone(device);
+		ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
+		//ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel, NULL);
 	}
 
    	//Item_class_ref is needed for gic.

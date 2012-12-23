@@ -23,11 +23,11 @@
 
 #include <Evas.h>
 #include <Eina.h>
-#include <xPL.h>
 
 #include "libedams.h"
 #include "location.h"
 #include "settings.h"
+#include "xPL.h"
 
 #define XPL_VERSION "20091005"
 
