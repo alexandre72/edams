@@ -40,31 +40,8 @@ _apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 
 	eina_stringshare_replace(&(app->settings->cosm_apikey), elm_object_text_get(elm_object_name_find(win, "cosm api key entry", -1)));
 
-	if((elm_radio_value_get(elm_object_name_find(win, "emulation radio group", -1))) == 0)
-	{
-		app->settings->softemu = EINA_FALSE;
-		app->settings->hardemu = EINA_FALSE;
-	}
-	else if((elm_radio_value_get(elm_object_name_find(win, "emulation radio group", -1))) == 1)
-	{
-		app->settings->softemu = EINA_TRUE;
-		app->settings->hardemu = EINA_FALSE;
-	}
-	else if((elm_radio_value_get(elm_object_name_find(win, "emulation radio group", -1))) == 2)
-	{
-		 app->settings->hardemu = EINA_TRUE;
-		 app->settings->softemu = EINA_FALSE;
-
-	}
-
-	if((elm_check_state_get(elm_object_name_find(win, "debug checkb", -1))) == EINA_TRUE)
-	{
-		 app->settings->debug = EINA_TRUE;
-	}
-	else
-	{
-		 app->settings->debug = EINA_FALSE;
-	}
+	app->settings->softemu = elm_check_state_get(elm_object_name_find(win, "emulation checkb", -1));
+	app->settings->debug = elm_check_state_get(elm_object_name_find(win, "debug checkb", -1));
 
     edams_settings_write(app->settings);
 	app->settings = edams_settings_get();
@@ -81,7 +58,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 {
 	Evas_Object *win, *gd;
 	Evas_Object *label, *ic, *bx, *frame;
-	Evas_Object *bt, *radio, *group, *ck;
+	Evas_Object *bt, *ck;
 	Evas_Object *entry;
 
 	App_Info *app = (App_Info*)data;
@@ -117,42 +94,17 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
     elm_box_horizontal_set(bx, EINA_TRUE);
     evas_object_show(bx);
 
-    group = radio = elm_radio_add(win);
-	evas_object_name_set(radio, "emulation radio group");
-    elm_object_text_set(radio, _("Normal"));
-    elm_radio_state_value_set(radio, 0);
-    elm_radio_group_add(radio, group);
-    elm_box_pack_end(bx, radio);
-    evas_object_show(radio);
-
-    radio = elm_radio_add(win);
-    elm_object_text_set(radio, _("Serial software"));
-    elm_radio_state_value_set(radio, 1);
-    elm_radio_group_add(radio, group);
-    elm_box_pack_end(bx, radio);
-    evas_object_show(radio);
-
-    radio = elm_radio_add(win);
-    elm_object_text_set(radio, _("Hardware loopback"));
-    elm_radio_state_value_set(radio, 2);
-    elm_radio_group_add(radio, group);
-    elm_box_pack_end(bx, radio);
-    evas_object_show(radio);
-    evas_object_show(group);
-
-    frame = elm_frame_add(win);
-    elm_object_content_set(frame, bx);
-    elm_object_text_set(frame, _("Serial Emulation"));
-  	elm_grid_pack(gd, frame , 0, 40, 100, 40);
-    evas_object_show(frame);
-
+    ck = elm_check_add(win);
+	evas_object_name_set(ck, "emulation checkb");
+    elm_object_text_set(ck, _("Emulation"));
+  	elm_grid_pack(gd, ck , 0, 10, 100, 10);
+    evas_object_show(ck);
 
     ck = elm_check_add(win);
 	evas_object_name_set(ck, "debug checkb");
     elm_object_text_set(ck, _("Debug with printf"));
-  	elm_grid_pack(gd, ck , 0, 85, 100, 10);
+  	elm_grid_pack(gd, ck , 0, 20, 100, 10);
     evas_object_show(ck);
-
 
 	bt = elm_button_add(win);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

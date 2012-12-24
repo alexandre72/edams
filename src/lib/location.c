@@ -639,7 +639,6 @@ locations_list_get()
 	char s[PATH_MAX];
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S, edams_locations_data_path_get());
-	fprintf(stdout, "OPENING:%s\n", s);
 	it = eina_file_stat_ls(s);
 
    	if(it)

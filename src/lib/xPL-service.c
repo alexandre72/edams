@@ -3,6 +3,7 @@
 
 #include "xPL.h"
 #include "xPL_priv.h"
+#include "utils.h"
 
 #define GROW_SERVICE_LIST_BY 8
 
@@ -72,7 +73,7 @@ Eina_Bool xPL_sendHeartbeat(xPL_ServicePtr theService) {
 
     /* Install a new heartbeat message */
     theService->heartbeatMessage = theHeartbeat;
-    xPL_Debug("SERVICE:: Just allocated a new Heartbeat message for the service");
+    debug(stdout,"SERVICE:: Just allocated a new Heartbeat message for the service");
   } else
     theHeartbeat = theService->heartbeatMessage;
 
@@ -81,7 +82,7 @@ Eina_Bool xPL_sendHeartbeat(xPL_ServicePtr theService) {
 
   /* Update last heartbeat time */
   theService->lastHeartbeatAt = time(NULL);
-  xPL_Debug("Sent Heatbeat message");
+  debug(stdout,"Sent Heatbeat message");
   return EINA_TRUE;
 }
 
@@ -101,7 +102,7 @@ Eina_Bool xPL_sendGoodbyeHeartbeat(xPL_ServicePtr theService) {
   /* Release message */
   xPL_releaseMessage(theHeartbeat);
 
-  xPL_Debug("Sent Goodbye Heatbeat");
+  debug(stdout,"Sent Goodbye Heatbeat");
   return EINA_TRUE;
 }
 
@@ -487,7 +488,7 @@ static void handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage) 
     if (!strcmp(theService->serviceVendor, theMessage->sourceVendor)
 	&& !strcmp(theService->serviceDeviceID, theMessage->sourceDeviceID)
 	&& !strcmp(theService->serviceInstanceID, theMessage->sourceInstanceID)) {
-      xPL_Debug("Skipping message from self");
+      debug(stdout,"Skipping message from self");
       return;
     }
   }
@@ -501,7 +502,7 @@ static void handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage) 
 
       /* Compute a response delay (.5 to 2.5 seconds) */
       responseDelay = (int) (((double) random() / (double) RAND_MAX) * 2000.0) + 500;
-      xPL_Debug("Sending heartbeat in response to discovery request after a %d millisecond delay", responseDelay);
+      debug(stdout,"Sending heartbeat in response to discovery request after a %d millisecond delay", responseDelay);
       usleep(responseDelay);
       xPL_sendHeartbeat(theService);
     }
@@ -545,11 +546,14 @@ static void handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage) 
 }
 
 /* Run the passed message by each service and see who is interested */
-void xPL_handleServiceMessage(xPL_MessagePtr theMessage, xPL_ObjectPtr userData) {
+void
+xPL_handleServiceMessage(xPL_MessagePtr theMessage, xPL_ObjectPtr userData __UNUSED__)
+{
   xPL_ServicePtr theService;
   int serviceIndex;
 
-  for (serviceIndex = serviceCount - 1; serviceIndex >= 0; serviceIndex--) {
+  for (serviceIndex = serviceCount - 1; serviceIndex >= 0; serviceIndex--)
+  {
     theService = serviceList[serviceIndex];
     handleMessage(theService, theMessage);
   }

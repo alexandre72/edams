@@ -22,9 +22,16 @@
 
 #include "libedams.h"
 #include "gettext.h"
+#include "settings.h"
 
-//Keep aspect ratio.
-void evas_object_image_scale (Evas_Object * obj, int width, int height)
+
+#define LOG_BUFF_MAX 512
+
+Eina_Bool _debug = EINA_FALSE;
+
+/*Keep evas object image aspect ratio*/
+void
+evas_object_image_scale (Evas_Object * obj, int width, int height)
 {
    int w3, h3;
    int w2, h2;
@@ -44,17 +51,14 @@ void evas_object_image_scale (Evas_Object * obj, int width, int height)
    evas_object_resize (obj, w3, h3);
 }
 
-//
-//
-//
-const char *user_home_get (void)
+/*Return user home dir*/
+const char *
+user_home_get (void)
 {
    return (getenv ("HOME"));
 }
 
-//
-//Close a window by deleting evas object passing arg.
-//
+/*Close a window by deleting evas object passing arg*/
 void
 window_clicked_close_cb (void *data, Evas_Object * obj __UNUSED__,
                          void *event_info __UNUSED__)
@@ -62,10 +66,10 @@ window_clicked_close_cb (void *data, Evas_Object * obj __UNUSED__,
    evas_object_del (data);
 }
 
-//
-//Show a window message to inform user about something.
-//
-void msgbox (const char *msg)
+
+/*Show a window message to inform user about something*/
+void
+msgbox (const char *msg)
 {
    Evas_Object *win, *popup, *ic;
    Evas_Object *bt;
@@ -92,4 +96,41 @@ void msgbox (const char *msg)
                                    win);
 
    evas_object_show (popup);
+}
+
+
+/*Set debugging mode*/
+void
+set_debug_mode(Eina_Bool debug)
+ {
+  _debug = debug;
+}
+
+
+/*Write a debug message out (if we are in debugging mode)*/
+void
+debug(FILE *stream, char *theFormat, ...)
+{
+	if(!_debug)
+		return;
+
+	char logMessageBuffer[LOG_BUFF_MAX] = "0";
+
+  	va_list theParms;
+  	/* Get access to the variable parms */
+  	va_start(theParms, theFormat);
+
+  	/* Convert formatted message */
+  	vsprintf(&logMessageBuffer[strlen(logMessageBuffer)], theFormat, theParms);
+
+  	/* Write to the console or system log file */
+  	if(stream == stdout)
+		fprintf(stdout, "\033[32mDBG:\033[0m");
+	else if(stream == stderr)
+		fprintf(stdout, "\033[31mERROR:\033[0m");
+
+	fprintf(stdout, "%s\n", logMessageBuffer);
+
+  	/* Release parms */
+  	va_end(theParms);
 }

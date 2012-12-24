@@ -7,67 +7,9 @@
 #include "xPL_priv.h"
 
 /* static buffer to create log messages */
-#define LOG_BUFF_MAX 512
-static char logMessageBuffer[LOG_BUFF_MAX];
-
 static char convertBuffer[32];
 
 #define NAME_VALUE_LIST_GROW_BY 8;
-
-
-/* Debug mode */
-Eina_Bool xPL_DebugMode = EINA_FALSE;
-
-/* Write a debug message out (if we are debugging) */
-void xPL_Debug(String theFormat, ...) {
-  va_list theParms;
-  time_t rightNow;
-
-  /* Skip if not a debug message */
-  if (!xPL_DebugMode) return;
-
-  /* Get access to the variable parms */
-  va_start(theParms, theFormat);
-
-  /* Write a time stamp */
-  time(&rightNow);
-  strftime(logMessageBuffer, 40, "%y/%m/%d %H:%M:%S ", localtime(&rightNow));
-  strcat(logMessageBuffer, "xPL_DEBUG: ");
-
-  /* Convert formatted message */
-  vsprintf(&logMessageBuffer[strlen(logMessageBuffer)], theFormat, theParms);
-
-  /* Write to the console or system log file */
-  strcat(logMessageBuffer, "\n");
-  fprintf(stderr, logMessageBuffer);
-
-  /* Release parms */
-  va_end(theParms);
-}
-
-/* Write an error message out */
-void xPL_Error(String theFormat, ...) {
-  va_list theParms;
-  time_t rightNow;
-
-  /* Get access to the variable parms */
-  va_start(theParms, theFormat);
-
-  /* Write a time stamp */
-  time(&rightNow);
-  strftime(logMessageBuffer, 40, "%y/%m/%d %H:%M:%S ", localtime(&rightNow));
-  strcat(logMessageBuffer, "ERROR: ");
-
-  /* Convert formatted message */
-  vsprintf(&logMessageBuffer[strlen(logMessageBuffer)], theFormat, theParms);
-
-  /* Write to the console or system log file */
-  strcat(logMessageBuffer, "\n");
-  fprintf(stderr, logMessageBuffer);
-
-  /* Release parms */
-  va_end(theParms);
-}
 
 
 /* Add a new entry to a passed name/value pair list */
@@ -339,15 +281,7 @@ String xPL_intToStr(int theValue) {
   return convertBuffer;
 }
 
-/* Return if debug mode in use */
-Eina_Bool xPL_isDebugging() {
-  return xPL_DebugMode;
-}
 
-/* Set Debugging Mode */
-void xPL_setDebugging(Eina_Bool isDebugging) {
-  xPL_DebugMode = isDebugging;
-}
 
 /* Context defined for parser */
 static xPL_ConnectType xPL_ParsedConnectionType = xcViaHub;

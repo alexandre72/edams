@@ -18,11 +18,15 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+#include <Evas.h>
+#include <Eina.h>
+#include "libedams.h"
+
+void set_debug_mode(Eina_Bool debug);
+void debug(FILE *stream, char *theFormat, ...);
 void evas_object_image_scale(Evas_Object *obj, int width, int height);
 void window_clicked_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 const char *user_home_get(void);

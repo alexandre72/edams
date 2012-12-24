@@ -304,11 +304,6 @@ extern void xPL_addServiceListener(xPL_ServicePtr, xPL_ServiceListener, xPL_Mess
 extern Eina_Bool xPL_removeServiceListener(xPL_ServicePtr, xPL_ServiceListener);
 
 /* General Library support */
-extern void xPL_setDebugging(Eina_Bool);
-extern Eina_Bool xPL_isDebugging();
-extern void xPL_Debug(char *, ...);
-extern void xPL_Error(char *, ...);
-
 extern Eina_Bool xPL_initialize(xPL_ConnectType);
 extern Eina_Bool xPL_shutdown();
 

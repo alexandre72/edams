@@ -27,7 +27,6 @@ typedef struct
 {
 	char *cosm_apikey;
 	Eina_Bool softemu;
-	Eina_Bool hardemu;
 	Eina_Bool debug;
 } Settings;
 
