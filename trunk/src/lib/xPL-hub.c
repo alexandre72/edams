@@ -21,6 +21,7 @@
 
 #include "xPL.h"
 #include "xPL_priv.h"
+#include "utils.h"
 
 typedef struct {
   int clientPort;
@@ -58,7 +59,7 @@ static void buildLocalIPList() {
 
   /* Get our interfaces */
   if (ioctl(xPL_getFD(), SIOCGIFCONF, &interfaceList) != 0) {
-    xPL_Debug("Unable to get IP addr list");
+    debug(stdout,"Unable to get IP addr list");
     return;
   }
 
@@ -79,14 +80,14 @@ static void buildLocalIPList() {
   }
 
   /* Allocate sufficiant space */
-  xPL_Debug("There are %d local network addresses on this system");
+  debug(stdout,"There are %d local network addresses on this system");
   localIPAddrs = (String *) malloc(sizeof(String) * localNetCount);
   for (ifIndex = 0; ifIndex < interfaceList.ifc_len; ifIndex++) {
     ifInfo = &(interfaceList.ifc_req[ifIndex]);
     if (ifInfo->ifr_addr.sa_family != AF_INET ) continue;
 
     localIPAddrs[localIPAddrCount++] = xPL_StrDup(inet_ntoa(((struct sockaddr_in *) &(ifInfo->ifr_addr))->sin_addr));
-    xPL_Debug("  Found %s", localIPAddrs[localIPAddrCount - 1]);
+    debug(stdout,"  Found %s", localIPAddrs[localIPAddrCount - 1]);
   }
 }
 
@@ -97,7 +98,7 @@ static Eina_Bool isLocalClient(xPL_MessagePtr theMessage) {
   /* Get clients IP address */
   String clientIPAddr = xPL_getMessageNamedValue(theMessage, "remote-ip");
   if (clientIPAddr == NULL) {
-    xPL_Debug("No client address (remote-ip) found in message -- client message ignored");
+    debug(stdout,"No client address (remote-ip) found in message -- client message ignored");
     return EINA_FALSE;
   }
 
@@ -113,7 +114,7 @@ static Eina_Bool isLocalClient(xPL_MessagePtr theMessage) {
 static Eina_Bool isHeartbeatMessage(xPL_MessagePtr theMessage) {
   String schemaClass = xPL_getSchemaClass(theMessage);
   if (schemaClass == NULL) {
-    xPL_Debug("Message is missing schema class -- not a heartbeat message");
+    debug(stdout,"Message is missing schema class -- not a heartbeat message");
     return EINA_FALSE;
   }
 
@@ -126,7 +127,7 @@ static Eina_Bool isHeartbeatMessage(xPL_MessagePtr theMessage) {
 static Eina_Bool isSignoffMessage(xPL_MessagePtr theMessage) {
   String schemaType = xPL_getSchemaType(theMessage);
   if (schemaType == NULL) {
-    xPL_Debug("Message is missing schema type -- not a heartbeat message");
+    debug(stdout,"Message is missing schema type -- not a heartbeat message");
     return EINA_FALSE;
   }
 
@@ -140,13 +141,13 @@ static int getClientPort(xPL_MessagePtr theMessage) {
   /* Ge the port # */
   String clientPortNum = xPL_getMessageNamedValue(theMessage, "port");
   if (clientPortNum == NULL) {
-    xPL_Debug("Heartbeat message is missing port specification");
+    debug(stdout,"Heartbeat message is missing port specification");
     return -1;
   }
 
   /* Attempt to convert to an int */
   if (!xPL_strToInt(clientPortNum, &clientPort)) {
-    xPL_Debug("Heartbeat message has invalid numeric port -- %s", clientPortNum);
+    debug(stdout,"Heartbeat message has invalid numeric port -- %s", clientPortNum);
     return -1;
   }
 
@@ -161,19 +162,19 @@ static int getHeartbeatInterval(xPL_MessagePtr theMessage) {
   /* Ge the interval */
   String heartbeatInterval = xPL_getMessageNamedValue(theMessage, "interval");
   if (heartbeatInterval == NULL) {
-    xPL_Debug("Heartbeat message is missing interval -- defaulting to 5 minutes");
+    debug(stdout,"Heartbeat message is missing interval -- defaulting to 5 minutes");
     return 5;
   }
 
   /* Attempt to convert to an int */
   if (!xPL_strToInt(heartbeatInterval, &theInterval)) {
-    xPL_Debug("Heartbeat message has invalid numeric interval -- %s -- changing to 5 minutes", heartbeatInterval);
+    debug(stdout,"Heartbeat message has invalid numeric interval -- %s -- changing to 5 minutes", heartbeatInterval);
     return 5;
   }
 
   /* Constrain interval */
   if (theInterval > 30) {
-    xPL_Debug("Heartbeat interval of %d out of range -- contrained to 30 minutes");
+    debug(stdout,"Heartbeat interval of %d out of range -- contrained to 30 minutes");
     theInterval = 30;
   }
 
@@ -199,7 +200,7 @@ static void updateClientIdent(xPL_MessagePtr theMessage, hubClientPtr theClient)
 
   /* See if there is a change */
   if (!strcmp(theClient->clientIdent, identBuff)) return;
-  xPL_Debug("Client changing Ident from %s to %s", theClient->clientIdent, identBuff);
+  debug(stdout,"Client changing Ident from %s to %s", theClient->clientIdent, identBuff);
   STR_FREE(theClient->clientIdent);
   theClient->clientIdent = xPL_StrDup(identBuff);
 }
@@ -241,21 +242,21 @@ static hubClientPtr addNewClient(xPL_MessagePtr theMessage, int clientPort, int 
 
   /* Map protocol name */
   if ((ppe = getprotobyname("udp")) == 0) {
-    xPL_Debug("Unable to lookup UDP protocol info -- cannot setup new client");
+    debug(stdout,"Unable to lookup UDP protocol info -- cannot setup new client");
     clientCount--;
     return NULL;
   }
 
   /* Attempt to create a socket */
   if ((theClient->clientSocket = socket(AF_INET, SOCK_DGRAM, ppe->p_proto)) < 0) {
-    xPL_Debug("Unable to create broadcast socket %s (%d) -- cannot setup new client ", strerror(errno), errno);
+    debug(stdout,"Unable to create broadcast socket %s (%d) -- cannot setup new client ", strerror(errno), errno);
     clientCount--;
     return NULL;
   }
 
   /* Mark as a broadcasting socket */
   if (setsockopt(theClient->clientSocket, SOL_SOCKET, SO_BROADCAST, &flag, sizeof(flag)) < 0) {
-    xPL_Debug("Unable to set SO_BROADCAST on socket %s (%d) -- cannot setup new client", strerror(errno), errno);
+    debug(stdout,"Unable to set SO_BROADCAST on socket %s (%d) -- cannot setup new client", strerror(errno), errno);
     close(theClient->clientSocket);
     clientCount--;
     return NULL;
@@ -267,7 +268,7 @@ static hubClientPtr addNewClient(xPL_MessagePtr theMessage, int clientPort, int 
   theClient->clientAddr.sin_addr.s_addr = inet_addr(xPL_getListenerIPAddr());
 
   /* And we are ready to go */
-  xPL_Debug("Added new client %s on port %d, interval is %d, client count now %d",
+  debug(stdout,"Added new client %s on port %d, interval is %d, client count now %d",
 	    theClient->clientIdent, clientPort, heartbeatInterval, clientCount);
 
   /* And return it */
@@ -350,7 +351,7 @@ static void checkForClientUpdates(xPL_MessagePtr theMessage) {
 
   /* See if heartbeat interval has changed */
   if (clientHeartbeatInterval != theClient->heartbeatInterval) {
-    xPL_Debug("Changing heartbeat interval for client on port %s from %s minutes to %d",
+    debug(stdout,"Changing heartbeat interval for client on port %s from %s minutes to %d",
 	      theClient->clientPort, theClient->heartbeatInterval, clientHeartbeatInterval);
     theClient->heartbeatInterval = clientHeartbeatInterval;
   }
@@ -367,10 +368,10 @@ static Eina_Bool rebroadcastMessage(hubClientPtr theClient, String theData, int 
   /* Try to send the message */
   if ((bytesSent = sendto(theClient->clientSocket, theData, dataLen, 0,
 			  (struct sockaddr *) &(theClient->clientAddr), sizeof(struct sockaddr_in))) != dataLen) {
-    xPL_Debug("Unable to rebroadcast message to client on port %d, %s (%d)", theClient->clientPort, strerror(errno), errno);
+    debug(stdout,"Unable to rebroadcast message to client on port %d, %s (%d)", theClient->clientPort, strerror(errno), errno);
     return EINA_FALSE;
   }
-  xPL_Debug("Broadcasted %d bytes (of %d attempted)", bytesSent, dataLen);
+  debug(stdout,"Broadcasted %d bytes (of %d attempted)", bytesSent, dataLen);
 
   /* Okey dokey then */
   return EINA_TRUE;
@@ -386,7 +387,7 @@ static void rebroadcastMessageToClients(xPL_MessagePtr theMessage) {
 
   /* Format this message back into text */
   if ((formattedText = xPL_formatMessage(theMessage)) == NULL) {
-    xPL_Debug("Unable to format message for rebroadcast -- message lost");
+    debug(stdout,"Unable to format message for rebroadcast -- message lost");
     return;
   }
 
@@ -401,7 +402,9 @@ static void rebroadcastMessageToClients(xPL_MessagePtr theMessage) {
 
 /* Handle a newly received message.  Update our recorded clients */
 /* and rebroadcast to them                                       */
-static void handleXPLMessage(xPL_MessagePtr theMessage, xPL_ObjectPtr userValue) {
+static void
+handleXPLMessage(xPL_MessagePtr theMessage, xPL_ObjectPtr userValue __UNUSED__)
+ {
   /* Do client checks */
   checkForClientUpdates(theMessage);
 
@@ -412,25 +415,27 @@ static void handleXPLMessage(xPL_MessagePtr theMessage, xPL_ObjectPtr userValue)
 /* Check each client to see how long it's been since we        */
 /* last heard from it.  If it's twice as long as the heartbeat */
 /* interval we expect, declare them dead and remove them       */
-static void doClientTimeoutChecks(int actualElapsedTime, xPL_ObjectPtr userValue) {
+static void
+doClientTimeoutChecks(int actualElapsedTime __UNUSED__, xPL_ObjectPtr userValue __UNUSED__)
+{
   int clientIndex, elapsedTime;
   time_t rightNow = time(NULL);
   hubClientPtr theClient;
 
-  xPL_Debug("Checking for client timeouts...");
+  debug(stdout,"Checking for client timeouts...");
 
   for (clientIndex = clientCount - 1; clientIndex >= 0; clientIndex--) {
     theClient = &clientList[clientIndex];
 
     /* Figure elapsed time since we've last heard from this client */
     elapsedTime = (rightNow - theClient->lastHeardFromAt) / 60;
-    xPL_Debug("  Checking client #%d on port %d -- %d minutes since last heard from", clientIndex, theClient->clientPort, elapsedTime);
+    debug(stdout,"  Checking client #%d on port %d -- %d minutes since last heard from", clientIndex, theClient->clientPort, elapsedTime);
 
     /* See if this exceeds twice the expected heartbeat interval */
     if (elapsedTime < ((theClient->heartbeatInterval * 2) + 1)) continue;
 
     /* We have not heard from this client -- remove it */
-    xPL_Debug("Havn't heard from client @ port %d in %d minutes (heartbeats expected every %d minutes) -- Removing it",
+    debug(stdout,"Havn't heard from client @ port %d in %d minutes (heartbeats expected every %d minutes) -- Removing it",
 	      theClient->clientPort, elapsedTime, theClient->heartbeatInterval);
     releaseClient(theClient);
   }

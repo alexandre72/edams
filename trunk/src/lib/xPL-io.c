@@ -22,6 +22,7 @@
 
 #include "xPL.h"
 #include "xPL_priv.h"
+#include "utils.h"
 
 #define POLL_GROW_BY 32
 
@@ -155,7 +156,7 @@ Eina_Bool xPL_addIODevice(xPL_IOHandler theIOHandler, int userValue, int theFD, 
   pollUserInfo[pollInfoCount].userValue = userValue;
   pollInfoCount++;
 
-  xPL_Debug("Added managed IO device, now %d devices", pollInfoCount);
+  debug(stdout,"Added managed IO device, now %d devices", pollInfoCount);
   return EINA_TRUE;
 }
 
@@ -177,12 +178,12 @@ Eina_Bool xPL_removeIODevice(int theFD) {
       memcpy(&pollUserInfo[infoIndex], &pollUserInfo[infoIndex + 1], sizeof(struct _pollUserInfo) * (pollInfoCount - infoIndex));
     }
 
-    xPL_Debug("Removed managed IO device, now %d devices", pollInfoCount);
+    debug(stdout,"Removed managed IO device, now %d devices", pollInfoCount);
     return EINA_TRUE;
   }
 
   /* Never found it */
-  xPL_Debug("Unable to remove managed IO device, fd=%d not found", theFD);
+  debug(stdout,"Unable to remove managed IO device, fd=%d not found", theFD);
   return EINA_FALSE;
 }
 
@@ -281,15 +282,15 @@ static Eina_Bool maximizeReceiveBufferSize(int thefd) {
 
   /* Get current receive buffer size */
   if (getsockopt(thefd, SOL_SOCKET, SO_RCVBUF, &startRcvBuffSize, &buffLen) != 0)
-    xPL_Debug("Unable to read receive socket buffer size - %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to read receive socket buffer size - %s (%d)", strerror(errno), errno);
   else
-    xPL_Debug("Initial receive socket buffer size is %d bytes", startRcvBuffSize);
+    debug(stdout,"Initial receive socket buffer size is %d bytes", startRcvBuffSize);
 
   /* Try to increase the buffer (maybe multiple times) */
   for (idealRcvBuffSize = 1024000; idealRcvBuffSize > startRcvBuffSize; ) {
     /* Attempt to set the buffer size */
     if (setsockopt(thefd, SOL_SOCKET, SO_RCVBUF, &idealRcvBuffSize, sizeof(int)) != 0) {
-      xPL_Debug("Not able to set receive buffer to %d bytes - retrying", idealRcvBuffSize);
+      debug(stdout,"Not able to set receive buffer to %d bytes - retrying", idealRcvBuffSize);
       idealRcvBuffSize -= 64000;
       continue;
     }
@@ -297,15 +298,15 @@ static Eina_Bool maximizeReceiveBufferSize(int thefd) {
     /* We did it!  Get the current size and bail out */
     buffLen = sizeof(int);
     if (getsockopt(thefd, SOL_SOCKET, SO_RCVBUF, &finalRcvBuffSize, &buffLen) != 0)
-      xPL_Debug("Unable to read receive socket buffer size - %s (%d)", strerror(errno), errno);
+      debug(stdout,"Unable to read receive socket buffer size - %s (%d)", strerror(errno), errno);
     else
-      xPL_Debug("Actual receive socket buffer size is %d bytes", finalRcvBuffSize);
+      debug(stdout,"Actual receive socket buffer size is %d bytes", finalRcvBuffSize);
 
     return (finalRcvBuffSize > startRcvBuffSize);
   }
 
   /* We weren't able to increase it */
-  xPL_Debug("Unable to increase receive buffer size - dang!");
+  debug(stdout,"Unable to increase receive buffer size - dang!");
   return EINA_FALSE;
 }
 
@@ -324,33 +325,33 @@ static Eina_Bool attemptStandaloneConnection() {
 
   /* Map protocol name */
   if ((ppe = getprotobyname("udp")) == 0) {
-    xPL_Debug("Unable to lookup UDP protocol info");
+    debug(stdout,"Unable to lookup UDP protocol info");
     return EINA_FALSE;
   }
 
   /* Attempt to creat the socket */
   if ((sockfd = socket(PF_INET, SOCK_DGRAM, ppe->p_proto)) < 0) {
-    xPL_Debug("Unable to create listener socket %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to create listener socket %s (%d)", strerror(errno), errno);
     return EINA_FALSE;
   }
 
   /* Allow re-use and restart */
   if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &flag, sizeof(flag)) < 0) {
-    xPL_Debug("Unable to set SO_REUSEADDR on socket %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to set SO_REUSEADDR on socket %s (%d)", strerror(errno), errno);
     close(sockfd);
     return EINA_FALSE;
   }
 
   /* Mark as a broadcast socket */
   if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &flag, sizeof(flag)) < 0) {
-    xPL_Debug("Unable to set SO_BROADCAST on socket %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to set SO_BROADCAST on socket %s (%d)", strerror(errno), errno);
     close(sockfd);
     return EINA_FALSE;
   }
 
   /* Attempt to bind */
   if (bind(sockfd, (struct sockaddr *)&theSockInfo, sizeof(theSockInfo)) < 0) {
-    xPL_Debug("Unable to bind listener socket to port %d, %s (%d)", xPLPort, strerror(errno), errno);
+    debug(stdout,"Unable to bind listener socket to port %d, %s (%d)", xPLPort, strerror(errno), errno);
     close(sockfd);
     return EINA_FALSE;
   }
@@ -359,7 +360,7 @@ static Eina_Bool attemptStandaloneConnection() {
   xPLFD = sockfd;
   markNonblocking(xPLFD);
   maximizeReceiveBufferSize(xPLFD);
-  xPL_Debug("xPL Started in standalone mode");
+  debug(stdout,"xPL Started in standalone mode");
   return EINA_TRUE;
 }
 
@@ -379,33 +380,33 @@ static Eina_Bool attempHubConnection() {
 
   /* Map protocol name */
   if ((ppe = getprotobyname("udp")) == 0) {
-    xPL_Debug("Unable to lookup UDP protocol info");
+    debug(stdout,"Unable to lookup UDP protocol info");
     return EINA_FALSE;
   }
 
   /* Attempt to creat the socket */
   if ((sockfd = socket(PF_INET, SOCK_DGRAM, ppe->p_proto)) < 0) {
-    xPL_Debug("Unable to create listener socket %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to create listener socket %s (%d)", strerror(errno), errno);
     return EINA_FALSE;
   }
 
   /* Mark as a broadcast socket */
   if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &flag, sizeof(flag)) < 0) {
-    xPL_Debug("Unable to set SO_BROADCAST on socket %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to set SO_BROADCAST on socket %s (%d)", strerror(errno), errno);
     close(sockfd);
     return EINA_FALSE;
   }
 
   /* Attempt to bind */
   if ((bind(sockfd, (struct sockaddr *)&theSockInfo, sockSize)) < 0) {
-    xPL_Debug("Unable to bind listener socket to port %d, %s (%d)", xPLPort, strerror(errno), errno);
+    debug(stdout,"Unable to bind listener socket to port %d, %s (%d)", xPLPort, strerror(errno), errno);
     close(sockfd);
     return EINA_FALSE;
   }
 
   /* Fetch the actual socket port # */
   if (getsockname(sockfd, (struct sockaddr *) &theSockInfo, (socklen_t *) &sockSize)) {
-    xPL_Debug("Unable to fetch socket info for bound listener, %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to fetch socket info for bound listener, %s (%d)", strerror(errno), errno);
     close(sockfd);
     return EINA_FALSE;
   }
@@ -415,7 +416,7 @@ static Eina_Bool attempHubConnection() {
   xPLPort = ntohs(theSockInfo.sin_port);
   markNonblocking(xPLFD);
   maximizeReceiveBufferSize(xPLFD);
-  xPL_Debug("xPL Starting in Hub mode on port %d", xPLPort);
+  debug(stdout,"xPL Starting in Hub mode on port %d", xPLPort);
   return EINA_TRUE;
 }
 
@@ -424,19 +425,19 @@ static Eina_Bool makeConnection(xPL_ConnectType theConnectType) {
   /* Try an stand along connection */
   if ((theConnectType == xcStandAlone) || (theConnectType == xcAuto)) {
     /* Attempt the connection */
-    xPL_Debug("Attemping standalone xPL");
+    debug(stdout,"Attemping standalone xPL");
     if (attemptStandaloneConnection()) {
       xPLconnectType = xcStandAlone;
       return EINA_TRUE;
     }
 
     /* If we failed and this what we want, bomb out */
-    xPL_Debug("Standalong connect failed - %d %d", theConnectType, xcStandAlone);
+    debug(stdout,"Standalong connect failed - %d %d", theConnectType, xcStandAlone);
     if (theConnectType == xcStandAlone) return EINA_FALSE;
   }
 
   /* Try a hub based connection */
-  xPL_Debug("Attempting hub based xPL");
+  debug(stdout,"Attempting hub based xPL");
   if (!attempHubConnection()) return EINA_FALSE;
   xPLconnectType = xcViaHub;
   return EINA_TRUE;
@@ -471,7 +472,7 @@ static Eina_Bool findDefaultInterface(int sockfd) {
     /* Get device flags */
     if (ioctl(sockfd, SIOCGIFFLAGS, &interfaceInfo) != 0) continue;
 
-    xPL_Debug("Checking if interface %s is valid w/flags %d", interfaceInfo.ifr_name, interfaceInfo.ifr_flags);
+    debug(stdout,"Checking if interface %s is valid w/flags %d", interfaceInfo.ifr_name, interfaceInfo.ifr_flags);
 
     /* Insure this interface is active and not loopback */
     if ((interfaceInfo.ifr_flags & IFF_UP) == 0) continue;
@@ -479,7 +480,7 @@ static Eina_Bool findDefaultInterface(int sockfd) {
 
     /* If successful, use this interface */
     strcpy(xPLInterfaceName, ifr[intIndex].ifr_name);
-    xPL_Debug("Choose interface %s as default interface", xPLInterfaceName);
+    debug(stdout,"Choose interface %s as default interface", xPLInterfaceName);
     return EINA_TRUE;
   }
 
@@ -498,19 +499,19 @@ static Eina_Bool setupBroadcastAddr() {
 
   /* Map protocol name */
   if ((ppe = getprotobyname("udp")) == 0) {
-    xPL_Error("Unable to lookup UDP protocol info");
+    debug(stderr,"Unable to lookup UDP protocol info");
     return EINA_FALSE;
   }
 
   /* Attempt to create a socket */
   if ((sockfd = socket(AF_INET, SOCK_DGRAM, ppe->p_proto)) < 0) {
-    xPL_Error("Unable to create broadcast socket %s (%d)", strerror(errno), errno);
+    debug(stderr,"Unable to create broadcast socket %s (%d)", strerror(errno), errno);
     return EINA_FALSE;
   }
 
   /* Mark as a broadcasting socket */
   if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &flag, sizeof(flag)) < 0) {
-    xPL_Error("Unable to set SO_BROADCAST on socket %s (%d)", strerror(errno), errno);
+    debug(stderr,"Unable to set SO_BROADCAST on socket %s (%d)", strerror(errno), errno);
     close(sockfd);
     return EINA_FALSE;
   }
@@ -518,7 +519,7 @@ static Eina_Bool setupBroadcastAddr() {
   /* See if we need to find a default interface */
   if ((xPLInterfaceName == NULL) || (strlen(xPLInterfaceName) == 0)) {
     if (!findDefaultInterface(sockfd)) {
-      xPL_Error("Could not find a working, non-loopback network interface");
+      debug(stderr,"Could not find a working, non-loopback network interface");
       close(sockfd);
       return EINA_FALSE;
     }
@@ -531,12 +532,12 @@ static Eina_Bool setupBroadcastAddr() {
 
   /* Get our interface address */
   if (ioctl(sockfd, SIOCGIFADDR, &interfaceInfo) != 0) {
-    xPL_Error("Unable to get IP addr for interface %s", xPLInterfaceName);
+    debug(stderr,"Unable to get IP addr for interface %s", xPLInterfaceName);
     close(sockfd);
     return EINA_FALSE;
   }
   xPLInterfaceAddr.s_addr = ((struct sockaddr_in *) &interfaceInfo.ifr_addr)->sin_addr.s_addr;
-  xPL_Debug("Auto-assigning IP address of %s", inet_ntoa(xPLInterfaceAddr));
+  debug(stdout,"Auto-assigning IP address of %s", inet_ntoa(xPLInterfaceAddr));
 
   /* Get interface netmask */
   bzero(&interfaceInfo, sizeof(struct ifreq));
@@ -544,7 +545,7 @@ static Eina_Bool setupBroadcastAddr() {
   interfaceInfo.ifr_broadaddr.sa_family = AF_INET;
   strcpy(interfaceInfo.ifr_name, xPLInterfaceName);
   if (ioctl(sockfd, SIOCGIFNETMASK, &interfaceInfo) != 0) {
-    xPL_Error("Unable to extract the interface net mask");
+    debug(stderr,"Unable to extract the interface net mask");
     close(sockfd);
     return EINA_FALSE;
   }
@@ -559,7 +560,7 @@ static Eina_Bool setupBroadcastAddr() {
   markNonblocking(sockfd);
 
   /* And we are done */
-  xPL_Debug("Assigned xPL Broadcast address of %s, port %d", inet_ntoa(xPLBroadcastAddr.sin_addr), BASE_XPL_PORT);
+  debug(stdout,"Assigned xPL Broadcast address of %s, port %d", inet_ntoa(xPLBroadcastAddr.sin_addr), BASE_XPL_PORT);
   return EINA_TRUE;
 }
 
@@ -571,10 +572,10 @@ Eina_Bool xPL_sendRawMessage(String theData, int dataLen) {
   /* Try to send the message */
   if ((bytesSent = sendto(xPLBroadcastFD, theData, dataLen, 0,
 			  (struct sockaddr *) &xPLBroadcastAddr, sizeof(struct sockaddr_in))) != dataLen) {
-    xPL_Debug("Unable to broadcast message, %s (%d)", strerror(errno), errno);
+    debug(stdout,"Unable to broadcast message, %s (%d)", strerror(errno), errno);
     return EINA_FALSE;
   }
-  xPL_Debug("Broadcasted %d bytes (of %d attempted)", bytesSent, dataLen);
+  debug(stdout,"Broadcasted %d bytes (of %d attempted)", bytesSent, dataLen);
 
   /* Okey dokey then */
   return EINA_TRUE;
@@ -705,7 +706,7 @@ Eina_Bool xPL_processMessages(int theTimeout) {
     /* Handle errors */
     if (activeDevices == -1) {
       /* Andything else is an error */
-      xPL_Debug("Error while polling devices - %s (%d) - terminating", strerror(errno), errno);
+      debug(stdout,"Error while polling devices - %s (%d) - terminating", strerror(errno), errno);
       return xPLMessageProcessed;
     }
 

@@ -642,8 +642,7 @@ handler(void *data, void *buf, unsigned int len)
 
 	}
 
-	if(app->settings->debug)
-	   fprintf(stdout, _("Sensors registered:%d\n"), eina_list_count(app->devices));
+	debug(stdout, _("Sensors registered:%d\n"), eina_list_count(app->devices));
 }
 
 
@@ -931,12 +930,11 @@ elm_main(int argc, char **argv)
 	pid_t child_pid;
 
 	//Allocate and initialize App_Info struct.
-	fprintf(stdout, _("Allocate App_Info ...\n"));
 	app = calloc(1, sizeof(App_Info));
 
 	if(!app)
 	{
-		fprintf(stderr, _("ERROR:Couldn't calloc App_Info struct!\n"));
+		fprintf(stderr, _("\033[31mERROR:\033[0mCan't allocate App_Info struct!\n"));
 		exit(-1);
 	}
 	app->argc = argc;
@@ -970,7 +968,6 @@ elm_main(int argc, char **argv)
 		}
 		edje_file_collection_list_free(groups);
 	}
-
 	app->win = elm_win_add(NULL, "edams", ELM_WIN_BASIC);
 	elm_win_title_set(app->win, s);
 	elm_win_autodel_set(app->win, EINA_TRUE);

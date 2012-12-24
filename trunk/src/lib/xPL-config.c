@@ -5,6 +5,7 @@
 
 #include "xPL.h"
 #include "xPL_priv.h"
+#include "utils.h"
 
 #define GROW_CONFIG_LIST_BY 4
 
@@ -265,7 +266,7 @@ static Eina_Bool parseConfigDefinition(xPL_ServicePtr theService, String parseVa
 
     valueCount = strtol(startChar, &endChar, 10);
     if (*endChar != ']') {
-      xPL_Error("CONFIG:: Bad defintion for config=%s[%s -- item ignored", parseValue, startChar);
+      debug(stderr,"CONFIG:: Bad defintion for config=%s[%s -- item ignored", parseValue, startChar);
       return EINA_FALSE;
     }
 
@@ -283,12 +284,12 @@ static Eina_Bool parseConfigDefinition(xPL_ServicePtr theService, String parseVa
   strncpy(nameBuffer, parseValue, nameLength);
   nameBuffer[nameLength] = '\0';
   if (!xPL_addServiceConfigurable(theService, nameBuffer, configType, valueCount)) {
-    xPL_Error("CONFIG:: Unable to define configurable %s -- item ignored", parseValue);
+    debug(stderr,"CONFIG:: Unable to define configurable %s -- item ignored", parseValue);
     return EINA_FALSE;
   }
 
   /* Success! */
-  xPL_Debug("CONFIG:: Added new configurable item %s", parseValue);
+  debug(stdout,"CONFIG:: Added new configurable item %s", parseValue);
   return EINA_TRUE;
 }
 
@@ -350,7 +351,7 @@ static void installNewConfig(xPL_ServicePtr theService, xPL_NameValueListPtr nam
 
       /* Get the new ID */
       newInstanceID = theElement->itemValue;
-      xPL_Debug("CONFIG:: Got new instanceID %s for service -- will restart service\n", newInstanceID);
+      debug(stdout,"CONFIG:: Got new instanceID %s for service -- will restart service\n", newInstanceID);
       restartService = EINA_TRUE;
       continue;
     }
@@ -367,7 +368,7 @@ static void installNewConfig(xPL_ServicePtr theService, xPL_NameValueListPtr nam
 	continue;
       }
 
-      xPL_Debug("CONFIG:: Got new interval of %d for service -- will restart service\n", newInterval);
+      debug(stdout,"CONFIG:: Got new interval of %d for service -- will restart service\n", newInterval);
       restartService = EINA_TRUE;
       continue;
     }
@@ -391,7 +392,7 @@ static void installNewConfig(xPL_ServicePtr theService, xPL_NameValueListPtr nam
       /* Parse the filter and validate it */
       if (!parseFilter(theElement->itemValue, &(theService->messageFilterList[theService->filterCount]))) continue;
       theService->filterCount++;
-      xPL_Debug("CONFIG:: Added new filter %s to service\n", theElement->itemValue);
+      debug(stdout,"CONFIG:: Added new filter %s to service\n", theElement->itemValue);
 
       continue;
     }
@@ -413,15 +414,15 @@ static void installNewConfig(xPL_ServicePtr theService, xPL_NameValueListPtr nam
 
       /* Add the group */
       theService->groupList[theService->groupCount++] = xPL_StrDup(theElement->itemValue);
-      xPL_Debug("CONFIG:: Added new group %s to service\n", theElement->itemValue);
+      debug(stdout,"CONFIG:: Added new group %s to service\n", theElement->itemValue);
       continue;
     }
 
 
     /* Anything else had better be a configurable */
-    xPL_Debug("CONFIG:: About to update configurable %s with value %s\n", theElement->itemName, theElement->itemValue);
+    debug(stdout,"CONFIG:: About to update configurable %s with value %s\n", theElement->itemName, theElement->itemValue);
     if (!xPL_addServiceConfigValue(theService, theElement->itemName, theElement->itemValue)) {
-      xPL_Debug("CONFIG::    UNABLE to add/set that configuration value!\n");
+      debug(stdout,"CONFIG::    UNABLE to add/set that configuration value!\n");
     }
   }
 
@@ -431,7 +432,7 @@ static void installNewConfig(xPL_ServicePtr theService, xPL_NameValueListPtr nam
   /* See if we need to restart the service */
   if (serviceWasEnabled && restartService) {
     /* Disable service as is */
-    xPL_Debug("CONFIG:: Stopping service to restart later for new instance/interval change\n");
+    debug(stdout,"CONFIG:: Stopping service to restart later for new instance/interval change\n");
     xPL_setServiceEnabled(theService, EINA_FALSE);
   }
 
@@ -450,7 +451,7 @@ static void installNewConfig(xPL_ServicePtr theService, xPL_NameValueListPtr nam
 
   /* Restart service, if needed */
   if (serviceWasEnabled && restartService) xPL_setServiceEnabled(theService, EINA_TRUE);
-  xPL_Debug("CONFIG:: Restarted service with new parameters");
+  debug(stdout,"CONFIG:: Restarted service with new parameters");
 
   /* Fire config changed message */
   if (serviceWasEnabled && !allowDefinitions) xPL_dispatchServiceConfigChangedEvent(theService);
@@ -458,7 +459,9 @@ static void installNewConfig(xPL_ServicePtr theService, xPL_NameValueListPtr nam
 
 
 /* Handle configuration messages */
-static void configHandler(xPL_ServicePtr theService, xPL_MessagePtr theMessage, xPL_ObjectPtr userValue) {
+static void
+configHandler(xPL_ServicePtr theService, xPL_MessagePtr theMessage, xPL_ObjectPtr userValue __UNUSED__)
+ {
   String theSchemaType = xPL_getSchemaType(theMessage);
   String theCommand = xPL_getMessageNamedValue(theMessage, "command");
 
@@ -522,13 +525,13 @@ static Eina_Bool xPL_loadServiceConfig(xPL_ServicePtr theService) {
 
   /* Attempt to open the configuration file */
   if ((configFile = fopen(theService->configFileName, "r")) == NULL) {
-    xPL_Debug("CONFIG:: File %s does not exist -- no config loaded", theService->configFileName);
+    debug(stdout,"CONFIG:: File %s does not exist -- no config loaded", theService->configFileName);
     return EINA_TRUE;
   }
 
   /* Get the header and insure it matches */
   if (fgets(lineBuffer, 2048, configFile) == NULL) {
-    xPL_Error("CONFIG:: Error reading config file %s -- config not loaded", theService->configFileName);
+    debug(stderr,"CONFIG:: Error reading config file %s -- config not loaded", theService->configFileName);
     fclose(configFile);
     return EINA_FALSE;
   }
@@ -536,23 +539,23 @@ static Eina_Bool xPL_loadServiceConfig(xPL_ServicePtr theService) {
   /* Whack the new line */
   lineBuffer[strlen(lineBuffer) - 1] = '\0';
   if (strlen(lineBuffer) < 5) {
-    xPL_Error("CONFIG:: Config file header too short -- config not loaded");
+    debug(stderr,"CONFIG:: Config file header too short -- config not loaded");
     fclose(configFile);
     return EINA_FALSE;
   }
 
   /* Parse the header */
-  xPL_Debug("CONFIG:: Read header %s from config file, about to parse", lineBuffer);
+  debug(stdout,"CONFIG:: Read header %s from config file, about to parse", lineBuffer);
   readVendor = &lineBuffer[1];
   if ((readDevice = strstr(readVendor, "-")) == NULL) {
-    xPL_Error("CONFIG:: Unable to parse configuration file header (missing dash) for %s -- config not loaded", theService->configFileName);
+    debug(stderr,"CONFIG:: Unable to parse configuration file header (missing dash) for %s -- config not loaded", theService->configFileName);
     fclose(configFile);
     return EINA_FALSE;
   }
 
   *readDevice++ = '\0';
   if (readDevice[strlen(readDevice) - 1] != ']') {
-    xPL_Error("CONFIG:: Unable to parse configuration file header (missing end bracket) for %s -- config not loaded", theService->configFileName);
+    debug(stderr,"CONFIG:: Unable to parse configuration file header (missing end bracket) for %s -- config not loaded", theService->configFileName);
     fclose(configFile);
     return EINA_FALSE;
   }
@@ -561,7 +564,7 @@ static Eina_Bool xPL_loadServiceConfig(xPL_ServicePtr theService) {
   /* Insure it matches */
   if ((strcasecmp(readVendor, theService->serviceVendor) != 0)
       || (strcasecmp(readDevice, theService->serviceDeviceID) != 0)) {
-    xPL_Error("CONFIG:: Config file header does not match this device -- config not loaded");
+    debug(stderr,"CONFIG:: Config file header does not match this device -- config not loaded");
     fclose(configFile);
     return EINA_FALSE;
   }
@@ -599,7 +602,7 @@ static Eina_Bool xPL_loadServiceConfig(xPL_ServicePtr theService) {
   xPL_FreeNVList(namedValues);
 
   /* And we are done */
-  xPL_Debug("CONFIG:: Config file successfully read and installed");
+  debug(stdout,"CONFIG:: Config file successfully read and installed");
   return EINA_TRUE;
 }
 
@@ -618,7 +621,7 @@ static Eina_Bool xPL_saveServiceConfig(xPL_ServicePtr theService) {
 
   /* Attempt to create the configuration file */
   if ((configFile = fopen(theService->configFileName, "w")) == NULL) {
-    xPL_Debug("CONFIG:: File %s could not be opened/created -- %s (%d)", theService->configFileName, strerror(errno), errno);
+    debug(stdout,"CONFIG:: File %s could not be opened/created -- %s (%d)", theService->configFileName, strerror(errno), errno);
     return EINA_FALSE;
   }
 
@@ -782,7 +785,7 @@ Eina_Bool xPL_addServiceConfigurable(xPL_ServicePtr theService, String itemName,
   theItem->valueList = NULL;
   theItem->valueAllocCount = 0;
   theItem->valueCount = 0;
-  xPL_Debug("CONFIG:: Added configurable [%s] (%s), TYPE=%d, MAX_VALUES=%d", theItem->itemName, itemName, theItem->itemType, theItem->maxValueCount);
+  debug(stdout,"CONFIG:: Added configurable [%s] (%s), TYPE=%d, MAX_VALUES=%d", theItem->itemName, itemName, theItem->itemType, theItem->maxValueCount);
 
   /* And we are done */
   return EINA_TRUE;

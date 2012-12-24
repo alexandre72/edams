@@ -32,28 +32,15 @@ static int efl_init(App_Info *app);
 static int
 xpl_init(App_Info *app)
 {
-	fprintf(stdout, _("Initialize xPL service...\n"));
+	debug(stdout, _("Initialize xPL service..."));
 
-	if(app->settings->debug)
-		xPL_setDebugging(TRUE) ;
-
-	//initializing xPL up.
+	//Setup xPL.
 	if ( !xPL_initialize(xPL_getParsedConnectionType()) )
 		return 0 ;
 
-	//Creating an xpl service.
+	//Create an xpl service.
 	app->edamsService = xPL_createService("edams", "xpl", "vesta");
 	xPL_setServiceVersion(app->edamsService, XPL_VERSION);
-
-	//Adding responder(s).
-	//Ajout fonction écoute sensor.basic (état senseur SdB)
-	//xPL_addServiceListener(app->edamsService, edamsMessageSensorBasicHandler, xPL_MESSAGE_TRIGGER, "sensor", "basic", NULL) ;
-	//Ajout fonction écoute hvac.basic (commande VMC)
-	//xPL_addServiceListener(DomosService, DomosMessageHvacBasicHandler, xPL_MESSAGE_COMMAND, "hvac", "basic", NULL) ;
-
-	//Creating a message to send
-	//DomosMessageStat = xPL_createBroadcastMessage(DomosService, xPL_MESSAGE_STATUS) ;
-	//DomosMessageTrig = xPL_createBroadcastMessage(DomosService, xPL_MESSAGE_TRIGGER) ;
 
 	// Enable the service
 	xPL_setServiceEnabled(app->edamsService, TRUE);
@@ -66,11 +53,11 @@ xpl_init(App_Info *app)
 static int
 efl_init(App_Info *app)
 {
-	fprintf(stdout, _("Initialize Enlightenment Foundation Libraries...\n"));
+	debug(stdout, _("Initialize Enlightenment Foundation Libraries..."));
 
 	if (!eina_init())
 	{
-		fprintf(stderr, _("Couldn't init Eina!"));
+		debug(stderr, _("Couldn't init Eina!"));
 		return EXIT_FAILURE;
 	}
 
@@ -82,7 +69,7 @@ efl_init(App_Info *app)
 
 	if (!elm_init(app->argc, app->argv))
 	{
-		fprintf(stderr, _("Couldn't init Elementary!"));
+		debug(stderr, _("Couldn't init Elementary!"));
         return EXIT_FAILURE;
 	}
     //Setting elementary options.
@@ -104,7 +91,7 @@ efl_init(App_Info *app)
 static int
 paths_init(App_Info *app)
 {
-	fprintf(stdout, _("Checking EDAMS useful paths...\n"));
+	debug(stdout, _("Checking EDAMS useful paths..."));
 
 	char s[PATH_MAX];
 
@@ -113,7 +100,7 @@ paths_init(App_Info *app)
 	if(ecore_file_is_dir(s) == EINA_FALSE)
 	{
 		if(app->settings->debug)
-		fprintf(stdout, _("It appears that it's the first time you run EDAMS. To be used, EDAMS needs some database files containing items. I'll copy some default items files, but you can easily remove them and create new ones(highly recommended)!"));
+		debug(stdout, _("It appears that it's the first time you run EDAMS. To be used, EDAMS needs some database files containing items. I'll copy some default items files, but you can easily remove them and create new ones(highly recommended)!"));
 		ecore_file_mkpath(edams_data_path_get());
 	}
 

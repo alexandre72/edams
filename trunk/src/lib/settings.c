@@ -23,7 +23,7 @@
 #include "settings.h"
 #include "edams.h"
 #include "path.h"
-
+#include "utils.h"
 
 //
 //
@@ -33,12 +33,11 @@ const Settings
 {
 	Eet_File *ef;
 
-	fprintf(stdout, _("Read applications settings...\n"));
     Settings *settings = calloc(1, sizeof(Settings));
 
 	if(!settings)
 	{
-		fprintf(stderr, _("ERROR:Couldn't calloc Settings struct!\n"));
+		debug(stderr, _("ERROR:Couldn't calloc Settings struct!"));
 		return NULL;
 	}
 
@@ -48,7 +47,6 @@ const Settings
 	int size;
 	settings->cosm_apikey = NULL;
 	settings->softemu = EINA_FALSE;
-	settings->hardemu = EINA_FALSE;
 	settings->debug = EINA_FALSE;
 
    	ret = eet_read(ef, "edams/cosm_apikey", &size);
@@ -65,13 +63,6 @@ const Settings
    		FREE(ret);
    	}
 
-   	ret = eet_read(ef, "edams/hardemu", &size);
-   	if(ret)
-   	{
-		settings->hardemu = atoi(ret) ? EINA_TRUE : EINA_FALSE;
-   		FREE(ret);
-   	}
-
    	ret = eet_read(ef, "edams/debug", &size);
    	if(ret)
    	{
@@ -81,10 +72,13 @@ const Settings
 
 	eet_close(ef);
 
-	fprintf(stdout, _("OPTION:Cosm data handling=>%s\n"), settings->cosm_apikey?_("ENABLE"):_("DISABLE"));
-	fprintf(stdout, _("OPTION:Software emulation(snprintf)=>%s\n"), settings->softemu?_("ENABLE"):_("DISABLE"));
-	fprintf(stdout, _("OPTION:Hardware emulation(serial loopback)=>%s\n"), settings->hardemu?_("ENABLE"):_("DISABLE"));
-	fprintf(stdout, _("OPTION:Debug with printf=>%s\n"), settings->debug?_("ENABLE"):_("DISABLE"));
+	if(settings->debug)
+	{
+		debug(stdout, _("Cosm data handling options is %s"), settings->cosm_apikey?_("enabled"):_("disabled"));
+		debug(stdout, _("Software emulation is %s"), settings->softemu?_("enabled"):_("disabled"));
+		debug(stdout, _("Debug is %s"), settings->debug?_("enabled"):_("disabled"));
+	}
+	set_debug_mode(settings->debug);
 
 	return settings;
 }
@@ -103,15 +97,12 @@ edams_settings_write(Settings *settings)
 	else
 	   	eet_write(ef, "edams/softemu", "0", strlen("0")+1, 0);
 
-	if(settings->hardemu == EINA_TRUE)
-	   	eet_write(ef, "edams/hardemu", "1", strlen("1")+1, 0);
-	else
-	   	eet_write(ef, "edams/hardemu", "0", strlen("0")+1, 0);
-
 	if(settings->debug == EINA_TRUE)
-	   	eet_write(ef, "edams/debugf", "1", strlen("1")+1, 0);
+	   	eet_write(ef, "edams/debug", "1", strlen("1")+1, 0);
 	else
-	   	eet_write(ef, "edams/debugf", "0", strlen("0")+1, 0);
+	   	eet_write(ef, "edams/debug", "0", strlen("0")+1, 0);
+
+	set_debug_mode(settings->debug);
 
 	eet_close(ef);
 }
