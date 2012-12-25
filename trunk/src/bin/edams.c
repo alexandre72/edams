@@ -589,6 +589,7 @@ handler(void *data, void *buf, unsigned int len)
 
 	device = devices_list_device_with_id_get(app->devices, atoi(id));
 
+	/*TODO:handle case of device has been changed(type, name). and inform user about it.*/
 	if(!device)
 	{
 		//Create new device file *only* if device isn't already registered(filename already here)!
@@ -596,7 +597,7 @@ handler(void *data, void *buf, unsigned int len)
 		if(!(device = device_load(s)))
 		{
 			device = device_new(atoi(id), name);
-			device_type_set(device,  deviceStrtoType(type));
+			device_type_set(device, deviceStrtoType(type));
 			Eina_List *l;
 			Eina_List *database;
 			database = devices_database_list_get();
@@ -606,7 +607,6 @@ handler(void *data, void *buf, unsigned int len)
 				if(strcmp(device_name_get(data), device_name_get(device)) == 0)
 				{
 					device_description_set(device, device_description_get(data));
-					device_type_set(device, device_type_get(data));
 					device_datasheeturl_set(device, device_datasheeturl_get(data));
 					break;
 				}
@@ -735,9 +735,6 @@ _device_widget_data_update(Widget *widget)
 				if((t = elm_layout_data_get(layout, "tempvalue")))
 				{
 					int temp_x, temp_y;
-   					snprintf(s, sizeof(s), "%s°C", device_data_get(device));
-    				elm_object_part_text_set(layout, "value.text", s);
-
 			    	sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
 
 					Evas_Object *eo = elm_layout_edje_get(layout);
@@ -954,7 +951,7 @@ elm_main(int argc, char **argv)
 	  				(int)t->tm_mon+1,
 	  				1900+(int)t->tm_year);
 
-
+    app->locations = locations_list_get();
 	Eina_List *groups = edje_file_collection_list(edams_edje_theme_file_get());
 	if(groups)
 	{
@@ -1122,7 +1119,6 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(naviframe);
 
-    app->locations = locations_list_get();
     Location *location;
     EINA_LIST_FOREACH(app->locations, l, location)
 	{

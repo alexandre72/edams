@@ -243,12 +243,12 @@ device_type_set(Device *device, const Type_Flags type)
 		case CURRENT:
 					device_units_set(device, _("Amps"));
 					device_unit_symbol_set(device, "A");
-					device_unit_format_set(device, "%s A");
+					device_unit_format_set(device, "%sA");
 					break;
 		case DIRECTION:
 					device_units_set(device, _("Degrees"));
 					device_unit_symbol_set(device, "°");
-					device_unit_format_set(device, "%s °");
+					device_unit_format_set(device, "%s°");
 					break;
 		case DISTANCE:
 					device_units_set(device, _("Meters"));
@@ -258,17 +258,17 @@ device_type_set(Device *device, const Type_Flags type)
 		case ENERGY:
 					device_units_set(device, _("Kilowatt hours"));
 					device_unit_symbol_set(device, "kWh");
-					device_unit_format_set(device, "%s kWh");
+					device_unit_format_set(device, "%skWh");
 					break;
 		case FAN:
 					device_units_set(device, _("Rotation/min"));
 					device_unit_symbol_set(device, "RPM");
-					device_unit_format_set(device, "%s RPM");
+					device_unit_format_set(device, "%sRPM");
 					break;
 		case HUMIDITY:
-					device_units_set(device, _(""));
-					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%s/100");
+					device_units_set(device, _("Humidity ratio"));
+					device_unit_symbol_set(device, "%");
+					device_unit_format_set(device, "%s%%");
 					break;
 		case INPUT:
 					device_units_set(device, _(""));
@@ -283,17 +283,17 @@ device_type_set(Device *device, const Type_Flags type)
 		case POWER:
 					device_units_set(device, _("Kilowatt"));
 					device_unit_symbol_set(device, "kW");
-					device_unit_format_set(device, "%s kW");
+					device_unit_format_set(device, "%skW");
 					break;
 		case PRESSURE:
 					device_units_set(device, _("Pascals"));
 					device_unit_symbol_set(device, "N/m2");
-					device_unit_format_set(device, "%s N/m2");
+					device_unit_format_set(device, "%sN/m2");
 					break;
 		case SETPOINT:
 					device_units_set(device, _("Celsius"));
 					device_unit_symbol_set(device, "°C");
-					device_unit_format_set(device, "%s °C");
+					device_unit_format_set(device, "%s°C");
 					break;
 		case SPEED:
 					device_units_set(device, _("Miles per Hour"));
@@ -303,7 +303,7 @@ device_type_set(Device *device, const Type_Flags type)
 		case TEMP:
 					device_units_set(device, _("Celsius"));
 					device_unit_symbol_set(device, "°C");
-					device_unit_format_set(device, "%s °C");
+					device_unit_format_set(device, "%s°C");
 					break;
 		case UV:
 					device_units_set(device, _(""));
@@ -313,17 +313,17 @@ device_type_set(Device *device, const Type_Flags type)
 		case VOLTAGE:
 					device_units_set(device, _("Volts"));
 					device_unit_symbol_set(device, "V");
-					device_unit_format_set(device, "%s V");
+					device_unit_format_set(device, "%sV");
 					break;
 		case VOLUME:
 					device_units_set(device, _("Cubic meter"));
 					device_unit_symbol_set(device, "m3");
-					device_unit_format_set(device, "%s m3");
+					device_unit_format_set(device, "%sm3");
 					break;
 		case WEIGHT:
 					device_units_set(device, _("Kilograms"));
 					device_unit_symbol_set(device, "kg");
-					device_unit_format_set(device, "%s kg");
+					device_unit_format_set(device, "%skg");
 					break;
 	}
 }

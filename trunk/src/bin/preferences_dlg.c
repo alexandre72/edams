@@ -39,6 +39,7 @@ _apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 	App_Info* app = (App_Info*)evas_object_data_get(win, "app");
 
 	eina_stringshare_replace(&(app->settings->cosm_apikey), elm_object_text_get(elm_object_name_find(win, "cosm api key entry", -1)));
+	eina_stringshare_replace(&(app->settings->map_background), elm_object_text_get(elm_object_name_find(win, "map background entry", -1)));
 
 	app->settings->softemu = elm_check_state_get(elm_object_name_find(win, "emulation checkb", -1));
 	app->settings->debug = elm_check_state_get(elm_object_name_find(win, "debug checkb", -1));
@@ -86,7 +87,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_grid_pack(gd, entry, 51, 2, 40, 9);
+	elm_grid_pack(gd, entry, 51, 2, 100, 9);
 	evas_object_show(entry);
 
     bx = elm_box_add(win);
@@ -98,13 +99,25 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	evas_object_name_set(ck, "emulation checkb");
     elm_object_text_set(ck, _("Emulation"));
   	elm_grid_pack(gd, ck , 0, 10, 100, 10);
+  	elm_check_state_set(ck, app->settings->softemu);
     evas_object_show(ck);
 
     ck = elm_check_add(win);
 	evas_object_name_set(ck, "debug checkb");
     elm_object_text_set(ck, _("Debug with printf"));
   	elm_grid_pack(gd, ck , 0, 20, 100, 10);
+  	elm_check_state_set(ck, app->settings->debug);
     evas_object_show(ck);
+
+	entry = elm_entry_add(win);
+	evas_object_name_set(entry, "map background entry");
+	elm_object_text_set(entry, app->settings->map_background);
+	elm_entry_scrollable_set(entry, EINA_TRUE);
+	elm_entry_editable_set(entry, EINA_TRUE);
+	elm_entry_single_line_set(entry, EINA_TRUE);
+	elm_grid_pack(gd, entry, 0, 30, 100, 9);
+	evas_object_show(entry);
+
 
 	bt = elm_button_add(win);
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

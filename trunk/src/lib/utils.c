@@ -104,6 +104,7 @@ void
 set_debug_mode(Eina_Bool debug)
  {
   _debug = debug;
+
 }
 
 
@@ -129,7 +130,7 @@ debug(FILE *stream, char *theFormat, ...)
 	else if(stream == stderr)
 		fprintf(stdout, "\033[31mERROR:\033[0m");
 
-	fprintf(stdout, "%s\n", logMessageBuffer);
+	fprintf(stream, "%s!\n", logMessageBuffer);
 
   	/* Release parms */
   	va_end(theParms);
