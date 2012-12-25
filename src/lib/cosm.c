@@ -59,12 +59,20 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
    	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, location);
 
-	snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\", \"unit\":{\"label\":\"%s\", \"symbol\": \"%s\"}}]}"),
+
+	if(strlen(device_unit_symbol_get(device)) > 0)
+		snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\", \"unit\":{\"label\":\"%s\", \"symbol\": \"%s\"}}]}"),
 							device_id_get(device),
 							device_name_get(device),
 							device_data_get(device),
 							device_units_get(device),
 							device_unit_symbol_get(device));
+
+	else
+		snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\"}]}"),
+							device_id_get(device),
+							device_name_get(device),
+							device_data_get(device));
 
 	r = ecore_con_url_post(cosm_url, s, strlen(s), "text/json");
 	if (!r)
@@ -144,18 +152,21 @@ static Eina_Bool
 _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
 {
 
-  Ecore_Con_Event_Url_Complete *url_complete = event_info;
-   const Eina_List *headers, *l;
-   char *str;
+	Ecore_Con_Event_Url_Complete *url_complete = event_info;
 
-   headers = ecore_con_url_response_headers_get(url_complete->url_con);
+	const Eina_List *headers;
 
+	headers = ecore_con_url_response_headers_get(url_complete->url_con);
+
+	/*TODO:Handle debug mode.*/
+	/*Eina_List *l;*/
+	/*const char *str;*/
    /*
    EINA_LIST_FOREACH(headers, l, str)
    {
-		printf("%s", str);
+		fprintf("%s", str);
 	}
-*/
+	*/
 	return EINA_FALSE;
  }
 
