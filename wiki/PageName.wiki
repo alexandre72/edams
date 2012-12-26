@@ -1,4 +1,5 @@
 #summary EDAMS: Et la domotique s'illumine...
+#labels Phase-Requirements,Phase-Deploy
 
 = Introduction =
 
@@ -12,14 +13,20 @@ EDAMS supporte:
   * La représentation des données dans des gadgets(widgets).
   * Une carte complète des capteurs et périphériques avec la possibilité d'agencer des widgets comme il vous semble.
 
-
 Pour utiliser EDAMS au mieux, il vous sera nécessaire d'installer les programmes et librairies suivants:
 
   * les EFLs http://www.enlightenment.org
   * Un HUB xPL http://www.xpl4java.org/xPL4Linux/ ou https://github.com/beanz/xpl-perl/
 
-Des paquets sont disponibles pour la majorité des distributions. EDAMS est encore en développement, il n'existe pas de version à proprement parler mais cela risque fort vite d'évoluer...en attendant vous pouvez avec un client subversion(svn ou autre) télécharger le dépôt et compiler.
+Des paquets sont disponibles pour la majorité des distributions. EDAMS est encore en développement, il n'existe pas de version à proprement parler mais cela risque fort vite d'évoluer...en attendant vous pouvez avec un client subversion(svn ou autre) télécharger le dépôt et compiler:
+
+  * svn checkout http://edams.googlecode.com/svn/trunk/ edams-read-only 
+  * cd edams-read-only
+  * sh autogen.sh
+  * make
+  * sudo make install
+
 
 Pour la partie matérielle, je vous recommande:
-  *Arduino
-  *http://connectingstuff.net/blog/xpl-arduino/
+  * Arduino
+  * http://connectingstuff.net/blog/xpl-arduino/
