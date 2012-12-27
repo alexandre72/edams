@@ -203,7 +203,7 @@ _name_loaded(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 
 
 static void
-_bt_route(void *data, Evas_Object *obj, void *ev)
+_bt_route(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
    	Evas_Object *map;
    	char *address;
@@ -229,7 +229,7 @@ static void
 _add_location_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd, *frame, *bx, *bx2;
-	Evas_Object *label, *ic, *img;
+	Evas_Object *ic, *img;
 	Evas_Object *bt;
 	Evas_Object *entry;
 
@@ -469,6 +469,7 @@ _remove_apply_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 	if(it)
 	{
 	   	location = elm_object_item_data_get(it);
+	   	cosm_location_feed_delete(app, location);
 		location_remove(location);
 
 		snprintf(buf, sizeof(buf), _("Location '%s' have been removed."), location_name_get(location));
@@ -542,7 +543,7 @@ _location_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info 
 
 
 void
-edamsMessageSensorBasicHandler(xPL_ServicePtr theService, xPL_MessagePtr theMessage, xPL_ObjectPtr userValue)
+edamsMessageSensorBasicHandler(xPL_ServicePtr theService __UNUSED__, xPL_MessagePtr theMessage, xPL_ObjectPtr userValue)
 {
 	char buf[256]="0";
 	xPL_NameValueListPtr ListNomsValeursPtr ;
@@ -558,7 +559,7 @@ edamsMessageSensorBasicHandler(xPL_ServicePtr theService, xPL_MessagePtr theMess
 
 
 static void
-do_lengthy_task(Ecore_Pipe *pipe)
+do_lengthy_task(Ecore_Pipe *pipe __UNUSED__)
 {
 
 
@@ -572,7 +573,7 @@ do_lengthy_task(Ecore_Pipe *pipe)
 
 
 static void
-handler(void *data, void *buf, unsigned int len)
+handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
 	char s[PATH_MAX]="0";
 	char id[255];

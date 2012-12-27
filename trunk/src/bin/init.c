@@ -63,13 +63,18 @@ efl_init(App_Info *app)
 
 	eet_init();
 	ecore_init();
-    ecore_con_url_pipeline_set(EINA_FALSE);
+
+   if (!ecore_con_url_pipeline_get())
+   {
+		debug(stdout, _("Ecore_Con_Url pipeline has been enabled"));
+	     ecore_con_url_pipeline_set(EINA_TRUE);
+	}
 	ecore_evas_init();
 	edje_init();
 
 	if (!elm_init(app->argc, app->argv))
 	{
-		debug(stderr, _("Couldn't init Elementary!"));
+		debug(stderr, _("Couldn't init Elementary"));
         return EXIT_FAILURE;
 	}
     //Setting elementary options.

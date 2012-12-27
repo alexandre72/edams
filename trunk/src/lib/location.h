@@ -26,6 +26,8 @@
 #include <Eet.h>
 #include <Evas.h>
 
+#define LOCATION_FILE_VERSION 0x0002
+
 typedef struct _Widget Widget;
 typedef struct _Location Location;
 
