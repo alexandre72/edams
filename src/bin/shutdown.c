@@ -31,7 +31,7 @@ static int xpl_shutdown(App_Info *app);
 static int
 xpl_shutdown(App_Info *app)
 {
-	fprintf(stdout, _("Shutdown xPL...\n"));
+	debug(stdout, _("Shutdown xPL..."));
 	xPL_setServiceEnabled(app->edamsService, FALSE) ;
 	xPL_releaseService(app->edamsService) ;
 	xPL_shutdown() ;
@@ -43,7 +43,7 @@ xpl_shutdown(App_Info *app)
 static int
 efl_shutdown(App_Info *app)
 {
-	fprintf(stdout, _("Shutdown Enlightenment Foundation Libraries...\n"));
+	debug(stdout, _("Shutdown Enlightenment Foundation Libraries..."));
 	eina_shutdown();
 	ecore_evas_shutdown();
 	ecore_shutdown();
@@ -60,7 +60,7 @@ edams_shutdown(App_Info *app)
 {
 	xpl_shutdown(app);
 
-	fprintf(stdout, _("Free allocated memory...\n"));
+	debug(stdout, _("Free allocated memory..."));
 	app->locations = locations_list_free(app->locations);
 	app->devices = devices_list_free(app->devices);
 	void *data;

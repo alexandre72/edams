@@ -141,7 +141,7 @@ cosm_location_feed_delete(App_Info *app, Location *location)
    	Eina_Bool r;
 
 	//Don't delete if no cosm feedid cosm or null location
-	if(!location || location_cosm_feedid_get(location) != 0)
+	if(!location || location_cosm_feedid_get(location) == 0)
 		return EINA_FALSE;
 
 	waiting_win_create();
@@ -150,16 +150,16 @@ cosm_location_feed_delete(App_Info *app, Location *location)
    	elm_object_text_set(pb, s);
    	evas_object_show(waiting_win);
 
-   	cosm_url = ecore_con_url_custom_new("http://api.cosm.com/v2/feeds", "DELETE");
-
+	snprintf(s, sizeof(s), "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
+	cosm_url = ecore_con_url_custom_new(s, "DELETE");
    	if (!cosm_url)
      {
-		debug(stderr, _("Couldn't create Ecore_Con_Url object"));
+	    debug(stderr, _("Couldn't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
 	ecore_con_url_verbose_set(cosm_url, app->settings->debug);
 	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
-   	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, location);
+   	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, strdup(location_name_get(location)));
 
   	r = ecore_con_url_post(cosm_url, NULL, 0, NULL);
 	if (!r)
@@ -169,7 +169,6 @@ cosm_location_feed_delete(App_Info *app, Location *location)
      }
 
 	return EINA_TRUE;
-
 }
 
 
@@ -180,6 +179,7 @@ cosm_apikey_set(Ecore_Con_Url *cosm_url, const char *key)
 
 	return EINA_TRUE;
 }
+
 
 static Eina_Bool
 _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
@@ -200,7 +200,7 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, v
 		fprintf("%s", str);
 	}
 	*/
-	return EINA_FALSE;
+	return EINA_TRUE;
  }
 
 
@@ -213,9 +213,12 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *even
 
    headers = ecore_con_url_response_headers_get(url_complete->url_con);
 
-	//FIXME:Handle debug mode and check if valid response from cosm server!
    EINA_LIST_FOREACH(headers, l, str)
    {
+	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
+		{
+			msgbox(_("A location feed hasn't been created, maybe cosm server is down or an internet connection problem?"));
+		}
 		if(strncmp(str, "Location:", 9) == 0)
 		{
 			unsigned int feedid;
@@ -224,12 +227,15 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *even
                 Location *location = (Location *)data;
 		     	location_cosm_feedid_set(location, feedid);
 				location_save(location);
+				char s[128];
+				snprintf(s, sizeof(s), _("Location with cosm feedid '%d' for '%s' has been added with success"), location_cosm_feedid_get(location), location_name_get(location));
+				msgbox(s);
 			}
      	}
 	}
 
 	evas_object_del(waiting_win);
-	return EINA_FALSE;
+	return EINA_TRUE;
 }
 
 
@@ -242,14 +248,24 @@ _url_feed_delete_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *e
 
    headers = ecore_con_url_response_headers_get(url_complete->url_con);
 
-	//FIXME:Handle debug mode and check if valid response from cosm server!
    	EINA_LIST_FOREACH(headers, l, str)
    	{
-		fprintf(stdout, "%s", str);
+	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
+		{
+			msgbox(_("A location feed hasn't been deleted, maybe cosm server is down or an internet connection problem?"));
+		}
+   		if(strncmp(str, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
+		{
+                char *location = (char *)data;
+				char s[128];
+				snprintf(s, sizeof(s), _("Location '%s' has been deleted with success"), location);
+				msgbox(s);
+				FREE(location);
+		}
 	}
 
 	evas_object_del(waiting_win);
-	return EINA_FALSE;
+	return EINA_TRUE;
 }
 
 

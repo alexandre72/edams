@@ -24,7 +24,7 @@
 #include "sound.h"
 
 
-#ifdef HAVE_EMOTION	
+#ifdef HAVE_EMOTION
 static Evas        *evas       = NULL;
 static Emotion_Vis  vis        = EMOTION_VIS_NONE;
 
@@ -35,8 +35,8 @@ sound_file_play(const char *f);
 {
    Evas_Object *o;
 
-   DBG("Initialize EMOTION.");
- 	
+   debug(stdout, _("Sound support with Emotion has been enabled"));
+
  	o = emotion_object_add(evas);
 
    if (!emotion_object_init(o, "gstreamer"))
@@ -50,7 +50,7 @@ sound_file_play(const char *f);
    emotion_object_smooth_scale_set(o, 1);
    evas_object_show(o);
 
-	
+
 return 0;
 }
 
@@ -58,8 +58,7 @@ return 0;
 extern int
 sound_file_play(const char *f);
 {
-	ERR("No sound system for playing audio.");
+	debug(stderr, _("No sound system for playing audio"));
 	return 0;
 }
 #endif
-
