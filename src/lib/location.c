@@ -28,7 +28,7 @@
 #include "location.h"
 #include "libedams.h"
 #include "path.h"
-
+#include "utils.h"
 
 struct _Widget {
     const char * name;
@@ -93,7 +93,7 @@ widget_new(const char * name, unsigned int device_id)
 
     if (!widget)
        {
-          fprintf(stderr, "ERROR: could not calloc Widget\n");
+          debug(stderr, _("Couldn't calloc Widget struct"));
           return NULL;
        }
 
@@ -229,7 +229,7 @@ location_new(unsigned int id, const char * name, const char * description)
 
     if (!location)
        {
-          fprintf(stderr, "ERROR: could not calloc Location!\n");
+          debug(stderr, _("Couldn't calloc Location struct"));
           return NULL;
        }
 
@@ -392,7 +392,7 @@ location_image_set(Location *location, Evas_Object *image)
     Eet_File *ef = eet_open(location->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
       {
-        fprintf(stderr, "ERROR: could not open '%s' for writing!\n", location->__eet_filename);
+        debug(stderr, _("Couldn't open '%s' for writing"), location->__eet_filename);
         return;
       }
 
@@ -495,7 +495,7 @@ location_load(const char *filename)
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
       {
-        fprintf(stderr, "ERROR: could not open '%s' for read!\n", filename);
+        debug(stderr, _("Couldn't open '%s' for read"), filename);
         return NULL;
       }
 
@@ -503,14 +503,15 @@ location_load(const char *filename)
     if (!location) goto end;
     location->__eet_filename = eina_stringshare_add(filename);
 
-   	if (location->version < 0x0002)
+	/*FIXME:In future release handle this code's parts by adding newly field(extensions)*/
+   	if (location->version < LOCATION_FILE_VERSION)
      	{
 
-        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"),
+        	debug(stderr, _("Eet file '%s' %#x was too old, upgrading it to %#x"),
         			location->__eet_filename,
-                	location->version, 0x0002);
+                	location->version, LOCATION_FILE_VERSION);
 
-        	location->version = 0x0002;
+        	location->version = LOCATION_FILE_VERSION;
      	}
 
 end:
@@ -529,7 +530,7 @@ location_save(Location *location)
     ef = eet_open(location->__eet_filename, EET_FILE_MODE_READ_WRITE);
     if (!ef)
        {
-          fprintf(stderr, "ERROR: could not open '%s' for write!\n", location->__eet_filename);
+          debug(stderr, _("Couldn't open '%s' for writing"), location->__eet_filename);
           return EINA_FALSE;
        }
 
@@ -567,7 +568,7 @@ location_remove(Location *location)
     //INF(_("Removing:%s"), location->__eet_filename);
 	if(ecore_file_remove(location->__eet_filename) == EINA_FALSE)
 	{
-	    fprintf(stderr, _("Can't remove Eet file:'%s'!"), location->__eet_filename);
+	    debug(stderr, _("Couldn't remove Eet file '%s'"), location->__eet_filename);
 	    return EINA_FALSE;
 	}
 
@@ -657,7 +658,7 @@ locations_list_get()
 		            //fprintf(stdout, _("INFO:Found new '%s' Eet location file.\n"), ecore_file_file_get(f_info->path));
 					if (eina_error_get())
 					{
-						fprintf(stderr, _("Can't allocate list node!"));
+						debug(stderr, _("Couldn' allocate Eina_List node"));
 						exit(-1);
 					}
 				}

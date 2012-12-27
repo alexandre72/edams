@@ -88,7 +88,7 @@ static void _on_mouse_move(void  *data __UNUSED__, Evas  *evas, Evas_Object *o, 
 static void _on_keydown(void *data, Evas *evas , Evas_Object *o, void *einfo);
 
 static void
-_on_child_del(void *data,  Evas *evas, Evas_Object *o,  void *einfo)
+_on_child_del(void *data,  Evas *evas __UNUSED__, Evas_Object *o,  void *einfo __UNUSED__)
 {
    Evas_Object *example_smart = data;
    long idx;
@@ -123,7 +123,7 @@ _evas_smart_example_child_callbacks_register(Evas_Object *o,
 
 
 static void
-_on_mouse_out(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
+_on_mouse_out(void  *data __UNUSED__, Evas  *evas __UNUSED__, Evas_Object *o, void *einfo __UNUSED__)
 {
 		evas_object_focus_set(o, EINA_FALSE);
 }
@@ -131,7 +131,7 @@ _on_mouse_out(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
 
 
 static void
-_on_mouse_in(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
+_on_mouse_in(void  *data __UNUSED__, Evas  *evas __UNUSED__, Evas_Object *o, void *einfo __UNUSED__)
 {
 	    evas_object_focus_set(o, EINA_TRUE);
 }
@@ -140,7 +140,7 @@ _on_mouse_in(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
 
 
 static void
-_on_mouse_move(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
+_on_mouse_move(void  *data __UNUSED__, Evas  *evas, Evas_Object *o, void *einfo __UNUSED__)
 {
     if(evas_object_focus_get(o) == EINA_TRUE)
     {
@@ -163,9 +163,9 @@ _on_mouse_move(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
 				evas_object_geometry_get(priv->border, &prect.x, &prect.y, &prect.w, &prect.h);
 				evas_object_geometry_get(o, &crect.x, &crect.y, &crect.w, &crect.h);
 
-
+				//FIXME:Check to see ifn't out of the priv->border bounds.
 				/*Check if children is in*/
-				printf("*********************************************\n");
+				/*
 				printf("Parent geometry:x=%d y=%d width=%d height=%d\n", prect.x, prect.y, prect.w, prect.h);
 				printf("Current child geometry:x=%d y=%d\n", x, y);
 
@@ -173,8 +173,7 @@ _on_mouse_move(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
 
 				if(x>=prect.w || x<=prect.x)
 					printf("Child is OUT\n");
-
-
+				*/
 				if(eina_rectangle_coords_inside(&prect, x, y))
 				{
 					evas_object_move(o, x, y);
@@ -192,7 +191,8 @@ _on_mouse_move(void  *data, Evas  *evas, Evas_Object *o, void *einfo)
 
 				char s[64];
 				char key[64];
-				snprintf(s, sizeof(s), "%d;%d", x, y);
+				evas_object_geometry_get(o, &prect.x, &prect.y, &prect.w, &prect.h);
+				snprintf(s, sizeof(s), "%d;%d;%d;%d", x, y, prect.w, prect.h);
 				snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
 				eet_write(ef, key, s, strlen(s) + 1, 0);
 			}
@@ -297,22 +297,11 @@ _evas_smart_example_smart_calculate(Evas_Object *o)
 	EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN(o, priv);
    	evas_object_geometry_get(o, &x, &y, &w, &h);
 
-	Eina_Rectangle border_geometry;
-	snprintf(key, sizeof(key), "map/%s", evas_object_name_get(priv->border));
-   	ret = eet_read(ef, key, &size);
-  	if(ret)
-   	{
-	   	sscanf(ret, "%d;%d", &border_geometry.x, &border_geometry.y);
-   		free(ret);
-   	}
-   	else
-   	{
-   		border_geometry.x = x/2;
-   		border_geometry.y = y/2;
-   	}
-   	evas_object_move(priv->border, border_geometry.x, border_geometry.y);
+	//Set border size/position.
+   	evas_object_move(priv->border, x, y);
    	evas_object_resize(priv->border, w, h);
 
+	//Set child's sizes/positions.
 	int n = 0;
 	for(n = 0;n != MAX_CHILD; n++)
 	{
@@ -338,33 +327,32 @@ _evas_smart_example_smart_calculate(Evas_Object *o)
     }
 }
 
-/* setting our smart interface */
+//Setup our smart interface
 static void
 _evas_smart_example_smart_set_user(Evas_Smart_Class *sc)
 {
-   /* specializing these two */
+   //Specializing these two
    sc->add = _evas_smart_example_smart_add;
    sc->del = _evas_smart_example_smart_del;
    sc->show = _evas_smart_example_smart_show;
    sc->hide = _evas_smart_example_smart_hide;
 
-   /* clipped smart object has no hook on resizes or calculations */
+   //Clipped smart object has no hook on resizes or calculations
    sc->resize = _evas_smart_example_smart_resize;
    sc->calculate = _evas_smart_example_smart_calculate;
 }
 
-/* BEGINS example smart object's own interface */
-
+/*
+ *
+ *BEGINS example smart object's own interface
+ *
+ */
 Eina_List *
 evas_smart_example_location_add(Evas_Object *o, Location *location)
 {
-	char s[64];
 	Eina_List *childs = NULL;
 
-   EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
-
-	snprintf(s, sizeof(s), "%s border", location_name_get(location));
-	evas_object_name_set(priv->border, s);
+   	EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
 
 	Eina_List *l2, *widgets;
 	Widget *widget;
@@ -373,8 +361,9 @@ evas_smart_example_location_add(Evas_Object *o, Location *location)
 	int x = 0;
     EINA_LIST_FOREACH(widgets, l2, widget)
     {
+    	char s[64];
 		priv->children[x] = edje_object_add(evas_object_evas_get(o));
-		snprintf(s, sizeof(s), "%d %d %s", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
+		snprintf(s, sizeof(s), "%d_%d_%s", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
 		evas_object_name_set(priv->children[x], s);
 
 		if (!priv->children[x])
@@ -424,7 +413,9 @@ evas_smart_example_location_add(Evas_Object *o, Location *location)
 
 
 
-/* add a new example smart object to a canvas */
+/*
+ *Add a new example smart object to a canvas
+ */
 Evas_Object *
 evas_smart_example_add(Evas *evas)
 {
@@ -446,7 +437,9 @@ _evas_smart_example_remove_do(Evas_Smart_Example_Data *priv,
 
 
 
-/* remove a child element, return its pointer (or NULL on errors) */
+/*
+ *Remove a child element, return its pointer (or NULL on errors)
+ */
 Evas_Object *
 evas_smart_example_remove(Evas_Object *o, Evas_Object *child)
 {
@@ -476,67 +469,66 @@ evas_smart_example_remove(Evas_Object *o, Evas_Object *child)
 }
 
 
+/*
+ *Callback called in smart object when a key is pressed
+ */
 static void
-_on_keydown(void *data,   Evas *evas,  Evas_Object *o, void *einfo)
+_on_keydown(void *data __UNUSED__,   Evas *evas __UNUSED__,  Evas_Object *o, void *einfo)
 {
-   Evas_Event_Key_Down *ev = einfo;
+	Evas_Event_Key_Down *ev = einfo;
 
-   /* move smart object along the canvas */
+	Eina_Rectangle o_geometry;
+	evas_object_geometry_get(o, &o_geometry.x, &o_geometry.y, &o_geometry.w, &o_geometry.h);
+
+	//Keys 'Right' or 'Left' keys are used to increase/decrease width.
+	//Keys 'Up' or 'Down' keys are used to increase/decrease height.
    if (strcmp(ev->keyname, "Right") == 0 || strcmp(ev->keyname, "Left") == 0 ||
        strcmp(ev->keyname, "Up") == 0 || strcmp(ev->keyname, "Down") == 0)
      {
-        Evas_Coord x, y;
-
-        evas_object_geometry_get(o, &x, &y, NULL, NULL);
-
         switch (ev->keyname[0])
           {
            case 'R':
-             x += 20;
+        			o_geometry.w *= 1.1;
              break;
 
            case 'L':
-             x -= 20;
+        			o_geometry.w *= 0.9;
              break;
 
            case 'U':
-             y -= 20;
+			        o_geometry.h *= 1.1;
              break;
 
            case 'D':
-             y += 20;
+			        o_geometry.h *= 0.9;
              break;
           }
-
-        evas_object_move(o, x, y);
+        evas_object_resize(o, o_geometry.w, o_geometry.h);
+		char s[64];
+		char key[64];
+		snprintf(s, sizeof(s), "%d;%d;%d;%d", o_geometry.x, o_geometry.y, o_geometry.w, o_geometry.h);
+		snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+		eet_write(ef, key, s, strlen(s) + 1, 0);
         return;
      }
 
-   /* increase smart object's size */
+   //Key 'd' increase smart object's width and height size
    if (strcmp(ev->keyname, "i") == 0)
      {
-        Evas_Coord w, h;
+        o_geometry.w *= 1.1;
+        o_geometry.h *= 1.1;
 
-        evas_object_geometry_get(o, NULL, NULL, &w, &h);
-
-        w *= 1.1;
-        h *= 1.1;
-
-        evas_object_resize(o, w, h);
+        evas_object_resize(o, o_geometry.w, o_geometry.h);
         return;
      }
 
-   /* decrease smart object's size */
+   //Key 'd' decrease smart object's width and height size
    if (strcmp(ev->keyname, "d") == 0)
      {
-        Evas_Coord w, h;
+        o_geometry.w *= 0.9;
+        o_geometry.h *= 0.9;
 
-        evas_object_geometry_get(o, NULL, NULL, &w, &h);
-
-        w *= 0.9;
-        h *= 0.9;
-
-        evas_object_resize(o, w, h);
+        evas_object_resize(o, o_geometry.w, o_geometry.h);
         return;
      }
 }
@@ -606,10 +598,32 @@ map_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
     Eina_List *l;
     EINA_LIST_FOREACH(app->locations, l, location)
 	{
+		char s[64];
+    	char key[64];
+		char *ret;
+		int size;
+		Eina_Rectangle smart_geometry;
    		Evas_Object *smt;
+
    		smt = evas_smart_example_add(evas);
-   		evas_object_move(smt, geometry.w / 4, geometry.h / 4);
-   		evas_object_resize(smt, geometry.w / 2, geometry.h / 2);
+		snprintf(s, sizeof(s), "%s_smart", location_name_get(location));
+		evas_object_name_set(smt, s);
+		snprintf(key, sizeof(key), "map/%s", evas_object_name_get(smt));
+	   	ret = eet_read(ef, key, &size);
+	  	if(ret)
+	   	{
+		   	sscanf(ret, "%d;%d;%d;%d", &smart_geometry.x, &smart_geometry.y, &smart_geometry.w, &smart_geometry.h);
+   			free(ret);
+   		}
+   		else
+   		{
+   			smart_geometry.x = geometry.w / 4;
+   			smart_geometry.y = geometry.h / 4;
+			smart_geometry.w = geometry.w / 2;
+			smart_geometry.h = geometry.h / 2;
+   		}
+		evas_object_move(smt, smart_geometry.x, smart_geometry.y);
+   		evas_object_resize(smt, smart_geometry.w, smart_geometry.h);
 		evas_smart_example_location_add(smt, location);
    		evas_object_show(smt);
 	}

@@ -103,8 +103,7 @@ msgbox (const char *msg)
 void
 set_debug_mode(Eina_Bool debug)
  {
-  _debug = debug;
-
+	_debug = debug;
 }
 
 
