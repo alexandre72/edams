@@ -57,18 +57,26 @@ efl_init(App_Info *app)
 
 	if (!eina_init())
 	{
-		debug(stderr, _("Couldn't init Eina!"));
+		debug(stderr, _("Couldn't init Eina"));
 		return EXIT_FAILURE;
 	}
 
 	eet_init();
 	ecore_init();
 
-   if (!ecore_con_url_pipeline_get())
-   {
-		debug(stdout, _("Ecore_Con_Url pipeline has been enabled"));
-	     ecore_con_url_pipeline_set(EINA_TRUE);
+	if (!ecore_con_init() || !ecore_con_url_init())
+	{
+		debug(stderr, _("Couldn't init Ecore_Con or Ecore_Con_Url"));
+		return EXIT_FAILURE;
 	}
+
+	if (!ecore_con_url_pipeline_get())
+	{
+		debug(stdout, _("Ecore_Con_Url pipeline has been enabled"));
+		ecore_con_url_pipeline_set(EINA_TRUE);
+	}
+    //ecore_con_url_pipeline_set(EINA_FALSE);
+
 	ecore_evas_init();
 	edje_init();
 

@@ -1025,7 +1025,6 @@ elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_smart_callback_add(bt, "clicked", _notify_close_bt_cb, notify);
 
-
 	//Setup toolbar.
 	app->toolbar = elm_toolbar_add(app->win);
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
@@ -1143,7 +1142,6 @@ elm_main(int argc, char **argv)
 
 	evas_object_resize(app->win, 480, 500);
 	evas_object_show(app->win);
-
 	pipe = ecore_pipe_add(handler, NULL);
 	xPL_addServiceListener(app->edamsService, edamsMessageSensorBasicHandler, xPL_MESSAGE_TRIGGER, "sensor", "basic", (xPL_ObjectPtr)pipe);
 
