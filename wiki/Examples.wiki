@@ -10,3 +10,36 @@ In my house, I'm using Arduino with EDAMS. But you're free to use whatever you w
 Here's a simplified schematic to see my installation:
 
 http://edams.googlecode.com/files/myhouse_scheme.png
+
+
+Arduino ethernetshield allow me to put Arduino at distance of my Linux PC. On Arduino I'm using xPL.Arduino library(See more on:http://code.google.com/p/xpl-arduino/), to declare device(DHT11, PIR sensor's...), with a syntax like this:
+
+{{{
+xPL_Message msg;
+ 
+msg.hop = 1;
+msg.type = XPL_TRIG;
+msg.SetTarget_P(PSTR("*"));
+msg.SetSchema_P(PSTR("sensor"), PSTR("basic"));
+msg.AddCommand_P(PSTR("device"),PSTR("DHT11"));
+msg.AddCommand_P(PSTR("type"),PSTR( "humidty"));
+msg.AddCommand("current", dht11.value);
+ xpl.SendMessage(&msg);
+...
+}}}
+
+Too see more about sensor.basic usage with EDAMS, consult 'how to declare sensor.basic' documentation from wiki.
+
+
+After launching xPL_HUB(in daemon mode, but to see if all is ok you can try in nodaemon mode):
+
+{{{
+alex ~/$xPL_Hub -nodaemon -xpldebug
+12/12/28 14:10:34 INFO: Running on console
+12/12/28 14:10:34 xPL_DEBUG: Checking if interface lo is valid w/flags 73
+12/12/28 14:10:34 xPL_DEBUG: Checking if interface wlan0 is valid w/flags 4163
+12/12/28 14:10:34 xPL_DEBUG: Choose interface wlan0 as default interface
+12/12/28 14:10:34 xPL_DEBUG: Auto-assigning IP address of 192.168.0.1
+12/12/28 14:10:34 xPL_DEBUG: Assigned xPL Broadcast address of 192.168.0.255, port 3865
+12/12/28 14:10:34 xPL_DEBUG: Attemping standalone xPL
+}}}
