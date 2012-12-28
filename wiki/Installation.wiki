@@ -1,6 +1,6 @@
 #summary Installation
 
-= Introduction =
+= Installation =
 
 Since EDAMS isn't available in binary package, you'll need to compile it yourself.
 
