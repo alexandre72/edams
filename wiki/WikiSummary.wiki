@@ -1,0 +1,31 @@
+#summary EDAMS
+#labels Phase-Requirements,Phase-Deploy
+
+= Introduction =
+
+EDAMS is a Linux application to allow house domotics handling. EDAMS have nice but efficients user interfaces to improve your's domotics experience.
+
+EDAMS support:
+
+  * xPL protocole
+  * Data handling via Cosm.com(ex-pachube.com)
+  * Location handling with geolocalization service.
+  * Gadgets to show your device's data in a nice way.
+  * Global device's map to show your devices in one touch with the ability to move gadgets anywhere on the map.
+
+To use EDAMS, you'll needs:
+
+  * EFLs http://www.enlightenment.org
+  * xPL HUB http://www.xpl4java.org/xPL4Linux/ oe https://github.com/beanz/xpl-perl/
+
+See your own distribution manager for these package, they should be available. Currently, EDAMS isn't available in a packaging version, you'll need to do the following step:
+
+  * svn checkout http://edams.googlecode.com/svn/trunk/ edams-read-only
+  * cd edams-read-only
+  * sh autogen.sh
+  * make
+  * sudo make install
+
+For hardware parts, its depends of your xPL networks. In my house, I'm using:
+  * Arduino
+  * Arduino xPL library to make my own xPL devices: http://connectingstuff.net/blog/xpl-arduino/
