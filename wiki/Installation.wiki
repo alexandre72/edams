@@ -1,0 +1,19 @@
+#summary Installation
+
+= Introduction =
+
+Since EDAMS isn't available in binary package, you'll need to compile it yourself.
+
+= Details =
+
+To be compiled, EDAMS needs the following libraries:
+
+ = EFL (the Enlightenment Foundation Libraries)=
+
+   * Debian,Ubuntu https://launchpad.net/~efl/+archive/trunk
+   * ArchLinux http://wiki.archlinux.org/index.php/E17
+   * Gentoo http://overlays.gentoo.org/dev/vapier/wiki/enlightenment
+   * Slackware http://slacke17.sourceforge.net/
+   * OpenSUSE http://en.opensuse.org/Portal:Enlightenment
+   * SLE, Fedora, CentOS, Mandriva  http://download.opensuse.org/repositories/X11:/Enlightenment:/Factory/
+   * Others, you'll need sources: see 'Releases' content from http://enlightenment.org/p.php?p=download&l=en
