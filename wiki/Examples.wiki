@@ -1,4 +1,4 @@
-#summary Exemple case of using Arduino with EDAMS
+#summary Example case of using Arduino with EDAMS
 
 = Introduction =
 
