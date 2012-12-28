@@ -1,6 +1,6 @@
 #summary Example case of using Arduino with EDAMS
 
-= Introduction =
+= Example on how to use Arduino with EDAMS =
 
 In my house, I'm using Arduino with EDAMS. But you're free to use whatever you want, the only rule is to use xPL. Alls devices and software communications are made by using this protocol.
 
