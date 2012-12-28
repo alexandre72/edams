@@ -8,3 +8,5 @@ In my house, I'm using Arduino with EDAMS. But you're free to use whatever you w
 = Details =
 
 Here's a simplified schematic to see my installation:
+
+http://code.google.com/p/edams/downloads/detail?name=myhouse_scheme.png&can=2&q=
