@@ -1,4 +1,4 @@
-/*
+/* 
  * preferences_dlg.c
  * This file is part of EDAMS
  *
@@ -25,90 +25,97 @@
 #include "utils.h"
 #include "myfileselector.h"
 
-static void _apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+static void _apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__,
+								 void *event_info __UNUSED__);
 
 
 
 
 static void
-_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win;
 
-  	win = (Evas_Object *)data;
-	App_Info* app = (App_Info*)evas_object_data_get(win, "app");
+	win = (Evas_Object *) data;
+	App_Info *app = (App_Info *) evas_object_data_get(win, "app");
 
-	eina_stringshare_replace(&(app->settings->cosm_apikey), elm_object_text_get(elm_object_name_find(win, "cosm api key entry", -1)));
-	eina_stringshare_replace(&(app->settings->map_background), elm_object_text_get(elm_object_name_find(win, "map background entry", -1)));
+	eina_stringshare_replace(&(app->settings->cosm_apikey),
+							 elm_object_text_get(elm_object_name_find
+												 (win, "cosm api key entry", -1)));
+	eina_stringshare_replace(&(app->settings->map_background),
+							 elm_object_text_get(elm_object_name_find
+												 (win, "map background entry", -1)));
 
 	app->settings->softemu = elm_check_state_get(elm_object_name_find(win, "emulation checkb", -1));
 	app->settings->debug = elm_check_state_get(elm_object_name_find(win, "debug checkb", -1));
 
-    edams_settings_write(app->settings);
+	edams_settings_write(app->settings);
 	app->settings = edams_settings_get();
 
 	evas_object_del(win);
 }
 
 
-//
-//
-//
+// 
+// 
+// 
 static void
-_action_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_action_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    const char *sel;
-	MyFileSelector *myfs = (MyFileSelector *)data;
+	const char *sel;
+	MyFileSelector *myfs = (MyFileSelector *) data;
 
-    sel = elm_fileselector_selected_get(myfs->fs);
+	sel = elm_fileselector_selected_get(myfs->fs);
 
-    if(sel)
-    {
-        if((eina_str_has_extension(sel, ".png") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, "jpg") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, ".jpeg") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, ".gif") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, ".bmp") == EINA_TRUE))
-            {
-                Evas_Object *entry;
-			    entry = evas_object_data_get(myfs->win, "entry");
-                elm_object_text_set(entry, sel);
-			}
-    }
-    myfileselector_close(myfs);
+	if (sel)
+	{
+		if ((eina_str_has_extension(sel, ".png") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, "jpg") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, ".jpeg") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, ".gif") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, ".bmp") == EINA_TRUE))
+		{
+			Evas_Object *entry;
+			entry = evas_object_data_get(myfs->win, "entry");
+			elm_object_text_set(entry, sel);
+		}
+	}
+	myfileselector_close(myfs);
 }
 
 
 
-//
-//
-//
+// 
+// 
+// 
 static void
-_open_file_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_open_file_bt_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
+						 void *event_info __UNUSED__)
 {
-    Evas_Object *entry = data;
- 	MyFileSelector *myfs;
+	Evas_Object *entry = data;
+	MyFileSelector *myfs;
 
 	myfs = myfileselector_add();
 	myfileselector_set_title(myfs, _("Select a picture file"));
 	evas_object_data_set(myfs->win, "entry", entry);
-    evas_object_smart_callback_add(myfs->action_bt, "clicked", _action_bt_clicked_cb, myfs);
+	evas_object_smart_callback_add(myfs->action_bt, "clicked", _action_bt_clicked_cb, myfs);
 }
 
 
 
-//
-//
-//
+// 
+// 
+// 
 void
-preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
+					void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd;
 	Evas_Object *label, *ic, *bx, *frame;
 	Evas_Object *bt, *ck;
 	Evas_Object *entry;
 
-	App_Info *app = (App_Info*)data;
+	App_Info *app = (App_Info *) data;
 
 	win = elm_win_util_standard_add("settings", _("Settings"));
 	evas_object_data_set(win, "app", app);
@@ -135,24 +142,24 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	elm_object_content_set(frame, entry);
 	elm_object_text_set(entry, app->settings->cosm_apikey);
 
-    bx = elm_box_add(win);
-    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_box_horizontal_set(bx, EINA_TRUE);
-    evas_object_show(bx);
+	bx = elm_box_add(win);
+	evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_box_horizontal_set(bx, EINA_TRUE);
+	evas_object_show(bx);
 
-    ck = elm_check_add(win);
+	ck = elm_check_add(win);
 	evas_object_name_set(ck, "emulation checkb");
-    elm_object_text_set(ck, _("Emulation"));
-  	elm_grid_pack(gd, ck , 0, 20, 30, 10);
-  	elm_check_state_set(ck, app->settings->softemu);
-    evas_object_show(ck);
+	elm_object_text_set(ck, _("Emulation"));
+	elm_grid_pack(gd, ck, 0, 20, 30, 10);
+	elm_check_state_set(ck, app->settings->softemu);
+	evas_object_show(ck);
 
-    ck = elm_check_add(win);
+	ck = elm_check_add(win);
 	evas_object_name_set(ck, "debug checkb");
-    elm_object_text_set(ck, _("Debug with printf"));
-  	elm_grid_pack(gd, ck , 30, 20, 50, 10);
-  	elm_check_state_set(ck, app->settings->debug);
-    evas_object_show(ck);
+	elm_object_text_set(ck, _("Debug with printf"));
+	elm_grid_pack(gd, ck, 30, 20, 50, 10);
+	elm_check_state_set(ck, app->settings->debug);
+	evas_object_show(ck);
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Map background image:"));
@@ -180,7 +187,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "document-open");
 	elm_object_part_content_set(bt, "icon", ic);
-	evas_object_smart_callback_add(bt, "clicked",  _open_file_bt_clicked_cb, entry);
+	evas_object_smart_callback_add(bt, "clicked", _open_file_bt_clicked_cb, entry);
 	elm_box_pack_end(bx, bt);
 	evas_object_show(bt);
 
