@@ -1,4 +1,4 @@
-/*
+/* 
  * devices_creator.c
  * This file is part of EDAMS
  *
@@ -27,53 +27,59 @@
 #include "utils.h"
 #include "path.h"
 #include "device.h"
-//
-//Apply adding new device file.
-//
+// 
+// Apply adding new device file.
+// 
 static void
-_add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    const char *f, *g;
+	const char *f, *g;
 	Evas_Object *win;
-    Evas_Object *img;
-    Evas_Object *eo;
+	Evas_Object *img;
+	Evas_Object *eo;
 	Ecore_Evas *ee;
 	Evas *evas;
 	Device *device;
 
-  	win = (Evas_Object *)data;
+	win = (Evas_Object *) data;
 
-	device = device_new(-1,  NULL);
-    device_name_set(device, elm_object_text_get(elm_object_name_find(win, "device name entry", -1)));
-    device_description_set(device, elm_object_text_get(elm_object_name_find(win, "device description entry", -1)));
-    device_datasheeturl_set(device, elm_object_text_get(elm_object_name_find(win, "device datasheeturl entry", -1)));
+	device = device_new(-1, NULL);
+	device_name_set(device,
+					elm_object_text_get(elm_object_name_find(win, "device name entry", -1)));
+	device_description_set(device,
+						   elm_object_text_get(elm_object_name_find
+											   (win, "device description entry", -1)));
+	device_datasheeturl_set(device,
+							elm_object_text_get(elm_object_name_find
+												(win, "device datasheeturl entry", -1)));
 
-   	eo = NULL;
+	eo = NULL;
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
 	evas = ecore_evas_get(ee);
 
 	img = elm_object_name_find(win, "device image", -1);
-    elm_image_file_get(img, &f, &g);
+	elm_image_file_get(img, &f, &g);
 
-    //Don't try to update if isn't a new item image!
-    if(f &&  (eina_str_has_extension(f, ".eet") == EINA_FALSE))
-    {
+	// Don't try to update if isn't a new item image!
+	if (f && (eina_str_has_extension(f, ".eet") == EINA_FALSE))
+	{
 		eo = evas_object_image_filled_add(evas);
 		evas_object_image_file_set(eo, f, NULL);
-    		evas_object_image_alpha_set(eo, EINA_TRUE);
+		evas_object_image_alpha_set(eo, EINA_TRUE);
 		evas_object_image_scale(eo, 50, 50);
 		device_image_set(device, eo);
-    }
-    device_save(device);
+	}
+	device_save(device);
 
-	//Evas_Object *list = elm_object_name_find(app->win, "device list", -1);
-	//Elm_Object_Item *it = elm_list_item_append(list, device_name_get(device), NULL, NULL, NULL, device);
-	//elm_object_item_del_cb_set(it, _device_item_del_cb);
+	// Evas_Object *list = elm_object_name_find(app->win, "device list", -1);
+	// Elm_Object_Item *it = elm_list_item_append(list,
+	// device_name_get(device), NULL, NULL, NULL, device);
+	// elm_object_item_del_cb_set(it, _device_item_del_cb);
 
-	if(eo)
+	if (eo)
 	{
 		evas_object_del(eo);
-    	elm_image_file_set(img, device_filename_get(device), "/image/0");
+		elm_image_file_set(img, device_filename_get(device), "/image/0");
 	}
 
 	evas_object_del(win);
@@ -81,57 +87,59 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
 
 
-//
-//
-//
+// 
+// 
+// 
 static void
-_action_bt_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_action_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    const char *sel;
-	MyFileSelector *myfs = (MyFileSelector *)data;
+	const char *sel;
+	MyFileSelector *myfs = (MyFileSelector *) data;
 
-    sel = elm_fileselector_selected_get(myfs->fs);
+	sel = elm_fileselector_selected_get(myfs->fs);
 
-    if(sel)
-    {
-        if((eina_str_has_extension(sel, ".png") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, "jpg") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, ".jpeg") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, ".gif") == EINA_TRUE) ||
-            (eina_str_has_extension(sel, ".bmp") == EINA_TRUE))
-            {
-                Evas_Object *img;
-			    img = evas_object_data_get(myfs->win, "image");
-                elm_image_file_set(img, sel, NULL);
-			}
-    }
-    myfileselector_close(myfs);
+	if (sel)
+	{
+		if ((eina_str_has_extension(sel, ".png") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, "jpg") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, ".jpeg") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, ".gif") == EINA_TRUE) ||
+			(eina_str_has_extension(sel, ".bmp") == EINA_TRUE))
+		{
+			Evas_Object *img;
+			img = evas_object_data_get(myfs->win, "image");
+			elm_image_file_set(img, sel, NULL);
+		}
+	}
+	myfileselector_close(myfs);
 }
 
 
 
-//
-//
-//
+// 
+// 
+// 
 static void
-_photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
+					 void *event_info __UNUSED__)
 {
-    Evas_Object *img = data;
- 	MyFileSelector *myfs;
+	Evas_Object *img = data;
+	MyFileSelector *myfs;
 
 	myfs = myfileselector_add();
 	myfileselector_set_title(myfs, _("Select a picture file"));
 	evas_object_data_set(myfs->win, "image", img);
-    evas_object_smart_callback_add(myfs->action_bt, "clicked", _action_bt_clicked_cb, myfs);
+	evas_object_smart_callback_add(myfs->action_bt, "clicked", _action_bt_clicked_cb, myfs);
 }
 
 
 
-//
-//
-//
+// 
+// 
+// 
 void
-devices_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+devices_creator_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
+					void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd, *fr;
 	Evas_Object *label, *ic, *img;
@@ -168,11 +176,11 @@ devices_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "document-open");
 	elm_object_part_content_set(bt, "icon", ic);
-	evas_object_smart_callback_add(bt, "clicked",  _photo_bt_clicked_cb, img);
+	evas_object_smart_callback_add(bt, "clicked", _photo_bt_clicked_cb, img);
 	elm_grid_pack(gd, bt, 1, 31, 30, 12);
 	evas_object_show(bt);
 
-    label = elm_label_add(win);
+	label = elm_label_add(win);
 	elm_object_text_set(label, _("Name:"));
 	elm_grid_pack(gd, label, 32, 2, 30, 7);
 	evas_object_show(label);
@@ -198,7 +206,7 @@ devices_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	elm_grid_pack(gd, entry, 51, 15, 40, 9);
 	evas_object_show(entry);
 
-    label = elm_label_add(win);
+	label = elm_label_add(win);
 	elm_object_text_set(label, _("Type:"));
 	elm_grid_pack(gd, label, 32, 30, 30, 7);
 	evas_object_show(label);
@@ -242,7 +250,7 @@ devices_creator_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 	elm_icon_standard_set(ic, "window-close");
 	elm_object_part_content_set(bt, "icon", ic);
 	elm_object_text_set(bt, _("Close"));
-    elm_grid_pack(gd, bt, 60, 85, 20, 12);
+	elm_grid_pack(gd, bt, 60, 85, 20, 12);
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
 

@@ -43,7 +43,7 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
    	Eina_Bool r;
 
 	//Don't add cosm device datastream if no feed!
-	if(!location || location_cosm_feedid_get(location) == 0)
+	if(!location || (location_cosm_feedid_get(location) == 0) || !app->settings->cosm_apikey)
 		return EINA_FALSE;
 
 	snprintf(s, sizeof(s), "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
@@ -91,7 +91,7 @@ cosm_location_feed_add(App_Info *app, Location *location)
    	Eina_Bool r;
 
 	//Don't add cosm url feed if already there...
-	if(!location || location_cosm_feedid_get(location) != 0)
+	if(!location || (location_cosm_feedid_get(location) != 0) || !app->settings->cosm_apikey)
 		return EINA_FALSE;
 
 	waiting_win_create();
@@ -141,7 +141,7 @@ cosm_location_feed_delete(App_Info *app, Location *location)
    	Eina_Bool r;
 
 	//Don't delete if no cosm feedid cosm or null location
-	if(!location || location_cosm_feedid_get(location) == 0)
+	if(!location || (location_cosm_feedid_get(location) == 0) || !app->settings->cosm_apikey)
 		return EINA_FALSE;
 
 	waiting_win_create();

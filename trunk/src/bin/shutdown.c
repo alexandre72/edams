@@ -1,4 +1,4 @@
-/*
+/* 
  * shutdown.c
  * This file is part of EDAMS
  *
@@ -24,24 +24,22 @@
 #include "device.h"
 
 
-static int efl_shutdown(App_Info *app);
-static int xpl_shutdown(App_Info *app);
+static int efl_shutdown(App_Info * app);
+static int xpl_shutdown(App_Info * app);
 
 
-static int
-xpl_shutdown(App_Info *app)
+static int xpl_shutdown(App_Info * app)
 {
 	debug(stdout, _("Shutdown xPL..."));
-	xPL_setServiceEnabled(app->edamsService, FALSE) ;
-	xPL_releaseService(app->edamsService) ;
-	xPL_shutdown() ;
+	xPL_setServiceEnabled(app->edamsService, FALSE);
+	xPL_releaseService(app->edamsService);
+	xPL_shutdown();
 
 	return 0;
 }
 
 
-static int
-efl_shutdown(App_Info *app)
+static int efl_shutdown(App_Info * app)
 {
 	debug(stdout, _("Shutdown Enlightenment Foundation Libraries..."));
 	eina_shutdown();
@@ -55,8 +53,7 @@ efl_shutdown(App_Info *app)
 }
 
 
-int
-edams_shutdown(App_Info *app)
+int edams_shutdown(App_Info * app)
 {
 	xpl_shutdown(app);
 
@@ -64,8 +61,7 @@ edams_shutdown(App_Info *app)
 	app->locations = locations_list_free(app->locations);
 	app->devices = devices_list_free(app->devices);
 	void *data;
-	EINA_LIST_FREE(app->meters, data)
-		eina_stringshare_del(data);
+	EINA_LIST_FREE(app->meters, data) eina_stringshare_del(data);
 	locations_shutdown();
 	devices_shutdown();
 	edams_settings_free(app->settings);
