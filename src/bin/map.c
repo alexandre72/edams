@@ -14,8 +14,6 @@
 #define DEFAULT_WIDTH 800
 #define DEFAULT_HEIGHT 600
 
-static const char *border_img_path = "./red.png";
-
 #define _evas_smart_example_type "Evas_Smart_Example"
 #define EVT_CHILDREN_NUMBER_CHANGED "children,changed"
 
@@ -27,7 +25,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 typedef struct _Evas_Smart_Example_Data Evas_Smart_Example_Data;
 
 
-#define MAX_CHILD 15
+#define MAX_CHILD 20
 
 
 struct _Evas_Smart_Example_Data
@@ -216,10 +214,15 @@ static void _evas_smart_example_smart_add(Evas_Object * o)
 	EVAS_SMART_DATA_ALLOC(o, Evas_Smart_Example_Data);
 
 	// This is a border around the smart object's area, delimiting it
+	/*
 	priv->border = evas_object_image_filled_add(evas_object_evas_get(o));
-	evas_object_image_file_set(priv->border, border_img_path, NULL);
+	evas_object_image_file_set(priv->border,  edams_edje_theme_file_get(), "map/border");
 	evas_object_image_border_set(priv->border, 3, 3, 3, 3);
 	evas_object_image_border_center_fill_set(priv->border, EVAS_BORDER_FILL_NONE);
+	evas_object_smart_member_add(priv->border, o);
+*/
+	priv->border = evas_object_rectangle_add(evas_object_evas_get(o));
+	evas_object_color_set(priv->border, 255, 255, 255, 50);
 	evas_object_smart_member_add(priv->border, o);
 
 	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
@@ -505,19 +508,19 @@ static void _on_keydown(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Obje
 		switch (ev->keyname[0])
 		{
 		case 'R':
-			o_geometry.w *= 1.1;
+			o_geometry.w *= 1.02;
 			break;
 
 		case 'L':
-			o_geometry.w *= 0.9;
+			o_geometry.w *= 0.98;
 			break;
 
 		case 'U':
-			o_geometry.h *= 1.1;
+			o_geometry.h *= 1.02;
 			break;
 
 		case 'D':
-			o_geometry.h *= 0.9;
+			o_geometry.h *= 0.98;
 			break;
 		}
 		evas_object_resize(o, o_geometry.w, o_geometry.h);
@@ -715,9 +718,8 @@ void map_data_update(App_Info * app, Widget * widget)
 
 				if ((t = edje_object_data_get(edje, "title")))
 				{
-					snprintf(s, sizeof(s), "%d - %s", device_id_get(device),
-							 device_name_get(device));
-					elm_object_part_text_set(edje, "title.text", s);
+					snprintf(s, sizeof(s), "%d - %s", device_id_get(device), device_name_get(device));
+					edje_object_part_text_set(edje, "title.text", s);
 				}
 
 				if ((t = edje_object_data_get(edje, "value")))

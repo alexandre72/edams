@@ -25,8 +25,8 @@
       name: "meter/thermometer2";
       images
       {
-         image: "temp2_base.png" COMP;
-         image: "temp2_mid.png" COMP;
+         image: "thermometer_base.png" COMP;
+         image: "thermometer_filled.png" COMP;
          image: "updated.png" COMP;
       }
 
@@ -55,12 +55,13 @@
 			clip_to: "fade_clip";
             description
             {
-               state: "default" 0.0;
-               aspect_preference: BOTH;
-               align: 0.5 0.5;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-	           image.normal: "temp2_base.png";
+				max: 16 60;
+               	state: "default" 0.0;
+               	aspect_preference: BOTH;
+               	align: 0.5 0.5;
+               	rel1.relative: 0.0 0.0;
+               	rel2.relative: 1.0 1.0;
+	          	image.normal: "thermometer_base.png";
            }
          }
          part
@@ -69,10 +70,11 @@
             clip_to: "temp_clip";
             description
             {
-               state: "default" 0.0;
-               rel1.to: "base";
-               rel2.to: "base";
-               image.normal: "temp2_mid.png";
+				max: 16 60;
+               	state: "default" 0.0;
+               	rel1.to: "base";
+               	rel2.to: "base";
+               	image.normal: "thermometer_filled.png";
             }
          }
          part
