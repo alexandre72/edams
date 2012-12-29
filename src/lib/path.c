@@ -44,17 +44,6 @@ edams_data_path_get(void)
 }
 
 
-
-const char *
-edams_modules_path_get(void)
-{
-	char s[PATH_MAX];
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"lib"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"modules", edams_install_path_get());
-	return strdup(s);
-}
-
-
-
 const char *
 edams_locale_path_get(void)
 {
@@ -66,10 +55,10 @@ edams_locale_path_get(void)
 //
 //
 const char *
-edams_devices_data_path_get (void)
+edams_db_path_get (void)
 {
     char s[PATH_MAX];
-    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"devices", edams_data_path_get());
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"db", edams_data_path_get());
 	return strdup(s);
 }
 
@@ -110,20 +99,6 @@ edams_theme_path_get(void)
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"themes"DIR_SEPARATOR_S"default", edams_install_path_get());
 	return strdup(s);
 }
-
-
-//
-//
-//
-const char *
-edams_epb_file_get (void)
-{
-	char s[PATH_MAX];
-
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"themes"DIR_SEPARATOR_S"default"DIR_SEPARATOR_S"edams.epb", edams_install_path_get());
-	return strdup(s);
-}
-
 
 //
 //

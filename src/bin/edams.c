@@ -1,4 +1,4 @@
-/* 
+/*
  * edams.c
  * This file is part of EDAMS
  *
@@ -74,9 +74,9 @@ void edamsMessageSensorBasicHandler(xPL_ServicePtr theService,
 									xPL_MessagePtr theMessage, xPL_ObjectPtr userValue);
 
 
-// 
+//
 // Update current selected location informations.
-// 
+//
 static void
 _add_apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -152,9 +152,9 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 
 
 
-// 
-// 
-// 
+//
+//
+//
 static void
 _action_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -181,9 +181,9 @@ _action_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info
 
 
 
-// 
-// 
-// 
+//
+//
+//
 static void
 _photo_bt_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 					 void *event_info __UNUSED__)
@@ -230,9 +230,9 @@ static void _bt_route(void *data, Evas_Object * obj __UNUSED__, void *ev __UNUSE
 
 
 
-// 
-// Display ctxpopup when double-click on an patient's gengrid.
-// 
+/*
+ *
+ */
 static void
 _add_location_bt_clicked_cb(void *data __UNUSED__,
 							Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
@@ -245,7 +245,6 @@ _add_location_bt_clicked_cb(void *data __UNUSED__,
 	win = elm_win_util_standard_add("locations_description_dlg", _("Add a location"));
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
-	evas_object_show(win);
 
 	gd = elm_grid_add(win);
 	elm_grid_size_set(gd, 100, 100);
@@ -264,6 +263,7 @@ _add_location_bt_clicked_cb(void *data __UNUSED__,
 	img = elm_image_add(win);
 	evas_object_name_set(img, "location image");
 	elm_image_smooth_set(img, EINA_TRUE);
+	evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_image_aspect_fixed_set(img, EINA_TRUE);
 	elm_image_resizable_set(img, EINA_TRUE, EINA_TRUE);
 	elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
@@ -377,6 +377,7 @@ _add_location_bt_clicked_cb(void *data __UNUSED__,
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
 
 	evas_object_resize(win, 500, 500);
+	evas_object_show(win);
 }
 
 
@@ -420,9 +421,9 @@ _notify_timeout(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event
 }
 
 
-// 
+//
 // Hide notification when clicking on notify close button.
-// 
+//
 static void
 _notify_close_bt_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -432,9 +433,9 @@ _notify_close_bt_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info _
 
 
 
-// 
+//
 // Show notification.
-// 
+//
 static void _notify_set(const char *msg, const char *icon)
 {
 	Evas_Object *notify, *label, *ic, *bt;
@@ -458,9 +459,9 @@ static void _notify_set(const char *msg, const char *icon)
 }
 
 
-// 
-// 
-// 
+//
+//
+//
 static void
 _remove_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -493,9 +494,9 @@ _remove_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 }
 
 
-// 
+//
 // Remove currently selected location.
-// 
+//
 static void
 _remove_location_bt_clicked_cb(void *data __UNUSED__,
 							   Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
@@ -611,7 +612,7 @@ static void handler(void *data __UNUSED__, void *buf, unsigned int len)
 		if (!(device = device_load(s)))
 		{
 			device = device_new(atoi(id), name);
-			device_type_set(device, deviceStrtoType(type));
+			device_type_set(device, device_str_to_type(type));
 			Eina_List *l;
 			Eina_List *database;
 			database = devices_database_list_get();
@@ -622,6 +623,19 @@ static void handler(void *data __UNUSED__, void *buf, unsigned int len)
 				{
 					device_description_set(device, device_description_get(data));
 					device_datasheeturl_set(device, device_datasheeturl_get(data));
+
+					Evas_Object *eo;
+					Ecore_Evas *ee;
+					Evas *evas;
+					eo = NULL;
+					ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
+					evas = ecore_evas_get(ee);
+					eo = evas_object_image_filled_add(evas);
+					evas_object_image_file_set(eo, device_filename_get(data), "/image/0");
+					evas_object_image_alpha_set(eo, EINA_TRUE);
+					evas_object_image_scale(eo, 50, 50);
+					device_image_set(device, eo);
+					if (eo)	evas_object_del(eo);
 					break;
 				}
 			}
@@ -712,6 +726,7 @@ _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object * obj,
 	Widget *widget = (Widget *) data;
 
 	ctxpopup = elm_ctxpopup_add(obj);
+	elm_ctxpopup_hover_parent_set(ctxpopup, app->win);
 	evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
 
 	Eina_List *l;
@@ -886,7 +901,7 @@ Evas_Object *_location_naviframe_content(Location * location)
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "device-add");
 	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt, 55, 5, 20, 12);
+	elm_grid_pack(gd, bt, 55, 5, 20, 15);
 	evas_object_smart_callback_add(bt, "clicked", devicespicker_add, app);
 	evas_object_show(bt);
 
@@ -896,16 +911,16 @@ Evas_Object *_location_naviframe_content(Location * location)
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "device-remove");
 	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt, 55, 15, 20, 12);
+	elm_grid_pack(gd, bt, 55, 15, 20, 15);
 	evas_object_smart_callback_add(bt, "clicked", _clear_widget_from_location_bt_clicked_cb, NULL);
 	evas_object_show(bt);
 
 	hbx = elm_box_add(app->win);
 	evas_object_name_set(hbx, "meters hbx");
 	elm_box_horizontal_set(hbx, EINA_TRUE);
-	evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_homogeneous_set(hbx, EINA_TRUE);
+	//evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	//evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_homogeneous_set(hbx, EINA_FALSE);
 
 	Eina_List *l, *widgets;
 	Widget *widget;
@@ -919,7 +934,7 @@ Evas_Object *_location_naviframe_content(Location * location)
 		_device_widget_layout_update(widget);
 		_device_widget_data_update(widget);
 		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-		elm_box_padding_set(hbx, 2, 0);
+		elm_box_padding_set(hbx, 1, 0);
 		elm_box_pack_end(hbx, layout);
 		evas_object_show(layout);
 		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*",
@@ -937,9 +952,9 @@ Evas_Object *_location_naviframe_content(Location * location)
 
 
 
-// 
+//
 // Main.
-// 
+//
 EAPI_MAIN int elm_main(int argc, char **argv)
 {
 	char s[512];

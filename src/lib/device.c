@@ -204,7 +204,7 @@ device_name_set(Device *device, const char *name)
 
     EINA_SAFETY_ON_NULL_RETURN(device);
 
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_db_path_get(), name);
     eina_stringshare_replace(&(device->__eet_filename), s);
 	eina_stringshare_replace(&(device->name), name);
 }
@@ -535,7 +535,7 @@ devices_database_list_get()
 	Eina_List *devices = NULL;
 	Device *device = NULL;
 
-	it = eina_file_stat_ls(edams_devices_data_path_get());
+	it = eina_file_stat_ls(edams_db_path_get());
 
    	if(it)
    	{
@@ -648,27 +648,56 @@ devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
 	return NULL;
 }
 
-Type_Flags deviceStrtoType(const char *s)
+Type_Flags
+device_str_to_type(const char *s)
 {
-	if(strcmp(s, "battery") == 0) 	return BATTERY;
-	if(strcmp(s, "count") == 0)		return COUNT;
-	if(strcmp(s ,"current") == 0)	return CURRENT;
-	if(strcmp(s, "direction") == 0)	return DIRECTION;
-	if(strcmp(s, "distance") == 0)	return DISTANCE;
-	if(strcmp(s, "energy") == 0)	return ENERGY;
-	if(strcmp(s, "fan") == 0)		return FAN;
-	if(strcmp(s, "generic") == 0)	return GENERIC;
-	if(strcmp(s, "humidity") == 0)	return HUMIDITY;
-	if(strcmp(s, "input") == 0)		return INPUT;
-	if(strcmp(s, "output") == 0)	return OUPUT;
-	if(strcmp(s, "power") == 0)		return POWER;
-	if(strcmp(s, "pressure") == 0)	return PRESSURE;
-	if(strcmp(s, "setpoint") == 0)	return SETPOINT;
-	if(strcmp(s, "speed") == 0)		return SPEED;
-	if(strcmp(s, "temp") == 0)		return TEMP;
-	if(strcmp(s, "uv") == 0)		return UV;
-	if(strcmp(s, "voltage") == 0)	return VOLTAGE;
-	if(strcmp(s, "volume") == 0)	return VOLUME;
-	if(strcmp(s, "weight") == 0)	return WEIGHT;
-	else							return GENERIC;
+	if(!s) return;
+
+	if(strcmp(s, "battery") == 0) 		return BATTERY;
+	else if(strcmp(s, "count") == 0)	return COUNT;
+	else if(strcmp(s ,"current") == 0)	return CURRENT;
+	else if(strcmp(s, "direction") == 0)return DIRECTION;
+	else if(strcmp(s, "distance") == 0)	return DISTANCE;
+	else if(strcmp(s, "energy") == 0)	return ENERGY;
+	else if(strcmp(s, "fan") == 0)		return FAN;
+	else if(strcmp(s, "generic") == 0)	return GENERIC;
+	else if(strcmp(s, "humidity") == 0)	return HUMIDITY;
+	else if(strcmp(s, "input") == 0)	return INPUT;
+	else if(strcmp(s, "output") == 0)	return OUPUT;
+	else if(strcmp(s, "power") == 0)	return POWER;
+	else if(strcmp(s, "pressure") == 0)	return PRESSURE;
+	else if(strcmp(s, "setpoint") == 0)	return SETPOINT;
+	else if(strcmp(s, "speed") == 0)	return SPEED;
+	else if(strcmp(s, "temp") == 0)		return TEMP;
+	else if(strcmp(s, "uv") == 0)		return UV;
+	else if(strcmp(s, "voltage") == 0)	return VOLTAGE;
+	else if(strcmp(s, "volume") == 0)	return VOLUME;
+	else if(strcmp(s, "weight") == 0)	return WEIGHT;
+	else								return GENERIC;
+}
+
+
+
+const char *
+device_type_to_str(Type_Flags type)
+{
+	if(type == BATTERY)			return "battery";
+	else if(type == COUNT)		return "count";
+	else if(type == CURRENT)	return "current";
+	else if(type == DIRECTION)	return "direction";
+	else if(type == DISTANCE)	return "distance";
+	else if(type == ENERGY)		return "energy";
+	else if(type == FAN)		return "fan";
+	else if(type == HUMIDITY)	return "humidity";
+	else if(type == INPUT)		return "input";
+	else if(type == OUPUT)		return "output";
+	else if(type == POWER)		return "power";
+	else if(type == SETPOINT)	return "setpoint";
+	else if(type == SPEED)		return "speed";
+	else if(type == TEMP)		return "temp";
+	else if(type == UV)			return "uv";
+	else if(type == VOLTAGE)	return "voltage";
+	else if(type == VOLUME)		return "volume";
+	else if(type == WEIGHT)		return "weight";
+	else 						return "generic";
 }
