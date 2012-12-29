@@ -29,8 +29,6 @@ collections {
 #include "counter.edc"
 
 
-group
-{
 group {
 	name: "elm/icon/about-dlg/default";
       min: 48 48;

@@ -49,13 +49,16 @@ typedef enum _Type_Flags
 	UV				= (17),    	//uv - UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index
 	VOLTAGE			= (18), 	//voltage - a voltage value in Volts.
 	VOLUME			= (19),    	//volume - a volume in m3. Often used as a measure of gas and water consumption.
-	WEIGHT			= (20)    	//weight - the default unit is kilograms (yes, kilograms are a unit of mass, not weight)
+	WEIGHT			= (20),    	//weight - the default unit is kilograms (yes, kilograms are a unit of mass, not weight)
+	TYPE_LAST
 }Type_Flags;
 
 
 
 //Conversion funcs.
-Type_Flags deviceStrtoType(const char *s);
+Type_Flags device_str_to_type(const char *s);
+const char *device_type_to_str(Type_Flags type);
+
 
 Device *device_new(unsigned int id, const char * name);
 void device_free(Device *device);

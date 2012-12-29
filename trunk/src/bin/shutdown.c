@@ -1,4 +1,4 @@
-/* 
+/*
  * shutdown.c
  * This file is part of EDAMS
  *
@@ -22,7 +22,7 @@
 #include "shutdown.h"
 #include "settings.h"
 #include "device.h"
-
+#include "utils.h"
 
 static int efl_shutdown(App_Info * app);
 static int xpl_shutdown(App_Info * app);

@@ -1,4 +1,4 @@
-/* 
+/*
  * devicespicker.c
  * This file is part of EDAMS
  *
@@ -47,9 +47,9 @@ static Eina_Bool _gg_state_get(void *data __UNUSED__,
 							   Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
 
 
-// 
-// 
-// 
+//
+//
+//
 static char *_gg_text_get(void *data, Evas_Object * obj __UNUSED__, const char *part __UNUSED__)
 {
 	const GenGridItem *ti = data;
@@ -61,9 +61,9 @@ static char *_gg_text_get(void *data, Evas_Object * obj __UNUSED__, const char *
 }
 
 
-// 
-// 
-// 
+//
+//
+//
 static Evas_Object *_gg_content_get(void *data, Evas_Object * obj, const char *part)
 {
 	const GenGridItem *ti = data;
@@ -71,9 +71,8 @@ static Evas_Object *_gg_content_get(void *data, Evas_Object * obj, const char *p
 	if (!strcmp(part, "elm.swallow.icon"))
 	{
 		Evas_Object *icon = elm_bg_add(obj);
-
 		if (!elm_bg_file_set(icon, device_filename_get(ti->device), "/image/0"))
-			elm_bg_file_set(icon, edams_edje_theme_file_get(), "user/male");
+			elm_bg_file_set(icon, edams_edje_theme_file_get(), "elm/icon/devices-creator/default");
 		evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 		evas_object_show(icon);
 		return icon;
@@ -84,9 +83,9 @@ static Evas_Object *_gg_content_get(void *data, Evas_Object * obj, const char *p
 
 
 
-// 
-// 
-// 
+//
+//
+//
 static Eina_Bool
 _gg_state_get(void *data __UNUSED__, Evas_Object * obj __UNUSED__, const char *part __UNUSED__)
 {
@@ -95,9 +94,9 @@ _gg_state_get(void *data __UNUSED__, Evas_Object * obj __UNUSED__, const char *p
 
 
 
-// 
-// 
-// 
+//
+//
+//
 static void _gg_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__)
 {
 	GenGridItem *ti = data;
@@ -107,9 +106,9 @@ static void _gg_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__)
 
 
 
-// 
+//
 // Display ctxpopup when double-click on an patient's gengrid.
-// 
+//
 static void
 _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 					 void *event_info __UNUSED__)
@@ -127,23 +126,23 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 	location_save(app->location);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	elm_object_item_part_content_unset(naviframe, "default");
+	//elm_object_item_part_content_unset(naviframe, "default");
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe),
 									 NULL, _location_naviframe_content(app->location));
 }
 
 
 
-// 
+//
 // Create devices picker.
-// 
-void devicespicker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+//
+void
+devicespicker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
 	App_Info *app = (App_Info *) data;
 
-	if (!app->location)
-		return EINA_FALSE;
+	if (!app->location)	return;
 
 	// Setup a new window.
 	win = elm_win_util_standard_add("device_picker", _("Select a device"));
@@ -229,6 +228,4 @@ void devicespicker_add(void *data, Evas_Object * obj __UNUSED__, void *event_inf
 	// Resize window.
 	evas_object_resize(win, 400, 450);
 	evas_object_show(win);
-
-	return EINA_TRUE;
 }
