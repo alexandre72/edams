@@ -14,7 +14,6 @@ images {
     image: "icons/close-application.png" COMP;
     image: "images/header-bg.png" COMP;
     image: "images/header.png" COMP;
-    image: "images/map_border.png" COMP;
 }
 
 externals {
@@ -32,26 +31,6 @@ collections {
 
 group
 {
-	name: "map/border";
-	parts
-	{
-         part
-         {
-         	name: "border";
-            type: IMAGE;
-            mouse_events: 0;
-            description
-            {
-            	state: "default" 0;
-              	aspect: 1 1;
-               	aspect_preference: BOTH;
-               	image.normal: "images/map_border.png";
-            }
-         }
-      }
-   }
-
-
 group {
 	name: "elm/icon/about-dlg/default";
       min: 48 48;
