@@ -31,7 +31,7 @@ typedef struct _Evas_Smart_Example_Data Evas_Smart_Example_Data;
 struct _Evas_Smart_Example_Data
 {
 	Evas_Object_Smart_Clipped_Data base;
-	Evas_Object *children[MAX_CHILD], *border;
+	Evas_Object *children[MAX_CHILD], *border, *text;
 	int child_count;
 };
 
@@ -213,14 +213,7 @@ static void _evas_smart_example_smart_add(Evas_Object * o)
 {
 	EVAS_SMART_DATA_ALLOC(o, Evas_Smart_Example_Data);
 
-	// This is a border around the smart object's area, delimiting it
-	/*
-	priv->border = evas_object_image_filled_add(evas_object_evas_get(o));
-	evas_object_image_file_set(priv->border,  edams_edje_theme_file_get(), "map/border");
-	evas_object_image_border_set(priv->border, 3, 3, 3, 3);
-	evas_object_image_border_center_fill_set(priv->border, EVAS_BORDER_FILL_NONE);
-	evas_object_smart_member_add(priv->border, o);
-*/
+	// This is a filled rectangle in the smart object's area, delimiting location size and position
 	priv->border = evas_object_rectangle_add(evas_object_evas_get(o));
 	evas_object_color_set(priv->border, 255, 255, 255, 50);
 	evas_object_smart_member_add(priv->border, o);
@@ -229,6 +222,13 @@ static void _evas_smart_example_smart_add(Evas_Object * o)
 	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out, NULL);
 	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, NULL);
 	evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
+
+
+	priv->text = evas_object_text_add(evas);
+	evas_object_text_style_set(priv->text, EVAS_TEXT_STYLE_PLAIN);
+	evas_object_text_font_set(priv->text, "DejaVu", 20);
+	evas_object_color_set(priv->text, 0, 0, 0, 255);
+	evas_object_smart_member_add(priv->text, o);
 
 	// Add border to smart
 	_evas_smart_example_parent_sc->add(o);
@@ -263,6 +263,7 @@ static void _evas_smart_example_smart_show(Evas_Object * o)
 	}
 
 	evas_object_show(priv->border);
+	evas_object_show(priv->text);
 	_evas_smart_example_parent_sc->show(o);
 }
 
@@ -310,6 +311,10 @@ static void _evas_smart_example_smart_calculate(Evas_Object * o)
 	// Set border size/position.
 	evas_object_move(priv->border, x, y);
 	evas_object_resize(priv->border, w, h);
+
+	// Set location title size/position.
+	evas_object_size_hint_min_set(priv->text, 100, 20);
+	evas_object_move(priv->text, x, y);
 
 	// Set child's sizes/positions.
 	int n = 0;
@@ -363,6 +368,8 @@ Eina_List *evas_smart_example_location_add(Evas_Object * o, Location * location)
 	Eina_List *childs = NULL;
 
 	EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+
+	evas_object_text_text_set(priv->text, location_name_get(location));
 
 	Eina_List *l2, *widgets;
 	Widget *widget;
