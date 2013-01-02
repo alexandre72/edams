@@ -1,0 +1,13 @@
+#summary How to declare devices(sensor.basic or control.basic)?
+
+= Introduction =
+
+EDAMs can handle two device's type that follow xPL protocol specifications:
+
+  # Sensor basic:sensors are devices that get some data about physical phenomems like gas, input, light intensity, voltage...
+  # Control basic:controls are devices that can be set to act in an specific way like relays, light bulb...
+
+
+= Details =
+
+When you write
