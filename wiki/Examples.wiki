@@ -21,14 +21,14 @@ msg.hop = 1;
 msg.type = XPL_TRIG;
 msg.SetTarget_P(PSTR("*"));
 msg.SetSchema_P(PSTR("sensor"), PSTR("basic"));
-msg.AddCommand_P(PSTR("device"),PSTR("DHT11"));
+msg.AddCommand_P(PSTR("device"),PSTR("DHT11.1"));
 msg.AddCommand_P(PSTR("type"),PSTR( "humidty"));
 msg.AddCommand("current", dht11.value);
  xpl.SendMessage(&msg);
 ...
 }}}
 
-Too see more about sensor.basic usage with EDAMS, consult 'how to declare sensor.basic' documentation from wiki.
+Too see more about sensor.basic usage with EDAMS, see[HowToDeclareDevice how to declare device].
 
 
 After launching xPL_HUB(in daemon mode, but to see if all is ok you can try in nodaemon mode):
@@ -43,3 +43,13 @@ alex ~/$xPL_Hub -nodaemon -xpldebug
 12/12/28 14:10:34 xPL_DEBUG: Assigned xPL Broadcast address of 192.168.0.255, port 3865
 12/12/28 14:10:34 xPL_DEBUG: Attemping standalone xPL
 }}}
+
+After launching EDAMS, I add a new location and fill informations about it(name, description, a recent photo, geolocalization...). Now I select it by just clicking on it, click on "Add devices" button on the right panel, in devices picker I should see DHT11 device with ID on label '1-DHT11'. After double-clicking I should see it on location panel, sometimes a label "UPDATED" appears to inform me about data updates, widgets show me data, with right click on widget I can choose any widgets I want(like counter, thermometer...).
+
+To have a nice background on my global devices map, I've designed my house with sweethome3d software(great opensource 3D house designing software!). You can get it on:
+
+http://www.sweethome3d.com/fr/features.jsp
+
+Now in preferences window I'll be able to set map background image to sweethome3d photo generated file(something like:/home/alex/house.png). Next step is to go to "Devices Map", in a resizable(with left/down/up/right arrows) and drag&drop(with mouse's button 1) rectangle I'll be able to put it on a house background image. I can drag&drop widgets anywhere I want too.
+
+
