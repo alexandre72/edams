@@ -570,6 +570,29 @@ edamsMessageSensorBasicHandler(xPL_ServicePtr theService __UNUSED__,
 			 xPL_getNamedValue(ListNomsValeursPtr, "type"),
 			 xPL_getNamedValue(ListNomsValeursPtr, "current"));
 
+	//TODO:Add gnuplot pipe to write data value?
+	//or just lets the user open generated png file?
+	//Write gnutplot data file.
+
+	time_t timestamp;
+	struct tm *t;
+	// Setup main window.
+	timestamp = time(NULL);
+	t = localtime(&timestamp);
+
+	FILE *dat = fopen(xPL_getNamedValue(ListNomsValeursPtr, "device"), "a");
+
+	fprintf(dat,  "%d-%d-%d-%d:%d:%d %s\n",
+				t->tm_mday,
+				t->tm_mon,
+				t->tm_year,
+				t->tm_hour,
+				 t->tm_min,
+				 t->tm_sec,
+				 xPL_getNamedValue(ListNomsValeursPtr, "current"));
+
+	fclose(dat);
+
 	ecore_pipe_write(pipe, buf, strlen(buf));
 }
 
@@ -928,8 +951,7 @@ Evas_Object *_location_naviframe_content(Location * location)
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
 		layout = elm_layout_add(app->win);
-		snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget),
-				 widget_device_id_get(widget), location_name_get(location));
+		snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
 		evas_object_name_set(layout, s);
 		_device_widget_layout_update(widget);
 		_device_widget_data_update(widget);
@@ -937,8 +959,7 @@ Evas_Object *_location_naviframe_content(Location * location)
 		elm_box_padding_set(hbx, 1, 0);
 		elm_box_pack_end(hbx, layout);
 		evas_object_show(layout);
-		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*",
-									   _layout_dbclicked__cb, widget);
+		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, widget);
 	}
 
 	elm_box_recalculate(hbx);
@@ -949,10 +970,6 @@ Evas_Object *_location_naviframe_content(Location * location)
 }
 
 
-
-
-
-//
 // Main.
 //
 EAPI_MAIN int elm_main(int argc, char **argv)
