@@ -10,4 +10,23 @@ EDAMs can handle two device's type that follow xPL protocol specifications:
 
 = Details =
 
-When you write
+xPL manufactured device's are rare, in most case you'll need to create your own xPL device's. For Arduino case you'll use, xpl.arduino(http://code.google.com/p/xpl-arduino
+
+To get xPL working follow xpl-arduino examples code and to declare a new sensor you'll use something like:
+
+{{{
+msg.SetSchema_P(PSTR("sensor"), PSTR("basic")); 
+msg.AddCommand_P(PSTR("device"),PSTR("DS18B20.1"));
+msg.AddCommand_P(PSTR("type"),PSTR("temp"));
+msg.AddCommand_P(PSTR("current"),PSTR("22"));
+}}}
+
+sensor.basic follow xPL standard, when EDAMS discover a new xPL containing sensor.basic message it can recognize it as a sensor device type.
+
+device=DS18B20.1 is an EDAMS specification. DS18B20 follow name created in "device creator" and EDAMS compare these device name to registered database devices. "1" is a unique by sensor ID and must be separated by a "."
+
+
+type=temp follow xPL rule from sensor.basic message see http://xplproject.org.uk/wiki/index.php?title=Schema_-_SENSOR.BASIC to set other type(battery, weight...). EDAMS set units associated to these type(volt, celsius...). Cosm.com follow its standard too.
+
+
+current=22 is data get from your sensor.
