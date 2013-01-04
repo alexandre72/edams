@@ -867,18 +867,15 @@ Evas_Object *_location_naviframe_content(Location * location)
 {
 	Evas_Object *layout;
 	Evas_Object *gd;
-	Evas_Object *vbx, *hbx;
+	Evas_Object *vbx;
 	Evas_Object *ic, *img;
 	Evas_Object *bt;
 	Evas_Object *label;
 	char s[256];
 
-	if (!location)
-		return NULL;
+	if (!location) return NULL;
 
 	vbx = elm_box_add(app->win);
-	evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(vbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_show(vbx);
 
 	gd = elm_grid_add(app->win);
@@ -904,18 +901,18 @@ Evas_Object *_location_naviframe_content(Location * location)
 	label = elm_label_add(app->win);
 	snprintf(s, sizeof(s), _(_("Location:%s")), location_name_get(location));
 	elm_object_text_set(label, s);
-	elm_grid_pack(gd, label, 30, 1, 50, 8);
+	elm_grid_pack(gd, label, 41, 1, 40, 8);
 	evas_object_show(label);
 
 	label = elm_label_add(app->win);
 	snprintf(s, sizeof(s), _(_("Description:%s")), location_description_get(location));
 	elm_object_text_set(label, s);
-	elm_grid_pack(gd, label, 30, 8, 50, 8);
+	elm_grid_pack(gd, label, 41, 8, 40, 8);
 	evas_object_show(label);
 
 	label = elm_label_add(app->win);
 	snprintf(s, sizeof(s), _(_("Devices:")));
-	elm_grid_pack(gd, label, 30, 15, 50, 8);
+	elm_grid_pack(gd, label, 41, 15, 40, 8);
 	evas_object_show(label);
 
 	bt = elm_button_add(app->win);
@@ -924,7 +921,7 @@ Evas_Object *_location_naviframe_content(Location * location)
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "device-add");
 	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt, 55, 5, 20, 15);
+	elm_grid_pack(gd, bt, 70, 5, 20, 8);
 	evas_object_smart_callback_add(bt, "clicked", devicespicker_add, app);
 	evas_object_show(bt);
 
@@ -934,10 +931,34 @@ Evas_Object *_location_naviframe_content(Location * location)
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
 	elm_icon_standard_set(ic, "device-remove");
 	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt, 55, 15, 20, 15);
+	elm_grid_pack(gd, bt, 70, 15, 20, 8);
 	evas_object_smart_callback_add(bt, "clicked", _clear_widget_from_location_bt_clicked_cb, NULL);
 	evas_object_show(bt);
 
+	Evas_Object *table = elm_table_add(app->win);
+	elm_table_padding_set(table, 2, 2);
+
+	Eina_List *l, *widgets;
+	Widget *widget;
+	widgets = location_widgets_list_get(location);
+	int x = 0;
+	EINA_LIST_FOREACH(widgets, l, widget)
+	{
+		layout = elm_layout_add(app->win);
+		snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
+		evas_object_name_set(layout, s);
+		_device_widget_layout_update(widget);
+		_device_widget_data_update(widget);
+ 		elm_table_pack(table, layout, x, 0, 1, 1);
+		evas_object_show(layout);
+		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, widget);
+		x++;
+	}
+	elm_grid_pack(gd, table, 1, 40, 99, 59);
+	evas_object_show(table);
+
+
+/*
 	hbx = elm_box_add(app->win);
 	evas_object_name_set(hbx, "meters hbx");
 	elm_box_horizontal_set(hbx, EINA_TRUE);
@@ -965,7 +986,7 @@ Evas_Object *_location_naviframe_content(Location * location)
 	elm_box_recalculate(hbx);
 	elm_box_pack_end(vbx, hbx);
 	evas_object_show(hbx);
-
+*/
 	return vbx;
 }
 
@@ -1220,6 +1241,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 		elm_run();
 	}
 
+	map_quit();
 	ecore_pipe_del(pipe);
 	kill(child_pid, SIGKILL);
 
@@ -1227,5 +1249,4 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	return EXIT_SUCCESS;
 }
-
 ELM_MAIN()
