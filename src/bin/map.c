@@ -500,7 +500,8 @@ Evas_Object *evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 /*
  *Callback called in smart object when a key is pressed
  */
-static void _on_keydown(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, void *einfo)
+static void
+_on_keydown(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, void *einfo)
 {
 	Evas_Event_Key_Down *ev = einfo;
 
@@ -563,7 +564,8 @@ static void _on_keydown(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Obje
 
 
 
-void map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+void
+map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	app = (App_Info *) data;
 
@@ -662,13 +664,23 @@ void map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_in
 	ecore_main_loop_begin();
 	eet_close(ef);
 	ecore_evas_free(ee);
-
 	return;
+
 }
 
 
+void
+map_quit()
+{
+	if (!ee || !app)
+		return;
 
-void map_data_update(App_Info * app, Widget * widget)
+	ecore_main_loop_quit();
+}
+
+
+void
+map_data_update(App_Info * app, Widget * widget)
 {
 	// Sync device data with location device data(if affected to any
 	// location!).
