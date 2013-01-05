@@ -11,7 +11,8 @@ EDAMS supporte:
   * La gestion de vos données via cosm.com(ex-pachube.com)
   * La gestion des pièces de votre habitation ainsi que la géolocalisation.
   * La représentation des données dans des gadgets(widgets).
-  * Une carte complète des capteurs et périphériques avec la possibilité d'agencer des widgets comme il vous semble.
+  * Une carte complète des périphériques avec la possibilité d'agencer des widgets comme bon vous semble.
+  * La génération de graphiques via gnuplot avec contrôle du rendu dans la carte complètes.
 
 Pour utiliser EDAMS au mieux, il vous sera nécessaire d'installer les programmes et librairies suivants:
 
@@ -20,7 +21,7 @@ Pour utiliser EDAMS au mieux, il vous sera nécessaire d'installer les programme
 
 Des paquets sont disponibles pour la majorité des distributions. EDAMS est encore en développement, il n'existe pas de version à proprement parler mais cela risque fort vite d'évoluer...en attendant vous pouvez avec un client subversion(svn ou autre) télécharger le dépôt et compiler:
 
-  * svn checkout http://edams.googlecode.com/svn/trunk/ edams-read-only 
+  * svn checkout http://edams.googlecode.com/svn/trunk/ edams-read-only
   * cd edams-read-only
   * sh autogen.sh
   * make
