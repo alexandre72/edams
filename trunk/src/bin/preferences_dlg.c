@@ -1,4 +1,4 @@
-/* 
+/*
  * preferences_dlg.c
  * This file is part of EDAMS
  *
@@ -46,6 +46,10 @@ _apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info 
 							 elm_object_text_get(elm_object_name_find
 												 (win, "map background entry", -1)));
 
+	eina_stringshare_replace(&(app->settings->gnuplot_path),
+							 elm_object_text_get(elm_object_name_find
+												 (win, "gnuplot path entry", -1)));
+
 	app->settings->softemu = elm_check_state_get(elm_object_name_find(win, "emulation checkb", -1));
 	app->settings->debug = elm_check_state_get(elm_object_name_find(win, "debug checkb", -1));
 
@@ -56,9 +60,9 @@ _apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info 
 }
 
 
-// 
-// 
-// 
+//
+//
+//
 static void
 _action_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -85,9 +89,9 @@ _action_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info
 
 
 
-// 
-// 
-// 
+//
+//
+//
 static void
 _open_file_bt_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 						 void *event_info __UNUSED__)
@@ -103,15 +107,15 @@ _open_file_bt_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 
 
 
-// 
-// 
-// 
+//
+//
+//
 void
 preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 					void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd;
-	Evas_Object *label, *ic, *bx, *frame;
+	Evas_Object *ic, *bx, *frame;
 	Evas_Object *bt, *ck;
 	Evas_Object *entry;
 
@@ -192,6 +196,22 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 	evas_object_show(bt);
 
 	elm_object_content_set(frame, bx);
+
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("Gnuplot path:"));
+	elm_grid_pack(gd, frame, 1, 49, 99, 15);
+	evas_object_show(frame);
+
+	entry = elm_entry_add(win);
+	evas_object_name_set(entry, "gnuplot path entry");
+	elm_entry_scrollable_set(entry, EINA_TRUE);
+	elm_entry_editable_set(entry, EINA_TRUE);
+	elm_entry_single_line_set(entry, EINA_TRUE);
+	evas_object_show(entry);
+	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_object_text_set(entry, app->settings->gnuplot_path);
+	elm_object_content_set(frame, entry);
 
 	bx = elm_box_add(win);
 	elm_box_horizontal_set(bx, EINA_TRUE);
