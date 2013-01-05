@@ -1,12 +1,12 @@
 ###Process this file with autoconf to produce a configure script.
 
-# get rid of that stupid cache mechanism
-rm -f config.cache
+
+define([v_rev], esyscmd([sh -c "svnversion|tr -d '\n'"]))dnl
 
 m4_define([v_maj], [0])
 m4_define([v_min], [8])
 m4_define([v_mic], [0])
-m4_define([v_ver], [v_maj.v_min.v_mic])
+m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])
 
 AC_INIT([edams],[v_ver],[alexandre.dussart@laposte.net])
 AC_PREREQ([2.69])
