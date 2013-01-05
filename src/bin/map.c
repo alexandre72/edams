@@ -223,7 +223,6 @@ static void _evas_smart_example_smart_add(Evas_Object * o)
 	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, NULL);
 	evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
-
 	priv->text = evas_object_text_add(evas);
 	evas_object_text_style_set(priv->text, EVAS_TEXT_STYLE_PLAIN);
 	evas_object_text_font_set(priv->text, "DejaVu", 20);
@@ -340,6 +339,8 @@ static void _evas_smart_example_smart_calculate(Evas_Object * o)
 			edje_object_size_max_get(priv->children[n], &cw, &ch);
 			evas_object_resize(priv->children[n], 50, 50);
 			evas_object_move(priv->children[n], edje_geometry.x, edje_geometry.y);
+
+			evas_object_event_callback_add(priv->children[n], EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 		}
 	}
 }
@@ -478,9 +479,7 @@ Evas_Object *evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 	for (x = 0; x != MAX_CHILD; x++)
 	{
 		if (priv->children[x] != child)
-			fprintf(stderr,
-					"You are trying to remove something not belonging to"
-					" the example smart object!\n");
+			debug(stderr,_("You are trying to remove something not belonging to the smart object"));
 		return NULL;
 	}
 
@@ -497,16 +496,97 @@ Evas_Object *evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 }
 
 
+
+/*
+ *Timer called when adding a new stat_img, must be deleted after some delay to make screen space.
+ */
+static Eina_Bool
+_timer_cb(void *data)
+{
+	Evas_Object *stat_img = data;
+
+	evas_object_del(stat_img);
+
+	return EINA_FALSE;
+}
+
 /*
  *Callback called in smart object when a key is pressed
  */
 static void
-_on_keydown(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, void *einfo)
+_on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 {
 	Evas_Event_Key_Down *ev = einfo;
 
-	Eina_Rectangle o_geometry;
-	evas_object_geometry_get(o, &o_geometry.x, &o_geometry.y, &o_geometry.w, &o_geometry.h);
+	if(evas_object_smart_parent_get(o))
+	{
+		char id[255];
+		char s[PATH_MAX];
+		Device *device;
+
+		sscanf(evas_object_name_get(o), "%*[^'_']_%[^'_']_%*[^'_']_edje", id);
+		device = devices_list_device_with_id_get(app->devices, atoi(id));
+
+		if(device)
+		{
+		// Key 'd' decrease smart object's width and height size
+		if (strcmp(ev->keyname, "s") == 0)
+		{
+  				if(!app->settings->gnuplot_path)
+  				{
+					debug(stderr, _("Gnuplot binary isn't set!"));
+  					return;
+  				}
+
+  				FILE *gnuplotPipe;
+  				snprintf(s, sizeof(s), "%s -persist", app->settings->gnuplot_path);
+				gnuplotPipe = popen(s, "w");
+
+				if (gnuplotPipe)
+  				{
+  					fprintf(gnuplotPipe, "set term png size 600,300\n");
+  					fprintf(gnuplotPipe, "set output \"%s/%s-%d.png\"\n", edams_locations_data_path_get(), device_name_get(device), device_id_get(device));
+  					fprintf(gnuplotPipe, "set xdata time\n");
+  					fprintf(gnuplotPipe, "set format x \"%%d/%%m\"\n");
+  					fprintf(gnuplotPipe, "set ylabel \"%s\"\n", device_unit_symbol_get(device));
+  					fprintf(gnuplotPipe, "set timefmt \"%%d-%%m-%%Y-%%H:%%M:%%S\"\n");
+  					fprintf(gnuplotPipe, "set grid\n");
+  					//TODO:should handle xrange to let user select data period(monthly, years, daily, hour)
+  					//fprintf(gnuplotPipe, "set xrange [\"01-01-2013-17:36:00\":\"31-01-2013-17:37:00\"]\n");
+					fprintf(gnuplotPipe, "plot '%s/%s.%d' using 1:2 with lines title '%s'\n", edams_locations_data_path_get(), device_name_get(device), device_id_get(device), device_name_get(device)) ;
+					fprintf(gnuplotPipe,"exit\n");
+					pclose(gnuplotPipe);
+
+					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
+				    evas_object_image_alpha_set(stat_img, EINA_TRUE);
+  					snprintf(s, sizeof(s), "%s/%s-%d.png", edams_locations_data_path_get(), device_name_get(device), device_id_get(device));
+    				evas_object_image_file_set(stat_img, s, NULL);
+					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
+    				if (err != EVAS_LOAD_ERROR_NONE)
+				    {
+				      debug(stdout, _("Can't load Edje image!"));
+				    }
+
+					evas_object_image_scale(stat_img, 600, 300);
+					evas_object_move(stat_img, 300,  300);
+				    evas_object_show(stat_img);
+					ecore_timer_add(2.0, _timer_cb, stat_img);
+
+					evas_object_show(stat_img);
+				}
+				else
+  				{
+					debug(stderr, _("Couldn't found gnuplot binary in path:%s"), app->settings->gnuplot_path);
+				}
+
+			return;
+		}
+	}
+	}
+	else
+	{
+		Eina_Rectangle o_geometry;
+		evas_object_geometry_get(o, &o_geometry.x, &o_geometry.y, &o_geometry.w, &o_geometry.h);
 
 	// Keys 'Right' or 'Left' keys are used to increase/decrease width.
 	// Keys 'Up' or 'Down' keys are used to increase/decrease height.
@@ -559,6 +639,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, void
 
 		evas_object_resize(o, o_geometry.w, o_geometry.h);
 		return;
+	}
 	}
 }
 

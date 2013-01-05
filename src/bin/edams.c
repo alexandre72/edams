@@ -573,24 +573,23 @@ edamsMessageSensorBasicHandler(xPL_ServicePtr theService __UNUSED__,
 	//TODO:Add gnuplot pipe to write data value?
 	//or just lets the user open generated png file?
 	//Write gnutplot data file.
-
+	char s[PATH_MAX];
 	time_t timestamp;
 	struct tm *t;
 	// Setup main window.
 	timestamp = time(NULL);
 	t = localtime(&timestamp);
 
-	FILE *dat = fopen(xPL_getNamedValue(ListNomsValeursPtr, "device"), "a");
-
+	snprintf(s, sizeof(s), "%s/%s", edams_locations_data_path_get(), xPL_getNamedValue(ListNomsValeursPtr, "device"));
+	FILE *dat = fopen(s, "a");
 	fprintf(dat,  "%d-%d-%d-%d:%d:%d %s\n",
 				t->tm_mday,
-				t->tm_mon,
-				t->tm_year,
+				t->tm_mon+1,
+				1900+t->tm_year,
 				t->tm_hour,
 				 t->tm_min,
 				 t->tm_sec,
 				 xPL_getNamedValue(ListNomsValeursPtr, "current"));
-
 	fclose(dat);
 
 	ecore_pipe_write(pipe, buf, strlen(buf));
