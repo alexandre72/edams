@@ -10,6 +10,10 @@ http://edams.googlecode.com/files/shot-2013-01-05_13-23-15.jpg
 http://edams.googlecode.com/files/shot-2013-01-05_13-24-35.jpg
 
 
+ ===Global devices map interface with data graph generated from gnuplot===
+http://edams.googlecode.com/files/shot-2013-01-05_17-56-51.jpg
+
 
  ===Location adding  interface===
 http://edams.googlecode.com/files/shot-2013-01-05_13-26-44.jpg
+
