@@ -1,6 +1,14 @@
 #summary Screenshots of EDAMS in action
 
+
+ ===Main application interface===
 http://edams.googlecode.com/files/shot-2013-01-05_13-23-15.jpg
 
 
+
+ ===Global devices map interface===
 http://edams.googlecode.com/files/shot-2013-01-05_13-24-35.jpg
+
+
+
+ ===Location adding  interface===
