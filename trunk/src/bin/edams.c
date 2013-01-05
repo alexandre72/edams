@@ -34,7 +34,6 @@
 #include "path.h"
 #include "location.h"
 #include "device.h"
-#include "serial.h"
 #include "devices_picker.h"
 #include "devices_creator.h"
 #include "shutdown.h"
