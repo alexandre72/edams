@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 lib_LTLIBRARIES = libedams.la
 
 libedams_la_SOURCES = \
+gnuplot.c \
 myfileselector.c \
 path.c \
 location.c \
