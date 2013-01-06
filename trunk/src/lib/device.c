@@ -226,7 +226,7 @@ device_type_set(Device *device, const Type_Flags type)
 		default:
 		case UNKNOWN:
 		case GENERIC:
-					device_units_set(device, _(""));
+					device_units_set(device, _("Generic"));
 					device_unit_symbol_set(device, "");
 					device_unit_format_set(device, "%s");
 					break;
@@ -236,7 +236,7 @@ device_type_set(Device *device, const Type_Flags type)
 					device_unit_format_set(device, "%s%%");
 					break;
 		case COUNT:
-					device_units_set(device, _(""));
+					device_units_set(device, _("Counter"));
 					device_unit_symbol_set(device, "");
 					device_unit_format_set(device, "%s");
 					break;
@@ -271,12 +271,12 @@ device_type_set(Device *device, const Type_Flags type)
 					device_unit_format_set(device, "%s%%");
 					break;
 		case INPUT:
-					device_units_set(device, _(""));
+					device_units_set(device, _("Input"));
 					device_unit_symbol_set(device, "");
 					device_unit_format_set(device, "%s");
 					break;
 		case OUPUT:
-					device_units_set(device, _(""));
+					device_units_set(device, _("Output"));
 					device_unit_symbol_set(device, "");
 					device_unit_format_set(device, "%s");
 					break;
@@ -306,7 +306,7 @@ device_type_set(Device *device, const Type_Flags type)
 					device_unit_format_set(device, "%s°C");
 					break;
 		case UV:
-					device_units_set(device, _(""));
+					device_units_set(device, _("UV"));
 					device_unit_symbol_set(device, "");
 					device_unit_format_set(device, "%s");
 					break;
@@ -651,7 +651,7 @@ devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
 Type_Flags
 device_str_to_type(const char *s)
 {
-	if(!s) return;
+	if(!s) return UNKNOWN;
 
 	if(strcmp(s, "battery") == 0) 		return BATTERY;
 	else if(strcmp(s, "count") == 0)	return COUNT;

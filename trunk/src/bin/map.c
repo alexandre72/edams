@@ -353,7 +353,7 @@ _evas_smart_example_smart_calculate(Evas_Object * o)
 
 			int cw, ch;
 			edje_object_size_max_get(priv->children[n], &cw, &ch);
-			evas_object_resize(priv->children[n], 50, 50);
+			evas_object_resize(priv->children[n], 60, 60);
 			evas_object_move(priv->children[n], edje_geometry.x, edje_geometry.y);
 
 			evas_object_event_callback_add(priv->children[n], EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
@@ -553,27 +553,28 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 		sscanf(evas_object_name_get(o), "%*[^'_']_%[^'_']_%*[^'_']_edje", id);
 		device = devices_list_device_with_id_get(app->devices, atoi(id));
 
-		if(device)
-		{
 			// Key 's' show data device in graphics generated from gnuplot(PNG format).
 			if (strcmp(ev->keyname, "s") == 0)
 			{
-				Evas_Object *stat_img  = evas_object_image_filled_add(evas);
-				evas_object_image_alpha_set(stat_img, EINA_TRUE);
-    			evas_object_image_file_set(stat_img, gnuplot_device_png_write(app, device), NULL);
-				Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
-    			if (err != EVAS_LOAD_ERROR_NONE)
+				if(device)
 				{
-					debug(stdout, _("Can't load Edje image!"));
-					return;
-				}
-				evas_object_image_scale(stat_img, 600, 300);
-				evas_object_move(stat_img, 300,  300);
-			    evas_object_show(stat_img);
-				ecore_timer_add(2.0, _timer_cb, stat_img);
-				evas_object_show(stat_img);
-				return;
+					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
+					evas_object_image_alpha_set(stat_img, EINA_TRUE);
+    				evas_object_image_file_set(stat_img, gnuplot_device_png_write(app, device), NULL);
+					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
+    				if (err != EVAS_LOAD_ERROR_NONE)
+					{
+						debug(stdout, _("Can't load Edje image!"));
+						return;
+					}
+
+					evas_object_image_scale(stat_img, 600, 300);
+					evas_object_move(stat_img, 300,  300);
+				    evas_object_show(stat_img);
+					ecore_timer_add(2.0, _timer_cb, stat_img);
+					evas_object_show(stat_img);
 			}
+			return;
 		}
 	}
 	else
@@ -789,7 +790,7 @@ map_data_update(App_Info * app, Widget * widget)
 			if (edje)
 			{
 				const char *t;
-				if ((t = edje_object_data_get(edje, "tempvalue")))
+				if ((t = edje_object_data_get(edje, "drag")))
 				{
 					int temp_x, temp_y;
 					sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
