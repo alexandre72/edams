@@ -1,3 +1,25 @@
+/*
+ * thermometer.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
    group
    {
       name: "meter/thermometer";
@@ -8,19 +30,27 @@
    }
 	data
 	{
-		item: "tempvalue" "value.text";
+		item: "value" "value.text";
+		item: "drag" "EDJE_MESSAGE_FLOAT 1";
 	}
-      script {
-         public message(Msg_Type:type, id, ...) {
-            if ((type == MSG_FLOAT) && (id == 1)) {
+
+    script
+    {
+         public message(Msg_Type:type, id, ...)
+         {
+            if ((type == MSG_FLOAT) && (id == 1))
+            {
                new Float:val;
                val = getfarg(2);
                set_drag(PART:"temp_top", 0.0, val);
             }
          }
-      }
-      parts {
-         part {
+	}
+
+	parts
+	{
+		part
+        {
             name: "base";
             clip_to: "fade_clip";
             description {
@@ -72,7 +102,8 @@
                }
             }
          }
-         part {
+         part
+         {
             name: "value.text";
             type: TEXT;
             scale: 1;
@@ -88,14 +119,12 @@
                color: 255 255 255 0;
                color2: 0 0 0 0;
                color3: 0 0 0 0;
-               color_class: "module_label";
                text
                {
                   font: "Sans:style=Bold";
                   size: 8;
                   min: 1 1;
                   align: 0.0 0.0;
-                  text_class: "module_small";
                   text: "NA";
                }
             }

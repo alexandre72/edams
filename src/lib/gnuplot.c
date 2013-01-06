@@ -31,8 +31,10 @@ static const char *gnuplot_device_data_file_get(Device *device);
 static const char *
 gnuplot_device_data_file_get(Device *device)
 {
+	if(!device) return NULL;
+
 	char s[PATH_MAX];
-	snprintf(s, sizeof(s), "%s/%s-%d.dat", edams_locations_data_path_get(), device_name_get(device), device_id_get(device));
+	snprintf(s, sizeof(s), "%s/%d-%s.dat", edams_locations_data_path_get(), device_id_get(device), device_name_get(device));
 	return strdup(s);
 }
 
@@ -47,6 +49,8 @@ gnuplot_device_png_write(App_Info *app, Device *device)
 	//fprintf(gnuplotPipe, "set xrange [\"01-01-2013-17:36:00\":\"31-01-2013-17:37:00\"]\n");
 	//TODO:should handle options like grid, title, ylabel, xlabel, resolution format, histograms/plots...
 
+	if(!device) return NULL;
+
 	char s[PATH_MAX];
 
 	if(!app->settings->gnuplot_path)
@@ -55,24 +59,22 @@ gnuplot_device_png_write(App_Info *app, Device *device)
 		return NULL;
 	}
 
-	snprintf(s, sizeof(s), "%s/%s-%d.png", edams_locations_data_path_get(), device_name_get(device), device_id_get(device));
-
-	FILE *gnuplotPipe;
+	FILE *gnuplot_pipe;
 	snprintf(s, sizeof(s), "%s -persist", app->settings->gnuplot_path);
-	gnuplotPipe = popen(s, "w");
-
-	if (gnuplotPipe)
+	gnuplot_pipe = popen(s, "w");
+	if (gnuplot_pipe)
 	{
-		fprintf(gnuplotPipe, "set term png size 600,300\n");
-		fprintf(gnuplotPipe, "set output \"%s\"\n", s);
-		fprintf(gnuplotPipe, "set xdata time\n");
- 		fprintf(gnuplotPipe, "set format x \"%%d/%%m\"\n");
-  		fprintf(gnuplotPipe, "set ylabel \"%s\"\n", device_unit_symbol_get(device));
-  		fprintf(gnuplotPipe, "set timefmt \"%%d-%%m-%%Y-%%H:%%M:%%S\"\n");
-  		fprintf(gnuplotPipe, "set grid\n");
-		fprintf(gnuplotPipe, "plot '%s' using 1:2 with lines title '%s'\n", gnuplot_device_data_file_get(device), device_name_get(device));
-		fprintf(gnuplotPipe,"exit\n");
-		pclose(gnuplotPipe);
+		snprintf(s, sizeof(s), "%s/%d-%s.png", edams_locations_data_path_get(), device_id_get(device), device_name_get(device));
+		fprintf(gnuplot_pipe, "set term png size 600,300\n");
+		fprintf(gnuplot_pipe, "set output \"%s\"\n", s);
+		fprintf(gnuplot_pipe, "set xdata time\n");
+ 		fprintf(gnuplot_pipe, "set format x \"%%d/%%m\"\n");
+  		fprintf(gnuplot_pipe, "set ylabel \"%s(%s)\"\n", device_units_get(device), device_unit_symbol_get(device));
+  		fprintf(gnuplot_pipe, "set timefmt \"%%d-%%m-%%Y-%%H:%%M:%%S\"\n");
+  		fprintf(gnuplot_pipe, "set grid\n");
+		fprintf(gnuplot_pipe, "plot '%s' using 1:2 with lines title '%s'\n", gnuplot_device_data_file_get(device), device_name_get(device));
+		fprintf(gnuplot_pipe,"exit\n");
+		pclose(gnuplot_pipe);
 	}
 	else
 	{
@@ -90,6 +92,8 @@ gnuplot_device_png_write(App_Info *app, Device *device)
 Eina_Bool
 gnuplot_device_data_write(App_Info *app, Device *device)
 {
+	if(!device) return EINA_FALSE;
+
 	time_t timestamp;
 	struct tm *t;
 	FILE *dat;
