@@ -21,6 +21,32 @@
 
 group
 {
+	images
+	{
+		image: "thermometer2_icon.png" COMP;
+	}
+
+	name: "meter/thermometer2/icon";
+    min: 32 32;
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "thermometer2_icon.png";
+            }
+         }
+      }
+}
+
+
+group
+{
 	min: 16 60;
 	max: 16 60;
 

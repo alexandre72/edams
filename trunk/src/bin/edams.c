@@ -65,8 +65,6 @@ static void _notify_close_bt_cb(void *data, Evas_Object * obj __UNUSED__,
 								void *event_info __UNUSED__);
 static void _notify_set(const char *msg, const char *icon);
 static void _location_item_del_cb(void *data, Evas_Object * obj, void *event_info);
-static void _device_widget_data_update(Widget * widget);
-static void _device_widget_layout_update(Widget * widget);
 App_Info *app = NULL;
 
 // xPL sensor.basic listener.
@@ -663,8 +661,7 @@ static void handler(void *data __UNUSED__, void *buf, unsigned int len)
 			// Update device widget affected to it's location.
 			if (widget_device_id_get(widget) == device_id_get(device))
 			{
-				// If device is already here, so only update device data.
-				_device_widget_data_update(widget);
+				// If device is already here, only update device data in global map and cosm datastream.
 				map_data_update(app, widget);
 				cosm_device_datastream_update(app, location, device);
 			}
@@ -713,18 +710,16 @@ static void _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED_
 	char *meter = elm_object_item_text_get(event_info);
 	Widget *widget = data;
 	widget_name_set(widget, meter);
-	_device_widget_layout_update(widget);
 	location_save(app->location);
 }
 
 
 
 static void
-_layout_dbclicked__cb(void *data __UNUSED__, Evas_Object * obj,
-					  const char *emission __UNUSED__, const char *source __UNUSED__)
+_widgets_list_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-	Evas_Object *ctxpopup;
-	Evas_Coord x, y;
+   	Evas_Object *ctxpopup;
+   	Evas_Coord x,y;
 	Widget *widget = (Widget *) data;
 
 	ctxpopup = elm_ctxpopup_add(obj);
@@ -742,111 +737,18 @@ _layout_dbclicked__cb(void *data __UNUSED__, Evas_Object * obj,
 	evas_object_size_hint_max_set(ctxpopup, 240, 240);
 	evas_object_move(ctxpopup, x, y);
 	evas_object_show(ctxpopup);
+
+   elm_list_item_selected_set(event_info, EINA_FALSE);
 }
 
 
-static void _device_widget_data_update(Widget * widget)
-{
-	// Update data device meter affected to location(can be affected on
-	// different locations).
-	Device *device = devices_list_device_with_id_get(app->devices,
-													 widget_device_id_get(widget));
-
-	if (device)
-	{
-		Eina_List *l;
-		Location *location;
-
-		EINA_LIST_FOREACH(app->locations, l, location)
-		{
-			char s[64];
-			snprintf(s, sizeof(s), "%d %d %s layout",
-					 widget_position_get(widget), device_id_get(device),
-					 location_name_get(location));
-			Evas_Object *layout = elm_object_name_find(app->win, s, -1);
-
-			if (layout)
-			{
-				const char *t;
-				// Special layout case(example:temperature values are floats).
-				if ((t = elm_layout_data_get(layout, "tempvalue")))
-				{
-					int temp_x, temp_y;
-					sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
-
-					Evas_Object *eo = elm_layout_edje_get(layout);
-					Edje_Message_Float msg;
-					double level =
-						(double)((temp_x + (temp_y * 0.01)) -
-								 TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
-
-					if (level < 0.0)
-						level = 0.0;
-					else if (level > 1.0)
-						level = 1.0;
-					msg.val = level;
-					edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
-				}
-
-
-				if ((t = elm_layout_data_get(layout, "action")))
-				{
-					if (atoi(device_data_get(device)) == 0)
-						elm_object_signal_emit(layout, "end", "over");
-					else
-						elm_object_signal_emit(layout, "animate", "over");
-				}
-
-				if ((t = elm_layout_data_get(layout, "title")))
-				{
-					snprintf(s, sizeof(s), "%d - %s", device_id_get(device),
-							 device_name_get(device));
-					elm_object_part_text_set(layout, "title.text", s);
-				}
-
-				if ((t = elm_layout_data_get(layout, "value")))
-				{
-					snprintf(s, sizeof(s), device_unit_format_get(device), device_data_get(device));
-					elm_object_part_text_set(layout, "value.text", s);
-				}
-				elm_object_signal_emit(layout, "updated", "over");
-			}
-		}
-	}
-}
-
-
-
-static void _device_widget_layout_update(Widget * widget)
-{
-	char s[64];
-
-	// printf("SENSOR:%d-%s with data %s\n", device_id_get(device),
-	// device_name_get(device), device_data_get(device));
-
-	Eina_List *l;
-	Location *location;
-	EINA_LIST_FOREACH(app->locations, l, location)
-	{
-		snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget),
-				 widget_device_id_get(widget), location_name_get(location));
-		Evas_Object *layout = elm_object_name_find(app->win, s, -1);
-
-		if (strstr(widget_name_get(widget), "default"))
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), "meter/counter");
-		else
-			elm_layout_file_set(layout, edams_edje_theme_file_get(), widget_name_get(widget));
-
-		location_save(location);
-	}
-}
 
 
 Evas_Object *_location_naviframe_content(Location * location)
 {
-	Evas_Object *layout;
 	Evas_Object *gd;
-	Evas_Object *vbx;
+	Evas_Object *vbx, *frame;
+	Evas_Object *list;
 	Evas_Object *ic, *img;
 	Evas_Object *bt;
 	Evas_Object *label;
@@ -914,8 +816,16 @@ Evas_Object *_location_naviframe_content(Location * location)
 	evas_object_smart_callback_add(bt, "clicked", _clear_widget_from_location_bt_clicked_cb, NULL);
 	evas_object_show(bt);
 
-	Evas_Object *table = elm_table_add(app->win);
-	elm_table_padding_set(table, 2, 2);
+	frame = elm_frame_add(app->win);
+	elm_object_text_set(frame, _("Widgets"));
+	elm_grid_pack(gd, frame, 1, 40, 99, 59);
+	evas_object_show(frame);
+
+	list = elm_list_add(app->win);
+	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
+	evas_object_name_set(list, "device type list");
+	evas_object_show(list);
+	elm_object_content_set(frame, list);
 
 	Eina_List *l, *widgets;
 	Widget *widget;
@@ -923,49 +833,25 @@ Evas_Object *_location_naviframe_content(Location * location)
 	int x = 0;
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
-		layout = elm_layout_add(app->win);
-		snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
-		evas_object_name_set(layout, s);
-		_device_widget_layout_update(widget);
-		_device_widget_data_update(widget);
- 		elm_table_pack(table, layout, x, 0, 1, 1);
-		evas_object_show(layout);
-		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, widget);
+		Evas_Object *ic;
+		ic = elm_icon_add(app->win);
+		snprintf(s, sizeof(s), "%s/icon", widget_name_get(widget));
+   		elm_image_file_set(ic, edams_edje_theme_file_get(), s);
+		elm_image_aspect_fixed_set(ic, EINA_TRUE);
+		elm_image_resizable_set(ic, 1, 0);
+
+		snprintf(s, sizeof(s), "%d - %s", widget_device_id_get(widget), widget_name_get(widget));
+		elm_list_item_append(list, s, ic, NULL, _widgets_list_item_cb, widget);
+
+		Device *device = devices_list_device_with_id_get(app->devices, widget_device_id_get(widget));
+
+		if(device)
+			printf("%s\n", device_name_get(device));
+
 		x++;
 	}
-	elm_grid_pack(gd, table, 1, 40, 99, 59);
-	evas_object_show(table);
+	elm_list_go(list);
 
-
-/*
-	hbx = elm_box_add(app->win);
-	evas_object_name_set(hbx, "meters hbx");
-	elm_box_horizontal_set(hbx, EINA_TRUE);
-	//evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	//evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_homogeneous_set(hbx, EINA_FALSE);
-
-	Eina_List *l, *widgets;
-	Widget *widget;
-	widgets = location_widgets_list_get(location);
-	EINA_LIST_FOREACH(widgets, l, widget)
-	{
-		layout = elm_layout_add(app->win);
-		snprintf(s, sizeof(s), "%d %d %s layout", widget_position_get(widget), widget_device_id_get(widget), location_name_get(location));
-		evas_object_name_set(layout, s);
-		_device_widget_layout_update(widget);
-		_device_widget_data_update(widget);
-		evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-		elm_box_padding_set(hbx, 1, 0);
-		elm_box_pack_end(hbx, layout);
-		evas_object_show(layout);
-		elm_layout_signal_callback_add(layout, "mouse,clicked,1", "*", _layout_dbclicked__cb, widget);
-	}
-
-	elm_box_recalculate(hbx);
-	elm_box_pack_end(vbx, hbx);
-	evas_object_show(hbx);
-*/
 	return vbx;
 }
 
@@ -1017,7 +903,8 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 		{
 			if (strncmp(group, "meter/", 6) == 0)
 			{
-				app->meters = eina_list_append(app->meters, eina_stringshare_add(group));
+				if(!strstr(group, "/icon"))
+					app->meters = eina_list_append(app->meters, eina_stringshare_add(group));
 			}
 		}
 		edje_file_collection_list_free(groups);
@@ -1183,14 +1070,11 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	{
 		Evas_Object *ic;
 		ic = elm_icon_add(app->win);
-		// evas_object_size_hint_align_set(ic, 0.5, 0.5);
-		// elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
-		elm_image_file_set(ic, location_filename_get(location), "/image/0");
-		Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), NULL, ic,
-												   NULL, location);
+   		elm_image_file_set(ic, location_filename_get(location), "/image/0");
+		elm_image_resizable_set(ic, 1, 1);
+		Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), ic, ic,  NULL, location);
 		elm_object_item_del_cb_set(it, _location_item_del_cb);
-		it = elm_naviframe_item_push(naviframe, location_name_get(location),
-									 NULL, NULL, _location_naviframe_content(location), NULL);
+		it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content(location), NULL);
 		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 		elm_object_item_data_set(it, location);
 	}

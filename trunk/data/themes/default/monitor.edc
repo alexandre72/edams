@@ -20,6 +20,32 @@
 
 group
 {
+	images
+	{
+		image: "monitor_icon.png" COMP;
+	}
+
+	name: "meter/monitor/icon";
+    min: 32 32;
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "monitor_icon.png";
+            }
+         }
+      }
+}
+
+
+group
+{
 	min: 100 100;
     max: 100 100;
 
