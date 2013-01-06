@@ -2,14 +2,12 @@
 #include <Ecore.h>
 #include <Edje.h>
 
-
-#include "map.h"
-#include "edams.h"
-#include "path.h"
 #include "device.h"
+#include "gnuplot.h"
 #include "location.h"
+#include "map.h"
+#include "path.h"
 #include "utils.h"
-
 
 #define DEFAULT_WIDTH 800
 #define DEFAULT_HEIGHT 600
@@ -25,7 +23,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 typedef struct _Evas_Smart_Example_Data Evas_Smart_Example_Data;
 
 
-#define MAX_CHILD 20
+#define MAX_CHILD 50
 
 
 struct _Evas_Smart_Example_Data
@@ -79,10 +77,8 @@ static App_Info *app;
 Eet_File *ef;
 
 static void _ecore_evas_resize_cb(Ecore_Evas * ee);
-static void _on_mouse_in(void *data __UNUSED__, Evas * evas,
-						 Evas_Object * o __UNUSED__, void *einfo);
-static void _on_mouse_out(void *data __UNUSED__, Evas * evas,
-						  Evas_Object * o __UNUSED__, void *einfo);
+static void _on_mouse_in(void *data __UNUSED__, Evas * evas, Evas_Object * o __UNUSED__, void *einfo);
+static void _on_mouse_out(void *data __UNUSED__, Evas * evas, Evas_Object * o __UNUSED__, void *einfo);
 static void _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo);
 static void _on_keydown(void *data, Evas * evas, Evas_Object * o, void *einfo);
 
@@ -105,7 +101,8 @@ _on_child_del(void *data, Evas * evas __UNUSED__, Evas_Object * o, void *einfo _
 }/*_on_child_del*/
 
 
-static void _evas_smart_example_child_callbacks_unregister(Evas_Object * obj)
+static void
+_evas_smart_example_child_callbacks_unregister(Evas_Object * obj)
 {
 	evas_object_data_set(obj, "index", NULL);
 	evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE, _on_child_del);
@@ -125,7 +122,7 @@ _on_mouse_out(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o,
 			  void *einfo __UNUSED__)
 {
 	evas_object_focus_set(o, EINA_FALSE);
-}
+}/*_on_mouse_out*/
 
 
 
@@ -133,8 +130,7 @@ static void
 _on_mouse_in(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, void *einfo __UNUSED__)
 {
 	evas_object_focus_set(o, EINA_TRUE);
-}
-
+}/*_on_mouse_in*/
 
 
 static void
@@ -209,7 +205,8 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 /*
  *Create and setup a new example smart object's internals
  */
-static void _evas_smart_example_smart_add(Evas_Object * o)
+static void
+_evas_smart_example_smart_add(Evas_Object * o)
 {
 	EVAS_SMART_DATA_ALLOC(o, Evas_Smart_Example_Data);
 
@@ -233,7 +230,9 @@ static void _evas_smart_example_smart_add(Evas_Object * o)
 	_evas_smart_example_parent_sc->add(o);
 }/*_evas_smart_example_add*/
 
-static void _evas_smart_example_smart_del(Evas_Object * o)
+
+static void
+_evas_smart_example_smart_del(Evas_Object * o)
 {
 	EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
 
@@ -248,9 +247,14 @@ static void _evas_smart_example_smart_del(Evas_Object * o)
 	}
 
 	_evas_smart_example_parent_sc->del(o);
-}
+}/*_evas_smart_example_smart_del*/
 
-static void _evas_smart_example_smart_show(Evas_Object * o)
+
+/*
+ *
+ */
+static void
+_evas_smart_example_smart_show(Evas_Object * o)
 {
 	EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
 
@@ -264,9 +268,14 @@ static void _evas_smart_example_smart_show(Evas_Object * o)
 	evas_object_show(priv->border);
 	evas_object_show(priv->text);
 	_evas_smart_example_parent_sc->show(o);
-}
+}/*_evas_smart_example_smart_show*/
 
-static void _evas_smart_example_smart_hide(Evas_Object * o)
+
+/*
+ *
+ */
+static void
+_evas_smart_example_smart_hide(Evas_Object * o)
 {
 	EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
 
@@ -280,23 +289,30 @@ static void _evas_smart_example_smart_hide(Evas_Object * o)
 	evas_object_hide(priv->border);
 
 	_evas_smart_example_parent_sc->hide(o);
-}
+}/*_evas_smart_example_smart_hide*/
 
-static void _evas_smart_example_smart_resize(Evas_Object * o, Evas_Coord w, Evas_Coord h)
+
+/*
+ *
+ */
+static void
+_evas_smart_example_smart_resize(Evas_Object * o, Evas_Coord w, Evas_Coord h)
 {
 	Evas_Coord ow, oh;
 	evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
 	if ((ow == w) && (oh == h))
 		return;
 
-	printf("UPDATE SMART OBJECT GEOMETRY!\n");
-
-	/* this will trigger recalculation */
+	//Trigger recalculation.
 	evas_object_smart_changed(o);
-}
+}/*_evas_smart_example_smart_resize*/
 
-/* act on child objects' properties, before rendering */
-static void _evas_smart_example_smart_calculate(Evas_Object * o)
+
+/*
+ * Act on child objects' properties, before rendering
+ */
+static void
+_evas_smart_example_smart_calculate(Evas_Object * o)
 {
 	char key[64];
 	char *ret;
@@ -343,10 +359,14 @@ static void _evas_smart_example_smart_calculate(Evas_Object * o)
 			evas_object_event_callback_add(priv->children[n], EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 		}
 	}
-}
+}/*_evas_smart_example_smart_calculate*/
 
-// Setup our smart interface
-static void _evas_smart_example_smart_set_user(Evas_Smart_Class * sc)
+
+/*
+ * Setup our smart interface
+ */
+static void
+_evas_smart_example_smart_set_user(Evas_Smart_Class * sc)
 {
 	// Specializing these two
 	sc->add = _evas_smart_example_smart_add;
@@ -357,14 +377,16 @@ static void _evas_smart_example_smart_set_user(Evas_Smart_Class * sc)
 	// Clipped smart object has no hook on resizes or calculations
 	sc->resize = _evas_smart_example_smart_resize;
 	sc->calculate = _evas_smart_example_smart_calculate;
-}
+}/*_evas_smart_example_smart_set_user*/
+
 
 /*
  *
- *BEGINS example smart object's own interface
+ *BEGINS smart object's own interface
  *
  */
-Eina_List *evas_smart_example_location_add(Evas_Object * o, Location * location)
+Eina_List *
+evas_smart_example_location_add(Evas_Object * o, Location * location)
 {
 	Eina_List *childs = NULL;
 
@@ -439,21 +461,25 @@ Eina_List *evas_smart_example_location_add(Evas_Object * o, Location * location)
 										(void *)(long)priv->child_count);
 
 	return childs;
-}
+}/*evas_smart_example_location_add*/
 
 
 
 
 /*
- *Add a new example smart object to a canvas
+ *Add a new smart object to a canvas.
  */
-Evas_Object *evas_smart_example_add(Evas * evas)
+Evas_Object *
+evas_smart_example_add(Evas * evas)
 {
 	return evas_object_smart_add(evas, _evas_smart_example_smart_class_new());
-}
+}/*evas_smart_example_add*/
 
 
 
+/*
+ *
+ */
 static void
 _evas_smart_example_remove_do(Evas_Smart_Example_Data * priv, Evas_Object * child, int idx)
 {
@@ -461,14 +487,15 @@ _evas_smart_example_remove_do(Evas_Smart_Example_Data * priv, Evas_Object * chil
 	priv->child_count--;
 	_evas_smart_example_child_callbacks_unregister(child);
 	evas_object_smart_member_del(child);
-}
+}/*_evas_smart_example_remove_do*/
 
 
 
 /*
  *Remove a child element, return its pointer (or NULL on errors)
  */
-Evas_Object *evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
+Evas_Object *
+evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 {
 	long idx;
 
@@ -493,8 +520,7 @@ Evas_Object *evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 	evas_object_smart_changed(o);
 
 	return child;
-}
-
+}/*evas_smart_example_remove*/
 
 
 /*
@@ -508,7 +534,8 @@ _timer_cb(void *data)
 	evas_object_del(stat_img);
 
 	return EINA_FALSE;
-}
+}/*_timer_cb*/
+
 
 /*
  *Callback called in smart object when a key is pressed
@@ -521,7 +548,6 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 	if(evas_object_smart_parent_get(o))
 	{
 		char id[255];
-		char s[PATH_MAX];
 		Device *device;
 
 		sscanf(evas_object_name_get(o), "%*[^'_']_%[^'_']_%*[^'_']_edje", id);
@@ -529,122 +555,90 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 
 		if(device)
 		{
-		// Key 'd' decrease smart object's width and height size
-		if (strcmp(ev->keyname, "s") == 0)
-		{
-  				if(!app->settings->gnuplot_path)
-  				{
-					debug(stderr, _("Gnuplot binary isn't set!"));
-  					return;
-  				}
-
-  				FILE *gnuplotPipe;
-  				snprintf(s, sizeof(s), "%s -persist", app->settings->gnuplot_path);
-				gnuplotPipe = popen(s, "w");
-
-				if (gnuplotPipe)
-  				{
-  					fprintf(gnuplotPipe, "set term png size 600,300\n");
-  					fprintf(gnuplotPipe, "set output \"%s/%s-%d.png\"\n", edams_locations_data_path_get(), device_name_get(device), device_id_get(device));
-  					fprintf(gnuplotPipe, "set xdata time\n");
-  					fprintf(gnuplotPipe, "set format x \"%%d/%%m\"\n");
-  					fprintf(gnuplotPipe, "set ylabel \"%s\"\n", device_unit_symbol_get(device));
-  					fprintf(gnuplotPipe, "set timefmt \"%%d-%%m-%%Y-%%H:%%M:%%S\"\n");
-  					fprintf(gnuplotPipe, "set grid\n");
-  					//TODO:should handle xrange to let user select data period(monthly, years, daily, hour)
-  					//fprintf(gnuplotPipe, "set xrange [\"01-01-2013-17:36:00\":\"31-01-2013-17:37:00\"]\n");
-					fprintf(gnuplotPipe, "plot '%s/%s.%d' using 1:2 with lines title '%s'\n", edams_locations_data_path_get(), device_name_get(device), device_id_get(device), device_name_get(device)) ;
-					fprintf(gnuplotPipe,"exit\n");
-					pclose(gnuplotPipe);
-
-					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
-				    evas_object_image_alpha_set(stat_img, EINA_TRUE);
-  					snprintf(s, sizeof(s), "%s/%s-%d.png", edams_locations_data_path_get(), device_name_get(device), device_id_get(device));
-    				evas_object_image_file_set(stat_img, s, NULL);
-					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
-    				if (err != EVAS_LOAD_ERROR_NONE)
-				    {
-				      debug(stdout, _("Can't load Edje image!"));
-				    }
-
-					evas_object_image_scale(stat_img, 600, 300);
-					evas_object_move(stat_img, 300,  300);
-				    evas_object_show(stat_img);
-					ecore_timer_add(2.0, _timer_cb, stat_img);
-
-					evas_object_show(stat_img);
+			// Key 's' show data device in graphics generated from gnuplot(PNG format).
+			if (strcmp(ev->keyname, "s") == 0)
+			{
+				Evas_Object *stat_img  = evas_object_image_filled_add(evas);
+				evas_object_image_alpha_set(stat_img, EINA_TRUE);
+    			evas_object_image_file_set(stat_img, gnuplot_device_png_write(app, device), NULL);
+				Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
+    			if (err != EVAS_LOAD_ERROR_NONE)
+				{
+					debug(stdout, _("Can't load Edje image!"));
+					return;
 				}
-				else
-  				{
-					debug(stderr, _("Couldn't found gnuplot binary in path:%s"), app->settings->gnuplot_path);
-				}
-
-			return;
+				evas_object_image_scale(stat_img, 600, 300);
+				evas_object_move(stat_img, 300,  300);
+			    evas_object_show(stat_img);
+				ecore_timer_add(2.0, _timer_cb, stat_img);
+				evas_object_show(stat_img);
+				return;
+			}
 		}
-	}
 	}
 	else
 	{
 		Eina_Rectangle o_geometry;
 		evas_object_geometry_get(o, &o_geometry.x, &o_geometry.y, &o_geometry.w, &o_geometry.h);
 
-	// Keys 'Right' or 'Left' keys are used to increase/decrease width.
-	// Keys 'Up' or 'Down' keys are used to increase/decrease height.
-	if (strcmp(ev->keyname, "Right") == 0 || strcmp(ev->keyname, "Left") == 0
-		|| strcmp(ev->keyname, "Up") == 0 || strcmp(ev->keyname, "Down") == 0)
-	{
-		switch (ev->keyname[0])
+		// Keys 'Right' or 'Left' keys are used to increase/decrease width.
+		// Keys 'Up' or 'Down' keys are used to increase/decrease height.
+		if (strcmp(ev->keyname, "Right") == 0 || strcmp(ev->keyname, "Left") == 0
+			|| strcmp(ev->keyname, "Up") == 0 || strcmp(ev->keyname, "Down") == 0)
 		{
-		case 'R':
-			o_geometry.w *= 1.02;
-			break;
+			switch (ev->keyname[0])
+			{
+			case 'R':
+				o_geometry.w *= 1.02;
+				break;
+			case 'L':
+				o_geometry.w *= 0.98;
+				break;
+			case 'U':
+				o_geometry.h *= 1.02;
+				break;
+			case 'D':
+				o_geometry.h *= 0.98;
+				break;
+			}
 
-		case 'L':
-			o_geometry.w *= 0.98;
-			break;
-
-		case 'U':
-			o_geometry.h *= 1.02;
-			break;
-
-		case 'D':
-			o_geometry.h *= 0.98;
-			break;
+			evas_object_resize(o, o_geometry.w, o_geometry.h);
+			char s[64];
+			char key[64];
+			snprintf(s, sizeof(s), "%d;%d;%d;%d", o_geometry.x, o_geometry.y,
+					 o_geometry.w, o_geometry.h);
+			snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+			eet_write(ef, key, s, strlen(s) + 1, 0);
+			return;
 		}
-		evas_object_resize(o, o_geometry.w, o_geometry.h);
-		char s[64];
-		char key[64];
-		snprintf(s, sizeof(s), "%d;%d;%d;%d", o_geometry.x, o_geometry.y,
-				 o_geometry.w, o_geometry.h);
-		snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
-		eet_write(ef, key, s, strlen(s) + 1, 0);
-		return;
+
+		// Key 'd' increase smart object's width and height size
+		if (strcmp(ev->keyname, "i") == 0)
+		{
+			o_geometry.w *= 1.1;
+			o_geometry.h *= 1.1;
+
+			evas_object_resize(o, o_geometry.w, o_geometry.h);
+			return;
+		}
+
+		// Key 'd' decrease smart object's width and height size
+		if (strcmp(ev->keyname, "d") == 0)
+		{
+			o_geometry.w *= 0.9;
+			o_geometry.h *= 0.9;
+
+			evas_object_resize(o, o_geometry.w, o_geometry.h);
+			return;
+		}
 	}
-
-	// Key 'd' increase smart object's width and height size
-	if (strcmp(ev->keyname, "i") == 0)
-	{
-		o_geometry.w *= 1.1;
-		o_geometry.h *= 1.1;
-
-		evas_object_resize(o, o_geometry.w, o_geometry.h);
-		return;
-	}
-
-	// Key 'd' decrease smart object's width and height size
-	if (strcmp(ev->keyname, "d") == 0)
-	{
-		o_geometry.w *= 0.9;
-		o_geometry.h *= 0.9;
-
-		evas_object_resize(o, o_geometry.w, o_geometry.h);
-		return;
-	}
-	}
-}
+}/*_on_keydown*/
 
 
 
+/*
+ *
+ */
 void
 map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -746,10 +740,12 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 	eet_close(ef);
 	ecore_evas_free(ee);
 	return;
+}/*map_new*/
 
-}
 
-
+/*
+ *Quit map proprely(free allocated stuff).
+ */
 void
 map_quit()
 {
@@ -757,9 +753,12 @@ map_quit()
 		return;
 
 	ecore_main_loop_quit();
-}
+}/*map_quit*/
 
 
+/*
+ *Sync map widgets with device data.
+ */
 void
 map_data_update(App_Info * app, Widget * widget)
 {
@@ -778,6 +777,7 @@ map_data_update(App_Info * app, Widget * widget)
 		Eina_List *l;
 		Location *location;
 
+		//Parse all location widgets and update widget Edje.
 		EINA_LIST_FOREACH(app->locations, l, location)
 		{
 			char s[64];
@@ -831,10 +831,16 @@ map_data_update(App_Info * app, Widget * widget)
 			}
 		}
 	}
-}
+}/*map_data_update*/
 
-static void _ecore_evas_resize_cb(Ecore_Evas * ee)
+
+/*
+ *Callback called when resizing Ecore_Evas canvas.
+ */
+static void
+_ecore_evas_resize_cb(Ecore_Evas * ee)
 {
+	//Resize background image to fit in new canvas size.
 	ecore_evas_geometry_get(ee, NULL, NULL, &geometry.w, &geometry.h);
 	evas_object_resize(evas_object_name_find(evas, "background image"), geometry.w, geometry.h);
-}
+}/*_ecore_evas_resize_cb*/
