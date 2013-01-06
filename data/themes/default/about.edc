@@ -30,7 +30,6 @@ group {
       {
          part
          {
-
             name: "base";
             description
             {

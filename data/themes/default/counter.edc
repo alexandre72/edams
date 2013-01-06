@@ -21,21 +21,46 @@
 
 group
 {
+	images
+	{
+		image: "counter_icon.png" COMP;
+	}
+
+	name: "meter/counter/icon";
+    min: 32 32;
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "counter_icon.png";
+            }
+         }
+      }
+}
+
+
+group
+{
+	images
+	{
+		image: "counter.png" COMP;
+	}
+
+	fonts
+	{
+	   font: "DS-Digital_Bold_Italic.ttf" "digital";
+	}
+
 	min: 80 35;
  	max: 80 35;
 
-        name: "meter/counter";
-
-		images
-		{
-		   image: "counter.png" COMP;
-		}
-
-
-		fonts
-		{
-		   font: "DS-Digital_Bold_Italic.ttf" "digital";
-		}
+    name: "meter/counter";
 
 		data
 		{
