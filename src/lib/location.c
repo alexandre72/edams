@@ -30,10 +30,11 @@
 #include "path.h"
 #include "utils.h"
 
-struct _Widget {
-    const char * name;
-    unsigned int device_id;
-    unsigned int position;
+struct _Widget
+{
+    const char * name;				//Widget name associated(edc widget group name) e.g. 'meter/counter'.
+    unsigned int device_id;			//Device id associated e.g '12'.
+    unsigned int position;			//Device widget position in Eina_List.
 };
 
 
@@ -49,7 +50,7 @@ struct _Location
 	double elevation; 				//The elevation of the location.
     const char *creation;			//Creation date of location Eet file.
     const char *revision;			//Revision date of location Eet file.
-	unsigned int cosm_feedid;			//The cosm url feed location e.g.g 'http://api.cosm.com/v2/feeds/0001'.
+	unsigned int cosm_feedid;		//The cosm url feed location e.g.g 'http://api.cosm.com/v2/feeds/0001'.
     unsigned int version;			//Version of location Eet file.
     Eina_List * widgets;
 };
@@ -87,7 +88,7 @@ _widget_shutdown(void)
 
 
 Widget *
-widget_new(const char * name, unsigned int device_id)
+widget_new(const char * name,  Device *device)
 {
     Widget *widget = calloc(1, sizeof(Widget));
 
@@ -97,8 +98,8 @@ widget_new(const char * name, unsigned int device_id)
           return NULL;
        }
 
-    widget->name = eina_stringshare_add(name ? name : "default");
-    widget->device_id = device_id;
+    widget->name = eina_stringshare_add(name ? name : "counter");
+    widget->device_id = device_id_get(device);
 
     return widget;
 }

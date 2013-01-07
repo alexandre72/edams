@@ -883,14 +883,21 @@ Evas_Object
 		elm_image_aspect_fixed_set(ic, EINA_TRUE);
 		elm_image_resizable_set(ic, 1, 0);
 
-		snprintf(s, sizeof(s), "%d - %s", widget_device_id_get(widget), widget_name_get(widget));
-		elm_list_item_sorted_insert(list, s, ic, NULL, _list_item_widgets_selected_cb, widget, _list_widgets_sort_cb);
+		Device *device;
 
-		Device *device = devices_list_device_with_id_get(app->devices, widget_device_id_get(widget));
+		if ((device = device_with_id_from_data_get(widget_device_id_get(widget))))
+		{
+			snprintf(s, sizeof(s), "%s(id:%d)",
+									device_name_get(device),
+									device_id_get(device));
+		}
+		else
+		{
+			snprintf(s, sizeof(s), "%d - %s", widget_device_id_get(widget), widget_name_get(widget));
+		}
+			elm_list_item_sorted_insert(list, strdup(s), ic, NULL, _list_item_widgets_selected_cb, widget, _list_widgets_sort_cb);
 
-		if(device)
-			printf("%s\n", device_name_get(device));
-
+		device_free(device);
 		x++;
 	}
 	elm_list_go(list);
