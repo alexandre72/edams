@@ -137,7 +137,7 @@ _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNU
 		return;
 	GenGridItem *ggi = elm_object_item_data_get(it);
 	Widget *widget;
-	widget = widget_new("default", device_id_get(ggi->device));
+	widget = widget_new(NULL, ggi->device);
 	location_widgets_add(app->location, widget);
 	location_save(app->location);
 

@@ -26,6 +26,8 @@
 #include <Eet.h>
 #include <Evas.h>
 
+#include "device.h"
+
 #define LOCATION_FILE_VERSION 0x0002
 
 typedef struct _Widget Widget;
@@ -39,7 +41,7 @@ typedef enum _Exposure_Flags
 
 
 /* Widget */
-Widget *widget_new(const char * name, unsigned int device_id);
+Widget *widget_new(const char * name, Device *device);
 void widget_free(Widget *widget);
 
 void widget_name_set(Widget *widget, const char * name);

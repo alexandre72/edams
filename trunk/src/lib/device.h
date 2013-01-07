@@ -22,7 +22,8 @@
 #ifndef __DEVICE_H
 #define __DEVICE_H
 
-#include "location.h"
+#include <Eina.h>
+#include <Evas.h>
 
 #define DEVICE_FILE_VERSION 0x0002
 
@@ -60,6 +61,8 @@ typedef enum _Type_Flags
 Type_Flags device_str_to_type(const char *s);
 const char *device_type_to_str(Type_Flags type);
 
+
+Device *device_with_id_from_data_get(unsigned int id);
 
 Device *device_new(unsigned int id, const char * name);
 void device_free(Device *device);

@@ -534,6 +534,44 @@ end:
 //
 //Read all devices infos files.
 //
+Device *
+device_with_id_from_data_get(unsigned int id)
+{
+	const Eina_File_Direct_Info *f_info;
+	Eina_Iterator *it;
+	Device *device = NULL;
+
+	it = eina_file_stat_ls(edams_locations_data_path_get());
+
+   	if(it)
+   	{
+	   EINA_ITERATOR_FOREACH(it, f_info)
+	   {
+			if(eina_str_has_extension(f_info->path, ".eet") == EINA_TRUE)
+			{
+				char s[PATH_MAX];
+				snprintf(s, sizeof(s), "%d-", id);
+				if(strncmp(s, ecore_file_file_get(f_info->path), strlen(s)) == 0)
+				{
+					device = device_load(f_info->path);
+					return device;
+				}
+			}
+		}
+
+		eina_iterator_free(it);
+	}
+
+	debug(stderr, _("No device with id '%d' registered"), id);
+	return NULL;
+}
+
+
+
+
+//
+//Read all devices infos files.
+//
 Eina_List *
 devices_database_list_get()
 {
@@ -644,7 +682,6 @@ devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
 		if(device_id_get(device) == id)
 		{
 			return device;
-
 		}
 	}
 	return NULL;
