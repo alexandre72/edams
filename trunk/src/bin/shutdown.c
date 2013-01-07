@@ -60,8 +60,6 @@ int edams_shutdown(App_Info * app)
 	debug(stdout, _("Free allocated memory..."));
 	app->locations = locations_list_free(app->locations);
 	app->devices = devices_list_free(app->devices);
-	void *data;
-	EINA_LIST_FREE(app->meters, data) eina_stringshare_del(data);
 	locations_shutdown();
 	devices_shutdown();
 	edams_settings_free(app->settings);

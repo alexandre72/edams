@@ -25,7 +25,8 @@ map.c \
 devices_picker.c \
 devices_creator.c \
 preferences_dlg.c \
-shutdown.c
+shutdown.c \
+widgets_picker.c
 
 edams_LDADD = \
     $(top_builddir)/src/lib/libedams.la \

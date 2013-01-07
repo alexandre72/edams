@@ -27,17 +27,17 @@ group {
          public max_freq_old;
          public max_freq_new;
          public max_freq_now;
-        
+
          public slide_cur_freq(val, Float:v) {
             new Float:freq, Float:min_freq, Float:max_freq, Float:tf;
             new f, f0, f1;
-           
+
             v = (1.0 - cos(v * 3.141592654)) / 2.0;
-           
+
             min_freq = fetch_int(available_frequencies, 0);
             max_freq = fetch_int(available_frequencies,
                                  count(available_frequencies) - 1);
-           
+
             f0 = get_int(cur_freq_old);
             f1 = get_int(cur_freq_new);
             f = f1 - f0;
@@ -45,7 +45,7 @@ group {
             f = round(freq);
             f = f + f0;
             set_int(cur_freq_now, f);
-           
+
             freq = (float(f) - min_freq) / (max_freq - min_freq);
             tf = (freq * 225.0) - 135.0;
             custom_state(PART:"meter", "default", 0.0);
@@ -54,7 +54,7 @@ group {
             custom_state(PART:"meter_sh", "default", 0.0);
             set_state_val(PART:"meter_sh", STATE_MAP_ROT_Z, tf);
             set_state(PART:"meter_sh", "custom", 0.0);
-           
+
             f0 = get_int(min_freq_old);
             f1 = get_int(min_freq_new);
             f = f1 - f0;
@@ -62,7 +62,7 @@ group {
             f = round(freq);
             f = f + f0;
             set_int(min_freq_now, f);
-           
+
             freq = (float(f) - min_freq) / (max_freq - min_freq);
             tf = (freq * 225.0) - 135.0;
             custom_state(PART:"meter_min", "default", 0.0);
@@ -71,7 +71,7 @@ group {
             custom_state(PART:"meter_min_sh", "default", 0.0);
             set_state_val(PART:"meter_min_sh", STATE_MAP_ROT_Z, tf);
             set_state(PART:"meter_min_sh", "custom", 0.0);
-           
+
             f0 = get_int(max_freq_old);
             f1 = get_int(max_freq_new);
             f = f1 - f0;
@@ -79,7 +79,7 @@ group {
             f = round(freq);
             f = f + f0;
             set_int(max_freq_now, f);
-           
+
             freq = (float(f) - min_freq) / (max_freq - min_freq);
             tf = (freq * 225.0) - 135.0;
             custom_state(PART:"meter_max", "default", 0.0);
@@ -88,14 +88,14 @@ group {
             custom_state(PART:"meter_max_sh", "default", 0.0);
             set_state_val(PART:"meter_max_sh", STATE_MAP_ROT_Z, tf);
             set_state(PART:"meter_max_sh", "custom", 0.0);
-           
+
             if (v >= 1.0) {
               set_int(cur_freq_anim, 0);
               return 0;
             }
             return 1;
          }
-        
+
          public message(Msg_Type:type, id, ...) {
             if ((type == MSG_INT_SET) && (id == 1)) { // add an available freq
                while (count(available_frequencies) > 0) {
@@ -104,7 +104,7 @@ group {
                for (new i = 2; i < numargs(); i++) {
                   append_int(available_frequencies, getarg(i));
                }
-            } 
+            }
             else if ((type == MSG_STRING_SET) && (id == 2)) { // add a governor
                new text[100];
                while (count(available_governors) > 0) {
@@ -114,44 +114,44 @@ group {
                   snprintf(text, 100, "%s", getarg(i));
                   append_str(available_governors, text);
                }
-            } 
+            }
             else if ((type == MSG_INT_SET) && (id == 3)) { // avg freq
                new f;
                new ani, curf, minf, maxf;
                new text[100];
 
-               f = getarg(2);              
+               f = getarg(2);
                if (f < 1000000) {
                   f += 500;
                   snprintf(text, 100, "%i", f / 1000);
-               } 
+               }
                else {
                   f += 50000;
                   snprintf(text, 100, "%i.%i", f / 1000000,
                             (f % 1000000) / 100000);
                }
                set_text(PART:"readout", text);
-              
+
                ani = get_int(cur_freq_anim);
                if (ani > 0) cancel_anim(ani);
                ani = anim(1.0, "slide_cur_freq", 0);
                set_int(cur_freq_anim, ani);
-              
+
                f = getarg(2);
                curf = get_int(cur_freq_now);
                set_int(cur_freq_old, curf);
                set_int(cur_freq_new, f);
-              
+
                f = getarg(4);
                minf = get_int(min_freq_now);
                set_int(min_freq_old, minf);
                set_int(min_freq_new, f);
-              
+
                f = getarg(5);
                maxf = get_int(max_freq_now);
                set_int(max_freq_old, maxf);
                set_int(max_freq_new, f);
-            } 
+            }
             else if ((type == MSG_STRING) && (id == 4)) {
                new text[100];
                snprintf(text, 100, "%s", getarg(2));
@@ -202,7 +202,7 @@ group {
                color: 255 255 255 255;
                color2: 0 0 0 128;
                color3: 0 0 0 32;
-               color_class: "module_label";
+				fixed: 1 1;
                text {
                   text: "??? Ghz";
                   font: "Sans:style=Bold";
@@ -337,4 +337,4 @@ group {
             target: "fade_clip";
          }
       }
-}   
+}

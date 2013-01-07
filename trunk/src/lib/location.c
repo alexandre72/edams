@@ -506,10 +506,10 @@ location_load(const char *filename)
 	/*FIXME:In future release handle this code's parts by adding newly field(extensions)*/
    	if (location->version < LOCATION_FILE_VERSION)
      	{
-
         	debug(stderr, _("Eet file '%s' %#x was too old, upgrading it to %#x"),
         			location->__eet_filename,
-                	location->version, LOCATION_FILE_VERSION);
+                	location->version,
+                	LOCATION_FILE_VERSION);
 
         	location->version = LOCATION_FILE_VERSION;
      	}
@@ -583,21 +583,19 @@ location_remove(Location *location)
 Eina_List *
 locations_list_free(Eina_List *locations)
 {
-	if(locations)
+    EINA_SAFETY_ON_NULL_RETURN_VAL(locations, NULL);
+
+	unsigned int n = 0;
+	Location *data;
+
+	EINA_LIST_FREE(locations, data)
 	{
-		unsigned int n = 0;
-		Location *data;
+		n++;
+		location_free(data);
+	}
+	eina_list_free(locations);
 
-    	EINA_LIST_FREE(locations, data)
-    	{
-    		n++;
-	    	location_free(data);
-	    }
-        eina_list_free(locations);
-
-        fprintf(stdout, _("INFO:%d locations list freed.\n"), n);
-        return NULL;
-    }
+	debug(stdout, _("%d Location struct of Eina_list freed"), n);
 
     return NULL;
 }
@@ -655,10 +653,9 @@ locations_list_get()
 				{
 					location->id = id++;
 					locations = eina_list_append(locations, location);
-		            //fprintf(stdout, _("INFO:Found new '%s' Eet location file.\n"), ecore_file_file_get(f_info->path));
 					if (eina_error_get())
 					{
-						debug(stderr, _("Couldn' allocate Eina_List node"));
+						debug(stderr, _("Couldn't allocate Eina_List node!"));
 						exit(-1);
 					}
 				}
@@ -668,7 +665,7 @@ locations_list_get()
 	eina_iterator_free(it);
 	}
 
-	//fprintf(stdout, _("INFO:%d locations found in database.\n"), eina_list_count(locations));
+	debug(stdout, _("%d locations registered in database"), eina_list_count(locations));
 	locations = eina_list_sort(locations, eina_list_count(locations), EINA_COMPARE_CB(_locations_list_sort_cb));
 	return locations;
 }

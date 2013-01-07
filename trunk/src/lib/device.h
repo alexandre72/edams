@@ -23,7 +23,8 @@
 #define __DEVICE_H
 
 #include "location.h"
-#include "xPL.h"
+
+#define DEVICE_FILE_VERSION 0x0002
 
 typedef struct _Device Device;
 
