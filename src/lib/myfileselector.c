@@ -30,6 +30,8 @@ static char *_file_perms_get(mode_t st_mode, uid_t st_uid, gid_t st_gid);
 static char *_file_size_get(off_t size);
 
 
+
+
 #ifdef HAVE_EVIL
 #define 	getuid()   1000
 //Get the real group ID of the calling process.
@@ -259,7 +261,6 @@ myfileselector_add()
     //elm_grid_pack(gd, bt, 0, 0, 20, 7);
     //evas_object_show(bt);
 
-
     myfs->fs = elm_fileselector_add(myfs->win);
     elm_fileselector_buttons_ok_cancel_set(myfs->fs, EINA_FALSE);
     elm_fileselector_is_save_set(myfs->fs, EINA_FALSE);
@@ -269,7 +270,6 @@ myfileselector_add()
     elm_grid_pack(gd, myfs->fs , 1, 1, 50, 80);
     evas_object_show(myfs->fs);
     evas_object_smart_callback_add(myfs->fs, "selected", _fs_selected_cb, myfs);
-
 
     //Set preview panel.
     myfs->preview_img =  elm_image_add(myfs->win);
@@ -341,24 +341,24 @@ myfileselector_add()
     evas_object_show(myfs->filename_entry);
 
     //Buttons bar.
+    myfs->cancel_bt =elm_button_add(myfs->win);
+	elm_object_text_set(myfs->cancel_bt,  _("Cancel"));
+	ic = elm_icon_add(myfs->win);
+   	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(ic, "window-close");
+   	elm_object_part_content_set(myfs->cancel_bt, "icon", ic);
+    elm_grid_pack(gd, myfs->cancel_bt , 65, 92, 15, 7);
+    evas_object_show(myfs->cancel_bt );
+	evas_object_smart_callback_add(myfs->cancel_bt, "clicked", _cancel_bt_clicked_cb, myfs);
+
     myfs->action_bt =elm_button_add(myfs->win);
     elm_object_text_set(myfs->action_bt,  _("Open"));
 	ic = elm_icon_add(myfs->win);
    	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
    	elm_icon_standard_set(ic, "document-open");
+    elm_grid_pack(gd, myfs->action_bt , 80, 92, 15, 7);
    	elm_object_part_content_set(myfs->action_bt, "icon", ic);
-    elm_grid_pack(gd, myfs->action_bt , 35, 92, 15, 7);
     evas_object_show(myfs->action_bt );
-
-    myfs->cancel_bt =elm_button_add(myfs->win);
-	elm_object_text_set(myfs->cancel_bt,  _("Close"));
-	ic = elm_icon_add(myfs->win);
-   	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "window-close");
-   	elm_object_part_content_set(myfs->cancel_bt, "icon", ic);
-    elm_grid_pack(gd, myfs->cancel_bt , 50, 92, 15, 7);
-    evas_object_show(myfs->cancel_bt );
-	evas_object_smart_callback_add(myfs->cancel_bt, "clicked", _cancel_bt_clicked_cb, myfs);
     //End of buttons bar.
 
     ///Forcing min height.

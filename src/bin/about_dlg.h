@@ -23,6 +23,7 @@
 #define __ABOUTDLG_H
 
 #include <Evas.h>
+#include "libedams.h"
 
 void about_dialog_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 

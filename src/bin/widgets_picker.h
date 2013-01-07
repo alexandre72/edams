@@ -1,8 +1,8 @@
 /*
- * edams.h
+ * widgets_picker.h
  * This file is part of EDAMS
  *
- * Copyright (C) 2012 - Alexandre Dussart
+ * Copyright (C) 2013 - Alexandre Dussart
  *
  * EDAMS is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,41 +18,13 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDAMS_H__
-#define __EDAMS_H__
+
+#ifndef __WIDGETSPICKER_H
+#define __WIDGETSPICKER_H
 
 #include <Evas.h>
-#include <Eina.h>
-
 #include "libedams.h"
-#include "location.h"
-#include "settings.h"
-#include "xPL.h"
 
-#define XPL_VERSION "20091005"
+void widgets_picker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
-//
-//Define App UI struct.
-//
-typedef struct
-{
-	int argc;
-	char **argv;
-
-	Evas_Object *win;
-	Evas_Object *waiting_win;
-	Evas_Object *toolbar;
-	Eina_List *locations;
-	Eina_List *devices;
-	Location *location;
-	Settings *settings;
-
-	xPL_ServicePtr 	edamsService ;
-	xPL_MessagePtr 	edamsMessageStat ;
-	xPL_MessagePtr 	edamsMessageTrig ;
-} App_Info;
-
-
-Evas_Object*_location_naviframe_content(Location *location);
-
-#endif /* __EDAMS_H__ */
+#endif

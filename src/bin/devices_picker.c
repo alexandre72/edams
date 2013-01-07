@@ -21,10 +21,10 @@
 
 #include "devices_picker.h"
 #include "device.h"
-#include "location.h"
-#include "utils.h"
-#include "path.h"
 #include "edams.h"
+#include "location.h"
+#include "path.h"
+#include "utils.h"
 
 static Elm_Gengrid_Item_Class *gic;
 
@@ -38,19 +38,19 @@ typedef struct _GenGridItem
 
 Evas_Object *win = NULL;
 
-static char *_gg_text_get(void *data, Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
-static Evas_Object *_gg_content_get(void *data, Evas_Object * obj, const char *part);
-static void _gg_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__);
-static void _gg_clickeddouble_cb(void *data __UNUSED__,
-								 Evas_Object * obj __UNUSED__, void *event_info);
-static Eina_Bool _gg_state_get(void *data __UNUSED__,
-							   Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
+static char *_gengrid_devices_text_get(void *data, Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
+static Evas_Object *_gengrid_devices_content_get(void *data, Evas_Object * obj, const char *part);
+static Eina_Bool _gengrid_devices_state_get(void *data __UNUSED__, Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
+static void _gengrid_devices_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__);
+static int _gengrid_devices_sort_cb(const void *pa, const void *pb);
+static void _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
 
-//
-//
-//
-static char *_gg_text_get(void *data, Evas_Object * obj __UNUSED__, const char *part __UNUSED__)
+/*
+ *
+ */
+static char *
+_gengrid_devices_text_get(void *data, Evas_Object * obj __UNUSED__, const char *part __UNUSED__)
 {
 	const GenGridItem *ti = data;
 	char buf[256];
@@ -58,13 +58,14 @@ static char *_gg_text_get(void *data, Evas_Object * obj __UNUSED__, const char *
 	snprintf(buf, sizeof(buf), "%d - %s", device_id_get(ti->device), device_name_get(ti->device));
 
 	return strdup(buf);
-}
+}/*_gengrid_devices_text_get*/
 
 
-//
-//
-//
-static Evas_Object *_gg_content_get(void *data, Evas_Object * obj, const char *part)
+/*
+ *
+ */
+static Evas_Object *
+_gengrid_devices_content_get(void *data, Evas_Object * obj, const char *part)
 {
 	const GenGridItem *ti = data;
 
@@ -79,38 +80,53 @@ static Evas_Object *_gg_content_get(void *data, Evas_Object * obj, const char *p
 	}
 
 	return NULL;
-}
+}/*_gengrid_devices_content_get*/
 
 
 
-//
-//
-//
+/*
+ *
+ */
 static Eina_Bool
-_gg_state_get(void *data __UNUSED__, Evas_Object * obj __UNUSED__, const char *part __UNUSED__)
+_gengrid_devices_state_get(void *data __UNUSED__, Evas_Object * obj __UNUSED__, const char *part __UNUSED__)
 {
 	return EINA_FALSE;
-}
+}/*_gengrid_devices_state_get*/
 
 
 
-//
-//
-//
-static void _gg_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__)
+/*
+ *
+ */
+static void
+_gengrid_devices_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__)
 {
 	GenGridItem *ti = data;
 	device_free(ti->device);
 	FREE(ti);
-}
+}/*_gengrid_devices_del*/
 
 
+/*
+ *Callback called in gengrid "devices" when sorted sorted_insert func is called.
+ */
+static int
+_gengrid_devices_sort_cb(const void *pa, const void *pb)
+{
+	const GenGridItem *ggia = pa, *ggib = pb;
 
-//
-// Display ctxpopup when double-click on an patient's gengrid.
-//
+	Device *a = (Device *)ggia->device;
+	Device *b = (Device *)ggib->device;
+
+	return device_id_get(a) - device_id_get(b);
+}/*gengrid_devices_sort_cb*/
+
+
+/*
+ *Callback called in gengrid "devices" when clickeddouble signal is emitted.
+ */
 static void
-_gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
+_gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 					 void *event_info __UNUSED__)
 {
 	App_Info *app = data;
@@ -126,16 +142,14 @@ _gg_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 	location_save(app->location);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	//elm_object_item_part_content_unset(naviframe, "default");
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe),
 									 NULL, _location_naviframe_content(app->location));
-}
+}/*_gengrid_devices_clickeddouble_cb*/
 
 
-
-//
-// Create devices picker.
-//
+/*
+ *Create devices picker: to allow user to select device found by xPL hub.
+ */
 void
 devicespicker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -165,7 +179,7 @@ devicespicker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	elm_gengrid_reorder_mode_set(grid, EINA_FALSE);
 	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_min_set(grid, 400, 400);
-	evas_object_smart_callback_add(grid, "clicked,double", _gg_clickeddouble_cb, app);
+	evas_object_smart_callback_add(grid, "clicked,double", _gengrid_devices_clickeddouble_cb, app);
 	elm_box_pack_end(bx, grid);
 	evas_object_show(grid);
 
@@ -197,35 +211,32 @@ devicespicker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	evas_object_show(sp);
 	elm_box_pack_end(bx, sp);
 
-	// Defines gengrid item class.
-	gic = elm_gengrid_item_class_new();
-	gic->item_style = "default";
-	gic->func.text_get = _gg_text_get;
-	gic->func.content_get = _gg_content_get;
-	gic->func.state_get = _gg_state_get;
-	gic->func.del = _gg_del;
+    // Defines gengrid item class.
+  	gic = elm_gengrid_item_class_new();
+   	gic->item_style = "default";
+	gic->func.text_get = _gengrid_devices_text_get;
+    gic->func.content_get = _gengrid_devices_content_get;
+    gic->func.state_get = _gengrid_devices_state_get;
+   	gic->func.del = _gengrid_devices_del;
 
-	// Fill gengrid with detected devices.
-	Eina_List *l;
-	Device *device;
-	printf("Sensors registered:%d\n", eina_list_count(app->devices));
+     // Fill gengrid with detected devices.
+    Eina_List *l;
+    Device *device;
 
-	EINA_LIST_FOREACH(app->devices, l, device)
-	{
-		GenGridItem *ti;
-		ti = calloc(1, sizeof(*ti));
-		ti->device = device_clone(device);
-		ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
-		// ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti,
-		// compare_cb, grid_sel, NULL);
-	}
+    EINA_LIST_FOREACH(app->devices, l, device)
+    {
+    	GenGridItem *ti;
+        ti = calloc(1, sizeof(*ti));
+       	ti->device = device_clone(device);
+        ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
+    }
 
 	// Item_class_ref is needed for gic.
 	// Some items can be added in callbacks.
-	elm_gengrid_item_class_ref(gic);
+    elm_gengrid_item_class_ref(gic);
 	elm_gengrid_item_class_free(gic);
 
 	// Resize window.
 	evas_object_resize(win, 400, 450);
 	evas_object_show(win);
-}
+}/*devicespicker_add*/

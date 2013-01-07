@@ -127,14 +127,15 @@ group
                color: 255 255 255 255;
                color2: 0 0 0 128;
                color3: 0 0 0 32;
-               text
-               {
-                  font: "Sans:style=Bold";
-                  size: 8;
-                  min: 1 1;
-                  align: 0.0 0.5;
-                  text: "NA";
-               }
+				fixed: 1 1;
+               	text
+               	{
+					font: "Sans:style=Bold";
+                  	size: 8;
+                  	min: 1 1;
+                  	align: 0.0 0.5;
+                  	text: "NA";
+               	}
             }
          }
 		part

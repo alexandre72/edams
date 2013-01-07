@@ -20,9 +20,10 @@
 
 
 #include "device.h"
+#include "edams.h"
 #include "libedams.h"
 #include "path.h"
-#include "edams.h"
+#include "utils.h"
 
 struct _Device
 {
@@ -120,10 +121,10 @@ device_new(unsigned int id, const char * name)
     Device *device = calloc(1, sizeof(Device));
 
     if (!device)
-       {
-          fprintf(stderr, "ERROR: could not calloc Device\n");
-          return NULL;
-       }
+	{
+		debug(stderr, _("Couldn't calloc Device struct"));
+		return NULL;
+	}
 
    	device->id = id;
     device->name = eina_stringshare_add(name ? name : "undefined");
@@ -420,7 +421,7 @@ device_image_set(Device *device, Evas_Object *image)
     Eet_File *ef = eet_open(device->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
       {
-        fprintf(stderr, "ERROR: could not open '%s' for writing!\n", device->__eet_filename);
+        debug(stderr, _("Couldn't open Eet file '%s' in writing mode"), device->__eet_filename);
         return;
       }
 
@@ -480,15 +481,21 @@ device_save(Device *device)
 
     ef = eet_open(device->__eet_filename, EET_FILE_MODE_READ_WRITE);
     if (!ef)
-       {
-          fprintf(stderr, "ERROR: could not open '%s' for write!\n", device->__eet_filename);
-          return EINA_FALSE;
-       }
+	{
+		debug(stderr, _("Couldn't open Eet file '%s' in writing mode"), device->__eet_filename);
+		return EINA_FALSE;
+	}
 
     ret = !!eet_data_write(ef, _device_descriptor, DEVICE_ENTRY, device, EINA_TRUE);
     eet_close(ef);
 
-    return ret;
+	if (!ret)
+	{
+		debug(stderr, _("Couldn't write any data to Eet file '%s'"), device->__eet_filename);
+		return EINA_FALSE;
+	}
+
+    return EINA_TRUE;
 }
 
 
@@ -499,10 +506,10 @@ device_load(const char *filename)
 
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
-      {
-        fprintf(stderr, "ERROR: could not open '%s' for reading!\n", filename);
+	{
+		debug(stderr, _("Couldn't open Eet file '%s' in reading mode"), filename);
         return NULL;
-      }
+	}
 
     device = eet_data_read(ef, _device_descriptor, DEVICE_ENTRY);
     if (!device) goto end;
@@ -510,12 +517,12 @@ device_load(const char *filename)
 
    	if (device->version < 0x0001)
      	{
-
-        	fprintf(stderr,_("Eet file '%s' %#x was too old, upgrading it to %#x!\n"),
+        	debug(stderr, _("Eet file '%s' %#x was too old, upgrading it to %#x"),
         			device->__eet_filename,
-                	device->version, 0x0001);
+                	device->version,
+                	DEVICE_FILE_VERSION);
 
-        	device->version = 0x0001;
+        	device->version = DEVICE_FILE_VERSION;
      	}
 
 end:
@@ -547,13 +554,11 @@ devices_database_list_get()
 
 				if(device)
 				{
-		            //fprintf(stdout, _("INFO:Found new '%s' Eet database device file.\n"), ecore_file_file_get(f_info->path));
-
 					devices = eina_list_append(devices, device);
 
 					if (eina_error_get())
 					{
-						fprintf(stderr, _("Can't allocate list node!"));
+						debug(stderr, _("Couldn't allocate Eina list node!"));
 						exit(-1);
 					}
 				}
@@ -563,7 +568,7 @@ devices_database_list_get()
 	eina_iterator_free(it);
 	}
 
-	//fprintf(stdout, _("INFO:%d devices found in database.\n"), eina_list_count(devices));
+	debug(stdout, _("%d devices registered in database"), eina_list_count(devices));
 	devices = eina_list_sort(devices, eina_list_count(devices), EINA_COMPARE_CB(devices_list_sort_cb));
 	return devices;
 }
@@ -575,22 +580,19 @@ devices_database_list_get()
 Eina_List *
 devices_list_free(Eina_List *devices)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(devices, NULL);
 
-	if(devices)
-	{
-		unsigned int n = 0;
-		Device *data;
+	unsigned int n = 0;
+	Device *data;
 
-    	EINA_LIST_FREE(devices, data)
-    	{
-			n++;
-	    	device_free(data);
-		}
-        eina_list_free(devices);
+    EINA_LIST_FREE(devices, data)
+    {
+		n++;
+	    device_free(data);
+	}
+	eina_list_free(devices);
 
-        fprintf(stdout, _("INFO:%d devices list freed.\n"),n);
-        return NULL;
-    }
+	debug(stdout, _("%d Device struct of Eina_list freed"), n);
 
     return NULL;
 }
@@ -604,10 +606,10 @@ device_clone(const Device *src)
 
     Device *dst = calloc(1, sizeof(Device));
     if (!dst)
-       {
-          fprintf(stderr, "ERROR: could not calloc Device\n");
-          return NULL;
-       }
+	{
+		debug(stderr, _("Couldn't calloc Device struct"));
+		return NULL;
+	}
 
     dst->__eet_filename = eina_stringshare_add(src->__eet_filename);
     dst->id = src->id;

@@ -145,7 +145,7 @@ devices_creator_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 					void *event_info __UNUSED__)
 {
 	Evas_Object *win, *gd, *frame, *bx;
-	Evas_Object *label, *ic, *img;
+	Evas_Object *ic, *img;
 	Evas_Object *bt, *list;
 	Evas_Object *entry;
 

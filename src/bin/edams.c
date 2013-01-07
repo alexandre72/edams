@@ -26,21 +26,23 @@
 
 #include <Ecore_File.h>
 
-#include "edams.h"
-#include "gnuplot.h"
-#include "map.h"
-#include "utils.h"
-#include "init.h"
-#include "myfileselector.h"
-#include "path.h"
-#include "location.h"
+#include "about_dlg.h"
+#include "cosm.h"
 #include "device.h"
 #include "devices_picker.h"
 #include "devices_creator.h"
-#include "shutdown.h"
-#include "about_dlg.h"
-#include "cosm.h"
+#include "edams.h"
+#include "gnuplot.h"
+#include "init.h"
+#include "location.h"
+#include "map.h"
+#include "myfileselector.h"
+#include "path.h"
 #include "preferences_dlg.h"
+#include "shutdown.h"
+#include "utils.h"
+#include "widgets_picker.h"
+
 
 static const int TEMP_MIN = -30;
 static const int TEMP_MAX = 50;
@@ -67,14 +69,14 @@ static void _notify_set(const char *msg, const char *icon);
 static void _location_item_del_cb(void *data, Evas_Object * obj, void *event_info);
 App_Info *app = NULL;
 
-// xPL sensor.basic listener.
+//xPL sensor.basic listener.
 void edamsMessageSensorBasicHandler(xPL_ServicePtr theService,
 									xPL_MessagePtr theMessage, xPL_ObjectPtr userValue);
 
 
-//
-// Update current selected location informations.
-//
+/*
+ *
+ */
 static void
 _add_apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -150,9 +152,9 @@ _add_apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 
 
 
-//
-//
-//
+/*
+ *
+ */
 static void
 _action_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -551,7 +553,9 @@ _location_item_del_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info
 	location = NULL;
 }
 
-
+/*
+ *Callback called in xPL Message 'control.basic' is triggered.
+ */
 void
 edamsMessageSensorBasicHandler(xPL_ServicePtr theService __UNUSED__,
 							   xPL_MessagePtr theMessage, xPL_ObjectPtr userValue)
@@ -572,7 +576,11 @@ edamsMessageSensorBasicHandler(xPL_ServicePtr theService __UNUSED__,
 }
 
 
-static void do_lengthy_task(Ecore_Pipe * pipe __UNUSED__)
+/*
+ *Child process that listen xPL messages received from xPL hub(hub is an external prog and need to be run).
+ */
+static void
+do_lengthy_task(Ecore_Pipe * pipe __UNUSED__)
 {
 	for (;;)
 	{
@@ -582,8 +590,27 @@ static void do_lengthy_task(Ecore_Pipe * pipe __UNUSED__)
 }
 
 
+/*
+ *Callback called in Eina list "app->devices" when sorted list_sort func is called.
+ */
+static int
+_eina_list_devices_sort_cb(const void *d1, const void *d2)
+{
+    unsigned int id1 = device_id_get((Device *)d1);
+    unsigned int id2 = device_id_get((Device *)d2);
 
-static void handler(void *data __UNUSED__, void *buf, unsigned int len)
+	if(id1 == id2)
+		return 0;
+	else if(id1 < id2)
+		return -1;
+	else
+		return 1;
+}/*_eina_list_devices_sort_cb*/
+
+
+
+static void
+handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
 	char s[PATH_MAX] = "0";
 	char id[255];
@@ -642,6 +669,7 @@ static void handler(void *data __UNUSED__, void *buf, unsigned int len)
 			device_save(device);
 		}
 		app->devices = eina_list_append(app->devices, device);
+		app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
 	}
 	device_data_set(device, sval);
 
@@ -673,98 +701,137 @@ static void handler(void *data __UNUSED__, void *buf, unsigned int len)
 }
 
 
-
-
+/*
+ *Callback called in ctxpopup object when dismissed signal is emitted
+ */
 static void
-_clear_widget_from_location_bt_clicked_cb(void *data __UNUSED__,
-										  Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_ctxpopup_dismissed_cb(void *data __UNUSED__, Evas_Object * obj, void *event_info __UNUSED__)
+{
+	evas_object_del(obj);
+}/*_ctxpopup_dismissed_cb*/
+
+
+/*
+ *Callback called in ctxpopup object when "remove" item is selected
+ */
+static void
+_ctxpopup_item_remove_widget_selected_cb(void *data __UNUSED__,
+										  Evas_Object * obj, void *event_info __UNUSED__)
 {
 	if (!app->location)
 	{
 		_notify_set(_
-					("Can't clear location devices list:no location selected!"),
+					("Couldn't remove widgets from location:no location selected!"),
 					"elm/icon/warning-notify/default");
 		return;
 	}
-	location_widgets_list_clear(app->location);
+
+	Evas_Object *list = elm_object_name_find(app->win, "widgets list", -1);
+
+	Elm_Object_Item *selected_item = elm_list_selected_item_get(list);
+	Widget *widget = elm_object_item_data_get(selected_item);
+
+	location_widgets_del(app->location, widget);
+   	elm_object_item_del(selected_item);
 	location_save(app->location);
+
+	elm_ctxpopup_dismiss(obj);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	// elm_object_item_part_content_unset(naviframe, NULL);
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe),
 									 NULL, _location_naviframe_content(app->location));
-}
+}/*_ctxpopup_item_remove_widget_selected_cb*/
 
 
 
-
-static void _dismissed(void *data __UNUSED__, Evas_Object * obj, void *event_info __UNUSED__)
-{
-	evas_object_del(obj);
-}
-
-
-
-static void _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
-{
-	char *meter = elm_object_item_text_get(event_info);
-	Widget *widget = data;
-	widget_name_set(widget, meter);
-	location_save(app->location);
-}
+#define ICON_NEW(ic, _icon)									  	\
+   if (_icon)                                         			\
+     {                                                 			\
+        ic = elm_icon_add(app->win);               				\
+        elm_icon_standard_set(ic, _icon);                      	\
+        elm_image_resizable_set(ic, EINA_FALSE, EINA_TRUE);   	\
+		elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME); \
+     }                                                         	\
+   else                                                        	\
+      ic = NULL;												\
 
 
-
+/*
+ *Callback called in list "widgets" object when an item is selected
+ */
 static void
-_widgets_list_item_cb(void *data, Evas_Object *obj, void *event_info)
+_list_item_widgets_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   	Evas_Object *ctxpopup;
+   	Evas_Object *ctxpopup, *ic;
    	Evas_Coord x,y;
 	Widget *widget = (Widget *) data;
 
 	ctxpopup = elm_ctxpopup_add(obj);
 	elm_ctxpopup_hover_parent_set(ctxpopup, app->win);
-	evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+	evas_object_smart_callback_add(ctxpopup, "dismissed", _ctxpopup_dismissed_cb, NULL);
 
-	Eina_List *l;
-	char *meter;
-	EINA_LIST_FOREACH(app->meters, l, meter)
-	{
-		elm_ctxpopup_item_append(ctxpopup, meter, NULL, _ctxpopup_item_cb, widget);
-	}
+	ICON_NEW(ic, "list-add");
+	elm_ctxpopup_item_append(ctxpopup, _("Add"), ic,  devicespicker_add, app);
+	ICON_NEW(ic, NULL);
+	elm_ctxpopup_item_append(ctxpopup, _("Change..."), NULL,  widgets_picker_add, app);
+	ICON_NEW(ic, "list-remove");
+	elm_ctxpopup_item_append(ctxpopup, _("Remove"), ic, _ctxpopup_item_remove_widget_selected_cb, widget);
 
 	evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
 	evas_object_size_hint_max_set(ctxpopup, 240, 240);
 	evas_object_move(ctxpopup, x, y);
 	evas_object_show(ctxpopup);
 
-   elm_list_item_selected_set(event_info, EINA_FALSE);
-}
+   	elm_list_item_selected_set(event_info, EINA_TRUE);
+}/*_list_item_widgets_selected_cb*/
 
 
+/*
+ *Callback called in list "widgets" when sorted sorted_insert func is called.
+ */
+int
+_list_widgets_sort_cb(const void *pa, const void *pb)
+{
+   const Elm_Object_Item *ia = pa, *ib = pb;
+
+   Device *a = (Device *)elm_object_item_data_get(ia);
+   Device *b = (Device *)elm_object_item_data_get(ib);
+
+   return device_id_get(a) - device_id_get(b);
+}/*_list_widgets_sort_cb*/
 
 
-Evas_Object *_location_naviframe_content(Location * location)
+/*
+ *
+ */
+Evas_Object
+*_location_naviframe_content(Location * location)
 {
 	Evas_Object *gd;
-	Evas_Object *vbx, *frame;
+	Evas_Object *bx, *frame;
 	Evas_Object *list;
-	Evas_Object *ic, *img;
-	Evas_Object *bt;
-	Evas_Object *label;
+	Evas_Object *img;
+	Evas_Object *en;
 	char s[256];
 
 	if (!location) return NULL;
-
-	vbx = elm_box_add(app->win);
-	evas_object_show(vbx);
 
 	gd = elm_grid_add(app->win);
 	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(gd, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_grid_size_set(gd, 100, 100);
-	elm_box_pack_end(vbx, gd);
 	evas_object_show(gd);
+
+	frame = elm_frame_add(app->win);
+	elm_object_text_set(frame, _("Informations"));
+	elm_grid_pack(gd, frame, 1, 1, 99, 30);
+	evas_object_show(frame);
+
+   	bx = elm_box_add(app->win);
+   	elm_box_horizontal_set(bx, EINA_TRUE);
+   	evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	elm_win_resize_object_add(app->win, bx);
+   	evas_object_show(bx);
 
 	img = elm_image_add(app->win);
 	elm_image_smooth_set(img, EINA_TRUE);
@@ -775,55 +842,31 @@ Evas_Object *_location_naviframe_content(Location * location)
 	{
 		elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
 	}
-	elm_grid_pack(gd, img, 1, 1, 40, 40);
-
+   	evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_pack_end(bx, img);
 	evas_object_show(img);
 
-	label = elm_label_add(app->win);
-	snprintf(s, sizeof(s), _(_("Location:%s")), location_name_get(location));
-	elm_object_text_set(label, s);
-	elm_grid_pack(gd, label, 41, 1, 40, 8);
-	evas_object_show(label);
+   	en = elm_entry_add(app->win);
+   	elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
+   	snprintf(s, sizeof(s),"%s", location_name_get(location));
+   	elm_object_text_set(en, s);
+   	evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   	elm_box_pack_end(bx, en);
+	evas_object_show(en);
 
-	label = elm_label_add(app->win);
-	snprintf(s, sizeof(s), _(_("Description:%s")), location_description_get(location));
-	elm_object_text_set(label, s);
-	elm_grid_pack(gd, label, 41, 8, 40, 8);
-	evas_object_show(label);
-
-	label = elm_label_add(app->win);
-	snprintf(s, sizeof(s), _(_("Devices:")));
-	elm_grid_pack(gd, label, 41, 15, 40, 8);
-	evas_object_show(label);
-
-	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Add..."));
-	ic = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "device-add");
-	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt, 70, 5, 20, 8);
-	evas_object_smart_callback_add(bt, "clicked", devicespicker_add, app);
-	evas_object_show(bt);
-
-	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Remove..."));
-	ic = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "device-remove");
-	elm_object_part_content_set(bt, "icon", ic);
-	elm_grid_pack(gd, bt, 70, 15, 20, 8);
-	evas_object_smart_callback_add(bt, "clicked", _clear_widget_from_location_bt_clicked_cb, NULL);
-	evas_object_show(bt);
+	elm_object_content_set(frame, bx);
 
 	frame = elm_frame_add(app->win);
 	elm_object_text_set(frame, _("Widgets"));
-	elm_grid_pack(gd, frame, 1, 40, 99, 59);
+	elm_grid_pack(gd, frame, 1, 31, 99, 69);
 	evas_object_show(frame);
 
 	list = elm_list_add(app->win);
-	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
-	evas_object_name_set(list, "device type list");
+	elm_scroller_policy_set(list, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_ON);
+	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS);
+	evas_object_name_set(list, "widgets list");
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
 
@@ -841,7 +884,7 @@ Evas_Object *_location_naviframe_content(Location * location)
 		elm_image_resizable_set(ic, 1, 0);
 
 		snprintf(s, sizeof(s), "%d - %s", widget_device_id_get(widget), widget_name_get(widget));
-		elm_list_item_append(list, s, ic, NULL, _widgets_list_item_cb, widget);
+		elm_list_item_sorted_insert(list, s, ic, NULL, _list_item_widgets_selected_cb, widget, _list_widgets_sort_cb);
 
 		Device *device = devices_list_device_with_id_get(app->devices, widget_device_id_get(widget));
 
@@ -852,8 +895,8 @@ Evas_Object *_location_naviframe_content(Location * location)
 	}
 	elm_list_go(list);
 
-	return vbx;
-}
+	return gd;
+}/*_location_naviframe_content*/
 
 
 // Main.
@@ -895,20 +938,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 			 PACKAGE_VERSION, (int)t->tm_mday, (int)t->tm_mon + 1, 1900 + (int)t->tm_year);
 
 	app->locations = locations_list_get();
-	Eina_List *groups = edje_file_collection_list(edams_edje_theme_file_get());
-	if (groups)
-	{
-		char *group;
-		EINA_LIST_FOREACH(groups, l, group)
-		{
-			if (strncmp(group, "meter/", 6) == 0)
-			{
-				if(!strstr(group, "/icon"))
-					app->meters = eina_list_append(app->meters, eina_stringshare_add(group));
-			}
-		}
-		edje_file_collection_list_free(groups);
-	}
+
 	app->win = elm_win_add(NULL, "edams", ELM_WIN_BASIC);
 	elm_win_title_set(app->win, s);
 	elm_win_autodel_set(app->win, EINA_TRUE);
@@ -1033,7 +1063,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	elm_object_text_set(bt, _("Add"));
 	ic = elm_icon_add(app->win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "add-edit");
+	elm_icon_standard_set(ic, "list-add");
 	elm_object_part_content_set(bt, "icon", ic);
 	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_table_pack(tb, bt, 0, 0, 1, 1);
@@ -1044,7 +1074,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	elm_object_text_set(bt, _("Remove"));
 	ic = elm_icon_add(app->win);
 	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "delete-edit");
+	elm_icon_standard_set(ic, "list-remove");
 	elm_object_part_content_set(bt, "icon", ic);
 	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_table_pack(tb, bt, 0, 1, 1, 1);

@@ -1,4 +1,4 @@
-/* 
+/*
  * about_dlg.c
  * This file is part of EDAMS
  *
@@ -19,17 +19,14 @@
  */
 
 
-
-
 #include "edams.h"
 #include "path.h"
 #include "utils.h"
 
 
-
-// 
-// 
-// 
+//
+//
+//
 void about_dialog_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 					  void *event_info __UNUSED__)
 {
