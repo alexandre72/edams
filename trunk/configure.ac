@@ -41,12 +41,12 @@ PKG_PROG_PKG_CONFIG
 
 #Must-to-have libraries checks.
 requirements="\
-   eina >= 1.2.99 \
-   eet >= 1.6.99 \
-   evas >= 1.2.99 \
-   ecore >= 1.2.99 \
-   edje >= 1.2.99 \
-   elementary >= 1.0.99 \
+   eina >= 1.7 \
+   eet >= 1.7 \
+   evas >= 1.7 \
+   ecore >= 1.7 \
+   edje >= 1.7 \
+   elementary >= 1.7 \
    "
 PKG_CHECK_MODULES([EDAMS], [${requirements}])
 
