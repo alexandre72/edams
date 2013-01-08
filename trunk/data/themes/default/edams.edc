@@ -24,8 +24,6 @@ collections {
 #include "about.edc"
 #include "monitor.edc"
 #include "thermometer.edc"
-#include "thermometer2.edc"
-#include "tachometer.edc"
 #include "counter.edc"
 
 
