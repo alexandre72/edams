@@ -1,5 +1,5 @@
 /*
- * thermometer2.edc
+ * thermometer.edc
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -23,10 +23,10 @@ group
 {
 	images
 	{
-		image: "thermometer2_icon.png" COMP;
+		image: "thermometer_icon.png" COMP;
 	}
 
-	name: "meter/thermometer2/icon";
+	name: "meter/thermometer/icon";
     min: 32 32;
       parts
       {
@@ -38,7 +38,7 @@ group
                	aspect: 1 1;
                	aspect_preference: BOTH;
             	state: "default" 0;
-		   		image.normal: "thermometer2_icon.png";
+		   		image.normal: "thermometer_icon.png";
             }
          }
       }
@@ -50,7 +50,7 @@ group
 	min: 16 60;
 	max: 16 60;
 
-	name: "meter/thermometer2";
+	name: "meter/thermometer";
 	images
 	{
 		image: "thermometer_base.png" COMP;
