@@ -966,7 +966,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	notify = elm_notify_add(app->win);
 	elm_notify_allow_events_set(notify, EINA_TRUE);
 	evas_object_name_set(notify, "notify");
-	elm_notify_align_set(notify, ELM_NOTIFY_ALIGN_FILL, 0.0);
+	//elm_notify_align_set(notify, -1.0, 0.0);
 	evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_notify_timeout_set(notify, 5.0);
 	evas_object_smart_callback_add(notify, "timeout", _notify_timeout, notify);
