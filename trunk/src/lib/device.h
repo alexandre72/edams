@@ -25,13 +25,13 @@
 #include <Eina.h>
 #include <Evas.h>
 
-#define DEVICE_FILE_VERSION 0x0002
+#define DEVICE_FILE_VERSION 0x0003
 
 typedef struct _Device Device;
 
 typedef enum _Type_Flags
 {
-	UNKNOWN			= (0),
+	UNKNOWN_TYPE	= (0),
 	BATTERY			= (1),      //battery - a battery level in percent.
 	COUNT			= (2),     	//count - a counter value (door openings, rain fall, etc)
 	CURRENT			= (3),	   	//current - a current value in Amps.
@@ -56,10 +56,21 @@ typedef enum _Type_Flags
 }Type_Flags;
 
 
+typedef enum _Class_Flags
+{
+	UNKNOWN_CLASS			= (0),
+	SENSOR					= (1),
+	CONTROL					= (2),
+	CLASS_LAST
+}Class_Flags;
+
+
 
 //Conversion funcs.
 Type_Flags device_str_to_type(const char *s);
 const char *device_type_to_str(Type_Flags type);
+Class_Flags device_str_to_class(const char *s);
+const char *device_class_to_str(Class_Flags type);
 
 
 Device *device_with_id_from_data_get(unsigned int id);
@@ -73,13 +84,13 @@ Device *device_load(const char *filename);
 
 void device_id_set(Device *device, unsigned int id);
 void device_name_set(Device *device, const char * name);
+void device_class_set(Device *device, Class_Flags class);
 void device_type_set(Device *device, Type_Flags type);
 void device_description_set(Device *device, const char * description);
 void device_datasheeturl_set(Device *device, const char * datasheeturl);
 void device_image_set(Device *device, Evas_Object *image);
 void device_creation_set(Device *device, const char * creation);
 void device_data_set(Device *device, const char * data);
-void device_widget_set(Device *device, const char * widget);
 void device_units_set(Device *device, const char *units);
 void device_unit_format_set(Device *device, const char *unit_format);
 void device_unit_symbol_set(Device *device, const char *unit_symbol);
@@ -87,12 +98,12 @@ void device_unit_symbol_set(Device *device, const char *unit_symbol);
 const char *device_filename_get(Device *device);
 unsigned int device_id_get(const Device *device);
 const char * device_name_get(const Device *device);
+Class_Flags device_class_get(const Device *device);
 Type_Flags device_type_get(const Device *device);
 const char * device_description_get(const Device *device);
 const char * device_datasheeturl_get(const Device *device);
 const char * device_creation_get(const Device *device);
 const char * device_data_get(const Device *device);
-const char * device_widget_get(const Device *device);
 const char * device_units_get(const Device *device);
 const char * device_unit_format_get(const Device *device);
 const char * device_unit_symbol_get(const Device *device);
@@ -100,7 +111,6 @@ const char * device_unit_symbol_get(const Device *device);
 Eina_List *devices_database_list_get();
 Eina_List *devices_list_free(Eina_List *devices);
 Device* devices_list_device_with_id_get(Eina_List *devices, unsigned int id);
-int devices_list_sort_cb(const void *d1, const void *d2);
 
 /* Global initializer / shutdown functions */
 void devices_init(void);
