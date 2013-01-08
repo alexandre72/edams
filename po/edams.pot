@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: edams 0.5.0\n"
+"Project-Id-Version: edams 0.8.0.84:93M\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
-"POT-Creation-Date: 2012-12-06 20:07+0100\n"
+"POT-Creation-Date: 2013-01-08 20:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,297 +17,412 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/bin/about_dlg.c:39
+#: src/bin/about_dlg.c:37
 msgid "About E.D.A.M.S..."
 msgstr ""
 
-#: src/bin/about_dlg.c:67 src/bin/sensors_picker.c:179
-#: src/lib/myfileselector.c:354
+#: src/bin/about_dlg.c:65 src/bin/edams.c:373 src/bin/preferences_dlg.c:238
+#: src/bin/devices_creator.c:272 src/bin/devices_picker.c:200
+#: src/lib/utils.c:92
 msgid "Close"
 msgstr ""
 
-#: src/bin/edams.c:125
+#: src/bin/edams.c:148
 #, c-format
-msgid "Room %s has been created."
+msgid "Location %s has been created."
 msgstr ""
 
-#: src/bin/edams.c:172 src/bin/sensors_creator.c:124
+#: src/bin/edams.c:195 src/bin/preferences_dlg.c:103
+#: src/bin/devices_creator.c:133
 msgid "Select a picture file"
 msgstr ""
 
-#: src/bin/edams.c:190
-msgid "Room Description"
+#: src/bin/edams.c:245
+msgid "Add a location"
 msgstr ""
 
-#: src/bin/edams.c:215 src/bin/sensors_creator.c:170
-msgid "Photo..."
+#: src/bin/edams.c:256 src/bin/devices_creator.c:163
+msgid "Photo"
 msgstr ""
 
-#: src/bin/edams.c:225 src/bin/sensors_creator.c:180
+#: src/bin/edams.c:276 src/bin/preferences_dlg.c:189
+#: src/bin/devices_creator.c:182
+msgid "Open..."
+msgstr ""
+
+#: src/bin/edams.c:288
 msgid "Name:"
 msgstr ""
 
-#: src/bin/edams.c:238 src/bin/sensors_creator.c:193
+#: src/bin/edams.c:301
 msgid "Description:"
 msgstr ""
 
-#: src/bin/edams.c:256 src/bin/sensors_creator.c:237 src/lib/utils.c:178
+#: src/bin/edams.c:314
+msgid "Geolocalization:"
+msgstr ""
+
+#: src/bin/edams.c:344
+msgid "Go to"
+msgstr ""
+
+#: src/bin/edams.c:362 src/bin/preferences_dlg.c:227
+#: src/bin/devices_creator.c:261
 msgid "Ok"
 msgstr ""
 
-#: src/bin/edams.c:267 src/bin/sensors_creator.c:248
-msgid "Cancel"
-msgstr ""
-
-#: src/bin/edams.c:375
+#: src/bin/edams.c:485
 #, c-format
-msgid "Room '%s' have been removed."
+msgid "Location '%s' have been removed."
 msgstr ""
 
-#: src/bin/edams.c:401
-msgid "Can't remove:no room selected!"
+#: src/bin/edams.c:512
+msgid "Can't remove:no location selected!"
 msgstr ""
 
-#: src/bin/edams.c:414
-msgid "Are you sure to want to remove selected room?"
+#: src/bin/edams.c:525
+msgid "Are you sure to want to remove selected location?"
 msgstr ""
 
-#: src/bin/edams.c:417
+#: src/bin/edams.c:528
 msgid "Yes"
 msgstr ""
 
-#: src/bin/edams.c:426
+#: src/bin/edams.c:537
 msgid "No"
 msgstr ""
 
-#: src/bin/edams.c:532
+#: src/bin/edams.c:700
 #, c-format
-msgid "INFO:Serial in content '%s'(%d bytes)\n"
+msgid "Sensors registered:%d\n"
 msgstr ""
 
-#: src/bin/edams.c:542
+#: src/bin/edams.c:724
+msgid "Couldn't remove widgets from location:no location selected!"
+msgstr ""
+
+#: src/bin/edams.c:774 src/bin/edams.c:1070
+msgid "Add"
+msgstr ""
+
+#: src/bin/edams.c:776
+msgid "Change..."
+msgstr ""
+
+#: src/bin/edams.c:778 src/bin/edams.c:1081
+msgid "Remove"
+msgstr ""
+
+#: src/bin/edams.c:826
+msgid "Informations"
+msgstr ""
+
+#: src/bin/edams.c:862
+msgid "Widgets"
+msgstr ""
+
+#: src/bin/edams.c:928
 #, c-format
-msgid ""
-"INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial "
-"port...)\n"
+msgid "[31mERROR:[0mCan't allocate App_Info struct!\n"
 msgstr ""
 
-#: src/bin/edams.c:547
-msgid "Initialize EDAMS wait please..."
-msgstr ""
-
-#: src/bin/edams.c:563
-msgid "calibrating sensors, setting serial port... "
-msgstr ""
-
-#: src/bin/edams.c:576
-#, c-format
-msgid "INFO:EDAMS is ready and operationnal\n"
-msgstr ""
-
-#: src/bin/edams.c:593
-#, c-format
-msgid "INFO:Updating sensor '%d-%s'  with data '%s'...\n"
-msgstr ""
-
-#: src/bin/edams.c:605
-#, c-format
-msgid "Added new sensor '%d-%s'."
-msgstr ""
-
-#: src/bin/edams.c:621
-msgid "Can't add a sensor to room:no room selected!"
-msgstr ""
-
-#: src/bin/edams.c:635
-msgid "Can't clear room sensors list:no room selected!"
-msgstr ""
-
-#: src/bin/edams.c:786
-#, c-format
-msgid "Room:%s"
-msgstr ""
-
-#: src/bin/edams.c:792
-#, c-format
-msgid "Description:%s"
-msgstr ""
-
-#: src/bin/edams.c:798
-#, c-format
-msgid "Sensors:"
-msgstr ""
-
-#: src/bin/edams.c:813
-msgid "Add..."
-msgstr ""
-
-#: src/bin/edams.c:823
-msgid "Remove..."
-msgstr ""
-
-#: src/bin/edams.c:897
-#, c-format
-msgid "CRI:Can't init Eina!\n"
-msgstr ""
-
-#: src/bin/edams.c:908
-msgid "Can't init Elementary!"
-msgstr ""
-
-#: src/bin/edams.c:922
-msgid "Initialize Application..."
-msgstr ""
-
-#: src/bin/edams.c:934
+#: src/bin/edams.c:944
 #, c-format
 msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
 msgstr ""
 
-#: src/bin/edams.c:1019
-msgid "Sensors Creator"
+#: src/bin/edams.c:1014
+msgid "Devices Creator"
 msgstr ""
 
-#: src/bin/edams.c:1020 src/bin/preferences_dlg.c:35
+#: src/bin/edams.c:1015
+msgid "Locations Map"
+msgstr ""
+
+#: src/bin/edams.c:1017
 msgid "Preferences"
 msgstr ""
 
-#: src/bin/edams.c:1021
+#: src/bin/edams.c:1018
 msgid "About"
 msgstr ""
 
-#: src/bin/edams.c:1022
+#: src/bin/edams.c:1019
 msgid "Quit"
 msgstr ""
 
-#: src/bin/edams.c:1046
-msgid "Rooms"
+#: src/bin/edams.c:1043
+msgid "Locations"
 msgstr ""
 
-#: src/bin/edams.c:1072
-msgid "Add"
+#: src/bin/init.c:33
+msgid "Initialize xPL service..."
 msgstr ""
 
-#: src/bin/edams.c:1083
-msgid "Remove"
+#: src/bin/init.c:53
+msgid "Initialize Enlightenment Foundation Libraries..."
 msgstr ""
 
-#: src/bin/init.c:52
+#: src/bin/init.c:57
+msgid "Couldn't init Eina"
+msgstr ""
+
+#: src/bin/init.c:66
+msgid "Couldn't init Ecore_Con or Ecore_Con_Url"
+msgstr ""
+
+#: src/bin/init.c:72
+msgid "Ecore_Con_Url pipeline has been enabled"
+msgstr ""
+
+#: src/bin/init.c:82
+msgid "Couldn't init Elementary"
+msgstr ""
+
+#: src/bin/init.c:103
+msgid "Checking EDAMS useful paths..."
+msgstr ""
+
+#: src/bin/init.c:114
 msgid ""
 "It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
 "some database files containing items. I'll copy some default items files, "
 "but you can easily remove them and create new ones(highly recommended)!"
 msgstr ""
 
-#: src/bin/sensors_creator.c:145
-msgid "Sensor Creator"
+#: src/bin/preferences_dlg.c:124
+msgid "Settings"
 msgstr ""
 
-#: src/bin/sensors_creator.c:206
-msgid "Type:"
+#: src/bin/preferences_dlg.c:136
+msgid "Cosm API key:"
 msgstr ""
 
-#: src/bin/sensors_creator.c:219
-msgid "Datasheet URL:"
+#: src/bin/preferences_dlg.c:156
+msgid "Emulation"
 msgstr ""
 
-#: src/bin/sensors_picker.c:142
-msgid "Select a sensor"
+#: src/bin/preferences_dlg.c:163
+msgid "Debug with printf"
 msgstr ""
 
-#: src/bin/shutdown.c:30
-msgid "Shutdown Edams..."
+#: src/bin/preferences_dlg.c:169
+msgid "Map background image:"
 msgstr ""
 
-#: src/lib/modules.c:50
+#: src/bin/preferences_dlg.c:201
+msgid "Gnuplot path:"
+msgstr ""
+
+#: src/bin/devices_creator.c:152
+msgid "Device Creator"
+msgstr ""
+
+#: src/bin/devices_creator.c:193
+msgid "Type"
+msgstr ""
+
+#: src/bin/devices_creator.c:212
+msgid "Name"
+msgstr ""
+
+#: src/bin/devices_creator.c:225
+msgid "Description"
+msgstr ""
+
+#: src/bin/devices_creator.c:238
+msgid "Datasheet URL"
+msgstr ""
+
+#: src/bin/devices_picker.c:162
+msgid "Select a device"
+msgstr ""
+
+#: src/bin/shutdown.c:33
+msgid "Shutdown xPL..."
+msgstr ""
+
+#: src/bin/shutdown.c:44
+msgid "Shutdown Enlightenment Foundation Libraries..."
+msgstr ""
+
+#: src/bin/shutdown.c:60
+msgid "Free allocated memory..."
+msgstr ""
+
+#: src/lib/device.c:125 src/lib/device.c:650
+msgid "Couldn't calloc Device struct"
+msgstr ""
+
+#: src/lib/device.c:243
+msgid "Couldn't set an unknown device type to device with id"
+msgstr ""
+
+#: src/lib/device.c:246
+msgid "Generic"
+msgstr ""
+
+#: src/lib/device.c:251
+msgid "Percent"
+msgstr ""
+
+#: src/lib/device.c:256
+msgid "Counter"
+msgstr ""
+
+#: src/lib/device.c:261
+msgid "Amps"
+msgstr ""
+
+#: src/lib/device.c:266
+msgid "Degrees"
+msgstr ""
+
+#: src/lib/device.c:271
+msgid "Meters"
+msgstr ""
+
+#: src/lib/device.c:276
+msgid "Kilowatt hours"
+msgstr ""
+
+#: src/lib/device.c:281
+msgid "Rotation/min"
+msgstr ""
+
+#: src/lib/device.c:286
+msgid "Humidity ratio"
+msgstr ""
+
+#: src/lib/device.c:291
+msgid "Input"
+msgstr ""
+
+#: src/lib/device.c:296
+msgid "Output"
+msgstr ""
+
+#: src/lib/device.c:301
+msgid "Kilowatt"
+msgstr ""
+
+#: src/lib/device.c:306
+msgid "Pascals"
+msgstr ""
+
+#: src/lib/device.c:311 src/lib/device.c:321
+msgid "Celsius"
+msgstr ""
+
+#: src/lib/device.c:316
+msgid "Miles per Hour"
+msgstr ""
+
+#: src/lib/device.c:326
+msgid "UV"
+msgstr ""
+
+#: src/lib/device.c:331
+msgid "Volts"
+msgstr ""
+
+#: src/lib/device.c:336
+msgid "Cubic meter"
+msgstr ""
+
+#: src/lib/device.c:341
+msgid "Kilograms"
+msgstr ""
+
+#: src/lib/device.c:426 src/lib/device.c:487
 #, c-format
-msgid "Can't load module %s: %s"
+msgid "Couldn't open Eet file '%s' in writing mode"
 msgstr ""
 
-#: src/lib/modules.c:58
+#: src/lib/device.c:496
 #, c-format
-msgid "Can't find _print_module_infos() in module %s: %s!"
+msgid "Couldn't write any data to Eet file '%s'"
 msgstr ""
 
-#: src/lib/modules.c:67
+#: src/lib/device.c:512
 #, c-format
-msgid "Can't find _module_id_get() in module %s: %s!"
+msgid "Couldn't open Eet file '%s' in reading mode"
 msgstr ""
 
-#: src/lib/modules.c:76
+#: src/lib/device.c:522 src/lib/location.c:510
 #, c-format
-msgid "Can't find _module_name_get() in module %s: %s!"
+msgid "Eet file '%s' %#x was too old, upgrading it to %#x"
 msgstr ""
 
-#: src/lib/modules.c:84
+#: src/lib/device.c:567
 #, c-format
-msgid "Can't find _module_desc_get() in module %s: %s!"
+msgid "No device with id '%d' registered"
 msgstr ""
 
-#: src/lib/modules.c:92
+#: src/lib/device.c:601
+msgid "Couldn't allocate Eina list node!"
+msgstr ""
+
+#: src/lib/device.c:611
 #, c-format
-msgid "Can't find _module_theme_get() in module %s: %s!"
+msgid "%d devices registered in database"
 msgstr ""
 
-#: src/lib/modules.c:100
+#: src/lib/device.c:635
 #, c-format
-msgid "Can't find _module_settings_get() in module %s: %s!"
+msgid "%d Device struct of Eina_list freed"
 msgstr ""
 
-#: src/lib/modules.c:173
-msgid "Can't get modules list!"
-msgstr ""
-
-#: src/lib/myfileselector.c:51
+#: src/lib/myfileselector.c:53
 #, c-format
 msgid "You"
 msgstr ""
 
-#: src/lib/myfileselector.c:103
+#: src/lib/myfileselector.c:105
 #, c-format
 msgid "Protected"
 msgstr ""
 
-#: src/lib/myfileselector.c:105 src/lib/myfileselector.c:114
-#: src/lib/myfileselector.c:123
+#: src/lib/myfileselector.c:107 src/lib/myfileselector.c:116
+#: src/lib/myfileselector.c:125
 #, c-format
 msgid "Read Only"
 msgstr ""
 
-#: src/lib/myfileselector.c:112 src/lib/myfileselector.c:121
+#: src/lib/myfileselector.c:114 src/lib/myfileselector.c:123
 #, c-format
 msgid "Forbidden"
 msgstr ""
 
-#: src/lib/myfileselector.c:130
+#: src/lib/myfileselector.c:132
 msgid "Read-Write"
 msgstr ""
 
-#: src/lib/myfileselector.c:141
+#: src/lib/myfileselector.c:143
 #, c-format
 msgid "%'.0f Bytes"
 msgstr ""
 
-#: src/lib/myfileselector.c:145
+#: src/lib/myfileselector.c:147
 #, c-format
 msgid "%'.0f KB"
 msgstr ""
 
-#: src/lib/myfileselector.c:149
+#: src/lib/myfileselector.c:151
 #, c-format
 msgid "%'.0f MB"
 msgstr ""
 
-#: src/lib/myfileselector.c:153
+#: src/lib/myfileselector.c:155
 #, c-format
 msgid "%'.1f GB"
 msgstr ""
 
-#: src/lib/myfileselector.c:180
+#: src/lib/myfileselector.c:182
 msgid "*FIXME*"
 msgstr ""
 
-#: src/lib/myfileselector.c:241
+#: src/lib/myfileselector.c:243
 msgid "Select a file..."
 msgstr ""
 
@@ -332,34 +447,58 @@ msgid "Permissions :"
 msgstr ""
 
 #: src/lib/myfileselector.c:345
+msgid "Cancel"
+msgstr ""
+
+#: src/lib/myfileselector.c:355
 msgid "Open"
 msgstr ""
 
-#: src/lib/rooms.c:722 src/lib/rooms.c:948
-#, c-format
-msgid "Eet file '%s' %#x was too old, upgrading it to %#x!\n"
+#: src/lib/location.c:97
+msgid "Couldn't calloc Widget struct"
 msgstr ""
 
-#: src/lib/rooms.c:779
-#, c-format
-msgid "Can't remove Eet file:'%s'!"
+#: src/lib/location.c:233
+msgid "Couldn't calloc Location struct"
 msgstr ""
 
-#: src/lib/rooms.c:820
+#: src/lib/location.c:396 src/lib/location.c:534
 #, c-format
-msgid "INFO:%d rooms list freed.\n"
+msgid "Couldn't open '%s' for writing"
 msgstr ""
 
-#: src/lib/rooms.c:882 src/lib/rooms.c:990
+#: src/lib/location.c:499
 #, c-format
-msgid "Can't allocate list node!"
+msgid "Couldn't open '%s' for read"
 msgstr ""
 
-#: src/lib/rooms.c:1024
+#: src/lib/location.c:572
 #, c-format
-msgid "INFO:%d sensors list freed.\n"
+msgid "Couldn't remove Eet file '%s'"
 msgstr ""
 
-#: src/lib/utils.c:167
+#: src/lib/location.c:599
+#, c-format
+msgid "%d Location struct of Eina_list freed"
+msgstr ""
+
+#: src/lib/location.c:659
+msgid "Couldn't allocate Eina_List node!"
+msgstr ""
+
+#: src/lib/location.c:669
+#, c-format
+msgid "%d locations registered in database"
+msgstr ""
+
+#: src/lib/sound.c:38
+msgid "Sound support with Emotion has been enabled"
+msgstr ""
+
+#: src/lib/sound.c:61
+msgid "No sound system for playing audio"
+msgstr ""
+
+#: src/lib/utils.c:77
 msgid "Confirmation"
 msgstr ""

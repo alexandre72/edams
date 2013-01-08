@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FriLogos 0.1\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
-"POT-Creation-Date: 2012-12-06 20:07+0100\n"
+"POT-Creation-Date: 2013-01-08 20:37+0100\n"
 "PO-Revision-Date: 2012-12-06 20:17+0100\n"
 "Last-Translator: Alexandre Dussart <alexandre.dussart@laposte.net>\n"
 "Language-Team: français <alexandre.dussart@laposte.net>\n"
@@ -18,184 +18,185 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
-#: src/bin/about_dlg.c:39
+#: src/bin/about_dlg.c:37
 msgid "About E.D.A.M.S..."
 msgstr "A propos d'E.D.A.M.S..."
 
-#: src/bin/about_dlg.c:67 src/bin/sensors_picker.c:179
-#: src/lib/myfileselector.c:354
+#: src/bin/about_dlg.c:65 src/bin/edams.c:373 src/bin/preferences_dlg.c:238
+#: src/bin/devices_creator.c:272 src/bin/devices_picker.c:200
+#: src/lib/utils.c:92
 msgid "Close"
 msgstr "Fermer"
 
-#: src/bin/edams.c:125
-#, c-format
-msgid "Room %s has been created."
+#: src/bin/edams.c:148
+#, fuzzy, c-format
+msgid "Location %s has been created."
 msgstr "La pièce %s a été créée."
 
-#: src/bin/edams.c:172 src/bin/sensors_creator.c:124
+#: src/bin/edams.c:195 src/bin/preferences_dlg.c:103
+#: src/bin/devices_creator.c:133
 msgid "Select a picture file"
 msgstr "Sélectionner un fichier image..."
 
-#: src/bin/edams.c:190
-msgid "Room Description"
-msgstr "Description de la pièce"
+#: src/bin/edams.c:245
+#, fuzzy
+msgid "Add a location"
+msgstr "Ajouter patient"
 
-#: src/bin/edams.c:215 src/bin/sensors_creator.c:170
-msgid "Photo..."
+#: src/bin/edams.c:256 src/bin/devices_creator.c:163
+#, fuzzy
+msgid "Photo"
 msgstr "Photo..."
 
-#: src/bin/edams.c:225 src/bin/sensors_creator.c:180
+#: src/bin/edams.c:276 src/bin/preferences_dlg.c:189
+#: src/bin/devices_creator.c:182
+#, fuzzy
+msgid "Open..."
+msgstr "Ouvrir"
+
+#: src/bin/edams.c:288
 msgid "Name:"
 msgstr "Nom:"
 
-#: src/bin/edams.c:238 src/bin/sensors_creator.c:193
+#: src/bin/edams.c:301
 msgid "Description:"
 msgstr "Description:"
 
-#: src/bin/edams.c:256 src/bin/sensors_creator.c:237 src/lib/utils.c:178
+#: src/bin/edams.c:314
+msgid "Geolocalization:"
+msgstr ""
+
+#: src/bin/edams.c:344
+msgid "Go to"
+msgstr ""
+
+#: src/bin/edams.c:362 src/bin/preferences_dlg.c:227
+#: src/bin/devices_creator.c:261
 msgid "Ok"
 msgstr "Ok"
 
-#: src/bin/edams.c:267 src/bin/sensors_creator.c:248
-msgid "Cancel"
-msgstr "Annuler"
-
-#: src/bin/edams.c:375
-#, c-format
-msgid "Room '%s' have been removed."
+#: src/bin/edams.c:485
+#, fuzzy, c-format
+msgid "Location '%s' have been removed."
 msgstr "Pièce '%s' a été supprimée."
 
-#: src/bin/edams.c:401
-msgid "Can't remove:no room selected!"
+#: src/bin/edams.c:512
+#, fuzzy
+msgid "Can't remove:no location selected!"
 msgstr "Impossible de supprimer:aucune pièce sélectionnée!"
 
-#: src/bin/edams.c:414
-msgid "Are you sure to want to remove selected room?"
+#: src/bin/edams.c:525
+#, fuzzy
+msgid "Are you sure to want to remove selected location?"
 msgstr "Êtes vous sûr de vouloir supprimer les pièces sélectionnées?"
 
-#: src/bin/edams.c:417
+#: src/bin/edams.c:528
 msgid "Yes"
 msgstr "Oui"
 
-#: src/bin/edams.c:426
+#: src/bin/edams.c:537
 msgid "No"
 msgstr "Non"
 
-#: src/bin/edams.c:532
-#, c-format
-msgid "INFO:Serial in content '%s'(%d bytes)\n"
-msgstr "INFO:Contenu tampon série '%s'(%d octets)\n"
+#: src/bin/edams.c:700
+#, fuzzy, c-format
+msgid "Sensors registered:%d\n"
+msgstr "Création Capteurs"
 
-#: src/bin/edams.c:542
-#, c-format
-msgid ""
-"INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial "
-"port...)\n"
+#: src/bin/edams.c:724
+#, fuzzy
+msgid "Couldn't remove widgets from location:no location selected!"
+msgstr "Impossible de supprimer:aucune pièce sélectionnée!"
+
+#: src/bin/edams.c:774 src/bin/edams.c:1070
+msgid "Add"
+msgstr "Ajouter"
+
+#: src/bin/edams.c:776
+msgid "Change..."
 msgstr ""
-"INFO:Initialisation d'EDAMS(calibrage des capteurs, initialisation des "
-"variables, mise en place du port série...)\n"
 
-#: src/bin/edams.c:547
-msgid "Initialize EDAMS wait please..."
-msgstr "Initialisation d'EDAMS, attendez s'il vous plaît..."
+#: src/bin/edams.c:778 src/bin/edams.c:1081
+msgid "Remove"
+msgstr "Supprimer"
 
-#: src/bin/edams.c:563
-msgid "calibrating sensors, setting serial port... "
-msgstr "Calibrage des capteurs, mise en place du port série..."
+#: src/bin/edams.c:826
+#, fuzzy
+msgid "Informations"
+msgstr "Confirmation"
 
-#: src/bin/edams.c:576
+#: src/bin/edams.c:862
+msgid "Widgets"
+msgstr ""
+
+#: src/bin/edams.c:928
 #, c-format
-msgid "INFO:EDAMS is ready and operationnal\n"
-msgstr "INFO:EDAMS est prêt et opérationnel\n"
+msgid "[31mERROR:[0mCan't allocate App_Info struct!\n"
+msgstr ""
 
-#: src/bin/edams.c:593
-#, c-format
-msgid "INFO:Updating sensor '%d-%s'  with data '%s'...\n"
-msgstr "INFO:Capteur '%d-%s' avec donnée '%s'...\n"
-
-#: src/bin/edams.c:605
-#, c-format
-msgid "Added new sensor '%d-%s'."
-msgstr "Ajoute capteur '%d-%s'"
-
-#: src/bin/edams.c:621
-msgid "Can't add a sensor to room:no room selected!"
-msgstr "Impossible d'ajouter un capteur:aucune pièce sélectionnée!"
-
-#: src/bin/edams.c:635
-msgid "Can't clear room sensors list:no room selected!"
-msgstr "Impossible de retirer les capteurs:aucune pièce sélectionnée!"
-
-#: src/bin/edams.c:786
-#, c-format
-msgid "Room:%s"
-msgstr "Pièce:%s"
-
-#: src/bin/edams.c:792
-#, c-format
-msgid "Description:%s"
-msgstr "Description:%s"
-
-#: src/bin/edams.c:798
-#, c-format
-msgid "Sensors:"
-msgstr "Capteurs:"
-
-#: src/bin/edams.c:813
-msgid "Add..."
-msgstr "Ajouter..."
-
-#: src/bin/edams.c:823
-msgid "Remove..."
-msgstr "Supprimer..."
-
-#: src/bin/edams.c:897
-#, c-format
-msgid "CRI:Can't init Eina!\n"
-msgstr "CRI:Impossible d'initialiser Eina!\n"
-
-#: src/bin/edams.c:908
-msgid "Can't init Elementary!"
-msgstr "Impossible d'initialiser Elementary!"
-
-#: src/bin/edams.c:922
-msgid "Initialize Application..."
-msgstr "Initialisation de l'application..."
-
-#: src/bin/edams.c:934
+#: src/bin/edams.c:944
 #, c-format
 msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
 msgstr "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
 
-#: src/bin/edams.c:1019
-msgid "Sensors Creator"
-msgstr "Création Capteurs"
+#: src/bin/edams.c:1014
+#, fuzzy
+msgid "Devices Creator"
+msgstr "Créateur de capteurs"
 
-#: src/bin/edams.c:1020 src/bin/preferences_dlg.c:35
+#: src/bin/edams.c:1015
+msgid "Locations Map"
+msgstr ""
+
+#: src/bin/edams.c:1017
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/bin/edams.c:1021
+#: src/bin/edams.c:1018
 msgid "About"
 msgstr "A propos"
 
-#: src/bin/edams.c:1022
+#: src/bin/edams.c:1019
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/bin/edams.c:1046
-msgid "Rooms"
-msgstr "Pièces"
+#: src/bin/edams.c:1043
+#, fuzzy
+msgid "Locations"
+msgstr "Indications"
 
-#: src/bin/edams.c:1072
-msgid "Add"
-msgstr "Ajouter"
+#: src/bin/init.c:33
+#, fuzzy
+msgid "Initialize xPL service..."
+msgstr "Initialisation de FriLogos..."
 
-#: src/bin/edams.c:1083
-msgid "Remove"
-msgstr "Supprimer"
+#: src/bin/init.c:53
+msgid "Initialize Enlightenment Foundation Libraries..."
+msgstr ""
 
-#: src/bin/init.c:52
+#: src/bin/init.c:57
+#, fuzzy
+msgid "Couldn't init Eina"
+msgstr "CRI:Impossible d'initialiser Eina!\n"
+
+#: src/bin/init.c:66
+msgid "Couldn't init Ecore_Con or Ecore_Con_Url"
+msgstr ""
+
+#: src/bin/init.c:72
+msgid "Ecore_Con_Url pipeline has been enabled"
+msgstr ""
+
+#: src/bin/init.c:82
+#, fuzzy
+msgid "Couldn't init Elementary"
+msgstr "Impossible d'initialiser Elementary!"
+
+#: src/bin/init.c:103
+msgid "Checking EDAMS useful paths..."
+msgstr ""
+
+#: src/bin/init.c:114
 msgid ""
 "It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
 "some database files containing items. I'll copy some default items files, "
@@ -207,115 +208,251 @@ msgstr ""
 "conseillé d'adapter EDAMS à ses besoins pour profiter pleinement de son "
 "utilisation."
 
-#: src/bin/sensors_creator.c:145
-msgid "Sensor Creator"
+#: src/bin/preferences_dlg.c:124
+#, fuzzy
+msgid "Settings"
+msgstr "Suppression de:%s"
+
+#: src/bin/preferences_dlg.c:136
+msgid "Cosm API key:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:156
+msgid "Emulation"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:163
+#, fuzzy
+msgid "Debug with printf"
+msgstr "Messages printf"
+
+#: src/bin/preferences_dlg.c:169
+msgid "Map background image:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:201
+msgid "Gnuplot path:"
+msgstr ""
+
+#: src/bin/devices_creator.c:152
+#, fuzzy
+msgid "Device Creator"
 msgstr "Créateur de capteurs"
 
-#: src/bin/sensors_creator.c:206
-msgid "Type:"
+#: src/bin/devices_creator.c:193
+#, fuzzy
+msgid "Type"
 msgstr "Type:"
 
-#: src/bin/sensors_creator.c:219
-msgid "Datasheet URL:"
+#: src/bin/devices_creator.c:212
+#, fuzzy
+msgid "Name"
+msgstr "Nom:"
+
+#: src/bin/devices_creator.c:225
+#, fuzzy
+msgid "Description"
+msgstr "Description:"
+
+#: src/bin/devices_creator.c:238
+#, fuzzy
+msgid "Datasheet URL"
 msgstr "URL du datasheet:"
 
-#: src/bin/sensors_picker.c:142
-msgid "Select a sensor"
-msgstr "Sélectionner un capteur"
+#: src/bin/devices_picker.c:162
+#, fuzzy
+msgid "Select a device"
+msgstr "Ouvrir un fichier..."
 
-#: src/bin/shutdown.c:30
-msgid "Shutdown Edams..."
+#: src/bin/shutdown.c:33
+#, fuzzy
+msgid "Shutdown xPL..."
 msgstr "Extinction d'EDAMS..."
 
-#: src/lib/modules.c:50
+#: src/bin/shutdown.c:44
+msgid "Shutdown Enlightenment Foundation Libraries..."
+msgstr ""
+
+#: src/bin/shutdown.c:60
+msgid "Free allocated memory..."
+msgstr ""
+
+#: src/lib/device.c:125 src/lib/device.c:650
+#, fuzzy
+msgid "Couldn't calloc Device struct"
+msgstr "Impossible d'allouer de la mémoire pour la structure Screen!"
+
+#: src/lib/device.c:243
+msgid "Couldn't set an unknown device type to device with id"
+msgstr ""
+
+#: src/lib/device.c:246
+#, fuzzy
+msgid "Generic"
+msgstr "Général"
+
+#: src/lib/device.c:251
+msgid "Percent"
+msgstr ""
+
+#: src/lib/device.c:256
+msgid "Counter"
+msgstr ""
+
+#: src/lib/device.c:261
+msgid "Amps"
+msgstr ""
+
+#: src/lib/device.c:266
+msgid "Degrees"
+msgstr ""
+
+#: src/lib/device.c:271
+msgid "Meters"
+msgstr ""
+
+#: src/lib/device.c:276
+msgid "Kilowatt hours"
+msgstr ""
+
+#: src/lib/device.c:281
+msgid "Rotation/min"
+msgstr ""
+
+#: src/lib/device.c:286
+msgid "Humidity ratio"
+msgstr ""
+
+#: src/lib/device.c:291
+msgid "Input"
+msgstr ""
+
+#: src/lib/device.c:296
+msgid "Output"
+msgstr ""
+
+#: src/lib/device.c:301
+msgid "Kilowatt"
+msgstr ""
+
+#: src/lib/device.c:306
+msgid "Pascals"
+msgstr ""
+
+#: src/lib/device.c:311 src/lib/device.c:321
+msgid "Celsius"
+msgstr ""
+
+#: src/lib/device.c:316
+msgid "Miles per Hour"
+msgstr ""
+
+#: src/lib/device.c:326
+msgid "UV"
+msgstr ""
+
+#: src/lib/device.c:331
+msgid "Volts"
+msgstr ""
+
+#: src/lib/device.c:336
+msgid "Cubic meter"
+msgstr ""
+
+#: src/lib/device.c:341
+msgid "Kilograms"
+msgstr ""
+
+#: src/lib/device.c:426 src/lib/device.c:487
+#, fuzzy, c-format
+msgid "Couldn't open Eet file '%s' in writing mode"
+msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#: src/lib/device.c:496
+#, fuzzy, c-format
+msgid "Couldn't write any data to Eet file '%s'"
+msgstr "Impossible d'écrire un fichier Eet %s!"
+
+#: src/lib/device.c:512
+#, fuzzy, c-format
+msgid "Couldn't open Eet file '%s' in reading mode"
+msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#: src/lib/device.c:522 src/lib/location.c:510
+#, fuzzy, c-format
+msgid "Eet file '%s' %#x was too old, upgrading it to %#x"
+msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x!\n"
+
+#: src/lib/device.c:567
 #, c-format
-msgid "Can't load module %s: %s"
-msgstr "Impossible de charger le module %s: %s"
+msgid "No device with id '%d' registered"
+msgstr ""
 
-#: src/lib/modules.c:58
+#: src/lib/device.c:601
+#, fuzzy
+msgid "Couldn't allocate Eina list node!"
+msgstr "Impossible d'allouer un nœud dans la liste!"
+
+#: src/lib/device.c:611
+#, fuzzy, c-format
+msgid "%d devices registered in database"
+msgstr "%d de fiches patient enregistrés."
+
+#: src/lib/device.c:635
 #, c-format
-msgid "Can't find _print_module_infos() in module %s: %s!"
-msgstr "Fonction _print_module_infos() non trouvée dans le module %s: %s!"
+msgid "%d Device struct of Eina_list freed"
+msgstr ""
 
-#: src/lib/modules.c:67
-#, c-format
-msgid "Can't find _module_id_get() in module %s: %s!"
-msgstr "Fonction _module_id_get() non trouvée dans le module %s: %s!"
-
-#: src/lib/modules.c:76
-#, c-format
-msgid "Can't find _module_name_get() in module %s: %s!"
-msgstr "Fonction _module_name_get() non trouvée dans le module %s: %s!"
-
-#: src/lib/modules.c:84
-#, c-format
-msgid "Can't find _module_desc_get() in module %s: %s!"
-msgstr "Fonction _module_desc_get() non trouvée dans le module %s: %s!"
-
-#: src/lib/modules.c:92
-#, c-format
-msgid "Can't find _module_theme_get() in module %s: %s!"
-msgstr "Fonction _module_theme_get() non trouvée dans le module %s: %s!"
-
-#: src/lib/modules.c:100
-#, c-format
-msgid "Can't find _module_settings_get() in module %s: %s!"
-msgstr "Fonction _module_settings_get() non trouvée dans le module %s: %s!"
-
-#: src/lib/modules.c:173
-msgid "Can't get modules list!"
-msgstr "Impossible d'obtenir la liste des modules!"
-
-#: src/lib/myfileselector.c:51
+#: src/lib/myfileselector.c:53
 #, c-format
 msgid "You"
 msgstr "Vous"
 
-#: src/lib/myfileselector.c:103
+#: src/lib/myfileselector.c:105
 #, c-format
 msgid "Protected"
 msgstr "Protégé"
 
-#: src/lib/myfileselector.c:105 src/lib/myfileselector.c:114
-#: src/lib/myfileselector.c:123
+#: src/lib/myfileselector.c:107 src/lib/myfileselector.c:116
+#: src/lib/myfileselector.c:125
 #, c-format
 msgid "Read Only"
 msgstr "Lecture Seule"
 
-#: src/lib/myfileselector.c:112 src/lib/myfileselector.c:121
+#: src/lib/myfileselector.c:114 src/lib/myfileselector.c:123
 #, c-format
 msgid "Forbidden"
 msgstr "Interdit"
 
-#: src/lib/myfileselector.c:130
+#: src/lib/myfileselector.c:132
 msgid "Read-Write"
 msgstr "Lecture-Ecriture"
 
-#: src/lib/myfileselector.c:141
+#: src/lib/myfileselector.c:143
 #, c-format
 msgid "%'.0f Bytes"
 msgstr "%'.0f Octets"
 
-#: src/lib/myfileselector.c:145
+#: src/lib/myfileselector.c:147
 #, c-format
 msgid "%'.0f KB"
 msgstr "%'.0f Ko"
 
-#: src/lib/myfileselector.c:149
+#: src/lib/myfileselector.c:151
 #, c-format
 msgid "%'.0f MB"
 msgstr "%'.0f Mo"
 
-#: src/lib/myfileselector.c:153
+#: src/lib/myfileselector.c:155
 #, c-format
 msgid "%'.1f GB"
 msgstr "%'.1f Go"
 
-#: src/lib/myfileselector.c:180
+#: src/lib/myfileselector.c:182
 msgid "*FIXME*"
 msgstr "*FIXME*"
 
-#: src/lib/myfileselector.c:241
+#: src/lib/myfileselector.c:243
 msgid "Select a file..."
 msgstr "Ouvrir un fichier..."
 
@@ -340,37 +477,152 @@ msgid "Permissions :"
 msgstr "Permissions :"
 
 #: src/lib/myfileselector.c:345
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/lib/myfileselector.c:355
 msgid "Open"
 msgstr "Ouvrir"
 
-#: src/lib/rooms.c:722 src/lib/rooms.c:948
-#, c-format
-msgid "Eet file '%s' %#x was too old, upgrading it to %#x!\n"
-msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x!\n"
+#: src/lib/location.c:97
+#, fuzzy
+msgid "Couldn't calloc Widget struct"
+msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
 
-#: src/lib/rooms.c:779
-#, c-format
-msgid "Can't remove Eet file:'%s'!"
+#: src/lib/location.c:233
+#, fuzzy
+msgid "Couldn't calloc Location struct"
+msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
+
+#: src/lib/location.c:396 src/lib/location.c:534
+#, fuzzy, c-format
+msgid "Couldn't open '%s' for writing"
+msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#: src/lib/location.c:499
+#, fuzzy, c-format
+msgid "Couldn't open '%s' for read"
+msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#: src/lib/location.c:572
+#, fuzzy, c-format
+msgid "Couldn't remove Eet file '%s'"
 msgstr "Impossible de supprimer un fichier Eet: '%s'!"
 
-#: src/lib/rooms.c:820
+#: src/lib/location.c:599
 #, c-format
-msgid "INFO:%d rooms list freed.\n"
-msgstr "INFO:libération mémoire de %d dans la liste des pièces.\n"
+msgid "%d Location struct of Eina_list freed"
+msgstr ""
 
-#: src/lib/rooms.c:882 src/lib/rooms.c:990
-#, c-format
-msgid "Can't allocate list node!"
+#: src/lib/location.c:659
+#, fuzzy
+msgid "Couldn't allocate Eina_List node!"
 msgstr "Impossible d'allouer un nœud dans la liste!"
 
-#: src/lib/rooms.c:1024
-#, c-format
-msgid "INFO:%d sensors list freed.\n"
-msgstr "INFO:libération mémoire de %d dans la liste des capteurs.\n"
+#: src/lib/location.c:669
+#, fuzzy, c-format
+msgid "%d locations registered in database"
+msgstr "%d de fiches patient enregistrés."
 
-#: src/lib/utils.c:167
+#: src/lib/sound.c:38
+msgid "Sound support with Emotion has been enabled"
+msgstr ""
+
+#: src/lib/sound.c:61
+msgid "No sound system for playing audio"
+msgstr ""
+
+#: src/lib/utils.c:77
 msgid "Confirmation"
 msgstr "Confirmation"
+
+#~ msgid "Room Description"
+#~ msgstr "Description de la pièce"
+
+#~ msgid "INFO:Serial in content '%s'(%d bytes)\n"
+#~ msgstr "INFO:Contenu tampon série '%s'(%d octets)\n"
+
+#~ msgid ""
+#~ "INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial "
+#~ "port...)\n"
+#~ msgstr ""
+#~ "INFO:Initialisation d'EDAMS(calibrage des capteurs, initialisation des "
+#~ "variables, mise en place du port série...)\n"
+
+#~ msgid "Initialize EDAMS wait please..."
+#~ msgstr "Initialisation d'EDAMS, attendez s'il vous plaît..."
+
+#~ msgid "calibrating sensors, setting serial port... "
+#~ msgstr "Calibrage des capteurs, mise en place du port série..."
+
+#~ msgid "INFO:EDAMS is ready and operationnal\n"
+#~ msgstr "INFO:EDAMS est prêt et opérationnel\n"
+
+#~ msgid "INFO:Updating sensor '%d-%s'  with data '%s'...\n"
+#~ msgstr "INFO:Capteur '%d-%s' avec donnée '%s'...\n"
+
+#~ msgid "Added new sensor '%d-%s'."
+#~ msgstr "Ajoute capteur '%d-%s'"
+
+#~ msgid "Can't add a sensor to room:no room selected!"
+#~ msgstr "Impossible d'ajouter un capteur:aucune pièce sélectionnée!"
+
+#~ msgid "Can't clear room sensors list:no room selected!"
+#~ msgstr "Impossible de retirer les capteurs:aucune pièce sélectionnée!"
+
+#~ msgid "Room:%s"
+#~ msgstr "Pièce:%s"
+
+#~ msgid "Description:%s"
+#~ msgstr "Description:%s"
+
+#~ msgid "Sensors:"
+#~ msgstr "Capteurs:"
+
+#~ msgid "Add..."
+#~ msgstr "Ajouter..."
+
+#~ msgid "Remove..."
+#~ msgstr "Supprimer..."
+
+#~ msgid "Initialize Application..."
+#~ msgstr "Initialisation de l'application..."
+
+#~ msgid "Rooms"
+#~ msgstr "Pièces"
+
+#~ msgid "Select a sensor"
+#~ msgstr "Sélectionner un capteur"
+
+#~ msgid "Can't load module %s: %s"
+#~ msgstr "Impossible de charger le module %s: %s"
+
+#~ msgid "Can't find _print_module_infos() in module %s: %s!"
+#~ msgstr "Fonction _print_module_infos() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_id_get() in module %s: %s!"
+#~ msgstr "Fonction _module_id_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_name_get() in module %s: %s!"
+#~ msgstr "Fonction _module_name_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_desc_get() in module %s: %s!"
+#~ msgstr "Fonction _module_desc_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_theme_get() in module %s: %s!"
+#~ msgstr "Fonction _module_theme_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_settings_get() in module %s: %s!"
+#~ msgstr "Fonction _module_settings_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't get modules list!"
+#~ msgstr "Impossible d'obtenir la liste des modules!"
+
+#~ msgid "INFO:%d rooms list freed.\n"
+#~ msgstr "INFO:libération mémoire de %d dans la liste des pièces.\n"
+
+#~ msgid "INFO:%d sensors list freed.\n"
+#~ msgstr "INFO:libération mémoire de %d dans la liste des capteurs.\n"
 
 #~ msgid "About edams..."
 #~ msgstr "A propos d'E.D.A.M.S..."
@@ -383,9 +635,6 @@ msgstr "Confirmation"
 
 #~ msgid "Remove all sensors..."
 #~ msgstr "Supprimer les capteurs..."
-
-#~ msgid "Debug printf"
-#~ msgstr "Messages printf"
 
 #~ msgid "Serial buffering simulation"
 #~ msgstr "Simulation du tampon série"
@@ -415,9 +664,6 @@ msgstr "Confirmation"
 
 #~ msgid "Options"
 #~ msgstr "Options"
-
-#~ msgid "General"
-#~ msgstr "Général"
 
 #~ msgid "Modules"
 #~ msgstr "Modules"
@@ -469,9 +715,6 @@ msgstr "Confirmation"
 
 #~ msgid "Patients"
 #~ msgstr "Patients"
-
-#~ msgid "Indications"
-#~ msgstr "Indications"
 
 #, fuzzy
 #~ msgid ""
@@ -551,9 +794,6 @@ msgstr "Confirmation"
 #~ msgid "Sequence %d"
 #~ msgstr "Séquence %d"
 
-#~ msgid "Couldn't calloc Screen struct!"
-#~ msgstr "Impossible d'allouer de la mémoire pour la structure Screen!"
-
 #~ msgid "Can't construct Ecore_Evas object!"
 #~ msgstr "Impossible de construire un objet Ecore_Evas!"
 
@@ -577,9 +817,6 @@ msgstr "Confirmation"
 
 #~ msgid "Alloc module ressources."
 #~ msgstr "Allocation des ressources module."
-
-#~ msgid "Couldn't calloc Settings struct!"
-#~ msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
 
 #~ msgid "Free module ressources."
 #~ msgstr "Libération des ressources module."
@@ -738,9 +975,6 @@ msgstr "Confirmation"
 #~ msgid "Undefined"
 #~ msgstr "Indéfini"
 
-#~ msgid "Can't write Eet file '%s'!"
-#~ msgstr "Impossible d'écrire un fichier Eet %s!"
-
 #~ msgid "Can't import %s!"
 #~ msgstr "Impossible d'importer un fichier Eet: '%s'!"
 
@@ -783,9 +1017,6 @@ msgstr "Confirmation"
 #~ msgid "undefined"
 #~ msgstr "indéfini"
 
-#~ msgid "Couldn't open file '%s'!"
-#~ msgstr "Impossible d'ouvrir un fichier '%s'!"
-
 #~ msgid ""
 #~ "Patient_Info:\n"
 #~ "\t|->Filename.....:%s(%#x)\n"
@@ -804,9 +1035,6 @@ msgstr "Confirmation"
 #~ "\t|->Date de naissance:%s\n"
 #~ "\t|->Créé le:%s\n"
 #~ "\t|->Révisé le:%s\n"
-
-#~ msgid "%d patients registered."
-#~ msgstr "%d de fiches patient enregistrés."
 
 #~ msgid "Can't allocate list node."
 #~ msgstr "Impossible d'allouer un noeud dans la liste."
@@ -1011,9 +1239,6 @@ msgstr "Confirmation"
 #~ msgid "INF:%s frilogos.c: 118 elm_main() Initialize EFL...\n"
 #~ msgstr "INF:%s frilogos.c: 118 elm_main() Initialisation des EFLs...\n"
 
-#~ msgid "Add patient"
-#~ msgstr "Ajouter patient"
-
 #~ msgid "Delete selected items..."
 #~ msgstr "Effacer les élements sélectionnés..."
 
@@ -1103,9 +1328,6 @@ msgstr "Confirmation"
 #~ msgid "Cannot create buffer engine canvas for image load."
 #~ msgstr ""
 #~ "Impossible de créer un canevas tampon pour le chargement des images."
-
-#~ msgid "Deleting:%s"
-#~ msgstr "Suppression de:%s"
 
 #~ msgid "Can't define more than 2 images levels per item, must be 0 or 1."
 #~ msgstr ""
@@ -1212,25 +1434,22 @@ msgstr "Confirmation"
 #~ "<item absize=250x70 vsize=full href=file://%s/icons/frilogos_header.png></"
 #~ "item><br><em>%s (build %s)</em></><ps></ps><b>Authors:</"
 #~ "b><br><em>Alexandre Dussart(main, plugins, website...)</em> "
-#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Remi Samier"
-#~ "(frilexie, suggestions, testings, doc)</em> <link>r.samier@gmail.com</"
-#~ "link></><br><em>Corine Berte(suggestions...)</em></><br><em>Sonia Dussart"
-#~ "(some design and items parts)</em></><br><em>Simion Ploscariu"
-#~ "(learntocount based code)</em></><ps></ps><b>Web:</b><br><link>http://www."
-#~ "frilogos.org</link></>"
+#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Remi "
+#~ "Samier(frilexie, suggestions, testings, doc)</em> <link>r.samier@gmail."
+#~ "com</link></><br><em>Corine Berte(suggestions...)</em></><br><em>Sonia "
+#~ "Dussart(some design and items parts)</em></><br><em>Simion "
+#~ "Ploscariu(learntocount based code)</em></><ps></ps><b>Web:</"
+#~ "b><br><link>http://www.frilogos.org</link></>"
 #~ msgstr ""
 #~ "<item absize=250x70 vsize=full href=file://%s/icons/frilogos_header.png></"
 #~ "item><br><em>%s (build %s)</em></><ps></ps><b>Auteurs:</"
 #~ "b><br><em>Alexandre Dussart(code principal, modules, site web...)</em> "
-#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Rémi Samier"
-#~ "(frilexie, suggestions, tests, documentation)</em> <link>r.samier@gmail."
-#~ "com</link></><br><em>Corine Berté(suggestions...)</em></><br><em>Sonia "
-#~ "Dussart(graphismes)</em></><br><em>Simion Ploscariu(basé sur le code de "
-#~ "learntocount)</em></><ps></ps><b>Site Web:</b><br><link>http://www."
-#~ "frilogos.org</link></>"
-
-#~ msgid "Initialize FriLogos..."
-#~ msgstr "Initialisation de FriLogos..."
+#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Rémi "
+#~ "Samier(frilexie, suggestions, tests, documentation)</em> <link>r."
+#~ "samier@gmail.com</link></><br><em>Corine Berté(suggestions...)</em></"
+#~ "><br><em>Sonia Dussart(graphismes)</em></><br><em>Simion Ploscariu(basé "
+#~ "sur le code de learntocount)</em></><ps></ps><b>Site Web:</"
+#~ "b><br><link>http://www.frilogos.org</link></>"
 
 #~ msgid "No application theme found"
 #~ msgstr "Aucun théme pour l'application trouvé."
