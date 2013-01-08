@@ -30,11 +30,11 @@ struct _Device
     const char *__eet_filename;		//Filename name of device, generated and based on device's name.
     unsigned int id;				//Id of device e.g. '104'.
     const char *name;				//Name of device 'DS18B20'.
+    Class_Flags class;				//Class of device e.g. 'SENSOR'.
     Type_Flags type;				//Type of device e.g. 'HUMIDITY'.
     const char *description;		//Description of device e.g.'I2C sensor'.
     const char *datasheeturl;		//URL Datasheet of device e.g. 'http///alldatasheet.com/ds18b20.html'.
     const char *data;				//Current data of device.
-	const char *widget;				//Widget used to show value of device e.g. 'widget/thermowidget'.
 	const char *units;  			//The units of the device e.g. 'Celsius'.
 	const char *unit_symbol;		//The symbol of the unit e.g. 'C'.
 	const char *unit_format;		//The unit format in c printf style e.g.g '%f'.
@@ -51,7 +51,7 @@ static Eet_Data_Descriptor *_device_descriptor = NULL;
 
 
 
-int
+static int
 devices_list_sort_cb(const void *d1, const void *d2)
 {
     unsigned int id1 = device_id_get((Device *)d1);
@@ -80,13 +80,13 @@ _device_init(void)
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "id", id, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "name", name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "class", class, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "type", type, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "description", description, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "datasheeturl", datasheeturl, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "creation", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "revision", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "version", version, EET_T_UINT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "widget", widget, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "units", units, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "unit_symbol", unit_symbol, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "unit_format", unit_format, EET_T_STRING);
@@ -130,10 +130,10 @@ device_new(unsigned int id, const char * name)
     device->name = eina_stringshare_add(name ? name : "undefined");
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%d-%s.eet" , edams_locations_data_path_get(), device->id, device->name);
     device->__eet_filename = eina_stringshare_add(s);
-    device->type = UNKNOWN;
+    device->class = UNKNOWN_CLASS;
+    device->type = UNKNOWN_TYPE;
     device->description = eina_stringshare_add("undefined");
     device->datasheeturl = eina_stringshare_add("undefined");
-    device->widget = NULL;
     device->data = NULL;
     device->units =NULL;
     device->unit_symbol = NULL;
@@ -164,7 +164,6 @@ device_free(Device *device)
     	eina_stringshare_del(device->description);
     	eina_stringshare_del(device->datasheeturl);
     	eina_stringshare_del(device->data);
-    	eina_stringshare_del(device->widget);
     	eina_stringshare_del(device->units);
     	eina_stringshare_del(device->unit_symbol);
     	eina_stringshare_del(device->unit_format);
@@ -210,6 +209,21 @@ device_name_set(Device *device, const char *name)
 	eina_stringshare_replace(&(device->name), name);
 }
 
+inline Class_Flags
+device_class_get(const Device *device)
+{
+    return device->class;
+}
+
+
+inline void
+device_class_set(Device *device, const Class_Flags class)
+{
+    EINA_SAFETY_ON_NULL_RETURN(device);
+    device->class = class;
+}
+
+
 inline Type_Flags
 device_type_get(const Device *device)
 {
@@ -225,7 +239,9 @@ device_type_set(Device *device, const Type_Flags type)
 	switch(type)
 	{
 		default:
-		case UNKNOWN:
+		case UNKNOWN_TYPE:
+						debug(stderr, _("Couldn't set an unknown device type to device with id"), device_name_get(device), device_id_get(device));
+						break;
 		case GENERIC:
 					device_units_set(device, _("Generic"));
 					device_unit_symbol_set(device, "");
@@ -327,20 +343,6 @@ device_type_set(Device *device, const Type_Flags type)
 					device_unit_format_set(device, "%skg");
 					break;
 	}
-}
-
-inline void
-device_widget_set(Device *device, const char *widget)
-{
-    EINA_SAFETY_ON_NULL_RETURN(device);
-    eina_stringshare_replace(&(device->widget), widget);
-}
-
-
-inline const char *
-device_widget_get(const Device *device)
-{
-    return device->widget;
 }
 
 
@@ -656,7 +658,6 @@ device_clone(const Device *src)
     dst->description = eina_stringshare_add(src->description);
     dst->datasheeturl = eina_stringshare_add(src->datasheeturl);
     dst->data = eina_stringshare_add(src->data);
-    dst->widget = eina_stringshare_add(src->widget);
     dst->units = eina_stringshare_add(src->units);
     dst->unit_symbol = eina_stringshare_add(src->unit_symbol);
     dst->unit_format = eina_stringshare_add(src->unit_format);
@@ -687,10 +688,32 @@ devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
 	return NULL;
 }
 
+
+Class_Flags
+device_str_to_class(const char *s)
+{
+	if(!s) return UNKNOWN_TYPE;
+
+	if(strcmp(s, "control.basic") == 0) return CONTROL;
+	if(strcmp(s, "sensor.basic") == 0) 	return SENSOR;
+	else								return UNKNOWN_TYPE;
+}
+
+
+const char *
+device_class_to_str(Class_Flags class)
+{
+	if(class == SENSOR)			return "sensor.basic";
+	else if(class == CONTROL)	return "control.basic";
+	else 						return NULL;
+}
+
+
+
 Type_Flags
 device_str_to_type(const char *s)
 {
-	if(!s) return UNKNOWN;
+	if(!s) return UNKNOWN_TYPE;
 
 	if(strcmp(s, "battery") == 0) 		return BATTERY;
 	else if(strcmp(s, "count") == 0)	return COUNT;
@@ -712,7 +735,7 @@ device_str_to_type(const char *s)
 	else if(strcmp(s, "voltage") == 0)	return VOLTAGE;
 	else if(strcmp(s, "volume") == 0)	return VOLUME;
 	else if(strcmp(s, "weight") == 0)	return WEIGHT;
-	else								return GENERIC;
+	else								return UNKNOWN_TYPE;
 }
 
 
@@ -727,6 +750,7 @@ device_type_to_str(Type_Flags type)
 	else if(type == DISTANCE)	return "distance";
 	else if(type == ENERGY)		return "energy";
 	else if(type == FAN)		return "fan";
+	else if(type == GENERIC)	return "generic";
 	else if(type == HUMIDITY)	return "humidity";
 	else if(type == INPUT)		return "input";
 	else if(type == OUPUT)		return "output";
@@ -738,5 +762,5 @@ device_type_to_str(Type_Flags type)
 	else if(type == VOLTAGE)	return "voltage";
 	else if(type == VOLUME)		return "volume";
 	else if(type == WEIGHT)		return "weight";
-	else 						return "generic";
+	else 						return NULL;
 }

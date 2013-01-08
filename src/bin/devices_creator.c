@@ -203,7 +203,8 @@ devices_creator_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 	int x;
 	for(x=0;x != TYPE_LAST;x++)
 	{
-		elm_list_item_append(list, device_type_to_str(x), NULL, NULL, NULL,  device_type_to_str(x));
+		if(x != UNKNOWN_TYPE)
+			elm_list_item_append(list, device_type_to_str(x), NULL, NULL, NULL,  device_type_to_str(x));
 	}
 	elm_list_go(list);
 
