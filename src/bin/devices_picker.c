@@ -42,7 +42,6 @@ static char *_gengrid_devices_text_get(void *data, Evas_Object * obj __UNUSED__,
 static Evas_Object *_gengrid_devices_content_get(void *data, Evas_Object * obj, const char *part);
 static Eina_Bool _gengrid_devices_state_get(void *data __UNUSED__, Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
 static void _gengrid_devices_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__);
-static int _gengrid_devices_sort_cb(const void *pa, const void *pb);
 static void _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
 
@@ -107,20 +106,6 @@ _gengrid_devices_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__)
 }/*_gengrid_devices_del*/
 
 
-/*
- *Callback called in gengrid "devices" when sorted sorted_insert func is called.
- */
-static int
-_gengrid_devices_sort_cb(const void *pa, const void *pb)
-{
-	const GenGridItem *ggia = pa, *ggib = pb;
-
-	Device *a = (Device *)ggia->device;
-	Device *b = (Device *)ggib->device;
-
-	return device_id_get(a) - device_id_get(b);
-}/*gengrid_devices_sort_cb*/
-
 
 /*
  *Callback called in gengrid "devices" when clickeddouble signal is emitted.
@@ -151,7 +136,7 @@ _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNU
  *Create devices picker: to allow user to select device found by xPL hub.
  */
 void
-devicespicker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
 	App_Info *app = (App_Info *) data;

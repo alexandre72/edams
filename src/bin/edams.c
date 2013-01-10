@@ -30,7 +30,6 @@
 #include "cosm.h"
 #include "device.h"
 #include "devices_picker.h"
-#include "devices_creator.h"
 #include "edams.h"
 #include "gnuplot.h"
 #include "init.h"
@@ -47,6 +46,7 @@
 static const int TEMP_MIN = -30;
 static const int TEMP_MAX = 50;
 
+App_Info *app = NULL;
 
 EAPI_MAIN int elm_main(int argc, char *argv[]);
 
@@ -60,18 +60,15 @@ static void _remove_location_bt_clicked_cb(void *data __UNUSED__,
 										   void *event_info __UNUSED__);
 static void _add_location_bt_clicked_cb(void *data __UNUSED__,
 										Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
-
 static void _notify_timeout(void *data __UNUSED__,
 							Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _notify_close_bt_cb(void *data, Evas_Object * obj __UNUSED__,
 								void *event_info __UNUSED__);
 static void _notify_set(const char *msg, const char *icon);
 static void _location_item_del_cb(void *data, Evas_Object * obj, void *event_info);
-App_Info *app = NULL;
 
 //xPL sensor.basic listener.
-void edamsMessageSensorBasicHandler(xPL_ServicePtr theService,
-									xPL_MessagePtr theMessage, xPL_ObjectPtr userValue);
+static void _xpl_sensor_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data);
 
 
 /*
@@ -556,21 +553,20 @@ _location_item_del_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info
 /*
  *Callback called in xPL Message 'control.basic' is triggered.
  */
-void
-edamsMessageSensorBasicHandler(xPL_ServicePtr theService __UNUSED__,
-							   xPL_MessagePtr theMessage, xPL_ObjectPtr userValue)
+static void
+_xpl_sensor_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data)
 {
 	char buf[256] = "0";
-	xPL_NameValueListPtr ListNomsValeursPtr;
+	xPL_NameValueListPtr values_names;
 
-	Ecore_Pipe *pipe = (Ecore_Pipe *) userValue;
+	Ecore_Pipe *pipe = (Ecore_Pipe *) data;
 
-	ListNomsValeursPtr = xPL_getMessageBody(theMessage);
+	values_names = xPL_getMessageBody(msg);
 
-	snprintf(buf, sizeof(buf), "%s.%s.%s",
-			 xPL_getNamedValue(ListNomsValeursPtr, "device"),
-			 xPL_getNamedValue(ListNomsValeursPtr, "type"),
-			 xPL_getNamedValue(ListNomsValeursPtr, "current"));
+	snprintf(buf, sizeof(buf), "%s!%s!%s",
+			 xPL_getNamedValue(values_names, "device"),
+			 xPL_getNamedValue(values_names, "type"),
+			 xPL_getNamedValue(values_names, "current"));
 
 	ecore_pipe_write(pipe, buf, strlen(buf));
 }
@@ -596,16 +592,15 @@ do_lengthy_task(Ecore_Pipe * pipe __UNUSED__)
 static int
 _eina_list_devices_sort_cb(const void *d1, const void *d2)
 {
-    unsigned int id1 = device_id_get((Device *)d1);
-    unsigned int id2 = device_id_get((Device *)d2);
+    const char *txt = device_name_get((Device *)d1);
+    const char *txt2 = device_name_get((Device *)d2);
 
-	if(id1 == id2)
-		return 0;
-	else if(id1 < id2)
-		return -1;
-	else
-		return 1;
+    if(!txt) return(1);
+    if(!txt2) return(-1);
+
+    return(strcoll(txt, txt2));
 }/*_eina_list_devices_sort_cb*/
+
 
 
 
@@ -613,7 +608,6 @@ static void
 handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
 	char s[PATH_MAX] = "0";
-	char id[255];
 	char name[255];
 	char type[255];
 	char sval[4] = "0";
@@ -622,57 +616,39 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 	char *str = malloc(sizeof(char) * len + 1);
 	memcpy(str, buf, len);
 	str[len] = '\0';
-	sscanf(str, "%[^'.'].%[^'.'].%[^'.'].%s", name, id, type, sval);
+	sscanf(str, "%[^'!']!%[^'!'].%s", name, type, sval);
 	free(str);
 
-	device = devices_list_device_with_id_get(app->devices, atoi(id));
-
-	/* TODO:handle case of device has been changed(type, name). and inform user about it. */
-	if (!device)
+	/* TODO:handle case of device has been changed(type, name) and inform user about it. */
+	//Register new devices to EDAMS.
+	if ((device = device_new(name)))
 	{
-		// Create new device file *only* if device isn't already
-		// registered(filename already here)!
-		snprintf(s, sizeof(s), "%s" DIR_SEPARATOR_S "%s-%s.eet",
-				 edams_locations_data_path_get(), id, name);
-		if (!(device = device_load(s)))
-		{
-			device = device_new(atoi(id), name);
-			device_type_set(device, device_str_to_type(type));
-			Eina_List *l;
-			Eina_List *database;
-			database = devices_database_list_get();
-			Device *data;
-			EINA_LIST_FOREACH(database, l, data)
-			{
-				if (strcmp(device_name_get(data), device_name_get(device)) == 0)
-				{
-					device_description_set(device, device_description_get(data));
-					device_datasheeturl_set(device, device_datasheeturl_get(data));
+		device_id_set(device, eina_list_count(app->devices));
+		device_type_set(device, device_str_to_type(type));
+		device_save(device);
 
-					Evas_Object *eo;
-					Ecore_Evas *ee;
-					Evas *evas;
-					eo = NULL;
-					ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
-					evas = ecore_evas_get(ee);
-					eo = evas_object_image_filled_add(evas);
-					evas_object_image_file_set(eo, device_filename_get(data), "/image/0");
-					evas_object_image_alpha_set(eo, EINA_TRUE);
-					evas_object_image_scale(eo, 50, 50);
-					device_image_set(device, eo);
-					if (eo)	evas_object_del(eo);
-					break;
-				}
-			}
+		//Add new device to edams devices Eina_List.
+		//app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
+	   	//app->devices  = eina_list_sorted_insert(app->devices , EINA_COMPARE_CB(_eina_list_devices_sort_cb), device);
 
-			devices_list_free(database);
-			device_save(device);
-		}
 		app->devices = eina_list_append(app->devices, device);
 		app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
 	}
+	//Or try to load it instead...
+	else
+	{
+		snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+		device = device_load(s);
+	}
+
+	if(!device)
+	{
+		debug(stderr, _("Couldn't registered new device '%s'"), name);
+		return;
+	}
 	device_data_set(device, sval);
 
+/*
 	gnuplot_device_data_write(app, device);
 
 	Eina_List *l;
@@ -696,8 +672,8 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		}
 
 	}
-
-	debug(stdout, _("Sensors registered:%d\n"), eina_list_count(app->devices));
+*/
+	debug(stdout, _("Sensors registered:%d"), eina_list_count(app->devices));
 }
 
 
@@ -715,13 +691,12 @@ _ctxpopup_dismissed_cb(void *data __UNUSED__, Evas_Object * obj, void *event_inf
  *Callback called in ctxpopup object when "remove" item is selected
  */
 static void
-_ctxpopup_item_remove_widget_selected_cb(void *data __UNUSED__,
-										  Evas_Object * obj, void *event_info __UNUSED__)
+_button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj, void *event_info __UNUSED__)
 {
 	if (!app->location)
 	{
 		_notify_set(_
-					("Couldn't remove widgets from location:no location selected!"),
+					("Couldn't remove widgets:no location selected!"),
 					"elm/icon/warning-notify/default");
 		return;
 	}
@@ -756,34 +731,6 @@ _ctxpopup_item_remove_widget_selected_cb(void *data __UNUSED__,
       ic = NULL;												\
 
 
-/*
- *Callback called in list "widgets" object when an item is selected
- */
-static void
-_list_item_widgets_selected_cb(void *data, Evas_Object *obj, void *event_info)
-{
-   	Evas_Object *ctxpopup, *ic;
-   	Evas_Coord x,y;
-	Widget *widget = (Widget *) data;
-
-	ctxpopup = elm_ctxpopup_add(obj);
-	elm_ctxpopup_hover_parent_set(ctxpopup, app->win);
-	evas_object_smart_callback_add(ctxpopup, "dismissed", _ctxpopup_dismissed_cb, NULL);
-
-	ICON_NEW(ic, "list-add");
-	elm_ctxpopup_item_append(ctxpopup, _("Add"), ic,  devicespicker_add, app);
-	ICON_NEW(ic, NULL);
-	elm_ctxpopup_item_append(ctxpopup, _("Change..."), NULL,  widgets_picker_add, app);
-	ICON_NEW(ic, "list-remove");
-	elm_ctxpopup_item_append(ctxpopup, _("Remove"), ic, _ctxpopup_item_remove_widget_selected_cb, widget);
-
-	evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
-	evas_object_size_hint_max_set(ctxpopup, 240, 240);
-	evas_object_move(ctxpopup, x, y);
-	evas_object_show(ctxpopup);
-
-   	elm_list_item_selected_set(event_info, EINA_TRUE);
-}/*_list_item_widgets_selected_cb*/
 
 
 /*
@@ -804,14 +751,14 @@ _list_widgets_sort_cb(const void *pa, const void *pb)
 /*
  *
  */
-Evas_Object
-*_location_naviframe_content(Location * location)
+Evas_Object *
+_location_naviframe_content(Location * location)
 {
 	Evas_Object *gd;
 	Evas_Object *bx, *frame;
 	Evas_Object *list;
-	Evas_Object *img;
-	Evas_Object *en;
+	Evas_Object *img, *ic;
+	Evas_Object *en, *bt;
 	char s[256];
 
 	if (!location) return NULL;
@@ -860,7 +807,7 @@ Evas_Object
 
 	frame = elm_frame_add(app->win);
 	elm_object_text_set(frame, _("Widgets"));
-	elm_grid_pack(gd, frame, 1, 31, 99, 69);
+	elm_grid_pack(gd, frame, 1, 31, 99, 49);
 	evas_object_show(frame);
 
 	list = elm_list_add(app->win);
@@ -873,7 +820,6 @@ Evas_Object
 	Eina_List *l, *widgets;
 	Widget *widget;
 	widgets = location_widgets_list_get(location);
-	int x = 0;
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
 		Evas_Object *ic;
@@ -885,7 +831,7 @@ Evas_Object
 
 		Device *device;
 
-		if ((device = device_with_id_from_data_get(widget_device_id_get(widget))))
+		if((device = device_load(widget_device_filename_get(widget))))
 		{
 			snprintf(s, sizeof(s), "%s(id:%d)",
 									device_name_get(device),
@@ -895,12 +841,46 @@ Evas_Object
 		{
 			snprintf(s, sizeof(s), "%d - %s", widget_device_id_get(widget), widget_name_get(widget));
 		}
-			elm_list_item_sorted_insert(list, strdup(s), ic, NULL, _list_item_widgets_selected_cb, widget, _list_widgets_sort_cb);
 
+		elm_list_item_append(list, strdup(s), ic, NULL, NULL, widget);
 		device_free(device);
-		x++;
 	}
 	elm_list_go(list);
+
+	bx = elm_box_add(app->win);
+	elm_box_horizontal_set(bx, EINA_TRUE);
+	elm_grid_pack(gd, bx, 1, 81, 90, 10);
+	evas_object_show(bx);
+
+	bt = elm_button_add(app->win);
+	elm_object_text_set(bt, _("Edit"));
+    ic = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(ic, "document-properties");
+    elm_object_part_content_set(bt, "icon", ic);
+	elm_box_pack_end(bx, bt);
+    evas_object_smart_callback_add(bt, "clicked", widgets_picker_add, app);
+    evas_object_show(bt);
+
+    bt = elm_button_add(app->win);
+    elm_object_text_set(bt, _("Add"));
+	ic = elm_icon_add(app->win);
+	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(ic, "device-add");
+	elm_object_part_content_set(bt, "icon", ic);
+	elm_box_pack_end(bx, bt);
+	evas_object_smart_callback_add(bt, "clicked", devices_picker_add, app);
+	evas_object_show(bt);
+
+	bt = elm_button_add(app->win);
+	elm_object_text_set(bt, _("Remove"));
+    ic = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(ic, "device-remove");
+    elm_object_part_content_set(bt, "icon", ic);
+	elm_box_pack_end(bx, bt);
+    evas_object_smart_callback_add(bt, "clicked", _button_remove_widget_clicked_cb, NULL);
+    evas_object_show(bt);
 
 	return gd;
 }/*_location_naviframe_content*/
@@ -934,6 +914,9 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	// Initialize edams.
 	edams_init(app);
+
+	//Load registered devices.
+	app->devices = devices_list_get();
 
 	// Setup main window.
 	timestamp = time(NULL);
@@ -1010,9 +993,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-	elm_toolbar_item_append(app->toolbar, "devices-creator",
-							_("Devices Creator"), devices_creator_new, app);
-	elm_toolbar_item_append(app->toolbar, "map", _("Locations Map"), map_new, app);
+	elm_toolbar_item_append(app->toolbar, "map", _("Global Map"), map_new, app);
 	elm_toolbar_item_append(app->toolbar, "preferences-browser",
 							_("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar, "about-dlg", _("About"), about_dialog_new, app);
@@ -1125,9 +1106,9 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_resize(app->win, 480, 500);
 	evas_object_show(app->win);
 	pipe = ecore_pipe_add(handler, NULL);
-	xPL_addServiceListener(app->edamsService, edamsMessageSensorBasicHandler,
-						   xPL_MESSAGE_TRIGGER, "sensor", "basic", (xPL_ObjectPtr) pipe);
 
+	xPL_addServiceListener(app->edamsService, _xpl_sensor_basic_handler,
+						   xPL_MESSAGE_TRIGGER, "sensor", "basic", (xPL_ObjectPtr) pipe);
 	child_pid = fork();
 
 	if (!child_pid)

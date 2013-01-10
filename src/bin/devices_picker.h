@@ -26,6 +26,6 @@
 #include <Eina.h>
 #include "libedams.h"
 
-void devicespicker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+void devices_picker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 #endif

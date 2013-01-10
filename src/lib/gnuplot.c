@@ -34,7 +34,7 @@ gnuplot_device_data_file_get(Device *device)
 	if(!device) return NULL;
 
 	char s[PATH_MAX];
-	snprintf(s, sizeof(s), "%s/%d-%s.dat", edams_locations_data_path_get(), device_id_get(device), device_name_get(device));
+	snprintf(s, sizeof(s), "%s/%s.dat", edams_devices_data_path_get(), device_name_get(device));
 	return strdup(s);
 }
 
@@ -64,7 +64,7 @@ gnuplot_device_png_write(App_Info *app, Device *device)
 	gnuplot_pipe = popen(s, "w");
 	if (gnuplot_pipe)
 	{
-		snprintf(s, sizeof(s), "%s/%d-%s.png", edams_locations_data_path_get(), device_id_get(device), device_name_get(device));
+		snprintf(s, sizeof(s), "%s/%s.png", edams_devices_data_path_get(), device_name_get(device));
 		fprintf(gnuplot_pipe, "set term png size 600,300\n");
 		fprintf(gnuplot_pipe, "set output \"%s\"\n", s);
 		fprintf(gnuplot_pipe, "set xdata time\n");

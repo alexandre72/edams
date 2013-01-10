@@ -55,10 +55,10 @@ edams_locale_path_get(void)
 //
 //
 const char *
-edams_db_path_get (void)
+edams_devices_data_path_get (void)
 {
     char s[PATH_MAX];
-    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"db", edams_data_path_get());
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"devices", edams_data_path_get());
 	return strdup(s);
 }
 

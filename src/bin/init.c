@@ -121,7 +121,7 @@ static int paths_init(App_Info * app)
 		ecore_file_mkpath(s);
 
 	// Create devices database directory.
-	strcpy(s, edams_db_path_get());
+	strcpy(s, edams_devices_data_path_get());
 	if (ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 

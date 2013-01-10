@@ -66,6 +66,9 @@ group
 		{
 			item: "value" "value.text";
 			item: "title" "title.text";
+
+			item: "description" "Counter display numerical data in a standard numerical way in green LCD like screen. Sensor name is displayed at the bottom.";
+			item: "tags" "temperature,humidity,rpm";
 		}
 
         parts

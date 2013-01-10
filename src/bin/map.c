@@ -545,6 +545,8 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 {
 	Evas_Event_Key_Down *ev = einfo;
 
+
+/*
 	if(evas_object_smart_parent_get(o))
 	{
 		char id[255];
@@ -633,6 +635,8 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			return;
 		}
 	}
+
+	*/
 }/*_on_keydown*/
 
 
@@ -768,6 +772,7 @@ map_data_update(App_Info * app, Widget * widget)
 	if (!ee || !app || !app->devices)
 		return;
 
+/*
 	// Update data device meter affected to location(can be affected on
 	// different locations).
 	Device *device;
@@ -832,6 +837,7 @@ map_data_update(App_Info * app, Widget * widget)
 			}
 		}
 	}
+	*/
 }/*map_data_update*/
 
 

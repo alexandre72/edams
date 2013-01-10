@@ -62,6 +62,9 @@ group
 	{
 		item: "value" "value.text";
 		item: "drag" "EDJE_MESSAGE_FLOAT 1";
+
+		item: "description" "Thermometer display value in a classic red gauge, with numerical value display on the top. Mostly useful with temperature sensor device.";
+		item: "tags" "temperature,humidity,rpm";
 	}
 
 

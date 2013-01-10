@@ -23,7 +23,6 @@ edams.c \
 init.c \
 map.c \
 devices_picker.c \
-devices_creator.c \
 preferences_dlg.c \
 shutdown.c \
 widgets_picker.c
