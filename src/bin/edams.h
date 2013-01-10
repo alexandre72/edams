@@ -21,10 +21,14 @@
 #ifndef __EDAMS_H__
 #define __EDAMS_H__
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <Evas.h>
 #include <Eina.h>
 
-#include "libedams.h"
+#include "utils.h"
 #include "location.h"
 #include "settings.h"
 #include "xPL.h"

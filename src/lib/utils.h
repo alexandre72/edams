@@ -22,9 +22,21 @@
 #define __UTILS_H__
 
 #include <Evas.h>
-#include <Eina.h>
-#include "libedams.h"
 
+#include "gettext.h"
+
+#define DIR_SEPARATOR '/'
+#define DIR_SEPARATOR_S "/"
+
+#define _(String) gettext (String)
+#define gettext_noop(String) String
+#define N_(String) gettext_noop (String)
+
+#define __UNUSED__ __attribute__((unused))
+
+#define FREE(ptr)  do { _free( #ptr, __FILE__, __LINE__, (ptr)); (ptr) = NULL; } while (0)
+
+void _free(const char * var, const char * filename, unsigned long line, void *ptr);
 void set_debug_mode(Eina_Bool debug);
 void debug(FILE *stream, char *theFormat, ...);
 void evas_object_image_scale(Evas_Object *obj, int width, int height);

@@ -18,6 +18,8 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
+
 
 #include "edams.h"
 #include "path.h"

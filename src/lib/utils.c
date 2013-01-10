@@ -18,16 +18,38 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+#include <Elementary.h>
+
 #include <ctype.h>
 
-#include "libedams.h"
-#include "gettext.h"
+#include "utils.h"
 #include "settings.h"
 
 
 #define LOG_BUFF_MAX 512
 
 Eina_Bool _debug = EINA_FALSE;
+
+
+
+inline void
+_free(const char * var, const char * filename, unsigned long line, void *ptr)
+{
+    //++free_count;
+    //INF(_("Variable %s (%10p) at %s:%lu"), var, ptr, filename, line);
+    if (ptr)
+    {
+        free(ptr);
+        ptr = NULL;
+    }
+    else
+    {
+        debug(stderr, _("Caught attempt to free NULL pointer variable %s at %s:%lu!"), var, filename, line);
+    }
+}//_free
+
+
 
 /*Keep evas object image aspect ratio*/
 void

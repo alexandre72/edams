@@ -18,10 +18,11 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Ecore.h>
+#include <Elementary.h>
 
 #include "device.h"
 #include "edams.h"
-#include "libedams.h"
 #include "path.h"
 #include "utils.h"
 
@@ -627,6 +628,29 @@ device_clone(const Device *src)
 
 	return dst;
 }
+
+
+
+/*
+ *Return device with 'id' arg.
+ */
+Device*
+devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(devices, NULL);
+
+	Eina_List *l;
+	Device *device;
+
+	EINA_LIST_FOREACH(devices, l, device)
+	{
+		if(device_id_get(device) == id) return device;
+	}
+
+	debug(stderr, _("Couldn't return device with id '%d' from devices list"), id);
+	return NULL;
+}
+
 
 
 Class_Flags

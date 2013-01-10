@@ -22,10 +22,6 @@
 #ifndef __PATH_H
 #define __PATH_H__
 
-
-#include "libedams.h"
-
-
 //path.c:Paths functions.
 const char *edams_install_path_get (void);
 const char *edams_data_path_get(void);

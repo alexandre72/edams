@@ -41,7 +41,7 @@ struct _Evas_Smart_Example_Data
   EVAS_SMART_EXAMPLE_DATA_GET(o, ptr);                       \
   if (!ptr)                                                  \
     {                                                        \
-       fprintf(stderr, "No widget data for object %p (%s)!", \
+       debug(stderr, _("No widget data for object %p (%s)"), \
                o, evas_object_type_get(o));                  \
        fflush(stderr);                                       \
        abort();                                              \
@@ -52,7 +52,7 @@ struct _Evas_Smart_Example_Data
   EVAS_SMART_EXAMPLE_DATA_GET(o, ptr);                         \
   if (!ptr)                                                    \
     {                                                          \
-       fprintf(stderr, "No widget data for object %p (%s)!",   \
+       debug(stderr, _("No widget data for object %p (%s)"),   \
                o, evas_object_type_get(o));                    \
        fflush(stderr);                                         \
        abort();                                                \
@@ -156,9 +156,9 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 				evas_object_geometry_get(o, &crect.x, &crect.y, &crect.w, &crect.h);
 
 				/* FIXME:Check to see ifn't out of the priv->border bounds. Check if children is in
-				   printf("Parent geometry:x=%d y=%d width=%d height=%d\n", prect.x, prect.y,
+				   fprintf(stdout, "Parent geometry:x=%d y=%d width=%d height=%d\n", prect.x, prect.y,
 				   prect.w, prect.h); printf("Current child geometry:x=%d y=%d\n", x, y);
-				   printf("Mouse pointer is in?%s\n", eina_rectangle_coords_inside(&prect, x, y)?
+				   fprintf(stdout, "Mouse pointer is in?%s\n", eina_rectangle_coords_inside(&prect, x, y)?
 				   "TRUE":"FALSE"); if(x>=prect.w || x<=prect.x) printf("Child is OUT\n"); */
 				if (eina_rectangle_coords_inside(&prect, x, y))
 				{
@@ -546,13 +546,13 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 	Evas_Event_Key_Down *ev = einfo;
 
 
-/*
 	if(evas_object_smart_parent_get(o))
 	{
 		char id[255];
 		Device *device;
 
 		sscanf(evas_object_name_get(o), "%*[^'_']_%[^'_']_%*[^'_']_edje", id);
+
 		device = devices_list_device_with_id_get(app->devices, atoi(id));
 
 			// Key 's' show data device in graphics generated from gnuplot(PNG format).
@@ -635,8 +635,6 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			return;
 		}
 	}
-
-	*/
 }/*_on_keydown*/
 
 
@@ -669,10 +667,10 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 		return;
 	}
 
-	printf("Using %s engine!\n", ecore_evas_engine_name_get(ee));
+	debug(stdout, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
 	ecore_evas_shaped_set(ee, 0);
 	ecore_evas_borderless_set(ee, 0);
-	ecore_evas_title_set(ee, _("Location's map"));
+	ecore_evas_title_set(ee, _("Global map"));
 	ecore_evas_callback_resize_set(ee, _ecore_evas_resize_cb);
 	evas = ecore_evas_get(ee);
 
@@ -765,79 +763,75 @@ map_quit()
  *Sync map widgets with device data.
  */
 void
-map_data_update(App_Info * app, Widget * widget)
+map_widget_data_update(App_Info * app, Location *location, Device *device)
 {
 	// Sync device data with location device data(if affected to any
 	// location!).
-	if (!ee || !app || !app->devices)
+	if (!ee || !app || !app->devices || !location || !device)
 		return;
 
-/*
-	// Update data device meter affected to location(can be affected on
-	// different locations).
-	Device *device;
-	device = devices_list_device_with_id_get(app->devices, widget_device_id_get(widget));
+	//Parse all location widget's and update Edje widget's objects.
+	Eina_List *l, *widgets;
+	Widget *widget;
 
-	if (device)
+	widgets = location_widgets_list_get(location);
+
+	EINA_LIST_FOREACH(widgets, l, widget)
 	{
-		Eina_List *l;
-		Location *location;
+		if(widget_device_id_get(widget) != device_id_get(device))
+			continue;
 
-		//Parse all location widgets and update widget Edje.
-		EINA_LIST_FOREACH(app->locations, l, location)
-		{
-			char s[64];
-			snprintf(s, sizeof(s), "%d_%d_%s_edje",
-					 widget_position_get(widget), widget_device_id_get(widget),
+		//Edje widget's object name follow same scheme _widgetposition_widgetdeviceid_locationame.
+		char s[64];
+		snprintf(s, sizeof(s), "%d_%d_%s_edje",
+					 widget_position_get(widget),
+					 widget_device_id_get(widget),
 					 location_name_get(location));
-			Evas_Object *edje = evas_object_name_find(evas, s);
+		Evas_Object *edje = evas_object_name_find(evas, s);
 
-			if (edje)
+		//Parse Edje widget's messages/actions.
+		if (edje)
+		{
+			const char *t;
+			if ((t = edje_object_data_get(edje, "drag")))
 			{
-				const char *t;
-				if ((t = edje_object_data_get(edje, "drag")))
-				{
-					int temp_x, temp_y;
-					sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
+				int temp_x, temp_y;
+				sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
+				Edje_Message_Float msg;
+				double level =
+								(double)((temp_x + (temp_y * 0.01)) -
+							 	TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
 
-					Edje_Message_Float msg;
-					double level =
-						(double)((temp_x + (temp_y * 0.01)) -
-								 TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
+				if (level < 0.0) level = 0.0;
+				else if (level > 1.0) level = 1.0;
 
-					if (level < 0.0)
-						level = 0.0;
-					else if (level > 1.0)
-						level = 1.0;
-					msg.val = level;
-					edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
-				}
-
-
-				if ((t = edje_object_data_get(edje, "action")))
-				{
-					if (atoi(device_data_get(device)) == 0)
-						edje_object_signal_emit(edje, "end", "over");
-					else
-						edje_object_signal_emit(edje, "animate", "over");
-				}
-
-				if ((t = edje_object_data_get(edje, "title")))
-				{
-					snprintf(s, sizeof(s), "%d - %s", device_id_get(device), device_name_get(device));
-					edje_object_part_text_set(edje, "title.text", s);
-				}
-
-				if ((t = edje_object_data_get(edje, "value")))
-				{
-					snprintf(s, sizeof(s), device_unit_format_get(device), device_data_get(device));
-					edje_object_part_text_set(edje, "value.text", s);
-				}
-				edje_object_signal_emit(edje, "updated", "over");
+				msg.val = level;
+				edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
 			}
+
+
+			if ((t = edje_object_data_get(edje, "action")))
+			{
+				if (atoi(device_data_get(device)) == 0)
+					edje_object_signal_emit(edje, "end", "over");
+				else
+					edje_object_signal_emit(edje, "animate", "over");
+			}
+
+			if ((t = edje_object_data_get(edje, "title")))
+			{
+				snprintf(s, sizeof(s), "%d - %s", device_id_get(device), device_name_get(device));
+				edje_object_part_text_set(edje, "title.text", s);
+			}
+
+			if ((t = edje_object_data_get(edje, "value")))
+			{
+				snprintf(s, sizeof(s), device_unit_format_get(device), device_data_get(device));
+				edje_object_part_text_set(edje, "value.text", s);
+			}
+			edje_object_signal_emit(edje, "updated", "over");
 		}
 	}
-	*/
 }/*map_data_update*/
 
 

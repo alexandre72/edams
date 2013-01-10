@@ -452,7 +452,7 @@ static Eina_Bool findDefaultInterface(int sockfd) {
   struct ifconf ifc;
   struct ifreq *ifr;
   struct ifreq interfaceInfo;
-  int intIndex;
+  unsigned int intIndex;
 
   /* Request list of intefaces */
   ifc.ifc_len = sizeof(intBuff);

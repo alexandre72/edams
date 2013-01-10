@@ -18,6 +18,7 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
 #include <Ecore_Con.h>
 #include "cosm.h"
 #include "edams.h"
@@ -192,12 +193,12 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, v
 	headers = ecore_con_url_response_headers_get(url_complete->url_con);
 
 	//FIXME:Handle debug mode and check if valid response from cosm server!
-	/*Eina_List *l;*/
-	/*const char *str;*/
-   /*
-   EINA_LIST_FOREACH(headers, l, str)
+	/*
+	Eina_List *l;
+	const char *str;
+      EINA_LIST_FOREACH(headers, l, str)
    {
-		fprintf("%s", str);
+		fprintf(stdout, "%s", str);
 	}
 	*/
 	return EINA_TRUE;

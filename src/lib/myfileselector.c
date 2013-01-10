@@ -18,9 +18,9 @@
  * along with Elm Extension Pack. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "myfileselector.h"
+#include <Elementary.h>
 
-#include "libedams.h"
+#include "myfileselector.h"
 #include "path.h"
 #include "utils.h"
 
@@ -28,9 +28,6 @@
 static char * _file_user_get(uid_t st_uid);
 static char *_file_perms_get(mode_t st_mode, uid_t st_uid, gid_t st_gid);
 static char *_file_size_get(off_t size);
-
-
-
 
 #ifdef HAVE_EVIL
 #define 	getuid()   1000

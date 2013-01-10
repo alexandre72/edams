@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <time.h>
 
+#include <Elementary.h>
 #include <Ecore_File.h>
 
 #include "about_dlg.h"
@@ -41,7 +42,6 @@
 #include "shutdown.h"
 #include "utils.h"
 #include "widgets_picker.h"
-
 
 static const int TEMP_MIN = -30;
 static const int TEMP_MAX = 50;
@@ -616,7 +616,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 	char *str = malloc(sizeof(char) * len + 1);
 	memcpy(str, buf, len);
 	str[len] = '\0';
-	sscanf(str, "%[^'!']!%[^'!'].%s", name, type, sval);
+	sscanf(str, "%[^'!']!%[^'!']!%s", name, type, sval);
 	free(str);
 
 	/* TODO:handle case of device has been changed(type, name) and inform user about it. */
@@ -628,9 +628,6 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		device_save(device);
 
 		//Add new device to edams devices Eina_List.
-		//app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
-	   	//app->devices  = eina_list_sorted_insert(app->devices , EINA_COMPARE_CB(_eina_list_devices_sort_cb), device);
-
 		app->devices = eina_list_append(app->devices, device);
 		app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
 	}
@@ -648,31 +645,19 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 	}
 	device_data_set(device, sval);
 
-/*
+	//Sync device's data with gnuplot, global map and cosm.
 	gnuplot_device_data_write(app, device);
 
 	Eina_List *l;
 	Location *location;
+
+	//Parse all locations and sync with global and cosm.
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
-		Eina_List *l2, *widgets;
-		Widget *widget;
-
-		widgets = location_widgets_list_get(location);
-
-		EINA_LIST_FOREACH(widgets, l2, widget)
-		{
-			// Update device widget affected to it's location.
-			if (widget_device_id_get(widget) == device_id_get(device))
-			{
-				// If device is already here, only update device data in global map and cosm datastream.
-				map_data_update(app, widget);
-				cosm_device_datastream_update(app, location, device);
-			}
-		}
-
+		cosm_device_datastream_update(app, location, device);
+		map_widget_data_update(app, location, device);
 	}
-*/
+
 	debug(stdout, _("Sensors registered:%d"), eina_list_count(app->devices));
 }
 
