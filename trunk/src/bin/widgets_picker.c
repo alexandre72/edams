@@ -18,12 +18,13 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
+
+#include "widgets_picker.h"
 #include "device.h"
 #include "edams.h"
 #include "path.h"
 #include "utils.h"
-#include "widgets_picker.h"
-
 
 static Evas_Object *win = NULL;
 

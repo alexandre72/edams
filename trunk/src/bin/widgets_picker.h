@@ -23,7 +23,7 @@
 #define __WIDGETSPICKER_H
 
 #include <Evas.h>
-#include "libedams.h"
+#include "utils.h"
 
 void widgets_picker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 

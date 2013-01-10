@@ -18,6 +18,10 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Eina.h>
+#include <Ecore_Evas.h>
+#include <Edje.h>
+#include <Elementary.h>
 
 #include "shutdown.h"
 #include "settings.h"
@@ -31,7 +35,7 @@ static int xpl_shutdown(App_Info * app);
 static int xpl_shutdown(App_Info * app)
 {
 	debug(stdout, _("Shutdown xPL..."));
-	xPL_setServiceEnabled(app->edamsService, FALSE);
+	xPL_setServiceEnabled(app->edamsService, EINA_FALSE);
 	xPL_releaseService(app->edamsService);
 	xPL_shutdown();
 

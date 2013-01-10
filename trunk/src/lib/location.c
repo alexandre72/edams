@@ -19,6 +19,8 @@
  */
 
 
+#include <Ecore_File.h>
+
 #include <limits.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -26,7 +28,6 @@
 #include <unistd.h>
 
 #include "location.h"
-#include "libedams.h"
 #include "path.h"
 #include "utils.h"
 

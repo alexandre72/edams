@@ -23,8 +23,7 @@
 #define __DEVICESPICKER_H
 
 #include <Evas.h>
-#include <Eina.h>
-#include "libedams.h"
+#include "utils.h"
 
 void devices_picker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 

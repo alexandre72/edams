@@ -18,6 +18,10 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Ecore_Con.h>
+#include <Ecore_File.h>
+#include <Elementary.h>
+
 #include "edams.h"
 #include "utils.h"
 #include "path.h"
@@ -41,7 +45,7 @@ static int xpl_init(App_Info * app)
 	xPL_setServiceVersion(app->edamsService, XPL_VERSION);
 
 	// Enable the service
-	xPL_setServiceEnabled(app->edamsService, TRUE);
+	xPL_setServiceEnabled(app->edamsService, EINA_TRUE);
 
 	return 0;
 }
@@ -72,7 +76,7 @@ static int efl_init(App_Info * app)
 		debug(stdout, _("Ecore_Con_Url pipeline has been enabled"));
 		ecore_con_url_pipeline_set(EINA_TRUE);
 	}
-	// ecore_con_url_pipeline_set(EINA_FALSE);
+	//ecore_con_url_pipeline_set(EINA_FALSE);
 
 	ecore_evas_init();
 	edje_init();

@@ -18,6 +18,7 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
 
 #include "edams.h"
 #include "path.h"
@@ -27,8 +28,6 @@
 
 static void _apply_bt_clicked_cb(void *data, Evas_Object * obj __UNUSED__,
 								 void *event_info __UNUSED__);
-
-
 
 
 static void

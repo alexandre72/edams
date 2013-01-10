@@ -20,9 +20,10 @@
 
 
 #include "path.h"
+#include "utils.h"
 
-
-
+#include <Eina.h>
+#include <Efreet.h>
 
 // Return FriLogos installation directory. useful to get global installation data path.
 // @return char pointer containing installation directory.

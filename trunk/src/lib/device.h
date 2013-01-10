@@ -108,7 +108,7 @@ const char * device_unit_symbol_get(const Device *device);
 
 Eina_List *devices_list_get();
 Eina_List *devices_list_free(Eina_List *devices);
-//Device* devices_list_device_with_id_get(Eina_List *devices, unsigned int id);
+Device* devices_list_device_with_id_get(Eina_List *devices, unsigned int id);
 
 /* Global initializer / shutdown functions */
 void devices_init(void);

@@ -18,6 +18,7 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
 
 #include "devices_picker.h"
 #include "device.h"
