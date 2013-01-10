@@ -130,7 +130,7 @@ debug(FILE *stream, char *theFormat, ...)
   	if(stream == stdout)
 		fprintf(stdout, "\033[32mDBG:\033[0m");
 	else if(stream == stderr)
-		fprintf(stdout, "\033[31mERROR:\033[0m");
+		fprintf(stderr, "\033[31mERROR:\033[0m");
 
 	fprintf(stream, "%s\n", logMessageBuffer);
 

@@ -25,7 +25,7 @@
 #include <Eina.h>
 #include <Evas.h>
 
-#define DEVICE_FILE_VERSION 0x0003
+#define DEVICE_FILE_VERSION 0x0004
 
 typedef struct _Device Device;
 
@@ -73,9 +73,7 @@ Class_Flags device_str_to_class(const char *s);
 const char *device_class_to_str(Class_Flags type);
 
 
-Device *device_with_id_from_data_get(unsigned int id);
-
-Device *device_new(unsigned int id, const char * name);
+Device *device_new(const char * name);
 void device_free(Device *device);
 Device *device_clone(const Device *src);
 Device *devices_detect(char *s);
@@ -108,9 +106,9 @@ const char * device_units_get(const Device *device);
 const char * device_unit_format_get(const Device *device);
 const char * device_unit_symbol_get(const Device *device);
 
-Eina_List *devices_database_list_get();
+Eina_List *devices_list_get();
 Eina_List *devices_list_free(Eina_List *devices);
-Device* devices_list_device_with_id_get(Eina_List *devices, unsigned int id);
+//Device* devices_list_device_with_id_get(Eina_List *devices, unsigned int id);
 
 /* Global initializer / shutdown functions */
 void devices_init(void);

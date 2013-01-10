@@ -58,7 +58,7 @@ _layout_samples_test(Evas_Object *layout)
 	Device *sample;
 	char s[32];
     srand((unsigned int)time((time_t *)NULL));
-	sample = device_new(prandom(50), "sample device");
+	sample = device_new("sample device");
 	device_type_set(sample, prandom(TYPE_LAST));
 
 	snprintf(s, sizeof(s), "%d", prandom(24));
@@ -120,10 +120,24 @@ static void
 _list_item_widgets_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	const char *widget = data;
+	const char *t;
 
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
 	elm_layout_file_set(layout, edams_edje_theme_file_get(), widget);
 	_layout_samples_test(layout);
+
+	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
+
+	if((t = elm_layout_data_get(layout, "description")))
+	{
+		char s[256];
+	   	snprintf(s, sizeof(s), "Description:%s", t);
+   		elm_object_text_set(entry, s);
+   	}
+   	else
+   	{
+   		elm_object_text_set(entry, NULL);
+   	}
 }
 
 
@@ -233,6 +247,19 @@ widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 		edje_file_collection_list_free(groups);
 	}
 	elm_list_go(list);
+
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("Description"));
+	elm_grid_pack(gd, frame, 1, 61, 99, 60);
+	evas_object_show(frame);
+
+   	entry = elm_entry_add(win);
+   	evas_object_name_set(entry, "widget description entry");
+   	elm_entry_line_wrap_set(entry, ELM_WRAP_MIXED);
+   	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_object_content_set(frame, entry);
+	evas_object_show(entry);
 
 	bx = elm_box_add(win);
 	elm_box_horizontal_set(bx, EINA_TRUE);

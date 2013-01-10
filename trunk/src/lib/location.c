@@ -34,6 +34,7 @@ struct _Widget
 {
     const char * name;				//Widget name associated(edc widget group name) e.g. 'meter/counter'.
     unsigned int device_id;			//Device id associated e.g '12'.
+    const char *device_filename;	//Device filename associated e.g 'temperature1.eet'.
     unsigned int position;			//Device widget position in Eina_List.
 };
 
@@ -74,6 +75,7 @@ _widget_init(void)
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "name", name, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "device_id", device_id, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "device_filename", device_filename, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "position", position, EET_T_UINT);
 }
 
@@ -88,7 +90,7 @@ _widget_shutdown(void)
 
 
 Widget *
-widget_new(const char * name,  Device *device)
+widget_new(const char * name, Device *device)
 {
     Widget *widget = calloc(1, sizeof(Widget));
 
@@ -98,8 +100,9 @@ widget_new(const char * name,  Device *device)
           return NULL;
        }
 
-    widget->name = eina_stringshare_add(name ? name : "counter");
+    widget->name = eina_stringshare_add(name ? name : "meter/counter");
     widget->device_id = device_id_get(device);
+    widget->device_filename = device_filename_get(device);
 
     return widget;
 }
@@ -110,6 +113,7 @@ void
 widget_free(Widget *widget)
 {
     eina_stringshare_del(widget->name);
+    eina_stringshare_del(widget->device_filename);
     free(widget);
 }
 
@@ -125,6 +129,22 @@ widget_name_set(Widget *widget, const char *name)
     EINA_SAFETY_ON_NULL_RETURN(widget);
     eina_stringshare_replace(&(widget->name), name);
 }
+
+
+
+inline const char *
+widget_device_filename_get(const Widget *widget)
+{
+    return widget->device_filename;
+}
+
+inline void
+widget_device_filename_set(Widget *widget, const char *filename)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    eina_stringshare_replace(&(widget->device_filename), filename);
+}
+
 
 inline unsigned int
 widget_device_id_get(const Widget *widget)
@@ -165,8 +185,6 @@ _locations_list_sort_cb(const void *d1, const void *d2)
 }
 
 
-
-
 static char *
 _filename_create()
 {
@@ -186,8 +204,6 @@ _filename_create()
 
 	return strdup(s);
 }
-
-
 
 
 static inline void
@@ -666,7 +682,7 @@ locations_list_get()
 	eina_iterator_free(it);
 	}
 
-	debug(stdout, _("%d locations registered in database"), eina_list_count(locations));
+	debug(stdout, _("%d locations registered"), eina_list_count(locations));
 	locations = eina_list_sort(locations, eina_list_count(locations), EINA_COMPARE_CB(_locations_list_sort_cb));
 	return locations;
 }

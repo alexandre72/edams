@@ -27,20 +27,20 @@
 
 struct _Device
 {
+    unsigned int id;				//Id of device.
     const char *__eet_filename;		//Filename name of device, generated and based on device's name.
-    unsigned int id;				//Id of device e.g. '104'.
-    const char *name;				//Name of device 'DS18B20'.
-    Class_Flags class;				//Class of device e.g. 'SENSOR'.
-    Type_Flags type;				//Type of device e.g. 'HUMIDITY'.
+    const char *name;				//Name of xpl device 'temperature1'. Should be unique.
+    Class_Flags class;				//Class of xpl device e.g. 'SENSOR'.
+    Type_Flags type;				//Type of xpl device e.g. 'HUMIDITY'.
     const char *description;		//Description of device e.g.'I2C sensor'.
-    const char *datasheeturl;		//URL Datasheet of device e.g. 'http///alldatasheet.com/ds18b20.html'.
-    const char *data;				//Current data of device.
+    const char *data;				//Current data of xpl device.
 	const char *units;  			//The units of the device e.g. 'Celsius'.
 	const char *unit_symbol;		//The symbol of the unit e.g. 'C'.
 	const char *unit_format;		//The unit format in c printf style e.g.g '%f'.
     const char *creation;			//Creation date of device Eet file.
 	const char *revision;			//Revision date of device Eet file.
     unsigned int version;			//Version of device Eet file.
+    const char *datasheeturl;		//URL Datasheet of device e.g. 'http///alldatasheet.com/ds18b20.html'.
 };
 
 
@@ -54,15 +54,13 @@ static Eet_Data_Descriptor *_device_descriptor = NULL;
 static int
 devices_list_sort_cb(const void *d1, const void *d2)
 {
-    unsigned int id1 = device_id_get((Device *)d1);
-    unsigned int id2 = device_id_get((Device *)d2);
+    const char *txt = device_name_get((Device *)d1);
+    const char *txt2 = device_name_get((Device *)d2);
 
-	if(id1 == id2)
-		return 0;
-	else if(id1 < id2)
-		return -1;
-	else
-		return 1;
+    if(!txt) return(1);
+    if(!txt2) return(-1);
+
+    return(strcoll(txt, txt2));
 }
 
 
@@ -114,9 +112,16 @@ devices_shutdown(void)
 }
 
 Device *
-device_new(unsigned int id, const char * name)
+device_new(const char * name)
 {
 	char s[PATH_MAX];
+
+	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+	if(ecore_file_exists(s))
+	{
+		debug(stderr, _("Eet file '%s' already exist. Device name should be unique into your xpl network or maybe have you  replaced your xPL device with new one(with another type, class...)?"), s);
+		return NULL;
+	}
 
     Device *device = calloc(1, sizeof(Device));
 
@@ -126,14 +131,13 @@ device_new(unsigned int id, const char * name)
 		return NULL;
 	}
 
-   	device->id = id;
+   	device->id = 0;
     device->name = eina_stringshare_add(name ? name : "undefined");
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%d-%s.eet" , edams_locations_data_path_get(), device->id, device->name);
     device->__eet_filename = eina_stringshare_add(s);
     device->class = UNKNOWN_CLASS;
     device->type = UNKNOWN_TYPE;
-    device->description = eina_stringshare_add("undefined");
-    device->datasheeturl = eina_stringshare_add("undefined");
+    device->description = NULL;
+    device->datasheeturl = NULL;
     device->data = NULL;
     device->units =NULL;
     device->unit_symbol = NULL;
@@ -174,9 +178,6 @@ device_free(Device *device)
 }
 
 
-
-
-
 inline unsigned int
 device_id_get(const Device *device)
 {
@@ -204,7 +205,7 @@ device_name_set(Device *device, const char *name)
 
     EINA_SAFETY_ON_NULL_RETURN(device);
 
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_db_path_get(), name);
+	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
     eina_stringshare_replace(&(device->__eet_filename), s);
 	eina_stringshare_replace(&(device->name), name);
 }
@@ -240,7 +241,7 @@ device_type_set(Device *device, const Type_Flags type)
 	{
 		default:
 		case UNKNOWN_TYPE:
-						debug(stderr, _("Couldn't set an unknown device type to device with id"), device_name_get(device), device_id_get(device));
+						debug(stderr, _("Couldn't set an unknown Type_Flags to device '%s'"), device_name_get(device));
 						break;
 		case GENERIC:
 					device_units_set(device, _("Generic"));
@@ -536,53 +537,15 @@ end:
 //
 //Read all devices infos files.
 //
-Device *
-device_with_id_from_data_get(unsigned int id)
-{
-	const Eina_File_Direct_Info *f_info;
-	Eina_Iterator *it;
-	Device *device = NULL;
-
-	it = eina_file_stat_ls(edams_locations_data_path_get());
-
-   	if(it)
-   	{
-	   EINA_ITERATOR_FOREACH(it, f_info)
-	   {
-			if(eina_str_has_extension(f_info->path, ".eet") == EINA_TRUE)
-			{
-				char s[PATH_MAX];
-				snprintf(s, sizeof(s), "%d-", id);
-				if(strncmp(s, ecore_file_file_get(f_info->path), strlen(s)) == 0)
-				{
-					device = device_load(f_info->path);
-					return device;
-				}
-			}
-		}
-
-		eina_iterator_free(it);
-	}
-
-	debug(stderr, _("No device with id '%d' registered"), id);
-	return NULL;
-}
-
-
-
-
-//
-//Read all devices infos files.
-//
 Eina_List *
-devices_database_list_get()
+devices_list_get()
 {
 	const Eina_File_Direct_Info *f_info;
 	Eina_Iterator *it;
 	Eina_List *devices = NULL;
 	Device *device = NULL;
 
-	it = eina_file_stat_ls(edams_db_path_get());
+	it = eina_file_stat_ls(edams_devices_data_path_get());
 
    	if(it)
    	{
@@ -590,25 +553,22 @@ devices_database_list_get()
 	   {
 			if(eina_str_has_extension(f_info->path, ".eet") == EINA_TRUE)
 			{
-				device = device_load(f_info->path);
-
-				if(device)
+				if((device = device_load(f_info->path)))
 				{
 					devices = eina_list_append(devices, device);
 
 					if (eina_error_get())
 					{
-						debug(stderr, _("Couldn't allocate Eina list node!"));
+						debug(stderr, _("Couldn't allocate Eina list node"));
 						exit(-1);
 					}
 				}
 			}
 		}
-
-	eina_iterator_free(it);
+		eina_iterator_free(it);
 	}
 
-	debug(stdout, _("%d devices registered in database"), eina_list_count(devices));
+	debug(stdout, _("%d devices registered"), eina_list_count(devices));
 	devices = eina_list_sort(devices, eina_list_count(devices), EINA_COMPARE_CB(devices_list_sort_cb));
 	return devices;
 }
@@ -666,26 +626,6 @@ device_clone(const Device *src)
     dst->version = src->version;
 
 	return dst;
-}
-
-
-//
-//
-//
-Device*
-devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
-{
-	Eina_List *l;
-	Device *device;
-
-	EINA_LIST_FOREACH(devices, l, device)
-	{
-		if(device_id_get(device) == id)
-		{
-			return device;
-		}
-	}
-	return NULL;
 }
 
 

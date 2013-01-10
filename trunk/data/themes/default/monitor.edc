@@ -59,6 +59,9 @@ group
 	{
 		item: "title" "title.text";
 		item: "action" "animate";
+
+		item: "description" "Monitor display boolean data in a monitor with an red animated guy when data is > 0. Sensor name is displayed at the bottom. Mostly useful when using boolean/input/switches xPL sensor device. Maybe you can use it in your xPL alarm system?";
+		item: "tags" "input,switches";
 	}
 
       parts

@@ -69,7 +69,7 @@ static void initCaches() {
 
 void xPL_FreeNVPair(xPL_NameValuePairPtr thePair) {
   CONFIRM_CACHE_OK;
-  debug(stdout,"STORE:: Releasing NameValuePair @ %p back to cache pool", thePair);
+  //debug(stdout,"STORE:: Releasing NameValuePair @ %p back to cache pool", thePair);
   releaseItem(thePair, NameValueCache);
 }
 
@@ -81,8 +81,9 @@ xPL_NameValuePairPtr xPL_AllocNVPair() {
   if ((thePair = (xPL_NameValuePairPtr) allocItem(NameValueCache)) == NULL) {
     thePair = malloc(sizeof(xPL_NameValuePair));
     debug(stdout,"STORE:: Allocating new xPL_NameValuePair @ %p, now %d pairs allocated", thePair, ++totalNameValueAlloc);
-  } else
-    debug(stdout,"STORE:: Reused NameValuePair @ %p from cache", thePair);
+  }
+  //else
+  //  debug(stdout,"STORE:: Reused NameValuePair @ %p from cache", thePair);
 
   bzero(thePair, sizeof(xPL_NameValuePair));
   return thePair;
@@ -125,8 +126,9 @@ xPL_MessagePtr xPL_AllocMessage() {
     theMessage = malloc(sizeof(xPL_Message));
     bzero(theMessage, sizeof(xPL_Message));
     debug(stdout,"STORE:: Allocated new xPL_Message, now %d messages allocated", ++totalMessageAlloc);
-  } else
-    debug(stdout,"STORE:: Reused xPL_Message @ %p from cache", theMessage);
+  }
+  //else
+  //debug(stdout,"STORE:: Reused xPL_Message @ %p from cache", theMessage);
 
   return theMessage;
 }
@@ -151,7 +153,8 @@ xPL_ServicePtr xPL_AllocService() {
   return theService;
 }
 
-void xPL_FreeStr(String theString) {
+void xPL_FreeStr(String theString)
+{
   int theLength;
   itemCachePtr theCache;
 
@@ -167,18 +170,21 @@ void xPL_FreeStr(String theString) {
   }
 
   /* Get the cache and init it if needed */
-  if ((theCache = StringCache[theLength]) == NULL) {
-    debug(stdout,"STORE:: Allocating new cache for strings %d characters long", theLength);
+  if ((theCache = StringCache[theLength]) == NULL)
+  {
+    //debug(stdout,"STORE:: Allocating new cache for strings %d characters long", theLength);
     theCache = allocItemCache();
     StringCache[theLength] = theCache;
   }
 
   /* Release the item into the cache */
-  debug(stdout,"STORE:: Releasing string @ %p to cache -- [%s] (LEN=%d, CNT=%d)", theString, theString, theLength, theCache->cacheCount);
+  //debug(stdout,"STORE:: Releasing string @ %p to cache -- [%s] (LEN=%d, CNT=%d)", theString, theString, theLength, theCache->cacheCount);
   releaseItem(theString, theCache);
 }
 
-String xPL_StrDup(String theOrigString) {
+String
+xPL_StrDup(String theOrigString)
+{
   String theString;
 
   /* Handle attempt to copy null */
@@ -187,7 +193,7 @@ String xPL_StrDup(String theOrigString) {
   /* Allocate a string and copy */
   theString = xPL_StrAlloc(strlen(theOrigString));
   strcpy(theString, theOrigString);
-  debug(stdout,"STORE:: Duped string [%s] (%d bytes)", theOrigString, strlen(theOrigString));
+  //debug(stdout,"STORE:: Duped string [%s] (%d bytes)", theOrigString, strlen(theOrigString));
   return theString;
 }
 
@@ -208,11 +214,12 @@ String xPL_StrNDup(String theOrigString, int maxChars) {
   theString = xPL_StrAlloc(theLength);
   strncpy(theString, theOrigString, theLength);
   theString[theLength] = '\0';
-  debug(stdout,"STORE:: Duped string [%s] (%d bytes copied, %d bytes max)", theOrigString, strlen(theOrigString), maxChars);
+  //debug(stdout,"STORE:: Duped string [%s] (%d bytes copied, %d bytes max)", theOrigString, strlen(theOrigString), maxChars);
   return theString;
 }
 
-String xPL_StrAlloc(int theLength) {
+String xPL_StrAlloc(int theLength)
+{
   String theString;
   itemCachePtr theCache;
 
@@ -225,7 +232,7 @@ String xPL_StrAlloc(int theLength) {
   if (theLength > STRING_CACHE_MAX) {
     theString = (String) malloc(theLength + 1);
     theString[0] = '\0';
-    debug(stdout,"STORE:: Allocating entirely new LARGE string @ %p (LEN=%d)", theString, theLength);
+    //debug(stdout,"STORE:: Allocating entirely new LARGE string @ %p (LEN=%d)", theString, theLength);
     return theString;
   }
 
@@ -233,7 +240,7 @@ String xPL_StrAlloc(int theLength) {
   if ((theCache = StringCache[theLength]) == NULL) {
     theString = (String) malloc(theLength + 1);
     theString[0] = '\0';
-    debug(stdout,"STORE:: Cache Empty, Allocating entirely new string @ %p (LEN=%d)", theString, theLength);
+    //debug(stdout,"STORE:: Cache Empty, Allocating entirely new string @ %p (LEN=%d)", theString, theLength);
     return theString;
   }
 
@@ -241,11 +248,11 @@ String xPL_StrAlloc(int theLength) {
   if ((theString = allocItem(theCache)) == NULL) {
     theString = (String) malloc(theLength + 1);
     theString[0] = '\0';
-    debug(stdout,"STORE:: No Cache Entry found, Allocating entirely new string @ %p (LEN=%d)", theString, theLength);
+    //debug(stdout,"STORE:: No Cache Entry found, Allocating entirely new string @ %p (LEN=%d)", theString, theLength);
     return theString;
   }
 
-  debug(stdout,"STORE:: Reusing cache entry for String @ %p (LEN=%d)", theString, theLength);
+  //debug(stdout,"STORE:: Reusing cache entry for String @ %p (LEN=%d)", theString, theLength);
   theString[0] = '\0';
   return theString;
 }
