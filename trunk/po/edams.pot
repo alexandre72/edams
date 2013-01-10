@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: edams 0.8.0.84:93M\n"
+"Project-Id-Version: edams 0.8.0.115\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
-"POT-Creation-Date: 2013-01-08 20:37+0100\n"
+"POT-Creation-Date: 2013-01-10 18:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,205 +17,33 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/bin/about_dlg.c:37
+#: src/bin/about_dlg.c:39
 msgid "About E.D.A.M.S..."
 msgstr ""
 
-#: src/bin/about_dlg.c:65 src/bin/edams.c:373 src/bin/preferences_dlg.c:238
-#: src/bin/devices_creator.c:272 src/bin/devices_picker.c:200
-#: src/lib/utils.c:92
+#: src/bin/about_dlg.c:67 src/bin/devices_creator.c:272
+#: src/bin/devices_picker.c:186 src/bin/edams.c:370
+#: src/bin/preferences_dlg.c:237 src/bin/widgets_picker.c:287
+#: src/lib/utils.c:114
 msgid "Close"
 msgstr ""
 
-#: src/bin/edams.c:148
-#, c-format
-msgid "Location %s has been created."
-msgstr ""
-
-#: src/bin/edams.c:195 src/bin/preferences_dlg.c:103
-#: src/bin/devices_creator.c:133
+#: src/bin/devices_creator.c:133 src/bin/edams.c:192
+#: src/bin/preferences_dlg.c:102
 msgid "Select a picture file"
-msgstr ""
-
-#: src/bin/edams.c:245
-msgid "Add a location"
-msgstr ""
-
-#: src/bin/edams.c:256 src/bin/devices_creator.c:163
-msgid "Photo"
-msgstr ""
-
-#: src/bin/edams.c:276 src/bin/preferences_dlg.c:189
-#: src/bin/devices_creator.c:182
-msgid "Open..."
-msgstr ""
-
-#: src/bin/edams.c:288
-msgid "Name:"
-msgstr ""
-
-#: src/bin/edams.c:301
-msgid "Description:"
-msgstr ""
-
-#: src/bin/edams.c:314
-msgid "Geolocalization:"
-msgstr ""
-
-#: src/bin/edams.c:344
-msgid "Go to"
-msgstr ""
-
-#: src/bin/edams.c:362 src/bin/preferences_dlg.c:227
-#: src/bin/devices_creator.c:261
-msgid "Ok"
-msgstr ""
-
-#: src/bin/edams.c:485
-#, c-format
-msgid "Location '%s' have been removed."
-msgstr ""
-
-#: src/bin/edams.c:512
-msgid "Can't remove:no location selected!"
-msgstr ""
-
-#: src/bin/edams.c:525
-msgid "Are you sure to want to remove selected location?"
-msgstr ""
-
-#: src/bin/edams.c:528
-msgid "Yes"
-msgstr ""
-
-#: src/bin/edams.c:537
-msgid "No"
-msgstr ""
-
-#: src/bin/edams.c:700
-#, c-format
-msgid "Sensors registered:%d\n"
-msgstr ""
-
-#: src/bin/edams.c:724
-msgid "Couldn't remove widgets from location:no location selected!"
-msgstr ""
-
-#: src/bin/edams.c:774 src/bin/edams.c:1070
-msgid "Add"
-msgstr ""
-
-#: src/bin/edams.c:776
-msgid "Change..."
-msgstr ""
-
-#: src/bin/edams.c:778 src/bin/edams.c:1081
-msgid "Remove"
-msgstr ""
-
-#: src/bin/edams.c:826
-msgid "Informations"
-msgstr ""
-
-#: src/bin/edams.c:862
-msgid "Widgets"
-msgstr ""
-
-#: src/bin/edams.c:928
-#, c-format
-msgid "[31mERROR:[0mCan't allocate App_Info struct!\n"
-msgstr ""
-
-#: src/bin/edams.c:944
-#, c-format
-msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
-msgstr ""
-
-#: src/bin/edams.c:1014
-msgid "Devices Creator"
-msgstr ""
-
-#: src/bin/edams.c:1015
-msgid "Locations Map"
-msgstr ""
-
-#: src/bin/edams.c:1017
-msgid "Preferences"
-msgstr ""
-
-#: src/bin/edams.c:1018
-msgid "About"
-msgstr ""
-
-#: src/bin/edams.c:1019
-msgid "Quit"
-msgstr ""
-
-#: src/bin/edams.c:1043
-msgid "Locations"
-msgstr ""
-
-#: src/bin/init.c:33
-msgid "Initialize xPL service..."
-msgstr ""
-
-#: src/bin/init.c:53
-msgid "Initialize Enlightenment Foundation Libraries..."
-msgstr ""
-
-#: src/bin/init.c:57
-msgid "Couldn't init Eina"
-msgstr ""
-
-#: src/bin/init.c:66
-msgid "Couldn't init Ecore_Con or Ecore_Con_Url"
-msgstr ""
-
-#: src/bin/init.c:72
-msgid "Ecore_Con_Url pipeline has been enabled"
-msgstr ""
-
-#: src/bin/init.c:82
-msgid "Couldn't init Elementary"
-msgstr ""
-
-#: src/bin/init.c:103
-msgid "Checking EDAMS useful paths..."
-msgstr ""
-
-#: src/bin/init.c:114
-msgid ""
-"It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
-"some database files containing items. I'll copy some default items files, "
-"but you can easily remove them and create new ones(highly recommended)!"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:124
-msgid "Settings"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:136
-msgid "Cosm API key:"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:156
-msgid "Emulation"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:163
-msgid "Debug with printf"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:169
-msgid "Map background image:"
-msgstr ""
-
-#: src/bin/preferences_dlg.c:201
-msgid "Gnuplot path:"
 msgstr ""
 
 #: src/bin/devices_creator.c:152
 msgid "Device Creator"
+msgstr ""
+
+#: src/bin/devices_creator.c:163 src/bin/edams.c:253
+msgid "Photo"
+msgstr ""
+
+#: src/bin/devices_creator.c:182 src/bin/edams.c:273
+#: src/bin/preferences_dlg.c:188
+msgid "Open..."
 msgstr ""
 
 #: src/bin/devices_creator.c:193
@@ -226,7 +54,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: src/bin/devices_creator.c:225
+#: src/bin/devices_creator.c:225 src/bin/widgets_picker.c:253
 msgid "Description"
 msgstr ""
 
@@ -234,261 +62,587 @@ msgstr ""
 msgid "Datasheet URL"
 msgstr ""
 
-#: src/bin/devices_picker.c:162
+#: src/bin/devices_creator.c:261 src/bin/edams.c:359
+#: src/bin/preferences_dlg.c:226 src/bin/widgets_picker.c:276
+msgid "Ok"
+msgstr ""
+
+#: src/bin/devices_picker.c:148
 msgid "Select a device"
 msgstr ""
 
-#: src/bin/shutdown.c:33
+#: src/bin/edams.c:145
+#, c-format
+msgid "Location %s has been created."
+msgstr ""
+
+#: src/bin/edams.c:242
+msgid "Add a location"
+msgstr ""
+
+#: src/bin/edams.c:285
+msgid "Name:"
+msgstr ""
+
+#: src/bin/edams.c:298
+msgid "Description:"
+msgstr ""
+
+#: src/bin/edams.c:311
+msgid "Geolocalization:"
+msgstr ""
+
+#: src/bin/edams.c:341
+msgid "Go to"
+msgstr ""
+
+#: src/bin/edams.c:482
+#, c-format
+msgid "Location '%s' have been removed."
+msgstr ""
+
+#: src/bin/edams.c:509
+msgid "Can't remove:no location selected!"
+msgstr ""
+
+#: src/bin/edams.c:522
+msgid "Are you sure to want to remove selected location?"
+msgstr ""
+
+#: src/bin/edams.c:525
+msgid "Yes"
+msgstr ""
+
+#: src/bin/edams.c:534
+msgid "No"
+msgstr ""
+
+#: src/bin/edams.c:643
+#, c-format
+msgid "Couldn't registered new device '%s'"
+msgstr ""
+
+#: src/bin/edams.c:661
+#, c-format
+msgid "Sensors registered:%d"
+msgstr ""
+
+#: src/bin/edams.c:684
+msgid "Couldn't remove widgets:no location selected!"
+msgstr ""
+
+#: src/bin/edams.c:758
+msgid "Informations"
+msgstr ""
+
+#: src/bin/edams.c:794 src/bin/widgets_picker.c:217
+msgid "Widgets"
+msgstr ""
+
+#: src/bin/edams.c:841
+msgid "Edit"
+msgstr ""
+
+#: src/bin/edams.c:851 src/bin/edams.c:1036
+msgid "Add"
+msgstr ""
+
+#: src/bin/edams.c:861 src/bin/edams.c:1047
+msgid "Remove"
+msgstr ""
+
+#: src/bin/edams.c:893
+#, c-format
+msgid "[31mERROR:[0mCan't allocate App_Info struct!\n"
+msgstr ""
+
+#: src/bin/edams.c:912
+#, c-format
+msgid "Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"
+msgstr ""
+
+#: src/bin/edams.c:981
+msgid "Global Map"
+msgstr ""
+
+#: src/bin/edams.c:983
+msgid "Preferences"
+msgstr ""
+
+#: src/bin/edams.c:984
+msgid "About"
+msgstr ""
+
+#: src/bin/edams.c:985
+msgid "Quit"
+msgstr ""
+
+#: src/bin/edams.c:1009
+msgid "Locations"
+msgstr ""
+
+#: src/bin/init.c:37
+msgid "Initialize xPL service..."
+msgstr ""
+
+#: src/bin/init.c:57
+msgid "Initialize Enlightenment Foundation Libraries..."
+msgstr ""
+
+#: src/bin/init.c:61
+msgid "Couldn't init Eina"
+msgstr ""
+
+#: src/bin/init.c:70
+msgid "Couldn't init Ecore_Con or Ecore_Con_Url"
+msgstr ""
+
+#: src/bin/init.c:76
+msgid "Ecore_Con_Url pipeline has been enabled"
+msgstr ""
+
+#: src/bin/init.c:86
+msgid "Couldn't init Elementary"
+msgstr ""
+
+#: src/bin/init.c:107
+msgid "Checking EDAMS useful paths..."
+msgstr ""
+
+#: src/bin/init.c:118
+msgid ""
+"It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
+"some database files containing items. I'll copy some default items files, "
+"but you can easily remove them and create new ones(highly recommended)!"
+msgstr ""
+
+#: src/bin/map.c:44 src/bin/map.c:55
+#, c-format
+msgid "No widget data for object %p (%s)"
+msgstr ""
+
+#: src/bin/map.c:412
+msgid "Couldn't create Edje_Object!"
+msgstr ""
+
+#: src/bin/map.c:423 src/bin/map.c:436
+#, c-format
+msgid "Couldn't load group Edje group '%s' from Edje file '%s'"
+msgstr ""
+
+#: src/bin/map.c:509
+msgid "You are trying to remove something not belonging to the smart object"
+msgstr ""
+
+#: src/bin/map.c:569
+msgid "Can't load Edje image!"
+msgstr ""
+
+#: src/bin/map.c:666
+msgid "Can't construct Ecore_Evas"
+msgstr ""
+
+#: src/bin/map.c:670
+#, c-format
+msgid "Using Ecore_Evas '%s' engine"
+msgstr ""
+
+#: src/bin/map.c:673
+msgid "Global map"
+msgstr ""
+
+#: src/bin/map.c:678
+msgid "Ecore_Evas has been correctly initalized"
+msgstr ""
+
+#: src/bin/map.c:694
+#, c-format
+msgid "Can't load image file from '%s'"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:123 src/bin/widgets_picker.c:192
+msgid "Settings"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:135
+msgid "Cosm API key:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:155
+msgid "Emulation"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:162
+msgid "Debug with printf"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:168
+msgid "Map background image:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:200
+msgid "Gnuplot path:"
+msgstr ""
+
+#: src/bin/shutdown.c:37
 msgid "Shutdown xPL..."
 msgstr ""
 
-#: src/bin/shutdown.c:44
+#: src/bin/shutdown.c:48
 msgid "Shutdown Enlightenment Foundation Libraries..."
 msgstr ""
 
-#: src/bin/shutdown.c:60
+#: src/bin/shutdown.c:64
 msgid "Free allocated memory..."
 msgstr ""
 
-#: src/lib/device.c:125 src/lib/device.c:650
+#: src/bin/widgets_picker.c:205 src/lib/myfileselector.c:279
+msgid "Preview"
+msgstr ""
+
+#: src/lib/cosm.c:54 src/lib/cosm.c:108 src/lib/cosm.c:158
+msgid "Couldn't create Ecore_Con_Url object"
+msgstr ""
+
+#: src/lib/cosm.c:78 src/lib/cosm.c:127
+msgid "Couldn't realize url PUT request"
+msgstr ""
+
+#: src/lib/cosm.c:99
+#, c-format
+msgid "Creating cosm feed for '%s'..."
+msgstr ""
+
+#: src/lib/cosm.c:149
+#, c-format
+msgid "Delete cosm feed for '%s'..."
+msgstr ""
+
+#: src/lib/cosm.c:168
+msgid "Couldn't realize url DELETE request"
+msgstr ""
+
+#: src/lib/cosm.c:221
+msgid ""
+"A location feed hasn't been created, maybe cosm server is down or it's an "
+"internet connection problem?"
+msgstr ""
+
+#: src/lib/cosm.c:232
+#, c-format
+msgid "Location with cosm feedid '%d' for '%s' has been added with success"
+msgstr ""
+
+#: src/lib/cosm.c:256
+msgid ""
+"A location feed hasn't been deleted, maybe cosm server is down or it's an "
+"internet connection problem?"
+msgstr ""
+
+#: src/lib/cosm.c:262
+#, c-format
+msgid "Location '%s' has been deleted with success"
+msgstr ""
+
+#: src/lib/cosm.c:278
+msgid "Generating feeds, wait please..."
+msgstr ""
+
+#: src/lib/device.c:123
+#, c-format
+msgid ""
+"Eet file '%s' already exist. Device name should be unique into your xpl "
+"network or maybe have you  replaced your xPL device with new one(with "
+"another type, class...)?"
+msgstr ""
+
+#: src/lib/device.c:131 src/lib/device.c:611
 msgid "Couldn't calloc Device struct"
 msgstr ""
 
-#: src/lib/device.c:243
-msgid "Couldn't set an unknown device type to device with id"
+#: src/lib/device.c:245
+#, c-format
+msgid "Couldn't set an unknown Type_Flags to device '%s'"
 msgstr ""
 
-#: src/lib/device.c:246
+#: src/lib/device.c:248
 msgid "Generic"
 msgstr ""
 
-#: src/lib/device.c:251
+#: src/lib/device.c:253
 msgid "Percent"
 msgstr ""
 
-#: src/lib/device.c:256
+#: src/lib/device.c:258
 msgid "Counter"
 msgstr ""
 
-#: src/lib/device.c:261
+#: src/lib/device.c:263
 msgid "Amps"
 msgstr ""
 
-#: src/lib/device.c:266
+#: src/lib/device.c:268
 msgid "Degrees"
 msgstr ""
 
-#: src/lib/device.c:271
+#: src/lib/device.c:273
 msgid "Meters"
 msgstr ""
 
-#: src/lib/device.c:276
+#: src/lib/device.c:278
 msgid "Kilowatt hours"
 msgstr ""
 
-#: src/lib/device.c:281
+#: src/lib/device.c:283
 msgid "Rotation/min"
 msgstr ""
 
-#: src/lib/device.c:286
+#: src/lib/device.c:288
 msgid "Humidity ratio"
 msgstr ""
 
-#: src/lib/device.c:291
+#: src/lib/device.c:293
 msgid "Input"
 msgstr ""
 
-#: src/lib/device.c:296
+#: src/lib/device.c:298
 msgid "Output"
 msgstr ""
 
-#: src/lib/device.c:301
+#: src/lib/device.c:303
 msgid "Kilowatt"
 msgstr ""
 
-#: src/lib/device.c:306
+#: src/lib/device.c:308
 msgid "Pascals"
 msgstr ""
 
-#: src/lib/device.c:311 src/lib/device.c:321
+#: src/lib/device.c:313 src/lib/device.c:323
 msgid "Celsius"
 msgstr ""
 
-#: src/lib/device.c:316
+#: src/lib/device.c:318
 msgid "Miles per Hour"
 msgstr ""
 
-#: src/lib/device.c:326
+#: src/lib/device.c:328
 msgid "UV"
 msgstr ""
 
-#: src/lib/device.c:331
+#: src/lib/device.c:333
 msgid "Volts"
 msgstr ""
 
-#: src/lib/device.c:336
+#: src/lib/device.c:338
 msgid "Cubic meter"
 msgstr ""
 
-#: src/lib/device.c:341
+#: src/lib/device.c:343
 msgid "Kilograms"
 msgstr ""
 
-#: src/lib/device.c:426 src/lib/device.c:487
+#: src/lib/device.c:428 src/lib/device.c:489
 #, c-format
 msgid "Couldn't open Eet file '%s' in writing mode"
 msgstr ""
 
-#: src/lib/device.c:496
+#: src/lib/device.c:498
 #, c-format
 msgid "Couldn't write any data to Eet file '%s'"
 msgstr ""
 
-#: src/lib/device.c:512
+#: src/lib/device.c:514
 #, c-format
 msgid "Couldn't open Eet file '%s' in reading mode"
 msgstr ""
 
-#: src/lib/device.c:522 src/lib/location.c:510
+#: src/lib/device.c:524 src/lib/location.c:527
 #, c-format
 msgid "Eet file '%s' %#x was too old, upgrading it to %#x"
 msgstr ""
 
-#: src/lib/device.c:567
+#: src/lib/device.c:563
+msgid "Couldn't allocate Eina list node"
+msgstr ""
+
+#: src/lib/device.c:572
 #, c-format
-msgid "No device with id '%d' registered"
+msgid "%d devices registered"
 msgstr ""
 
-#: src/lib/device.c:601
-msgid "Couldn't allocate Eina list node!"
-msgstr ""
-
-#: src/lib/device.c:611
-#, c-format
-msgid "%d devices registered in database"
-msgstr ""
-
-#: src/lib/device.c:635
+#: src/lib/device.c:596
 #, c-format
 msgid "%d Device struct of Eina_list freed"
 msgstr ""
 
-#: src/lib/myfileselector.c:53
+#: src/lib/device.c:650
 #, c-format
-msgid "You"
+msgid "Couldn't return device with id '%d' from devices list"
 msgstr ""
 
-#: src/lib/myfileselector.c:105
+#: src/lib/gnuplot.c:58
+msgid "Gnuplot binary path isn't set!"
+msgstr ""
+
+#: src/lib/gnuplot.c:81
 #, c-format
-msgid "Protected"
+msgid "Couldn't found gnuplot binary in path:%s"
 msgstr ""
 
-#: src/lib/myfileselector.c:107 src/lib/myfileselector.c:116
-#: src/lib/myfileselector.c:125
+#: src/lib/gnuplot.c:106
 #, c-format
-msgid "Read Only"
+msgid "Couldn't open gnuplot device data file '%s'"
 msgstr ""
 
-#: src/lib/myfileselector.c:114 src/lib/myfileselector.c:123
-#, c-format
-msgid "Forbidden"
-msgstr ""
-
-#: src/lib/myfileselector.c:132
-msgid "Read-Write"
-msgstr ""
-
-#: src/lib/myfileselector.c:143
-#, c-format
-msgid "%'.0f Bytes"
-msgstr ""
-
-#: src/lib/myfileselector.c:147
-#, c-format
-msgid "%'.0f KB"
-msgstr ""
-
-#: src/lib/myfileselector.c:151
-#, c-format
-msgid "%'.0f MB"
-msgstr ""
-
-#: src/lib/myfileselector.c:155
-#, c-format
-msgid "%'.1f GB"
-msgstr ""
-
-#: src/lib/myfileselector.c:182
-msgid "*FIXME*"
-msgstr ""
-
-#: src/lib/myfileselector.c:243
-msgid "Select a file..."
-msgstr ""
-
-#: src/lib/myfileselector.c:282
-msgid "Preview"
-msgstr ""
-
-#: src/lib/myfileselector.c:288
-msgid "Type :"
-msgstr ""
-
-#: src/lib/myfileselector.c:300
-msgid "Size :"
-msgstr ""
-
-#: src/lib/myfileselector.c:312
-msgid "Owner :"
-msgstr ""
-
-#: src/lib/myfileselector.c:324
-msgid "Permissions :"
-msgstr ""
-
-#: src/lib/myfileselector.c:345
-msgid "Cancel"
-msgstr ""
-
-#: src/lib/myfileselector.c:355
-msgid "Open"
-msgstr ""
-
-#: src/lib/location.c:97
+#: src/lib/location.c:100
 msgid "Couldn't calloc Widget struct"
 msgstr ""
 
-#: src/lib/location.c:233
+#: src/lib/location.c:250
 msgid "Couldn't calloc Location struct"
 msgstr ""
 
-#: src/lib/location.c:396 src/lib/location.c:534
+#: src/lib/location.c:413 src/lib/location.c:551
 #, c-format
 msgid "Couldn't open '%s' for writing"
 msgstr ""
 
-#: src/lib/location.c:499
+#: src/lib/location.c:516
 #, c-format
 msgid "Couldn't open '%s' for read"
 msgstr ""
 
-#: src/lib/location.c:572
+#: src/lib/location.c:589
 #, c-format
 msgid "Couldn't remove Eet file '%s'"
 msgstr ""
 
-#: src/lib/location.c:599
+#: src/lib/location.c:616
 #, c-format
 msgid "%d Location struct of Eina_list freed"
 msgstr ""
 
-#: src/lib/location.c:659
+#: src/lib/location.c:676
 msgid "Couldn't allocate Eina_List node!"
 msgstr ""
 
-#: src/lib/location.c:669
+#: src/lib/location.c:686
 #, c-format
-msgid "%d locations registered in database"
+msgid "%d locations registered"
+msgstr ""
+
+#: src/lib/myfileselector.c:50
+#, c-format
+msgid "You"
+msgstr ""
+
+#: src/lib/myfileselector.c:102
+#, c-format
+msgid "Protected"
+msgstr ""
+
+#: src/lib/myfileselector.c:104 src/lib/myfileselector.c:113
+#: src/lib/myfileselector.c:122
+#, c-format
+msgid "Read Only"
+msgstr ""
+
+#: src/lib/myfileselector.c:111 src/lib/myfileselector.c:120
+#, c-format
+msgid "Forbidden"
+msgstr ""
+
+#: src/lib/myfileselector.c:129
+msgid "Read-Write"
+msgstr ""
+
+#: src/lib/myfileselector.c:140
+#, c-format
+msgid "%'.0f Bytes"
+msgstr ""
+
+#: src/lib/myfileselector.c:144
+#, c-format
+msgid "%'.0f KB"
+msgstr ""
+
+#: src/lib/myfileselector.c:148
+#, c-format
+msgid "%'.0f MB"
+msgstr ""
+
+#: src/lib/myfileselector.c:152
+#, c-format
+msgid "%'.1f GB"
+msgstr ""
+
+#: src/lib/myfileselector.c:179
+msgid "*FIXME*"
+msgstr ""
+
+#: src/lib/myfileselector.c:240
+msgid "Select a file..."
+msgstr ""
+
+#: src/lib/myfileselector.c:285
+msgid "Type :"
+msgstr ""
+
+#: src/lib/myfileselector.c:297
+msgid "Size :"
+msgstr ""
+
+#: src/lib/myfileselector.c:309
+msgid "Owner :"
+msgstr ""
+
+#: src/lib/myfileselector.c:321
+msgid "Permissions :"
+msgstr ""
+
+#: src/lib/myfileselector.c:342
+msgid "Cancel"
+msgstr ""
+
+#: src/lib/myfileselector.c:352
+msgid "Open"
+msgstr ""
+
+#: src/lib/settings.c:68
+msgid "ERROR:Couldn't calloc Settings struct!"
+msgstr ""
+
+#: src/lib/settings.c:88
+#, c-format
+msgid "Debug is %s"
+msgstr ""
+
+#: src/lib/settings.c:88 src/lib/settings.c:89 src/lib/settings.c:90
+msgid "enabled"
+msgstr ""
+
+#: src/lib/settings.c:88 src/lib/settings.c:89 src/lib/settings.c:90
+msgid "disabled"
+msgstr ""
+
+#: src/lib/settings.c:89
+#, c-format
+msgid "Cosm data handling options is %s"
+msgstr ""
+
+#: src/lib/settings.c:90
+#, c-format
+msgid "Software emulation is %s"
+msgstr ""
+
+#: src/lib/settings.c:91
+#, c-format
+msgid "Map background file is '%s'"
+msgstr ""
+
+#: src/lib/settings.c:92
+#, c-format
+msgid "Gnuplot path is '%s'"
 msgstr ""
 
 #: src/lib/sound.c:38
@@ -499,6 +653,11 @@ msgstr ""
 msgid "No sound system for playing audio"
 msgstr ""
 
-#: src/lib/utils.c:77
+#: src/lib/utils.c:48
+#, c-format
+msgid "Caught attempt to free NULL pointer variable %s at %s:%lu!"
+msgstr ""
+
+#: src/lib/utils.c:99
 msgid "Confirmation"
 msgstr ""
