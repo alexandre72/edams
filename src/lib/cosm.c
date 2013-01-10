@@ -218,7 +218,7 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *even
    {
 	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
 		{
-			msgbox(_("A location feed hasn't been created, maybe cosm server is down or an internet connection problem?"));
+			msgbox(_("A location feed hasn't been created, maybe cosm server is down or it's an internet connection problem?"));
 		}
 		if(strncmp(str, "Location:", 9) == 0)
 		{
@@ -253,7 +253,7 @@ _url_feed_delete_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *e
    	{
 	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
 		{
-			msgbox(_("A location feed hasn't been deleted, maybe cosm server is down or an internet connection problem?"));
+			msgbox(_("A location feed hasn't been deleted, maybe cosm server is down or it's an internet connection problem?"));
 		}
    		if(strncmp(str, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
 		{
