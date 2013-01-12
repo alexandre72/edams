@@ -20,7 +20,6 @@
 
 #include <Elementary.h>
 
-#include "widgets_picker.h"
 #include "device.h"
 #include "edams.h"
 #include "path.h"
@@ -134,6 +133,22 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 	evas_object_name_set(list, "actions list");
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
+
+	Eina_List *l, *actions;
+	Action *action;
+	actions = device_actions_list_get(device);
+	EINA_LIST_FOREACH(actions, l, action)
+	{
+		char s[512];
+		snprintf(s, sizeof(s), "%s %s %s %s",
+							device_condition_to_str(action_ifcondition_get(action)),
+							action_ifvalue_get(action),
+							device_class_to_str(action_toclass_get(action)),
+							action_tocmnd_get(action));
+
+		elm_list_item_append(list, strdup(s), NULL, NULL, NULL, action);
+	}
+
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Action"));

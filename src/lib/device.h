@@ -84,7 +84,7 @@ typedef enum _Condition_
 Action *action_new(Condition condition, const char *value, Class_Flags to, const char *data);
 void action_free(Action *action);
 
-Condition 	action_ifcondititon_get(const Action *action);
+Condition action_ifcondition_get(const Action *action);
 const char * action_ifvalue_get(const Action *action);
 Class_Flags  action_toclass_get(const Action *action);
 const char * action_tocmnd_get(const Action *action);
@@ -97,7 +97,7 @@ Eina_List *device_actions_list_get(const Device *device);
 void device_actions_list_clear(Device *device);
 void device_actions_list_set(Device *device, Eina_List *list);
 
-//Conversion funcs.
+/*Convert funcs*/
 Type_Flags device_str_to_type(const char *s);
 const char *device_type_to_str(Type_Flags type);
 Class_Flags device_str_to_class(const char *s);
@@ -105,7 +105,7 @@ const char *device_class_to_str(Class_Flags type);
 const char *device_condition_to_str(Condition condition);
 Condition device_str_to_condition(const char *s);
 
-
+/*Device funcs*/
 Device *device_new(const char * name);
 void device_free(Device *device);
 Device *device_clone(const Device *src);
@@ -139,6 +139,7 @@ const char * device_units_get(const Device *device);
 const char * device_unit_format_get(const Device *device);
 const char * device_unit_symbol_get(const Device *device);
 
+/*Devices list funcs.*/
 Eina_List *devices_list_get();
 Eina_List *devices_list_free(Eina_List *devices);
 Device* devices_list_device_with_id_get(Eina_List *devices, unsigned int id);

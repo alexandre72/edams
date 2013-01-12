@@ -605,15 +605,11 @@ device_data_set(Device *device, const char *data)
 	eina_stringshare_replace(&(device->data), data);
 }
 
-
-
-
 const char *
 device_filename_get(Device *device)
 {
      return device->__eet_filename;
 }
-
 
 
 inline void
@@ -623,7 +619,6 @@ device_action_add(Device *device, Action *action)
     device->actions = eina_list_append(device->actions, action);
 }
 
-
 inline void
 device_action_del(Device *device, Action *action)
 {
@@ -632,7 +627,20 @@ device_action_del(Device *device, Action *action)
 }
 
 
+inline Eina_List *
+device_actions_list_get(const Device *device)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
+    return device->actions;
+}
 
+
+inline void
+device_actions_list_set(Device *device, Eina_List *list)
+{
+    EINA_SAFETY_ON_NULL_RETURN(device);
+    device->actions = list;
+}
 
 
 Eina_Bool
