@@ -26,6 +26,16 @@
 #include "path.h"
 #include "utils.h"
 
+
+struct _Action
+{
+	Condition ifcondition;
+	const char *ifvalue;
+	Class_Flags toclass;
+	const char *tocmnd;
+};
+
+
 struct _Device
 {
     unsigned int id;				//Id of device.
@@ -42,14 +52,13 @@ struct _Device
 	const char *revision;			//Revision date of device Eet file.
     unsigned int version;			//Version of device Eet file.
     const char *datasheeturl;		//URL Datasheet of device e.g. 'http///alldatasheet.com/ds18b20.html'.
+	Eina_List *actions;
 };
 
-
+static const char ACTION_ENTRY[] = "action";
 static const char DEVICE_ENTRY[] = "device";
 static Eet_Data_Descriptor *_device_descriptor = NULL;
-
-
-
+static Eet_Data_Descriptor *_action_descriptor = NULL;
 
 
 static int
@@ -64,6 +73,123 @@ devices_list_sort_cb(const void *d1, const void *d2)
     return(strcoll(txt, txt2));
 }
 
+
+static inline void
+_action_init(void)
+{
+    Eet_Data_Descriptor_Class eddc;
+
+    if (_action_descriptor) return;
+
+    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Action);
+    _action_descriptor = eet_data_descriptor_stream_new(&eddc);
+
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "ifcondition", ifcondition, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "ifvalue", ifvalue, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "toclass", toclass, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "tocmnd", tocmnd, EET_T_STRING);
+}
+
+
+static inline void
+_action_shutdown(void)
+{
+    if (!_action_descriptor) return;
+    eet_data_descriptor_free(_action_descriptor);
+    _action_descriptor = NULL;
+}
+
+
+Action *
+action_new(Condition ifcondition, const char *ifvalue, Class_Flags toclass, const char *tocmnd)
+{
+    Action *action = calloc(1, sizeof(Action));
+
+    if (!action)
+       {
+          debug(stderr, _("Couldn't calloc Action struct"));
+          return NULL;
+       }
+
+    action->ifcondition = ifcondition;
+    action->ifvalue = eina_stringshare_add(ifvalue);
+    action->toclass = toclass;
+    action->tocmnd = eina_stringshare_add(tocmnd);
+
+    return action;
+}
+
+
+void
+action_free(Action *action)
+{
+    eina_stringshare_del(action->ifvalue);
+    eina_stringshare_del(action->tocmnd);
+    free(action);
+}
+
+
+inline void
+action_ifcondition_set(Action *action, Condition ifcondition)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+	action->ifcondition = ifcondition;
+}
+
+
+inline Condition
+action_ifcondition_get(const Action *action)
+{
+    return action->ifcondition;
+}
+
+
+
+inline void
+action_ifvalue_set(const Action *action, const char *ifvalue)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+    eina_stringshare_replace(&(action->ifvalue), ifvalue);
+}
+
+
+inline const char *
+action_ifvalue_get(const Action *action)
+{
+    return action->ifvalue;
+}
+
+
+
+inline void
+action_toclass_set(Action *action, Class_Flags toclass)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+	action->toclass = toclass;
+}
+
+
+inline Class_Flags
+action_toclass_get(const Action *action)
+{
+    return action->toclass;
+}
+
+
+
+inline void
+action_tocmnd_set(const Action *action, const char *tocmnd)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+    eina_stringshare_replace(&(action->tocmnd), tocmnd);
+}
+
+
+inline const char *
+action_tocmnd_get(const Action *action)
+{
+    return action->tocmnd;
+}
 
 
 
@@ -89,6 +215,7 @@ _device_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "units", units, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "unit_symbol", unit_symbol, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "unit_format", unit_format, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_LIST(_device_descriptor, Device, "actions", actions, _action_descriptor);
 }
 
 static inline void
@@ -103,12 +230,14 @@ _device_shutdown(void)
 void
 devices_init(void)
 {
+	_action_init();
     _device_init();
 }
 
 void
 devices_shutdown(void)
 {
+	_action_shutdown();
     _device_shutdown();
 }
 
@@ -155,6 +284,7 @@ device_new(const char * name)
     device->creation = eina_stringshare_add(s);
 	device->revision = NULL;
 	device->version = 0x0002;
+	device->actions = NULL;
 
     return device;
 }
@@ -174,6 +304,14 @@ device_free(Device *device)
     	eina_stringshare_del(device->unit_format);
     	eina_stringshare_del(device->creation);
     	eina_stringshare_del(device->revision);
+
+    	if (device->actions)
+       	{
+          Action *action_elem;
+          EINA_LIST_FREE(device->actions, action_elem)
+             action_free(action_elem);
+       	}
+
     	FREE(device);
     }
 }
@@ -477,6 +615,26 @@ device_filename_get(Device *device)
 }
 
 
+
+inline void
+device_action_add(Device *device, Action *action)
+{
+    EINA_SAFETY_ON_NULL_RETURN(device);
+    device->actions = eina_list_append(device->actions, action);
+}
+
+
+inline void
+device_action_del(Device *device, Action *action)
+{
+    EINA_SAFETY_ON_NULL_RETURN(device);
+    device->actions = eina_list_remove(device->actions, action);
+}
+
+
+
+
+
 Eina_Bool
 device_save(Device *device)
 {
@@ -658,8 +816,9 @@ device_str_to_class(const char *s)
 {
 	if(!s) return UNKNOWN_TYPE;
 
-	if(strcmp(s, "control.basic") == 0) return CONTROL;
-	if(strcmp(s, "sensor.basic") == 0) 	return SENSOR;
+	if(strcmp(s, "control.basic") == 0) return CONTROL_BASIC;
+	if(strcmp(s, "sensor.basic") == 0) 	return SENSOR_BASIC;
+	if(strcmp(s, "exec.basic") == 0) 	return EXEC_BASIC;
 	else								return UNKNOWN_TYPE;
 }
 
@@ -667,9 +826,10 @@ device_str_to_class(const char *s)
 const char *
 device_class_to_str(Class_Flags class)
 {
-	if(class == SENSOR)			return "sensor.basic";
-	else if(class == CONTROL)	return "control.basic";
-	else 						return NULL;
+	if(class == SENSOR_BASIC)			return "sensor.basic";
+	else if(class == CONTROL_BASIC)		return "control.basic";
+	else if(class == EXEC_BASIC)		return "exec.basic";
+	else 								return NULL;
 }
 
 
@@ -702,7 +862,30 @@ device_str_to_type(const char *s)
 	else								return UNKNOWN_TYPE;
 }
 
+const char *
+device_condition_to_str(Condition condition)
+{
+	if(condition == EGAL_TO)				return "=";
+	else if(condition == LESS_THAN)			return "<";
+	else if(condition == MORE_THAN)			return ">";
+	else if(condition == MORE_OR_EGAL_TO)	return ">=";
+	else if(condition == LESS_OR_EGAL_TO)	return "<=";
+	else 									return NULL;
+}
 
+
+Condition
+device_str_to_condition(const char *s)
+{
+	if(!s) return UNKNOWN_CONDITION;
+
+	if(strcmp(s, "=") == 0) 		return EGAL_TO;
+	else if(strcmp(s, "<") == 0)	return LESS_THAN;
+	else if(strcmp(s, ">") == 0)	return MORE_THAN;
+	else if(strcmp(s, ">=") == 0)	return MORE_OR_EGAL_TO;
+	else if(strcmp(s, "<=") == 0)	return LESS_OR_EGAL_TO;
+	else							return UNKNOWN_CONDITION;
+}
 
 const char *
 device_type_to_str(Type_Flags type)

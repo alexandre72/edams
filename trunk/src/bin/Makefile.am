@@ -19,6 +19,7 @@ edamsdir = $(libdir)
 
 edams_SOURCES = \
 about_dlg.c \
+actions_editor.c \
 edams.c \
 init.c \
 map.c \
