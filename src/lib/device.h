@@ -25,9 +25,11 @@
 #include <Eina.h>
 #include <Evas.h>
 
-#define DEVICE_FILE_VERSION 0x0004
+#define DEVICE_FILE_VERSION 0x0005
 
 typedef struct _Device Device;
+typedef struct _Action Action;
+
 
 typedef enum _Type_Flags
 {
@@ -59,18 +61,49 @@ typedef enum _Type_Flags
 typedef enum _Class_Flags
 {
 	UNKNOWN_CLASS			= (0),
-	SENSOR					= (1),
-	CONTROL					= (2),
+	SENSOR_BASIC			= (1),
+	CONTROL_BASIC			= (2),
+	EXEC_BASIC				= (3),
 	CLASS_LAST
 }Class_Flags;
 
 
+typedef enum _Condition_
+{
+	UNKNOWN_CONDITION		= (0),
+	EGAL_TO					= (1),
+	LESS_THAN				= (2),
+	MORE_THAN				= (3),
+	LESS_OR_EGAL_TO			= (4),
+	MORE_OR_EGAL_TO			= (5),
+	CONDITION_LAST
+}Condition;
+
+
+/* Actions */
+Action *action_new(Condition condition, const char *value, Class_Flags to, const char *data);
+void action_free(Action *action);
+
+Condition 	action_ifcondititon_get(const Action *action);
+const char * action_ifvalue_get(const Action *action);
+Class_Flags  action_toclass_get(const Action *action);
+const char * action_tocmnd_get(const Action *action);
+
+void device_action_add(Device *device, Action *action);
+void device_action_del(Device *device,Action *action);
+Action *device_action_get(const Device *device, unsigned int nth);
+unsigned int device_actions_count(const Device *device);
+Eina_List *device_actions_list_get(const Device *device);
+void device_actions_list_clear(Device *device);
+void device_actions_list_set(Device *device, Eina_List *list);
 
 //Conversion funcs.
 Type_Flags device_str_to_type(const char *s);
 const char *device_type_to_str(Type_Flags type);
 Class_Flags device_str_to_class(const char *s);
 const char *device_class_to_str(Class_Flags type);
+const char *device_condition_to_str(Condition condition);
+Condition device_str_to_condition(const char *s);
 
 
 Device *device_new(const char * name);

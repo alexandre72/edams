@@ -547,15 +547,21 @@ location_save(Location *location)
 
     ef = eet_open(location->__eet_filename, EET_FILE_MODE_READ_WRITE);
     if (!ef)
-       {
-          debug(stderr, _("Couldn't open '%s' for writing"), location->__eet_filename);
-          return EINA_FALSE;
-       }
+	{
+		debug(stderr, _("Couldn't open '%s' for writing"), location->__eet_filename);
+		return EINA_FALSE;
+	}
 
     ret = !!eet_data_write(ef, _location_descriptor, LOCATION_ENTRY, location, EINA_TRUE);
     eet_close(ef);
 
-    return ret;
+	if (!ret)
+	{
+		debug(stderr, _("Couldn't write any data to Eet file '%s'"), location->__eet_filename);
+		return EINA_FALSE;
+	}
+
+    return EINA_TRUE;
 }
 
 

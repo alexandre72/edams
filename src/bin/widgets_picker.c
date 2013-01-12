@@ -203,7 +203,7 @@ widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Preview"));
-	elm_grid_pack(gd, frame, 1, 1, 40, 60);
+	elm_grid_pack(gd, frame, 1, 1, 40, 50);
 	evas_object_show(frame);
 
 	layout = elm_layout_add(win);
@@ -215,7 +215,7 @@ widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Widgets"));
-	elm_grid_pack(gd, frame, 41, 1, 58, 60);
+	elm_grid_pack(gd, frame, 41, 1, 58, 50);
 	evas_object_show(frame);
 
 	list = elm_list_add(win);
@@ -251,7 +251,7 @@ widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Description"));
-	elm_grid_pack(gd, frame, 1, 61, 99, 60);
+	elm_grid_pack(gd, frame, 1, 51, 99, 60);
 	evas_object_show(frame);
 
    	entry = elm_entry_add(win);

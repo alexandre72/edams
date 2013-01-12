@@ -27,6 +27,7 @@
 #include <Elementary.h>
 #include <Ecore_File.h>
 
+#include "actions_editor.h"
 #include "about_dlg.h"
 #include "cosm.h"
 #include "device.h"
@@ -625,6 +626,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 	{
 		device_id_set(device, eina_list_count(app->devices));
 		device_type_set(device, device_str_to_type(type));
+		device_class_set(device, SENSOR_BASIC);
 		device_save(device);
 
 		//Add new device to edams devices Eina_List.
@@ -845,6 +847,16 @@ _location_naviframe_content(Location * location)
     elm_object_part_content_set(bt, "icon", ic);
 	elm_box_pack_end(bx, bt);
     evas_object_smart_callback_add(bt, "clicked", widgets_picker_add, app);
+    evas_object_show(bt);
+
+	bt = elm_button_add(app->win);
+	elm_object_text_set(bt, _("Action"));
+    ic = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(ic, "document-properties");
+    elm_object_part_content_set(bt, "icon", ic);
+	elm_box_pack_end(bx, bt);
+    evas_object_smart_callback_add(bt, "clicked", actions_editor_add, app);
     evas_object_show(bt);
 
     bt = elm_button_add(app->win);
