@@ -43,7 +43,7 @@ static int xpl_shutdown(App_Info * app)
 }
 
 
-static int efl_shutdown(App_Info * app)
+static int efl_shutdown(App_Info * app __UNUSED__)
 {
 	debug(stdout, _("Shutdown Enlightenment Foundation Libraries..."));
 	eina_shutdown();

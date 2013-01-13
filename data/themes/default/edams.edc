@@ -83,7 +83,7 @@ group {
       }
    }
 
-   group { name: "elm/icon/info/default";
+   group { name: "elm/icon/info-notify/default";
       min: 48 48;
       parts {
          part {

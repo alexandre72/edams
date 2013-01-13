@@ -63,9 +63,19 @@ typedef enum _Class_Flags
 	UNKNOWN_CLASS			= (0),
 	SENSOR_BASIC			= (1),
 	CONTROL_BASIC			= (2),
-	EXEC_BASIC				= (3),
 	CLASS_LAST
 }Class_Flags;
+
+
+typedef enum _Action_Type
+{
+	UNKNOWN_ACTION			= (0),
+	CMND_ACTION				= (1),
+	MAIL_ACTION				= (2),
+	EXEC_ACTION				= (3),
+	DEBUG_ACTION			= (4),
+	ACTION_TYPE_LAST
+}Action_Type;
 
 
 typedef enum _Condition_
@@ -81,13 +91,13 @@ typedef enum _Condition_
 
 
 /* Actions */
-Action *action_new(Condition condition, const char *value, Class_Flags to, const char *data);
+Action *action_new(Condition condition, const char *value, Action_Type type, const char *data);
 void action_free(Action *action);
 
 Condition action_ifcondition_get(const Action *action);
 const char * action_ifvalue_get(const Action *action);
-Class_Flags  action_toclass_get(const Action *action);
-const char * action_tocmnd_get(const Action *action);
+Action_Type  action_type_get(const Action *action);
+const char * action_data_get(const Action *action);
 
 void device_action_add(Device *device, Action *action);
 void device_action_del(Device *device,Action *action);
@@ -102,8 +112,11 @@ Type_Flags device_str_to_type(const char *s);
 const char *device_type_to_str(Type_Flags type);
 Class_Flags device_str_to_class(const char *s);
 const char *device_class_to_str(Class_Flags type);
-const char *device_condition_to_str(Condition condition);
-Condition device_str_to_condition(const char *s);
+const char *action_condition_to_str(Condition condition);
+Condition action_str_to_condition(const char *s);
+
+const char *action_type_to_str(Action_Type type);
+
 
 /*Device funcs*/
 Device *device_new(const char * name);

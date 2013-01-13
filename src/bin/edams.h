@@ -57,6 +57,7 @@ typedef struct
 } App_Info;
 
 
-Evas_Object*_location_naviframe_content(Location *location);
+Evas_Object*_location_naviframe_content_set(Location *location);
+void notify_set(const char *msg, const char *icon);
 
 #endif /* __EDAMS_H__ */
