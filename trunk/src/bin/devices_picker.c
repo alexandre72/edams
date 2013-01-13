@@ -128,8 +128,7 @@ _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNU
 	location_save(app->location);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe),
-									 NULL, _location_naviframe_content(app->location));
+	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));
 }/*_gengrid_devices_clickeddouble_cb*/
 
 

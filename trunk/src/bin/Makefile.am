@@ -22,6 +22,7 @@ about_dlg.c \
 actions_editor.c \
 edams.c \
 init.c \
+locations_creator.c \
 map.c \
 devices_picker.c \
 preferences_dlg.c \

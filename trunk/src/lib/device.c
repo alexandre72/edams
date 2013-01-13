@@ -29,10 +29,10 @@
 
 struct _Action
 {
-	Condition ifcondition;
-	const char *ifvalue;
-	Class_Flags toclass;
-	const char *tocmnd;
+	Condition ifcondition;			//Type of condition(=,>,<,<=,>=).
+	const char *ifvalue;			//Required condition value, data are converted ton int(atoi like).
+	Action_Type type;				//Type of action(exec, mail, cmnd...).
+	const char *data;				//Action passed to action separated by comma, depends on action type.
 };
 
 
@@ -86,8 +86,8 @@ _action_init(void)
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "ifcondition", ifcondition, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "ifvalue", ifvalue, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "toclass", toclass, EET_T_UINT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "tocmnd", tocmnd, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "type", type, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "data", data, EET_T_STRING);
 }
 
 
@@ -101,7 +101,7 @@ _action_shutdown(void)
 
 
 Action *
-action_new(Condition ifcondition, const char *ifvalue, Class_Flags toclass, const char *tocmnd)
+action_new(Condition ifcondition, const char *ifvalue, Action_Type type, const char *data)
 {
     Action *action = calloc(1, sizeof(Action));
 
@@ -113,8 +113,8 @@ action_new(Condition ifcondition, const char *ifvalue, Class_Flags toclass, cons
 
     action->ifcondition = ifcondition;
     action->ifvalue = eina_stringshare_add(ifvalue);
-    action->toclass = toclass;
-    action->tocmnd = eina_stringshare_add(tocmnd);
+    action->type = type;
+    action->data = eina_stringshare_add(data);
 
     return action;
 }
@@ -124,7 +124,7 @@ void
 action_free(Action *action)
 {
     eina_stringshare_del(action->ifvalue);
-    eina_stringshare_del(action->tocmnd);
+    eina_stringshare_del(action->data);
     free(action);
 }
 
@@ -162,33 +162,33 @@ action_ifvalue_get(const Action *action)
 
 
 inline void
-action_toclass_set(Action *action, Class_Flags toclass)
+action_type_set(Action *action, Action_Type type)
 {
     EINA_SAFETY_ON_NULL_RETURN(action);
-	action->toclass = toclass;
+	action->type = type;
 }
 
 
-inline Class_Flags
-action_toclass_get(const Action *action)
+inline Action_Type
+action_type_get(const Action *action)
 {
-    return action->toclass;
+    return action->type;
 }
 
 
 
 inline void
-action_tocmnd_set(const Action *action, const char *tocmnd)
+action_data_set(const Action *action, const char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(action);
-    eina_stringshare_replace(&(action->tocmnd), tocmnd);
+    eina_stringshare_replace(&(action->data), data);
 }
 
 
 inline const char *
-action_tocmnd_get(const Action *action)
+action_data_get(const Action *action)
 {
-    return action->tocmnd;
+    return action->data;
 }
 
 
@@ -643,6 +643,10 @@ device_actions_list_set(Device *device, Eina_List *list)
 }
 
 
+
+/*
+ *Return EINA_TRUE if 'device' arg is correctly saved.
+ */
 Eina_Bool
 device_save(Device *device)
 {
@@ -669,6 +673,9 @@ device_save(Device *device)
 }
 
 
+/*
+ *Return a Device struct allocated read from a Eet file 'filename' arg
+ */
 Device *
 device_load(const char *filename)
 {
@@ -701,9 +708,9 @@ end:
 }
 
 
-//
-//Read all devices infos files.
-//
+/*
+ *Return Eina_List of all Eet devices read in user's EDAMS data path.
+ */
 Eina_List *
 devices_list_get()
 {
@@ -741,9 +748,9 @@ devices_list_get()
 }
 
 
-//
-//Free devices list.
-//
+/*
+ *Return freed Eina_List 'devices' arg
+ */
 Eina_List *
 devices_list_free(Eina_List *devices)
 {
@@ -765,7 +772,9 @@ devices_list_free(Eina_List *devices)
 }
 
 
-
+/*
+ *Return an allocated Device* struct clone of Device 'src' arg.
+ */
 Device *
 device_clone(const Device *src)
 {
@@ -798,7 +807,7 @@ device_clone(const Device *src)
 
 
 /*
- *Return device with 'id' arg.
+ *Return device with 'id' arg in Eina_List 'devices'.
  */
 Device*
 devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
@@ -818,7 +827,9 @@ devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
 }
 
 
-
+/*
+ *Return Class_Flags type representation of 's' arg.
+ */
 Class_Flags
 device_str_to_class(const char *s)
 {
@@ -826,22 +837,24 @@ device_str_to_class(const char *s)
 
 	if(strcmp(s, "control.basic") == 0) return CONTROL_BASIC;
 	if(strcmp(s, "sensor.basic") == 0) 	return SENSOR_BASIC;
-	if(strcmp(s, "exec.basic") == 0) 	return EXEC_BASIC;
 	else								return UNKNOWN_TYPE;
 }
 
-
+/*
+ *Return string representation of Class_Flags 'class' arg.
+ */
 const char *
 device_class_to_str(Class_Flags class)
 {
 	if(class == SENSOR_BASIC)			return "sensor.basic";
 	else if(class == CONTROL_BASIC)		return "control.basic";
-	else if(class == EXEC_BASIC)		return "exec.basic";
 	else 								return NULL;
 }
 
 
-
+/*
+ *Return Type_Flags type representation of 's' arg.
+ */
 Type_Flags
 device_str_to_type(const char *s)
 {
@@ -870,8 +883,12 @@ device_str_to_type(const char *s)
 	else								return UNKNOWN_TYPE;
 }
 
+
+/*
+ *Return string representation of Condition type of 'condition' arg.
+ */
 const char *
-device_condition_to_str(Condition condition)
+action_condition_to_str(Condition condition)
 {
 	if(condition == EGAL_TO)				return "=";
 	else if(condition == LESS_THAN)			return "<";
@@ -882,8 +899,11 @@ device_condition_to_str(Condition condition)
 }
 
 
+/*
+ *Return Condition type representation of 's' arg.
+ */
 Condition
-device_str_to_condition(const char *s)
+action_str_to_condition(const char *s)
 {
 	if(!s) return UNKNOWN_CONDITION;
 
@@ -895,6 +915,24 @@ device_str_to_condition(const char *s)
 	else							return UNKNOWN_CONDITION;
 }
 
+
+/*
+ *Return string representation of Action_Type 'type' arg.
+ */
+const char *
+action_type_to_str(Action_Type type)
+{
+	if(type == CMND_ACTION)					return _("Send control.basic cmnd");
+	else if(type == MAIL_ACTION)			return _("Send mail");
+	else if(type == EXEC_ACTION)			return _("Execute external program");
+	else if(type == DEBUG_ACTION)			return _("Debug stuff for testing purpose");
+	else 									return NULL;
+}
+
+
+/*
+ *Return string representation of Type_Flags 'type' arg.
+ */
 const char *
 device_type_to_str(Type_Flags type)
 {
