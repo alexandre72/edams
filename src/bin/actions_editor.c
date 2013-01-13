@@ -109,8 +109,7 @@ _button_add_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_inf
  *
  */
 void
-actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
-					void *event_info __UNUSED__)
+actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *event_info __UNUSED__)
 {
 	char s[256];
 
