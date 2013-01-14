@@ -55,10 +55,12 @@ EAPI_MAIN int elm_main(int argc, char *argv[]);
 /*Callbacks*/
 static void _button_remove_location_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,void *event_info __UNUSED__);
 static void _list_locations_selected_cb(void *data, Evas_Object * obj, void *event_info);
-static Eina_Bool _statusbar_timer_cb(void *data);
 static void _button_quit_clicked_cb(void *data __UNUSED__,  Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static Eina_Bool _statusbar_timer_cb(void *data);
+static int _eina_list_devices_sort_cb(const void *d1, const void *d2);
 
 /*xPL sensor.basic listener*/
+static void xpl_process_messages();
 static void _xpl_sensor_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data);
 
 /*Functions*/
@@ -105,7 +107,7 @@ _button_quit_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, voi
  *
  */
 static Eina_Bool
-_statusbar_timer_cb(void *data)
+_statusbar_timer_cb(void *data __UNUSED__)
 {
 	char s[512];
 	time_t timestamp;
@@ -118,7 +120,7 @@ _statusbar_timer_cb(void *data)
 	elm_object_text_set(label, s);
 
 	Evas_Object *icon = elm_object_name_find(app->win, "status icon", -1);
-	elm_image_file_set(icon, "elm/icon/info-notify/default", NULL);
+	elm_image_file_set(icon, "dialog-information", NULL);
 
 	return EINA_FALSE;
 }/*_notify_timeout_cb*/
@@ -129,15 +131,15 @@ _statusbar_timer_cb(void *data)
  *Set elm label and elm icon of bottom status bar.
  */
 void
-statusbar_text_set(const char *msg, const char *icon)
+statusbar_text_set(const char *msg, const char *ic)
 {
-	Evas_Object *notify, *label, *ic, *bt;
+	Evas_Object *label, *icon;
 
 	label = elm_object_name_find(app->win, "status text", -1);
 	elm_object_text_set(label, msg);
 
-	ic = elm_object_name_find(app->win, "status icon", -1);
-	elm_image_file_set(ic, edams_edje_theme_file_get(), icon);
+	icon = elm_object_name_find(app->win, "status icon", -1);
+	elm_image_file_set(icon, edams_edje_theme_file_get(), ic);
 
 	ecore_timer_add(5.0, _statusbar_timer_cb, NULL);
 }/*statusbar_text_set*/
@@ -150,7 +152,7 @@ static void
 _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	char s[256];
-	Evas_Object *notify, *ic, *bt, *label, *list;
+	Evas_Object *list;
 	Elm_Object_Item *it;
 
 	list = (Evas_Object *) elm_object_name_find(app->win, "locations list", -1);
@@ -158,14 +160,12 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 
 	if (!it)
 	{
-		statusbar_text_set(_("Can't remove:no location selected!"), "elm/icon/warning-notify/default");
+		statusbar_text_set(_("Can't remove:no location selected!"), "dialog-error");
 		return;
 	}
 	else
 	{
 		Location *location = elm_object_item_data_get(it);
-
-		printf("Removing: '%s'\n", location_name_get(location));
 
 		if(location)
 		{
@@ -180,47 +180,10 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 			Evas_Object *naviframe = (Evas_Object *) elm_object_name_find(app->win, "naviframe", -1);
 			elm_naviframe_item_pop(naviframe);
 
-			statusbar_text_set(s, "elm/icon/info-notify/default");
+			statusbar_text_set(s, "dialog-information");
 		}
 	}
 }/*_button_remove_location_clicked_cb*/
-
-
-
-/*
- *Callback called in xPL Message 'control.basic' is triggered.
- */
-static void
-_xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data)
-{
-	char buf[256] = "0";
-	xPL_NameValueListPtr values_names;
-
-	Ecore_Pipe *pipe = (Ecore_Pipe *) data;
-
-	values_names = xPL_getMessageBody(msg);
-
-	snprintf(buf, sizeof(buf), "%s!%s!%s",
-			 xPL_getNamedValue(values_names, "device"),
-			 xPL_getNamedValue(values_names, "type"),
-			 xPL_getNamedValue(values_names, "current"));
-
-	ecore_pipe_write(pipe, buf, strlen(buf));
-}/*_xpl_sensor_basic_handler*/
-
-
-/*
- *Child process that listen xPL messages received from xPL hub(hub is an external prog and need to be run).
- */
-static void
-do_lengthy_task(Ecore_Pipe * pipe __UNUSED__)
-{
-	for (;;)
-	{
-		xPL_processMessages(100);
-		sleep(1);
-	}
-}/*do_lengthy_task*/
 
 
 /*
@@ -240,51 +203,50 @@ _eina_list_devices_sort_cb(const void *d1, const void *d2)
 
 
 
-
 /*
- *
+ *Callback called in xPL Message 'control.basic' is triggered.
  */
 static void
-handler(void *data __UNUSED__, void *buf, unsigned int len)
+_xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data __UNUSED__)
 {
-	char s[PATH_MAX] = "0";
-	char name[255];
-	char type[255];
-	char sval[4] = "0";
+	char s[512] = "0";
 	Device *device;
+	xPL_NameValueListPtr values_names;
 
-	char *str = malloc(sizeof(char) * len + 1);
-	memcpy(str, buf, len);
-	str[len] = '\0';
-	sscanf(str, "%[^'!']!%[^'!']!%s", name, type, sval);
-	free(str);
+	//Ecore_Pipe *pipe = (Ecore_Pipe *) data;
 
-	/* TODO:handle case of device has been changed(type, name) and inform user about it*/
+	values_names = xPL_getMessageBody(msg);
+
+	snprintf(s, sizeof(s), _("Received sensor.basic"));
+	statusbar_text_set(s, "elm/icon/xpl/default");
+
+	/*TODO:handle case of device has been changed(type, name) and inform user about it*/
 	/*Register new devices to EDAMS*/
-	if ((device = device_new(name)))
+	if ((device = device_new(xPL_getNamedValue(values_names, "device"))))
 	{
 		device_id_set(device, eina_list_count(app->devices));
-		device_type_set(device, device_str_to_type(type));
+		device_type_set(device, device_str_to_type(xPL_getNamedValue(values_names, "type")));
 		device_class_set(device, SENSOR_BASIC);
 		device_save(device);
 
 		/*Add new device to edams devices Eina_List*/
 		app->devices = eina_list_append(app->devices, device);
 		app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
+		debug(stdout, _("%d devices registered"), eina_list_count(app->devices));
 	}
 	/*Or try to load it instead...*/
 	else
 	{
-		snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+		snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), xPL_getNamedValue(values_names, "device"));
 		device = device_load(s);
 	}
 
 	if(!device)
 	{
-		debug(stderr, _("Couldn't registered new device '%s'"), name);
+		debug(stderr, _("Couldn't registered new device '%s'"), xPL_getNamedValue(values_names, "device"));
 		return;
 	}
-	device_data_set(device, sval);
+	device_data_set(device, xPL_getNamedValue(values_names, "current"));
 
 	/*Write gnuplot file with updated device's data*/
 	gnuplot_device_data_write(app, device);
@@ -299,22 +261,35 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		cosm_device_datastream_update(app, location, device);
 		map_widget_data_update(app, location, device);
 	}
+}/*_xpl_sensor_basic_handler*/
 
-	debug(stdout, _("Sensors registered:%d"), eina_list_count(app->devices));
-}/*handler*/
+
+/*
+ *Child process that listen xPL messages received from xPL hub(hub is an external prog and need to be run).
+ */
+static void
+xpl_process_messages()
+{
+	for (;;)
+	{
+		xPL_processMessages(100);
+		sleep(1);
+	}
+}/*xpl_process_messages*/
+
+
 
 
 /*
  *Callback called in ctxpopup object when "remove" item is selected
  */
 static void
-_button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj, void *event_info __UNUSED__)
+_button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	if (!app->location)
 	{
 		statusbar_text_set(_
-					("Couldn't remove widgets:no location selected!"),
-					"elm/icon/warning-notify/default");
+					("Couldn't remove widgets:no location selected!"), "dialog-error");
 		return;
 	}
 
@@ -322,10 +297,18 @@ _button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj, void 
 
 	Elm_Object_Item *selected_item = elm_list_selected_item_get(list);
 	Widget *widget = elm_object_item_data_get(selected_item);
+	Device *device = device_load(widget_device_filename_get(widget));
 
 	location_widgets_del(app->location, widget);
    	elm_object_item_del(selected_item);
 	location_save(app->location);
+
+	char s[256];
+	snprintf(s, sizeof(s), _("Widget for device '%s' have been removed from location '%s'."),
+							device_name_get(device),
+							location_name_get(app->location));
+	statusbar_text_set(s, "elm/icon/device/default");
+
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));
@@ -443,19 +426,8 @@ _location_naviframe_content_set(Location * location)
 		elm_image_aspect_fixed_set(ic, EINA_TRUE);
 		elm_image_resizable_set(ic, 1, 0);
 
-		Device *device;
-
-		if((device = device_load(widget_device_filename_get(widget))))
-		{
-			snprintf(s, sizeof(s), "%s(id:%d)",
-									device_name_get(device),
-									device_id_get(device));
-		}
-		else
-		{
-			snprintf(s, sizeof(s), "%d - %s", widget_device_id_get(widget), widget_name_get(widget));
-		}
-
+		Device *device = widget_device_get(widget);
+		snprintf(s, sizeof(s), "%d - %s", widget_id_get(widget), device_name_get(device));
 		elm_list_item_append(list, strdup(s), ic, NULL, NULL, widget);
 		device_free(device);
 	}
@@ -520,8 +492,6 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	Evas_Object *sep;
 	Evas_Object *tb, *bt, *icon, *label, *bx, *list, *naviframe;
 	Eina_List *l;
-	Ecore_Pipe *pipe;
-	pid_t child_pid;
 
 	// Allocate and initialize App_Info struct.
 	app = calloc(1, sizeof(App_Info));
@@ -686,7 +656,6 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
    	icon = elm_icon_add(bx);
 	evas_object_name_set(icon, "status icon");
-   	elm_icon_standard_set(icon, "home");
    	evas_object_size_hint_min_set(icon, 16, 16);
    	evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
    	evas_object_show(icon);
@@ -709,24 +678,21 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	evas_object_resize(app->win, 700, 500);
 	evas_object_show(app->win);
-	pipe = ecore_pipe_add(handler, NULL);
 
-	xPL_addServiceListener(app->edamsService, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic", (xPL_ObjectPtr)pipe);
+	xPL_addServiceListener(app->edamsService, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)NULL);
+	pid_t child_pid;
 	child_pid = fork();
 
 	if (!child_pid)
 	{
-		ecore_pipe_read_close(pipe);
-		do_lengthy_task(pipe);
+		xpl_process_messages();
 	}
 	else
 	{
-		ecore_pipe_write_close(pipe);
 		elm_run();
 	}
 
 	map_quit();
-	ecore_pipe_del(pipe);
 	kill(child_pid, SIGKILL);
 
 	edams_shutdown(app);

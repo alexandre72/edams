@@ -403,8 +403,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 	{
 		char s[64];
 		priv->children[x] = edje_object_add(evas_object_evas_get(o));
-		snprintf(s, sizeof(s), "%d_%d_%s_edje", widget_position_get(widget),
-				 widget_device_id_get(widget), location_name_get(location));
+		snprintf(s, sizeof(s), "%d_%s_edje", widget_id_get(widget), location_name_get(location));
 		evas_object_name_set(priv->children[x], s);
 
 		if (!priv->children[x])
@@ -752,8 +751,7 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 void
 map_quit()
 {
-	if (!ee || !app)
-		return;
+	if (!ee || !app) return;
 
 	ecore_main_loop_quit();
 }/*map_quit*/
@@ -767,8 +765,10 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 {
 	// Sync device data with location device data(if affected to any
 	// location!).
-	if (!ee || !app || !app->devices || !location || !device)
-		return;
+
+	if (!ee || !location || !device) return;
+
+	printf("UPDATE MAP WIDGET ASSOCIATED TO DEVICE '%s' in location '%s'\n", device_name_get(device), location_name_get(location));
 
 	//Parse all location widget's and update Edje widget's objects.
 	Eina_List *l, *widgets;
@@ -778,15 +778,13 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
-		if(widget_device_id_get(widget) != device_id_get(device))
-			continue;
+		if(strcmp(widget_device_filename_get(widget), device_filename_get(device)) != 0)	continue;
 
 		//Edje widget's object name follow same scheme _widgetposition_widgetdeviceid_locationame.
 		char s[64];
-		snprintf(s, sizeof(s), "%d_%d_%s_edje",
-					 widget_position_get(widget),
-					 widget_device_id_get(widget),
-					 location_name_get(location));
+		snprintf(s, sizeof(s), 	"%d_%s_edje",
+							 	widget_id_get(widget),
+					 			location_name_get(location));
 		Evas_Object *edje = evas_object_name_find(evas, s);
 
 		//Parse Edje widget's messages/actions.

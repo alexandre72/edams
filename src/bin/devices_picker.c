@@ -43,7 +43,7 @@ static char *_gengrid_devices_text_get(void *data, Evas_Object * obj __UNUSED__,
 static Evas_Object *_gengrid_devices_content_get(void *data, Evas_Object * obj, const char *part);
 static Eina_Bool _gengrid_devices_state_get(void *data __UNUSED__, Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
 static void _gengrid_devices_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__);
-static void _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _button_select_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
 
 /*
@@ -73,7 +73,7 @@ _gengrid_devices_content_get(void *data, Evas_Object * obj, const char *part)
 	{
 		Evas_Object *icon = elm_bg_add(obj);
 		if (!elm_bg_file_set(icon, device_filename_get(ti->device), "/image/0"))
-			elm_bg_file_set(icon, edams_edje_theme_file_get(), "elm/icon/devices-creator/default");
+			elm_bg_file_set(icon, edams_edje_theme_file_get(), "elm/icon/device/default");
 		evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 		evas_object_show(icon);
 		return icon;
@@ -110,10 +110,10 @@ _gengrid_devices_del(void *data __UNUSED__, Evas_Object * obj __UNUSED__)
 
 /*
  *Callback called in gengrid "devices" when clickeddouble signal is emitted.
+ *Callback called in button "select" when clicked signal is emitted.
  */
 static void
-_gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
-					 void *event_info __UNUSED__)
+_button_select_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	App_Info *app = data;
 	Evas_Object *gg = (Evas_Object *) elm_object_name_find(win, "devices gengrid", -1);
@@ -127,9 +127,15 @@ _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNU
 	location_widgets_add(app->location, widget);
 	location_save(app->location);
 
+	char s[256];
+	snprintf(s, sizeof(s), _("Widget for device '%s' have been added to location '%s'."),
+							device_name_get(ggi->device),
+							location_name_get(app->location));
+	statusbar_text_set(s, "elm/icon/device/default");
+
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));
-}/*_gengrid_devices_clickeddouble_cb*/
+}/*_button_select_clicked_cb*/
 
 
 /*
@@ -138,7 +144,7 @@ _gengrid_devices_clickeddouble_cb(void *data __UNUSED__, Evas_Object * obj __UNU
 void
 devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *grid, *bx, *hbx, *bt, *ic, *sp;
+	Evas_Object *gengrid, *bx, *hbx, *bt, *ic, *sp;
 	App_Info *app = (App_Info *) data;
 
 	if (!app->location)	return;
@@ -153,20 +159,20 @@ devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 	evas_object_show(bx);
 
 	// Setup gengrid to display devices files in a nice and modern way.
-	grid = elm_gengrid_add(win);
-	evas_object_name_set(grid, "devices gengrid");
-	elm_gengrid_filled_set(grid, EINA_TRUE);
-	elm_gengrid_align_set(grid, 0, 0);
-	elm_gengrid_item_size_set(grid, 150, 150);
-	elm_gengrid_horizontal_set(grid, EINA_FALSE);
-	elm_gengrid_multi_select_set(grid, EINA_TRUE);
-	elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_ALWAYS);
-	elm_gengrid_reorder_mode_set(grid, EINA_FALSE);
-	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_min_set(grid, 400, 400);
-	evas_object_smart_callback_add(grid, "clicked,double", _gengrid_devices_clickeddouble_cb, app);
-	elm_box_pack_end(bx, grid);
-	evas_object_show(grid);
+	gengrid = elm_gengrid_add(win);
+	evas_object_name_set(gengrid, "devices gengrid");
+	elm_gengrid_filled_set(gengrid, EINA_TRUE);
+	elm_gengrid_align_set(gengrid, 0, 0);
+	elm_gengrid_item_size_set(gengrid, 150, 150);
+	elm_gengrid_horizontal_set(gengrid, EINA_FALSE);
+	elm_gengrid_multi_select_set(gengrid, EINA_TRUE);
+	elm_gengrid_select_mode_set(gengrid, ELM_OBJECT_SELECT_MODE_ALWAYS);
+	elm_gengrid_reorder_mode_set(gengrid, EINA_FALSE);
+	evas_object_size_hint_weight_set(gengrid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_min_set(gengrid, 400, 400);
+	evas_object_smart_callback_add(gengrid, "clicked,double", _button_select_clicked_cb, app);
+	elm_box_pack_end(bx, gengrid);
+	evas_object_show(gengrid);
 
 	// Add a separator bar to show user's actions like add or remove.
 	sp = elm_separator_add(win);
@@ -180,6 +186,16 @@ devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 	elm_box_horizontal_set(hbx, EINA_TRUE);
 	elm_box_pack_end(bx, hbx);
 	evas_object_show(hbx);
+
+	bt = elm_button_add(win);
+	elm_object_text_set(bt, _("Select"));
+	ic = elm_icon_add(win);
+	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(ic, "apply-window");
+	elm_object_part_content_set(bt, "icon", ic);
+	elm_box_pack_end(hbx, bt);
+	evas_object_show(bt);
+	evas_object_smart_callback_add(bt, "clicked", _button_select_clicked_cb, app);
 
 	bt = elm_button_add(win);
 	elm_object_text_set(bt, _("Close"));
@@ -213,7 +229,7 @@ devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
     	GenGridItem *ti;
         ti = calloc(1, sizeof(*ti));
        	ti->device = device_clone(device);
-        ti->gg_it = elm_gengrid_item_append(grid, gic, ti, NULL, NULL);
+        ti->gg_it = elm_gengrid_item_append(gengrid, gic, ti, NULL, NULL);
     }
 
 	// Item_class_ref is needed for gic.
