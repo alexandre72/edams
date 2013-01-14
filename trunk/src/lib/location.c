@@ -586,15 +586,15 @@ locations_shutdown(void)
 Eina_Bool
 location_remove(Location *location)
 {
-    if(!location)
-        return EINA_FALSE;
+	if(!location) return EINA_FALSE;
 
-    //INF(_("Removing:%s"), location->__eet_filename);
-	if(ecore_file_remove(location->__eet_filename) == EINA_FALSE)
+	if(!ecore_file_remove(location->__eet_filename))
 	{
-	    debug(stderr, _("Couldn't remove Eet file '%s'"), location->__eet_filename);
+	    debug(stderr, _("Couldn't remove Eet location file '%s'"), location->__eet_filename);
 	    return EINA_FALSE;
 	}
+
+	debug(stdout, _("Eet Location file '%s' has been removed"), location->__eet_filename);
 
 	return EINA_TRUE;
 }

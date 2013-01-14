@@ -230,7 +230,7 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *even
 				location_save(location);
 				char s[128];
 				snprintf(s, sizeof(s), _("Location with cosm feedid '%d' for '%s' has been added with success"), location_cosm_feedid_get(location), location_name_get(location));
-				msgbox(s);
+				statusbar_text_set(s, "elm/icon/cosm/default");
 			}
      	}
 	}
@@ -260,7 +260,7 @@ _url_feed_delete_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *e
                 char *location = (char *)data;
 				char s[128];
 				snprintf(s, sizeof(s), _("Location '%s' has been deleted with success"), location);
-				msgbox(s);
+				statusbar_text_set(s, "elm/icon/cosm/default");
 				FREE(location);
 		}
 	}

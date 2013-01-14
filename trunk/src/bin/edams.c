@@ -53,12 +53,9 @@ EAPI_MAIN int elm_main(int argc, char *argv[]);
 
 
 /*Callbacks*/
-static void _button_apply_remove_location_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,void *event_info __UNUSED__);
 static void _button_remove_location_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,void *event_info __UNUSED__);
-static void _list_item_location_delete_cb(void *data, Evas_Object * obj, void *event_info);
 static void _list_locations_selected_cb(void *data, Evas_Object * obj, void *event_info);
-static void _notify_timeout_cb(void *data __UNUSED__,Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
-static void _notify_button_close_clicked_cb(void *data, Evas_Object * obj __UNUSED__,void *event_info __UNUSED__);
+static Eina_Bool _statusbar_timer_cb(void *data);
 static void _button_quit_clicked_cb(void *data __UNUSED__,  Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
 /*xPL sensor.basic listener*/
@@ -107,85 +104,43 @@ _button_quit_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, voi
 /*
  *
  */
-static void
-_notify_timeout_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+static Eina_Bool
+_statusbar_timer_cb(void *data)
 {
-	Evas_Object *notify = (Evas_Object *) data;
-	evas_object_hide(notify);
+	char s[512];
+	time_t timestamp;
+	struct tm *t;
+
+	Evas_Object *label = elm_object_name_find(app->win, "status text", -1);
+	timestamp = time(NULL);
+	t = localtime(&timestamp);
+  	snprintf(s, sizeof(s), _("EDAMS v%s - %02d/%02d/%d"),PACKAGE_VERSION, (int)t->tm_mday, (int)t->tm_mon + 1, 1900 + (int)t->tm_year);
+	elm_object_text_set(label, s);
+
+	Evas_Object *icon = elm_object_name_find(app->win, "status icon", -1);
+	elm_image_file_set(icon, "elm/icon/info-notify/default", NULL);
+
+	return EINA_FALSE;
 }/*_notify_timeout_cb*/
 
 
-/*
- *Hide notification when clicking on notify close button.
- */
-static void
-_notify_button_close_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
-{
-	Evas_Object *notify = data;
-	evas_object_hide(notify);
-}/*_notify_button_close_clicked_cb*/
-
 
 /*
- *Show notification.
+ *Set elm label and elm icon of bottom status bar.
  */
 void
-notify_set(const char *msg, const char *icon)
+statusbar_text_set(const char *msg, const char *icon)
 {
 	Evas_Object *notify, *label, *ic, *bt;
 
-	bt = elm_object_name_find(app->win, "notify bt1", -1);
-	evas_object_hide(bt);
-
-	bt = elm_object_name_find(app->win, "notify bt2", -1);
-	evas_object_hide(bt);
-
-	notify = elm_object_name_find(app->win, "notify", -1);
-	elm_notify_allow_events_set(notify, EINA_TRUE);
-	elm_notify_timeout_set(notify, 2.0);
-	evas_object_show(notify);
-
-	label = elm_object_name_find(app->win, "notify label", -1);
+	label = elm_object_name_find(app->win, "status text", -1);
 	elm_object_text_set(label, msg);
 
-	ic = elm_object_name_find(app->win, "notify icon", -1);
+	ic = elm_object_name_find(app->win, "status icon", -1);
 	elm_image_file_set(ic, edams_edje_theme_file_get(), icon);
-}/*notify_set*/
 
-
-/*
- *
- */
-static void
-_button_apply_remove_location_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
-{
-	char buf[256];
-	Evas_Object *list;
-	Elm_Object_Item *it;
-	Location *location;
-
-	Evas_Object *notify = (Evas_Object *) data;
-	evas_object_hide(notify);
-
-	list = (Evas_Object *) elm_object_name_find(app->win, "locations list", -1);
-	it = (Elm_Object_Item *) elm_list_selected_item_get(list);
-
-	if (it)
-	{
-		location = elm_object_item_data_get(it);
-		cosm_location_feed_delete(app, location);
-		location_remove(location);
-
-		snprintf(buf, sizeof(buf), _("Location '%s' have been removed."),
-				 location_name_get(location));
-		elm_object_item_del(it);
-
-		Evas_Object *naviframe = (Evas_Object *) elm_object_name_find(app->win, "naviframe", -1);
-		elm_naviframe_item_pop(naviframe);
-
-		notify_set(buf, "elm/icon/info/default");
-	}
-}/*_button_apply_remove_location_clicked_cb*/
+	ecore_timer_add(5.0, _statusbar_timer_cb, NULL);
+}/*statusbar_text_set*/
 
 
 /*
@@ -194,6 +149,7 @@ _button_apply_remove_location_clicked_cb(void *data, Evas_Object * obj __UNUSED_
 static void
 _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
+	char s[256];
 	Evas_Object *notify, *ic, *bt, *label, *list;
 	Elm_Object_Item *it;
 
@@ -202,52 +158,33 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 
 	if (!it)
 	{
-		notify_set(_("Can't remove:no location selected!"), "elm/icon/warning-notify/default");
+		statusbar_text_set(_("Can't remove:no location selected!"), "elm/icon/warning-notify/default");
 		return;
 	}
+	else
+	{
+		Location *location = elm_object_item_data_get(it);
 
-	notify = elm_object_name_find(app->win, "notify", -1);
-	elm_notify_allow_events_set(notify, EINA_TRUE);
-	elm_notify_timeout_set(notify, 0.0);
-	evas_object_show(notify);
+		printf("Removing: '%s'\n", location_name_get(location));
 
-	ic = elm_object_name_find(app->win, "notify icon", -1);
-	elm_image_file_set(ic, edams_edje_theme_file_get(), "elm/icon/info-notify/default");
+		if(location)
+		{
+			cosm_location_feed_delete(app, location);
+			location_remove(location);
+			snprintf(s, sizeof(s), _("Location '%s' have been removed."), location_name_get(location));
+			elm_object_item_del(it);
 
-	label = elm_object_name_find(app->win, "notify label", -1);
-	elm_object_text_set(label, _("Are you sure to want to remove selected location?"));
+			app->locations = locations_list_location_remove(app->locations, location);
+			location_free(location);
 
-	bt = elm_object_name_find(app->win, "notify bt1", -1);
-	elm_object_text_set(bt, _("Yes"));
-	ic = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "apply-window");
-	elm_object_part_content_set(bt, "icon", ic);
-	evas_object_smart_callback_add(bt, "clicked", _button_apply_remove_location_clicked_cb, notify);
-	evas_object_show(bt);
+			Evas_Object *naviframe = (Evas_Object *) elm_object_name_find(app->win, "naviframe", -1);
+			elm_naviframe_item_pop(naviframe);
 
-	bt = elm_object_name_find(app->win, "notify bt2", -1);
-	elm_object_text_set(bt, _("No"));
-	ic = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "window-close");
-	elm_object_part_content_set(bt, "icon", ic);
-	evas_object_show(bt);
+			statusbar_text_set(s, "elm/icon/info-notify/default");
+		}
+	}
 }/*_button_remove_location_clicked_cb*/
 
-
-/*
- *
- */
-static void
-_list_item_location_delete_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
-{
-	Location *location = (Location *) data;
-
-	app->locations = locations_list_location_remove(app->locations, location);
-	location_free(location);
-	location = NULL;
-}/*_list_item_location_delete_cb*/
 
 
 /*
@@ -375,7 +312,7 @@ _button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj, void 
 {
 	if (!app->location)
 	{
-		notify_set(_
+		statusbar_text_set(_
 					("Couldn't remove widgets:no location selected!"),
 					"elm/icon/warning-notify/default");
 		return;
@@ -392,7 +329,7 @@ _button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj, void 
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));
-}/*_ctxpopup_item_remove_widget_selected_cb*/
+}/*_button_remove_widget_clicked_cb*/
 
 
 
@@ -472,7 +409,7 @@ _location_naviframe_content_set(Location * location)
 	evas_object_show(img);
 
    	en = elm_entry_add(app->win);
-   	elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
+   	elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
    	snprintf(s, sizeof(s),"%s", location_name_get(location));
    	elm_object_text_set(en, s);
    	evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -578,12 +515,10 @@ _location_naviframe_content_set(Location * location)
  */
 EAPI_MAIN int elm_main(int argc, char **argv)
 {
-	char s[512];
-	time_t timestamp;
-	struct tm *t;
+
 	Evas_Object *vbx, *vbx2, *bg, *frame;
 	Evas_Object *sep;
-	Evas_Object *tb, *bt, *ic, *label, *notify, *bx, *list, *naviframe;
+	Evas_Object *tb, *bt, *icon, *label, *bx, *list, *naviframe;
 	Eina_List *l;
 	Ecore_Pipe *pipe;
 	pid_t child_pid;
@@ -607,18 +542,10 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	app->devices = devices_list_get();
 
 	// Setup main window.
-	timestamp = time(NULL);
-	t = localtime(&timestamp);
-
-	snprintf(s, sizeof(s),
-			 _
-			 ("Enlightened Domotics Alarm Monitoring System %s - %02d/%02d/%d"),
-			 PACKAGE_VERSION, (int)t->tm_mday, (int)t->tm_mon + 1, 1900 + (int)t->tm_year);
-
 	app->locations = locations_list_get();
 
 	app->win = elm_win_add(NULL, "edams", ELM_WIN_BASIC);
-	elm_win_title_set(app->win, s);
+	elm_win_title_set(app->win, _("Enlightened Domotics Alarm Monitoring System"));
 	elm_win_autodel_set(app->win, EINA_TRUE);
 	elm_win_center(app->win, EINA_TRUE, EINA_TRUE);
 
@@ -632,59 +559,15 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	elm_win_resize_object_add(app->win, vbx);
 	evas_object_show(vbx);
 
-
-	// Setup notify for user informations.
-	notify = elm_notify_add(app->win);
-	elm_notify_allow_events_set(notify, EINA_TRUE);
-	evas_object_name_set(notify, "notify");
-	//elm_notify_align_set(notify, -1.0, 0.0);
-	evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_notify_timeout_set(notify, 5.0);
-	evas_object_smart_callback_add(notify, "timeout", _notify_timeout_cb, notify);
-
-	bx = elm_box_add(app->win);
-	elm_object_content_set(notify, bx);
-	elm_box_horizontal_set(bx, EINA_TRUE);
-	evas_object_show(bx);
-
-	ic = elm_image_add(app->win);
-	evas_object_name_set(ic, "notify icon");
-	evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_image_no_scale_set(ic, EINA_TRUE);
-	elm_image_resizable_set(ic, EINA_FALSE, EINA_TRUE);
-	elm_image_smooth_set(ic, EINA_FALSE);
-	elm_image_orient_set(ic, ELM_IMAGE_FLIP_HORIZONTAL);
-	elm_image_aspect_fixed_set(ic, EINA_TRUE);
-	elm_image_fill_outside_set(ic, EINA_TRUE);
-	elm_image_editable_set(ic, EINA_TRUE);
-	elm_box_pack_end(bx, ic);
-	evas_object_show(ic);
-
-	label = elm_label_add(app->win);
-	evas_object_name_set(label, "notify label");
-	elm_box_pack_end(bx, label);
-	evas_object_show(label);
-
-	bt = elm_button_add(app->win);
-	evas_object_name_set(bt, "notify bt1");
-	elm_box_pack_end(bx, bt);
-	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-	bt = elm_button_add(app->win);
-	evas_object_name_set(bt, "notify bt2");
-	elm_box_pack_end(bx, bt);
-	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_smart_callback_add(bt, "clicked", _notify_button_close_clicked_cb, notify);
-
-	// Setup toolbar.
+	/*Setup toolbar.*/
 	app->toolbar = elm_toolbar_add(app->win);
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
 	elm_toolbar_item_append(app->toolbar, "map", _("Global Map"), map_new, app);
-	elm_toolbar_item_append(app->toolbar, "preferences-browser", _("Preferences"), preferences_dlg_new, app);
-	elm_toolbar_item_append(app->toolbar, "about-dlg", _("About"), about_dialog_new, app);
-	elm_toolbar_item_append(app->toolbar, "close-application", _("Quit"), _button_quit_clicked_cb, app);
+	elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
+	elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);
+	elm_toolbar_item_append(app->toolbar, "application-exit", _("Quit"), _button_quit_clicked_cb, app);
 	elm_box_pack_end(vbx, app->toolbar);
 	evas_object_show(app->toolbar);
 
@@ -723,7 +606,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_smart_callback_add(list, "selected", _list_locations_selected_cb, NULL);
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
-	elm_panes_content_left_size_set(panes, 0.15);
+	elm_panes_content_left_size_set(panes, 0.20);
 	elm_object_part_content_set(panes, "left", vbx2);
 
 	//Table widget, contains group/subgroup genlist navigation and actions buttons like add...
@@ -735,10 +618,10 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	bt = elm_button_add(app->win);
 	elm_object_text_set(bt, _("Add"));
-	ic = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "list-add");
-	elm_object_part_content_set(bt, "icon", ic);
+	icon = elm_icon_add(app->win);
+	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(icon, "list-add");
+	elm_object_part_content_set(bt, "icon", icon);
 	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_table_pack(tb, bt, 0, 0, 1, 1);
 	evas_object_show(bt);
@@ -746,14 +629,14 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	bt = elm_button_add(app->win);
 	elm_object_text_set(bt, _("Remove"));
-	ic = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "list-remove");
-	elm_object_part_content_set(bt, "icon", ic);
+	icon = elm_icon_add(app->win);
+	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(icon, "list-remove");
+	elm_object_part_content_set(bt, "icon", icon);
 	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_table_pack(tb, bt, 0, 1, 1, 1);
 	evas_object_show(bt);
-	evas_object_smart_callback_add(bt, "clicked", _button_remove_location_clicked_cb, NULL);
+	evas_object_smart_callback_add(bt, "clicked", _button_remove_location_clicked_cb, list);
 
 	frame = elm_frame_add(app->win);
 	evas_object_name_set(frame, "location frame");
@@ -772,12 +655,13 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	Location *location;
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
-		Evas_Object *ic;
-		ic = elm_icon_add(app->win);
-   		elm_image_file_set(ic, location_filename_get(location), "/image/0");
-		elm_image_resizable_set(ic, 1, 1);
-		Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), ic, ic,  NULL, location);
-		elm_object_item_del_cb_set(it, _list_item_location_delete_cb);
+   		icon = elm_icon_add(app->win);
+   		elm_image_file_set(icon, location_filename_get(location), "/image/0");
+   		evas_object_size_hint_min_set(icon, 48, 48);
+   		evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
+   		evas_object_show(icon);
+		Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), icon, icon,  NULL, location);
+		elm_object_item_data_set(it, location);
 		it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content_set(location), NULL);
 		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 		elm_object_item_data_set(it, location);
@@ -789,7 +673,41 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	elm_object_content_set(frame, naviframe);
 
-	evas_object_resize(app->win, 480, 500);
+	/*Setup status bar to inform user.*/
+	sep = elm_separator_add(app->win);
+	elm_separator_horizontal_set(sep, EINA_TRUE);
+	elm_box_pack_end(vbx, sep);
+	evas_object_show(sep);
+
+	bx = elm_box_add(app->win);
+	elm_box_horizontal_set(bx, EINA_TRUE);
+	elm_box_pack_end(vbx, bx);
+	evas_object_show(bx);
+
+   	icon = elm_icon_add(bx);
+	evas_object_name_set(icon, "status icon");
+   	elm_icon_standard_set(icon, "home");
+   	evas_object_size_hint_min_set(icon, 16, 16);
+   	evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
+   	evas_object_show(icon);
+   	elm_box_pack_end(bx, icon);
+
+   	label = elm_label_add(app->win);
+   	elm_label_slide_duration_set(label, 3);
+   	elm_label_slide_set(label, EINA_TRUE);
+   	elm_object_style_set(label, "slide_bounce");
+	evas_object_name_set(label, "status text");
+   	evas_object_show(label);
+	elm_box_pack_end(bx, label);
+   	evas_object_show(label);
+
+
+	sep = elm_separator_add(app->win);
+	elm_separator_horizontal_set(sep, EINA_TRUE);
+	elm_box_pack_end(vbx, sep);
+	evas_object_show(sep);
+
+	evas_object_resize(app->win, 700, 500);
 	evas_object_show(app->win);
 	pipe = ecore_pipe_add(handler, NULL);
 
