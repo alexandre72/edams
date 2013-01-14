@@ -27,6 +27,7 @@
 #include <Elementary.h>
 #include <Ecore_File.h>
 
+#include "action.h"
 #include "actions_editor.h"
 #include "about_dlg.h"
 #include "cosm.h"
@@ -286,13 +287,37 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
         }
         device_data_set(device, sval);
 
+		/*Parse all device action's and to execute them(if condition is full)*/
+		Eina_List *l, *actions;
+		Action *action;
+		actions = device_actions_list_get(device);
+		EINA_LIST_FOREACH(actions, l, action)
+		{
+				switch(action_ifcondition_get(action))
+				{
+					case EGAL_TO:
+							if(atoi(device_data_get(device)) == atoi(action_ifvalue_get(action))) action_parse(action);
+							break;
+					case LESS_THAN:
+							if(atoi(device_data_get(device)) < atoi(action_ifvalue_get(action))) action_parse(action);
+							break;
+					case MORE_THAN:
+							if(atoi(device_data_get(device)) > atoi(action_ifvalue_get(action))) action_parse(action);
+							break;
+					case LESS_OR_EGAL_TO:
+							if(atoi(device_data_get(device)) <= atoi(action_ifvalue_get(action))) action_parse(action);
+							break;
+					case MORE_OR_EGAL_TO:
+							if(atoi(device_data_get(device)) >= atoi(action_ifvalue_get(action))) action_parse(action);
+							break;
+				}
+		}
+
         /*Write gnuplot file with updated device's data*/
         gnuplot_device_data_write(app, device);
 
-        Eina_List *l;
-        Location *location;
-
         /*Parse all locations and sync with global and cosm*/
+        Location *location;
         EINA_LIST_FOREACH(app->locations, l, location)
         {
                 /*Sync device's data with gnuplot, global map and cosm*/

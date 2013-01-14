@@ -8,6 +8,7 @@ src/bin/map.c
 src/bin/preferences_dlg.c
 src/bin/shutdown.c
 src/bin/widgets_picker.c
+src/bin/actions.c
 src/lib/cosm.c
 src/lib/device.c
 src/lib/gnuplot.c

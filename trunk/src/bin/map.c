@@ -162,8 +162,6 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 				   "TRUE":"FALSE"); if(x>=prect.w || x<=prect.x) printf("Child is OUT\n"); */
 				if (eina_rectangle_coords_inside(&prect, x, y))
 				{
-					printf("MOVING WIDGET NAME '%s'\n", evas_object_name_get(o));
-
 					evas_object_move(o, x, y);
 
 					char s[64];
