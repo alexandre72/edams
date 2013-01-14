@@ -60,7 +60,7 @@ gnuplot_device_png_write(App_Info *app, Device *device)
 	}
 
 	FILE *gnuplot_pipe;
-	snprintf(s, sizeof(s), "%s -persist", app->settings->gnuplot_path);
+	snprintf(s, sizeof(s), "%s", app->settings->gnuplot_path);
 	gnuplot_pipe = popen(s, "w");
 	if (gnuplot_pipe)
 	{

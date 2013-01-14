@@ -55,7 +55,7 @@ _gengrid_devices_text_get(void *data, Evas_Object * obj __UNUSED__, const char *
 	const GenGridItem *ti = data;
 	char buf[256];
 
-	snprintf(buf, sizeof(buf), "%d - %s", device_id_get(ti->device), device_name_get(ti->device));
+	snprintf(buf, sizeof(buf), "%s", device_name_get(ti->device));
 
 	return strdup(buf);
 }/*_gengrid_devices_text_get*/

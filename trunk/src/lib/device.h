@@ -126,7 +126,6 @@ Device *devices_detect(char *s);
 Eina_Bool device_save(Device *device);
 Device *device_load(const char *filename);
 
-void device_id_set(Device *device, unsigned int id);
 void device_name_set(Device *device, const char * name);
 void device_class_set(Device *device, Class_Flags class);
 void device_type_set(Device *device, Type_Flags type);
@@ -140,7 +139,6 @@ void device_unit_format_set(Device *device, const char *unit_format);
 void device_unit_symbol_set(Device *device, const char *unit_symbol);
 
 const char *device_filename_get(Device *device);
-unsigned int device_id_get(const Device *device);
 const char * device_name_get(const Device *device);
 Class_Flags device_class_get(const Device *device);
 Type_Flags device_type_get(const Device *device);

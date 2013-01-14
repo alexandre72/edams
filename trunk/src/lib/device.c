@@ -38,7 +38,6 @@ struct _Action
 
 struct _Device
 {
-    unsigned int id;				//Id of device.
     const char *__eet_filename;		//Filename name of device, generated and based on device's name.
     const char *name;				//Name of xpl device 'temperature1'. Should be unique.
     Class_Flags class;				//Class of xpl device e.g. 'SENSOR'.
@@ -203,7 +202,6 @@ _device_init(void)
     EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Device);
     _device_descriptor = eet_data_descriptor_stream_new(&eddc);
 
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "id", id, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "name", name, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "class", class, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "type", type, EET_T_UINT);
@@ -261,7 +259,6 @@ device_new(const char * name)
 		return NULL;
 	}
 
-   	device->id = 0;
     device->name = eina_stringshare_add(name ? name : "undefined");
     device->__eet_filename = eina_stringshare_add(s);
     device->class = UNKNOWN_CLASS;
@@ -316,20 +313,6 @@ device_free(Device *device)
     }
 }
 
-
-inline unsigned int
-device_id_get(const Device *device)
-{
-    return device->id;
-}
-
-
-inline void
-device_id_set(Device *device, unsigned int id)
-{
-    EINA_SAFETY_ON_NULL_RETURN(device);
-    device->id = id;
-}
 
 inline const char *
 device_name_get(const Device *device)
@@ -788,7 +771,6 @@ device_clone(const Device *src)
 	}
 
     dst->__eet_filename = eina_stringshare_add(src->__eet_filename);
-    dst->id = src->id;
     dst->name = eina_stringshare_add(src->name);
     dst->type = src->type;
     dst->description = eina_stringshare_add(src->description);
@@ -802,28 +784,6 @@ device_clone(const Device *src)
     dst->version = src->version;
 
 	return dst;
-}
-
-
-
-/*
- *Return device with 'id' arg in Eina_List 'devices'.
- */
-Device*
-devices_list_device_with_id_get(Eina_List *devices, unsigned int id)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(devices, NULL);
-
-	Eina_List *l;
-	Device *device;
-
-	EINA_LIST_FOREACH(devices, l, device)
-	{
-		if(device_id_get(device) == id) return device;
-	}
-
-	debug(stderr, _("Couldn't return device with id '%d' from devices list"), id);
-	return NULL;
 }
 
 

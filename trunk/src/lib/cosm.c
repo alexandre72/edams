@@ -59,16 +59,14 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
    	url_event = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, location);
 
 	if(strlen(device_unit_symbol_get(device)) > 0)
-		snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\", \"unit\":{\"label\":\"%s\", \"symbol\": \"%s\"}}]}"),
-							device_id_get(device),
+		snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%s\", \"current_value\":\"%s\", \"unit\":{\"label\":\"%s\", \"symbol\": \"%s\"}}]}"),
 							device_name_get(device),
 							device_data_get(device),
 							device_units_get(device),
 							device_unit_symbol_get(device));
 
 	else
-		snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%d-%s\", \"current_value\":\"%s\"}]}"),
-							device_id_get(device),
+		snprintf(s, sizeof(s), ("{\"version\":\"1.0.0\", \"datastreams\":[{\"id\":\"%s\", \"current_value\":\"%s\"}]}"),
 							device_name_get(device),
 							device_data_get(device));
 

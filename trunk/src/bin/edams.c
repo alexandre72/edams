@@ -62,6 +62,7 @@ static int _eina_list_devices_sort_cb(const void *d1, const void *d2);
 /*xPL sensor.basic listener*/
 static void xpl_process_messages();
 static void _xpl_sensor_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data);
+static void handler(void *data __UNUSED__, void *buf, unsigned int len);
 
 /*Functions*/
 Evas_Object *_location_naviframe_content_set(Location * location);
@@ -204,63 +205,26 @@ _eina_list_devices_sort_cb(const void *d1, const void *d2)
 
 
 /*
- *Callback called in xPL Message 'control.basic' is triggered.
+ *Callback called in xPL Message 'cstatic void
+handler(void *data __UNUSED__, void *buf, unsigned int len)ontrol.basic' is triggered.
  */
 static void
 _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data __UNUSED__)
 {
-	char s[512] = "0";
-	Device *device;
-	xPL_NameValueListPtr values_names;
+    char buf[256] = "0";
+    xPL_NameValueListPtr values_names;
 
-	//Ecore_Pipe *pipe = (Ecore_Pipe *) data;
+	Ecore_Pipe *pipe = (Ecore_Pipe *) data;
 
 	values_names = xPL_getMessageBody(msg);
 
-	snprintf(s, sizeof(s), _("Received sensor.basic"));
-	statusbar_text_set(s, "elm/icon/xpl/default");
+	snprintf(buf, sizeof(buf), "%s!%s!%s",
+                         xPL_getNamedValue(values_names, "device"),
+                         xPL_getNamedValue(values_names, "type"),
+                         xPL_getNamedValue(values_names, "current"));
 
-	/*TODO:handle case of device has been changed(type, name) and inform user about it*/
-	/*Register new devices to EDAMS*/
-	if ((device = device_new(xPL_getNamedValue(values_names, "device"))))
-	{
-		device_id_set(device, eina_list_count(app->devices));
-		device_type_set(device, device_str_to_type(xPL_getNamedValue(values_names, "type")));
-		device_class_set(device, SENSOR_BASIC);
-		device_save(device);
+	ecore_pipe_write(pipe, buf, strlen(buf));
 
-		/*Add new device to edams devices Eina_List*/
-		app->devices = eina_list_append(app->devices, device);
-		app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
-		debug(stdout, _("%d devices registered"), eina_list_count(app->devices));
-	}
-	/*Or try to load it instead...*/
-	else
-	{
-		snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), xPL_getNamedValue(values_names, "device"));
-		device = device_load(s);
-	}
-
-	if(!device)
-	{
-		debug(stderr, _("Couldn't registered new device '%s'"), xPL_getNamedValue(values_names, "device"));
-		return;
-	}
-	device_data_set(device, xPL_getNamedValue(values_names, "current"));
-
-	/*Write gnuplot file with updated device's data*/
-	gnuplot_device_data_write(app, device);
-
-	Eina_List *l;
-	Location *location;
-
-	/*Parse all locations and sync with global and cosm*/
-	EINA_LIST_FOREACH(app->locations, l, location)
-	{
-		/*Sync device's data with gnuplot, global map and cosm*/
-		cosm_device_datastream_update(app, location, device);
-		map_widget_data_update(app, location, device);
-	}
 }/*_xpl_sensor_basic_handler*/
 
 
@@ -277,6 +241,67 @@ xpl_process_messages()
 	}
 }/*xpl_process_messages*/
 
+
+/*
+ *
+ */
+static void
+handler(void *data __UNUSED__, void *buf, unsigned int len)
+{
+        char s[PATH_MAX] = "0";
+        char name[255];
+        char type[255];
+        char sval[4] = "0";
+        Device *device;
+
+        char *str = malloc(sizeof(char) * len + 1);
+        memcpy(str, buf, len);
+        str[len] = '\0';
+        sscanf(str, "%[^'!']!%[^'!']!%s", name, type, sval);
+        free(str);
+
+        /* TODO:handle case of device has been changed(type, name) and inform user about it*/
+        /*Register new devices to EDAMS*/
+        if ((device = device_new(name)))
+        {
+                device_type_set(device, device_str_to_type(type));
+                device_class_set(device, SENSOR_BASIC);
+                device_save(device);
+
+                /*Add new device to edams devices Eina_List*/
+                app->devices = eina_list_append(app->devices, device);
+                app->devices = eina_list_sort(app->devices, eina_list_count(app->devices), EINA_COMPARE_CB(_eina_list_devices_sort_cb));
+        }
+        /*Or try to load it instead...*/
+        else
+        {
+                snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+                device = device_load(s);
+        }
+
+        if(!device)
+        {
+                debug(stderr, _("Couldn't registered new device '%s'"), name);
+                return;
+        }
+        device_data_set(device, sval);
+
+        /*Write gnuplot file with updated device's data*/
+        gnuplot_device_data_write(app, device);
+
+        Eina_List *l;
+        Location *location;
+
+        /*Parse all locations and sync with global and cosm*/
+        EINA_LIST_FOREACH(app->locations, l, location)
+        {
+                /*Sync device's data with gnuplot, global map and cosm*/
+                cosm_device_datastream_update(app, location, device);
+                map_widget_data_update(app, location, device);
+        }
+
+        debug(stdout, _("Sensors registered:%d"), eina_list_count(app->devices));
+}/*handler*/
 
 
 
@@ -341,7 +366,7 @@ _list_widgets_sort_cb(const void *pa, const void *pb)
    Device *a = (Device *)elm_object_item_data_get(ia);
    Device *b = (Device *)elm_object_item_data_get(ib);
 
-   return device_id_get(a) - device_id_get(b);
+   return strcoll(device_name_get(a), device_name_get(b));
 }/*_list_widgets_sort_cb*/
 
 
@@ -679,20 +704,26 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_resize(app->win, 700, 500);
 	evas_object_show(app->win);
 
-	xPL_addServiceListener(app->edamsService, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)NULL);
+	Ecore_Pipe *pipe;
 	pid_t child_pid;
+
+    pipe = ecore_pipe_add(handler, NULL);
+	xPL_addServiceListener(app->edamsService, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
 	child_pid = fork();
 
 	if (!child_pid)
 	{
-		xpl_process_messages();
+		ecore_pipe_read_close(pipe);
+		xpl_process_messages(pipe);
 	}
 	else
 	{
+		ecore_pipe_write_close(pipe);
 		elm_run();
 	}
 
 	map_quit();
+	ecore_pipe_del(pipe);
 	kill(child_pid, SIGKILL);
 
 	edams_shutdown(app);
