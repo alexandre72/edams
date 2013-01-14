@@ -2,16 +2,23 @@
 
 
  ===Main application interface===
-http://edams.googlecode.com/files/shot-2013-01-10_18-48-19.jpg
-
+http://edams.googlecode.com/files/shot-2013-01-14_20-39-21.jpg
 
 
  ===Global devices map interface===
-http://edams.googlecode.com/files/shot-2013-01-10_18-47-50.jpg
+http://edams.googlecode.com/files/shot-2013-01-14_20-40-13.jpg
 
 
  ===Global devices map interface with data graph generated from gnuplot===
 http://edams.googlecode.com/files/shot-2013-01-05_17-56-51.jpg
+
+
+ ===Widget properties editor===
+http://edams.googlecode.com/files/shot-2013-01-14_20-39-33.jpg
+
+
+ ===Actions editor===
+http://edams.googlecode.com/files/shot-2013-01-14_20-39-45.jpg
 
 
  ===Location adding  interface===
