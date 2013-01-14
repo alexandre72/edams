@@ -1,0 +1,25 @@
+#summary Captures d'écrans d'EDAMS en action
+
+
+ ===Interface d'administration principale===
+http://edams.googlecode.com/files/shot-2013-01-14_20-39-21.jpg
+
+
+ ===Carte générale===
+http://edams.googlecode.com/files/shot-2013-01-14_20-40-13.jpg
+
+
+ ===Carte générale avec représentation des données graphiques tracées par gnuplot===
+http://edams.googlecode.com/files/shot-2013-01-05_17-56-51.jpg
+
+
+ ===Editeur de propriétés pour le widget associé===
+http://edams.googlecode.com/files/shot-2013-01-14_20-39-33.jpg
+
+
+ ===Editeur d'actions===
+http://edams.googlecode.com/files/shot-2013-01-14_20-39-45.jpg
+
+
+ ===Interface d'ajout de localité===
+http://edams.googlecode.com/files/shot-2013-01-05_13-26-44.jpg
