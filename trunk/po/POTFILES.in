@@ -1,8 +1,9 @@
 src/bin/about_dlg.c
-src/bin/devices_creator.c
+src/bin/actions_editor.c
 src/bin/devices_picker.c
 src/bin/edams.c
 src/bin/init.c
+src/bin/locations_creator.c
 src/bin/map.c
 src/bin/preferences_dlg.c
 src/bin/shutdown.c
