@@ -351,8 +351,7 @@ static void checkForClientUpdates(xPL_MessagePtr theMessage) {
 
   /* See if heartbeat interval has changed */
   if (clientHeartbeatInterval != theClient->heartbeatInterval) {
-    debug(stdout,"Changing heartbeat interval for client on port %s from %s minutes to %d",
-	      theClient->clientPort, theClient->heartbeatInterval, clientHeartbeatInterval);
+    debug(stdout,"Changing heartbeat interval for client on port %s from %s minutes to %d",  theClient->clientPort, theClient->heartbeatInterval, clientHeartbeatInterval);
     theClient->heartbeatInterval = clientHeartbeatInterval;
   }
 
@@ -367,11 +366,11 @@ static Eina_Bool rebroadcastMessage(hubClientPtr theClient, String theData, int 
 
   /* Try to send the message */
   if ((bytesSent = sendto(theClient->clientSocket, theData, dataLen, 0,
-			  (struct sockaddr *) &(theClient->clientAddr), sizeof(struct sockaddr_in))) != dataLen) {
-    debug(stdout,"Unable to rebroadcast message to client on port %d, %s (%d)", theClient->clientPort, strerror(errno), errno);
-    return EINA_FALSE;
-  }
-  debug(stdout,"Broadcasted %d bytes (of %d attempted)", bytesSent, dataLen);
+			  (struct sockaddr *) &(theClient->clientAddr), sizeof(struct sockaddr_in))) != dataLen)
+	{
+    	debug(stderr, _("Couldn't rebroadcast to client on port %d, %s (%d)"), theClient->clientPort, strerror(errno), errno);
+    	return EINA_FALSE;
+  	}
 
   /* Okey dokey then */
   return EINA_TRUE;
@@ -386,8 +385,9 @@ static void rebroadcastMessageToClients(xPL_MessagePtr theMessage) {
   if (clientCount == 0) return;
 
   /* Format this message back into text */
-  if ((formattedText = xPL_formatMessage(theMessage)) == NULL) {
-    debug(stdout,"Unable to format message for rebroadcast -- message lost");
+  if ((formattedText = xPL_formatMessage(theMessage)) == NULL)
+  {
+    debug(stderr, _("Couldn't format message for rebroadcast - message is lost"));
     return;
   }
 
@@ -422,21 +422,17 @@ doClientTimeoutChecks(int actualElapsedTime __UNUSED__, xPL_ObjectPtr userValue 
   time_t rightNow = time(NULL);
   hubClientPtr theClient;
 
-  debug(stdout,"Checking for client timeouts...");
-
   for (clientIndex = clientCount - 1; clientIndex >= 0; clientIndex--) {
     theClient = &clientList[clientIndex];
 
     /* Figure elapsed time since we've last heard from this client */
     elapsedTime = (rightNow - theClient->lastHeardFromAt) / 60;
-    debug(stdout,"  Checking client #%d on port %d -- %d minutes since last heard from", clientIndex, theClient->clientPort, elapsedTime);
+
 
     /* See if this exceeds twice the expected heartbeat interval */
     if (elapsedTime < ((theClient->heartbeatInterval * 2) + 1)) continue;
 
     /* We have not heard from this client -- remove it */
-    debug(stdout,"Havn't heard from client @ port %d in %d minutes (heartbeats expected every %d minutes) -- Removing it",
-	      theClient->clientPort, elapsedTime, theClient->heartbeatInterval);
     releaseClient(theClient);
   }
 }

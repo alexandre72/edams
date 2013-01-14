@@ -20,6 +20,7 @@ static char blockValueBuff[MSG_MAX_SIZE];
 
 static Eina_Bool hubConfirmed = EINA_FALSE;
 
+
 /* Convert a text HEX character rep into actual binary data */
 /* If there is an error in the data, NULL is returned       */
 static
@@ -47,14 +48,18 @@ String textToBinary(String theText, int *binaryLength __UNUSED__)
   return theData;
 }
 
-/* Append text and keep track of what we've used */
-static Eina_Bool appendText(String theText) {
+
+/*
+ *Append text and keep track of what we've used
+ */
+static Eina_Bool
+appendText(String theText)
+{
   int textLen = strlen(theText);
 
   /* Make sure this will fit in the buffer */
-  if ((messageBytesWritten + textLen) >= MSG_MAX_SIZE) {
-    debug(stdout,"Message exceeds MSG_MAX_SIZE (%d) -- not sent!", MSG_MAX_SIZE);
-    debug(stdout,"** Too Long Message is, to date [%s]", messageBuff);
+  if ((messageBytesWritten + textLen) >= MSG_MAX_SIZE)
+  {
     return EINA_FALSE;
   }
 
@@ -65,8 +70,13 @@ static Eina_Bool appendText(String theText) {
   return EINA_TRUE;
 }
 
-/* Convert a binary value in xPL encoded data */
-static Eina_Bool writeBinaryValue(String theData, int dataLen) {
+
+/*
+ *Convert a binary value in xPL encoded data
+ */
+static Eina_Bool
+writeBinaryValue(String theData, int dataLen)
+{
   int dataIndex;
 
   for (dataIndex = 0; dataIndex < dataLen; dataIndex++)
@@ -75,9 +85,15 @@ static Eina_Bool writeBinaryValue(String theData, int dataLen) {
   return EINA_TRUE;
 }
 
-Eina_Bool xPL_isHubConfirmed() { return hubConfirmed; }
 
-void xPL_setMessageType(xPL_MessagePtr theMessage, xPL_MessageType messageType) {
+Eina_Bool xPL_isHubConfirmed()
+{
+	return hubConfirmed;
+}
+
+
+void
+xPL_setMessageType(xPL_MessagePtr theMessage, xPL_MessageType messageType) {
   if (theMessage->messageType == messageType) return;
   theMessage->messageType = messageType;
 }
@@ -85,23 +101,34 @@ xPL_MessageType xPL_getMessageType(xPL_MessagePtr theMessage) {
   return theMessage->messageType;
 }
 
-int xPL_getHopCount(xPL_MessagePtr theMessage) {
+int
+xPL_getHopCount(xPL_MessagePtr theMessage)
+{
   return theMessage->hopCount;
 }
 
-Eina_Bool xPL_isReceivedMessage(xPL_MessagePtr theMessage) {
+Eina_Bool xPL_isReceivedMessage(xPL_MessagePtr theMessage)
+{
   return theMessage->receivedMessage;
 }
 
-void xPL_setBroadcastMessage(xPL_MessagePtr theMessage, Eina_Bool isBroadcast) {
+void
+xPL_setBroadcastMessage(xPL_MessagePtr theMessage, Eina_Bool isBroadcast)
+{
   if (theMessage->isBroadcastMessage == isBroadcast) return;
   theMessage->isBroadcastMessage = isBroadcast;
 }
-Eina_Bool xPL_isBroadcastMessage(xPL_MessagePtr theMessage) {
+
+
+Eina_Bool
+xPL_isBroadcastMessage(xPL_MessagePtr theMessage)
+{
   return theMessage->isBroadcastMessage;
 }
 
-void xPL_setTargetGroup(xPL_MessagePtr theMessage, String theGroup) {
+void
+xPL_setTargetGroup(xPL_MessagePtr theMessage, String theGroup)
+{
   if (theGroup == NULL) {
     STR_FREE(theMessage->groupName);
     theMessage->isGroupMessage = EINA_FALSE;
@@ -116,14 +143,24 @@ void xPL_setTargetGroup(xPL_MessagePtr theMessage, String theGroup) {
     theMessage->groupName = xPL_StrDup(theGroup);
   }
 }
-String xPL_getTargetGroup(xPL_MessagePtr theMessage) {
+
+
+String
+xPL_getTargetGroup(xPL_MessagePtr theMessage)
+{
   return theMessage->groupName;
 }
-Eina_Bool xPL_isGroupMessage(xPL_MessagePtr theMessage) {
+
+
+Eina_Bool xPL_isGroupMessage(xPL_MessagePtr theMessage)
+{
   return theMessage->isGroupMessage;
 }
 
-void xPL_setTargetVendor(xPL_MessagePtr theMessage, String theVendor) {
+
+void
+xPL_setTargetVendor(xPL_MessagePtr theMessage, String theVendor)
+{
   /* Skip unless a real change */
   if ((theMessage->targetVendor != NULL) && !strcasecmp(theMessage->targetVendor, theVendor)) return;
 
@@ -132,17 +169,21 @@ void xPL_setTargetVendor(xPL_MessagePtr theMessage, String theVendor) {
   theMessage->targetVendor = xPL_StrDup(theVendor);
 
   /* Clear any group */
-  if (theMessage->isGroupMessage) {
+  if (theMessage->isGroupMessage)
+   {
     STR_FREE(theMessage->groupName);
     theMessage->isGroupMessage = EINA_FALSE;
   }
 }
 
-String xPL_getTargetVendor(xPL_MessagePtr theMessage) {
+String xPL_getTargetVendor(xPL_MessagePtr theMessage)
+{
   return theMessage->targetVendor;
 }
 
-void xPL_setTargetDeviceID(xPL_MessagePtr theMessage, String theDeviceID) {
+
+void xPL_setTargetDeviceID(xPL_MessagePtr theMessage, String theDeviceID)
+{
   /* Skip unless a real change */
   if ((theMessage->targetDeviceID != NULL) && !strcasecmp(theMessage->targetDeviceID, theDeviceID)) return;
 
@@ -151,17 +192,24 @@ void xPL_setTargetDeviceID(xPL_MessagePtr theMessage, String theDeviceID) {
   theMessage->targetDeviceID = xPL_StrDup(theDeviceID);
 
   /* Clear any group */
-  if (theMessage->isGroupMessage) {
+  if (theMessage->isGroupMessage)
+  {
     STR_FREE(theMessage->groupName);
     theMessage->isGroupMessage = EINA_FALSE;
   }
 }
 
-String xPL_getTargetDeviceID(xPL_MessagePtr theMessage) {
+
+String
+xPL_getTargetDeviceID(xPL_MessagePtr theMessage)
+{
   return theMessage->targetDeviceID;
 }
 
-void xPL_setTargetInstanceID(xPL_MessagePtr theMessage, String theInstanceID) {
+
+void
+xPL_setTargetInstanceID(xPL_MessagePtr theMessage, String theInstanceID)
+ {
   /* Skip unless a real change */
   if ((theMessage->targetInstanceID != NULL) && !strcasecmp(theMessage->targetInstanceID, theInstanceID)) return;
 
@@ -170,23 +218,33 @@ void xPL_setTargetInstanceID(xPL_MessagePtr theMessage, String theInstanceID) {
   theMessage->targetInstanceID = xPL_StrDup(theInstanceID);
 
   /* Clear any group */
-  if (theMessage->isGroupMessage) {
+  if (theMessage->isGroupMessage)
+  {
     STR_FREE(theMessage->groupName);
     theMessage->isGroupMessage = EINA_FALSE;
   }
 }
 
-String xPL_getTargetInstanceID(xPL_MessagePtr theMessage) {
+
+String
+xPL_getTargetInstanceID(xPL_MessagePtr theMessage)
+{
   return theMessage->targetInstanceID;
 }
 
-void xPL_setTarget(xPL_MessagePtr theMessage, String theVendor, String theDeviceID, String theInstanceID) {
+
+void
+xPL_setTarget(xPL_MessagePtr theMessage, String theVendor, String theDeviceID, String theInstanceID)
+{
   xPL_setTargetVendor(theMessage, theVendor);
   xPL_setTargetDeviceID(theMessage, theDeviceID);
   xPL_setTargetInstanceID(theMessage, theInstanceID);
 }
 
-void xPL_setSourceVendor(xPL_MessagePtr theMessage, String theVendor) {
+
+void
+xPL_setSourceVendor(xPL_MessagePtr theMessage, String theVendor)
+{
   /* Skip unless a real change and this is a received message (can't change sendable messages) */
   if (!theMessage->receivedMessage) return;
   if ((theMessage->sourceVendor != NULL) && !strcasecmp(theMessage->sourceVendor, theVendor)) return;
@@ -196,11 +254,17 @@ void xPL_setSourceVendor(xPL_MessagePtr theMessage, String theVendor) {
   theMessage->sourceVendor = xPL_StrDup(theVendor);
 }
 
-String xPL_getSourceVendor(xPL_MessagePtr theMessage) {
+
+String
+xPL_getSourceVendor(xPL_MessagePtr theMessage)
+{
   return theMessage->sourceVendor;
 }
 
-void xPL_setSourceDeviceID(xPL_MessagePtr theMessage, String theDeviceID) {
+
+void
+xPL_setSourceDeviceID(xPL_MessagePtr theMessage, String theDeviceID)
+{
   /* Skip unless a real change and this is a received message (can't change sendable messages) */
   if (!theMessage->receivedMessage) return;
   if ((theMessage->sourceDeviceID != NULL) && !strcasecmp(theMessage->sourceDeviceID, theDeviceID)) return;
@@ -210,11 +274,16 @@ void xPL_setSourceDeviceID(xPL_MessagePtr theMessage, String theDeviceID) {
   theMessage->sourceDeviceID = xPL_StrDup(theDeviceID);
 }
 
-String xPL_getSourceDeviceID(xPL_MessagePtr theMessage) {
+
+String
+xPL_getSourceDeviceID(xPL_MessagePtr theMessage)
+{
   return theMessage->sourceDeviceID;
 }
 
-void xPL_setSourceInstanceID(xPL_MessagePtr theMessage, String theInstanceID) {
+void
+xPL_setSourceInstanceID(xPL_MessagePtr theMessage, String theInstanceID)
+{
   /* Skip unless a real change and this is a received message (can't change sendable messages) */
   if (!theMessage->receivedMessage) return;
   if ((theMessage->sourceInstanceID != NULL) && !strcasecmp(theMessage->sourceInstanceID, theInstanceID)) return;
@@ -228,7 +297,9 @@ String xPL_getSourceInstanceID(xPL_MessagePtr theMessage) {
   return theMessage->sourceInstanceID;
 }
 
-void xPL_setSource(xPL_MessagePtr theMessage, String theVendor, String theDeviceID, String theInstanceID) {
+void
+xPL_setSource(xPL_MessagePtr theMessage, String theVendor, String theDeviceID, String theInstanceID)
+{
   /* Skip unless this is a received message (can't change sendable messages) */
   if (!theMessage->receivedMessage) return;
 
@@ -237,7 +308,10 @@ void xPL_setSource(xPL_MessagePtr theMessage, String theVendor, String theDevice
   xPL_setSourceInstanceID(theMessage, theInstanceID);
 }
 
-void xPL_setSchemaClass(xPL_MessagePtr theMessage, String theSchemaClass) {
+
+void
+xPL_setSchemaClass(xPL_MessagePtr theMessage, String theSchemaClass)
+{
   /* Skip unless a real change */
   if ((theMessage->schemaClass != NULL) && !strcasecmp(theMessage->schemaClass, theSchemaClass)) return;
 
@@ -385,19 +459,15 @@ xPL_MessagePtr xPL_createBroadcastMessage(xPL_ServicePtr theService, xPL_Message
 
 /* Release a message and all it's resources */
 void xPL_releaseMessage(xPL_MessagePtr theMessage) {
-  debug(stdout,"Releasing message, TYPE=%d, RECEIVED=%d", theMessage->messageType, theMessage->receivedMessage);
-
   /* Free Parsed stuff */
   if (theMessage->receivedMessage) {
     STR_FREE(theMessage->sourceVendor);
     STR_FREE(theMessage->sourceDeviceID);
     STR_FREE(theMessage->sourceInstanceID);
-    debug(stdout,"Releasing received messages SOURCE parameters");
   } else {
     theMessage->sourceVendor = NULL;
     theMessage->sourceDeviceID = NULL;
     theMessage->sourceInstanceID = NULL;
-    debug(stdout,"NULLing out transmitted messages SOURCE parameters");
   }
 
   theMessage->isBroadcastMessage = EINA_FALSE;
@@ -433,7 +503,8 @@ String xPL_formatMessage(xPL_MessagePtr theMessage) {
   messageBytesWritten = 0;
 
   /* Write header */
-  switch (theMessage->messageType) {
+  switch (theMessage->messageType)
+  {
   case xPL_MESSAGE_COMMAND:
     WRITE_TEXT("xpl-cmnd");
     break;
@@ -444,7 +515,7 @@ String xPL_formatMessage(xPL_MessagePtr theMessage) {
     WRITE_TEXT("xpl-trig");
     break;
   default:
-    debug(stdout,"Unable to format message -- invalid/unknown message type %d", theMessage->messageType);
+    debug(stderr, _("Coulnd't format xPL message -- invalid/unknown message type '%d'"), theMessage->messageType);
     return NULL;
   }
 
@@ -458,10 +529,12 @@ String xPL_formatMessage(xPL_MessagePtr theMessage) {
   WRITE_TEXT("\n");
 
   /* Write target */
-  if (xPL_isBroadcastMessage(theMessage)) {
+  if (xPL_isBroadcastMessage(theMessage))
+  {
     WRITE_TEXT("target=*");
   } else {
-    if (xPL_isGroupMessage(theMessage)) {
+    if (xPL_isGroupMessage(theMessage))
+    {
       WRITE_TEXT("target=XPL-GROUP.");
       WRITE_TEXT(xPL_getTargetGroup(theMessage));
     } else {
@@ -514,7 +587,6 @@ Eina_Bool xPL_sendMessage(xPL_MessagePtr theMessage) {
   if (xPL_formatMessage(theMessage) == NULL) return EINA_FALSE;
 
   /* Attempt to brodcast it */
-  debug(stdout,"About to broadcast %d bytes as [%s]", messageBytesWritten, messageBuff);
   if (!xPL_sendRawMessage(messageBuff, messageBytesWritten)) return EINA_FALSE;
 
   /* And we are done */
@@ -565,7 +637,7 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
       }
 
       /* Handle error */
-      debug(stdout,"Got invalid character parsing block header - %c at position %d", theChar, curIndex);
+      debug(stderr, _("Got invalid character parsing block header - %c at position %d"), theChar, curIndex);
       return -curIndex;
 
     case 1:
@@ -576,7 +648,7 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
       }
 
       /* Crapola */
-      debug(stdout,"Got invalid character parsing start of block - %c at position %d (wanted a {)", theChar, curIndex);
+      debug(stderr, _("Got invalid character parsing start of block - %c at position %d (wanted a {)"), theChar, curIndex);
       return -curIndex;
 
 
@@ -589,7 +661,7 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
       }
 
       /* Crapola */
-      debug(stdout,"Got invalid character parsing start of block -  %c at position %d (wanted a LF)", theChar, curIndex);
+      debug(stderr, _("Got invalid character parsing start of block -  %c at position %d (wanted a LF)"), theChar, curIndex);
       return -curIndex;
 
     case 3:
@@ -625,7 +697,7 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
       }
 
       /* Bad chararters! */
-      debug(stdout,"Got invalid character parsing block name/value name -  %c at position %d", theChar, curIndex);
+      debug(stderr, _("Got invalid character parsing block name/value name -  %c at position %d"), theChar, curIndex);
       return -curIndex;
 
     case 4:
@@ -640,7 +712,7 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
 	  theNameValue->itemValue = xPL_StrDup(blockValueBuff);
 	else {
 	  if ((theNameValue->itemValue = textToBinary(blockValueBuff, &theNameValue->binaryLength)) == NULL) {
-	    debug(stdout,"Unable to xlate binary value for name %s", blockValueBuff);
+	    debug(stderr, _("Unable to xlate binary value for name %s"), blockValueBuff);
 	    return -curIndex;
 	  }
 	}
@@ -659,7 +731,7 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
       }
 
       /* Bad character! */
-      debug(stdout,"Got invalid character parsing name/value value -  %c at position %d", theChar, curIndex);
+      debug(stderr, _("Got invalid character parsing name/value value -  %c at position %d"), theChar, curIndex);
       return -curIndex;
 
     case 5:
@@ -673,7 +745,7 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
       }
 
       /* Bad data */
-      debug(stdout,"Got invalid character parsing end of name/value -  %c at position %d (wanted a LF)", theChar, curIndex);
+      debug(stderr, _("Got invalid character parsing end of name/value -  %c at position %d (wanted a LF)"), theChar, curIndex);
       return -curIndex;
     }
     break;
@@ -698,30 +770,30 @@ static Eina_Bool parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueList
 
   /* Parse the hop count */
   if ((theNameValue = xPL_getNamedValuePair(nameValueList, "HOP")) == NULL) {
-    debug(stdout,"Message missing HOP count");
+    debug(stderr, _("Message missing HOP count"));
     return EINA_FALSE;
   }
   if (!xPL_strToInt(theNameValue->itemValue, &hopCount) || (hopCount < 1)) {
-    debug(stdout,"Message HOP Count invalid");
+    debug(stderr, _("Message HOP Count invalid"));
     return EINA_FALSE;
   }
   theMessage->hopCount = hopCount;
 
   /* Parse the source */
   if ((theNameValue = xPL_getNamedValuePair(nameValueList, "SOURCE")) == NULL) {
-    debug(stdout,"Message missing SOURCE");
+    debug(stderr, _("Message missing SOURCE"));
     return EINA_FALSE;
   }
   theVendor = theNameValue->itemValue;
   if ((theDeviceID = strchr(theVendor, '-')) == NULL) {
-    debug(stdout,"SOURCE Missing Device ID - %s", theVendor);
+    debug(stderr, _("SOURCE Missing Device ID - %s"), theVendor);
     return EINA_FALSE;
   }
 
   dashPtr = theDeviceID;
   *theDeviceID++ = '\0';
   if ((theInstanceID = strchr(theDeviceID, '.')) == NULL) {
-    debug(stdout,"SOURCE Missing Instance ID - %s.%s", theVendor, theDeviceID);
+    debug(stderr, _("SOURCE Missing Instance ID - %s.%s"), theVendor, theDeviceID);
     return EINA_FALSE;
   }
 
@@ -738,7 +810,7 @@ static Eina_Bool parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueList
 
   /* Parse the target (if anything) */
   if ((theNameValue = xPL_getNamedValuePair(nameValueList, "TARGET")) == NULL) {
-    debug(stdout,"Message missing TARGET");
+    debug(stderr, _("Message missing TARGET"));
     return EINA_FALSE;
   }
 
@@ -753,14 +825,14 @@ static Eina_Bool parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueList
     /* Parse vendor and such */
     theVendor = theNameValue->itemValue;
     if ((theDeviceID = strchr(theVendor, '-')) == NULL) {
-      debug(stdout,"TARGET Missing Device ID - %s", theVendor);
+      debug(stderr, _("TARGET Missing Device ID - %s"), theVendor);
       return EINA_FALSE;
     }
 
     dashPtr = theDeviceID;
     *theDeviceID++ = '\0';
     if ((theInstanceID = strchr(theDeviceID, '.')) == NULL) {
-      debug(stdout,"TARGET Missing Instance ID - %s.%s", theVendor, theDeviceID);
+      debug(stderr, _("TARGET Missing Instance ID - %s.%s"), theVendor, theDeviceID);
       return EINA_FALSE;
     }
 
@@ -800,7 +872,7 @@ xPL_MessagePtr parseMessage(String theText) {
 
   /* Parse the header */
   if ((parsedThisTime = parseBlock(theText, &blockHeaderKeyword, theMessage->messageBody, EINA_FALSE)) <= 0) {
-    debug(stdout,"Error parsing message header");
+    debug(stderr, _("Error parsing message header"));
     xPL_releaseMessage(theMessage);
     return NULL;
   }
@@ -814,7 +886,7 @@ xPL_MessagePtr parseMessage(String theText) {
   } else if (!strcasecmp(blockHeaderKeyword, "XPL-TRIG")) {
     xPL_setMessageType(theMessage, xPL_MESSAGE_TRIGGER);
   } else {
-    debug(stdout,"Unknown message header of %s - bad message", blockHeaderKeyword);
+    debug(stderr, _("Unknown message header of %s - bad message"), blockHeaderKeyword);
     STR_FREE(blockHeaderKeyword);
     xPL_releaseMessage(theMessage);
     return NULL;
@@ -824,8 +896,9 @@ xPL_MessagePtr parseMessage(String theText) {
   STR_FREE(blockHeaderKeyword);
 
   /* Parse the name/values into the message */
-  if (!parseMessageHeader(theMessage, theMessage->messageBody)) {
-    debug(stdout,"Unable to parse message header");
+  if (!parseMessageHeader(theMessage, theMessage->messageBody))
+  {
+    debug(stderr, _("Unable to parse message header"));
     xPL_releaseMessage(theMessage);
     return NULL;
   }
@@ -838,7 +911,7 @@ xPL_MessagePtr parseMessage(String theText) {
 
     /* Parse the next block */
     if ((parsedThisTime = parseBlock(&(theText[parsedChars]), &blockHeaderKeyword, theMessage->messageBody, EINA_FALSE)) < 0) {
-      debug(stdout,"Error parsing message block");
+      debug(stderr, _("Error parsing message block"));
       xPL_releaseMessage(theMessage);
       STR_FREE(blockHeaderKeyword);
       return NULL;
@@ -852,7 +925,7 @@ xPL_MessagePtr parseMessage(String theText) {
 
     /* Parse the block header */
     if ((blockDelimPtr = strchr(blockHeaderKeyword, '.')) == NULL) {
-      debug(stdout,"Malformed message block header - %s", blockHeaderKeyword);
+      debug(stderr, _("Malformed message block header - %s"), blockHeaderKeyword);
       xPL_releaseMessage(theMessage);
       STR_FREE(blockHeaderKeyword);
       return NULL;
@@ -910,31 +983,30 @@ xPL_receiveMessage(int theFD __UNUSED__, int thePollInfo __UNUSED__, int userVal
       if (errno == EAGAIN) return;
 
       /* Note the error and bail */
-      debug(stdout,"Error reading xPL message from network - %s (%d)", strerror(errno), errno);
+      debug(stderr, _("Error reading xPL message from network - %s (%d)"), strerror(errno), errno);
       return;
     }
 
     /* We receive a message - clean it up */
     messageBuff[bytesRead] = '\0';
-    debug(stdout,"Just read %d bytes as packet [%s]", bytesRead, messageBuff);
 
     /* Send the raw message to any raw message listeners */
     xPL_dispatchRawEvent(messageBuff, bytesRead);
 
     /* Parse the message */
     if ((theMessage = parseMessage(messageBuff)) == NULL) {
-      debug(stdout,"Error parsing network message - ignored");
+      debug(stderr, _("Error parsing network message - ignored"));
       continue;
     }
 
     /* See if we need to check the message for hub detection */
-    if (!hubConfirmed && isHubEcho(theMessage)) {
-      debug(stdout,"Hub detected and confirmed existing");
+    if (!hubConfirmed && isHubEcho(theMessage))
+    {
+      debug(stdout,"xPL Hub detected and confirmed existing");
       hubConfirmed = EINA_TRUE;
     }
 
     /* Dispatch the message */
-    debug(stdout,"Now dispatching valid message");
     xPL_dispatchMessageEvent(theMessage);
 
     /* Release the message */

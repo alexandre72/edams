@@ -1,8 +1,5 @@
 
 images {
-    image: "icons/info-notify.png" COMP;
-    image: "icons/question-notify.png" COMP;
-    image: "icons/warning-notify.png" COMP;
     image: "icons/device-add.png" COMP;
     image: "icons/device-remove.png" COMP;
     image: "icons/device.png" COMP;
@@ -47,7 +44,7 @@ group
 group
 {
 	name: "elm/icon/cosm/default";
-      min: 48 48;
+      min: 65 16;
       parts {
          part { name: "icon";
             type: IMAGE;
@@ -96,66 +93,6 @@ group
             {
                 state: "default" 0;
                 image.normal: "images/header.png";
-            }
-         }
-      }
-   }
-
-   group { name: "elm/icon/info-notify/default";
-      min: 48 48;
-      parts {
-         part {
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/info-notify.png";
-                  middle: DEFAULT;
-               }
-               fill {
-               }
-            }
-         }
-      }
-   }
-
-  group { name: "elm/icon/question-notify/default";
-      min: 48 48;
-      parts {
-         part {
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/question-notify.png";
-                  middle: DEFAULT;
-               }
-               fill {
-               }
-            }
-         }
-      }
-   }
-
-  group { name: "elm/icon/warning-notify/default";
-      min: 48 48;
-      parts {
-         part {
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/warning-notify.png";
-                  middle: DEFAULT;
-               }
-               fill {
-               }
             }
          }
       }

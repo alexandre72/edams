@@ -46,13 +46,12 @@ void widget_free(Widget *widget);
 
 void widget_name_set(Widget *widget, const char * name);
 void widget_device_filename_set(Widget *widget, const char *filename);
-void widget_device_id_set(Widget *widget, unsigned int device_id);
-void widget_position_set(Widget *widget, unsigned int position);
+void widget_id_set(Widget *widget, unsigned int position);
 
 const char * widget_name_get(const Widget *widget);
 const char * widget_device_filename_get(const Widget *widget);
-unsigned int widget_device_id_get(const Widget *widget);
-unsigned int widget_position_get(const Widget *widget);
+unsigned int widget_id_get(const Widget *widget);
+Device *widget_device_get(const Widget *widget);
 
 void location_widgets_add(Location *location, Widget *widget);
 void location_widgets_del(Location *location, Widget *widget);

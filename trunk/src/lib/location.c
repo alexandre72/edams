@@ -36,7 +36,7 @@ struct _Widget
     const char * name;				//Widget name associated(edc widget group name) e.g. 'meter/counter'.
     unsigned int device_id;			//Device id associated e.g '12'.
     const char *device_filename;	//Device filename associated e.g 'temperature1.eet'.
-    unsigned int position;			//Device widget position in Eina_List.
+    unsigned int id;			//Device widget position in Eina_List.
 };
 
 
@@ -75,9 +75,8 @@ _widget_init(void)
     _widget_descriptor = eet_data_descriptor_stream_new(&eddc);
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "name", name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "device_id", device_id, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "device_filename", device_filename, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "position", position, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "id", id, EET_T_UINT);
 }
 
 
@@ -131,8 +130,6 @@ widget_name_set(Widget *widget, const char *name)
     eina_stringshare_replace(&(widget->name), name);
 }
 
-
-
 inline const char *
 widget_device_filename_get(const Widget *widget)
 {
@@ -146,32 +143,36 @@ widget_device_filename_set(Widget *widget, const char *filename)
     eina_stringshare_replace(&(widget->device_filename), filename);
 }
 
-
 inline unsigned int
-widget_device_id_get(const Widget *widget)
+widget_id_get(const Widget *widget)
 {
-    return widget->device_id;
+    return widget->id;
 }
 
 inline void
-widget_device_id_set(Widget *widget, unsigned int device_id)
+widget_id_set(Widget *widget, unsigned int id)
 {
     EINA_SAFETY_ON_NULL_RETURN(widget);
-    widget->device_id = device_id;
+    widget->id = id;
 }
 
-inline unsigned int
-widget_position_get(const Widget *widget)
+
+Device *
+widget_device_get(const Widget *widget)
 {
-    return widget->position;
+	EINA_SAFETY_ON_NULL_RETURN_VAL(widget, NULL);
+
+	Device *device = device_load(widget->device_filename);
+
+	if(!device)
+	{
+		debug(stderr, _("Couldn't load device associated to widget '%d'"), widget->id);
+		return NULL;
+	}
+
+	return device;
 }
 
-inline void
-widget_position_set(Widget *widget, unsigned int position)
-{
-    EINA_SAFETY_ON_NULL_RETURN(widget);
-    widget->position = position;
-}
 
 static int
 _locations_list_sort_cb(const void *d1, const void *d2)
@@ -456,7 +457,7 @@ inline void
 location_widgets_add(Location *location, Widget *widget)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
-    widget_position_set(widget, eina_list_count(location->widgets)+1);
+    widget_id_set(widget, eina_list_count(location->widgets)+1);
     location->widgets = eina_list_append(location->widgets, widget);
 }
 
