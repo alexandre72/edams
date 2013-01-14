@@ -110,7 +110,7 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	}
 
 	snprintf(s, sizeof(s), _("Location %s has been created."), location_name_get(location));
-	notify_set(s, "elm/icon/info/default");
+	statusbar_text_set(s, "elm/icon/info/default");
 	evas_object_del(win);
 }/*_button_apply_clicked_cb*/
 

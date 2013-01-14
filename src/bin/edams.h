@@ -44,7 +44,6 @@ typedef struct
 	char **argv;
 
 	Evas_Object *win;
-	Evas_Object *waiting_win;
 	Evas_Object *toolbar;
 	Eina_List *locations;
 	Eina_List *devices;
@@ -58,6 +57,7 @@ typedef struct
 
 
 Evas_Object*_location_naviframe_content_set(Location *location);
-void notify_set(const char *msg, const char *icon);
+
+void statusbar_text_set(const char *msg, const char *icon);
 
 #endif /* __EDAMS_H__ */
