@@ -95,19 +95,16 @@ widget_new(const char * name, Device *device)
     Widget *widget = calloc(1, sizeof(Widget));
 
     if (!widget)
-       {
-          debug(stderr, _("Couldn't calloc Widget struct"));
-          return NULL;
-       }
+	{
+		debug(stderr, _("Couldn't calloc Widget struct"));
+    	return NULL;
+	}
 
     widget->name = eina_stringshare_add(name ? name : "meter/counter");
-    widget->device_id = device_id_get(device);
     widget->device_filename = device_filename_get(device);
 
     return widget;
 }
-
-
 
 void
 widget_free(Widget *widget)

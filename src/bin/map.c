@@ -70,7 +70,7 @@ static const int TEMP_MAX = 50;
 
 
 // Globals.
-static Ecore_Evas *ee;
+static Ecore_Evas *ee = NULL;
 static Evas *evas;
 static Eina_Rectangle geometry;
 static App_Info *app;
@@ -162,6 +162,8 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 				   "TRUE":"FALSE"); if(x>=prect.w || x<=prect.x) printf("Child is OUT\n"); */
 				if (eina_rectangle_coords_inside(&prect, x, y))
 				{
+					printf("MOVING WIDGET NAME '%s'\n", evas_object_name_get(o));
+
 					evas_object_move(o, x, y);
 
 					char s[64];
@@ -552,6 +554,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 
 		sscanf(evas_object_name_get(o), "%*[^'_']_%[^'_']_%*[^'_']_edje", id);
 
+/*
 		device = devices_list_device_with_id_get(app->devices, atoi(id));
 
 			// Key 's' show data device in graphics generated from gnuplot(PNG format).
@@ -577,6 +580,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			}
 			return;
 		}
+		*/
 	}
 	else
 	{
@@ -766,9 +770,7 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 	// Sync device data with location device data(if affected to any
 	// location!).
 
-	if (!ee || !location || !device) return;
-
-	printf("UPDATE MAP WIDGET ASSOCIATED TO DEVICE '%s' in location '%s'\n", device_name_get(device), location_name_get(location));
+	if (!ee || !app || !location || !device) return;
 
 	//Parse all location widget's and update Edje widget's objects.
 	Eina_List *l, *widgets;
@@ -778,10 +780,10 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
-		if(strcmp(widget_device_filename_get(widget), device_filename_get(device)) != 0)	continue;
-
-		//Edje widget's object name follow same scheme _widgetposition_widgetdeviceid_locationame.
-		char s[64];
+		if(strcmp(widget_device_filename_get(widget), device_filename_get(device)) == 0)
+		 {
+		//Edje widget's object name follow same scheme _widgetid_locationame.
+		char s[128];
 		snprintf(s, sizeof(s), 	"%d_%s_edje",
 							 	widget_id_get(widget),
 					 			location_name_get(location));
@@ -807,7 +809,6 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 				edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
 			}
 
-
 			if ((t = edje_object_data_get(edje, "action")))
 			{
 				if (atoi(device_data_get(device)) == 0)
@@ -818,16 +819,17 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 
 			if ((t = edje_object_data_get(edje, "title")))
 			{
-				snprintf(s, sizeof(s), "%d - %s", device_id_get(device), device_name_get(device));
+				snprintf(s, sizeof(s), "%d - %s", widget_id_get(widget), device_name_get(device));
 				edje_object_part_text_set(edje, "title.text", s);
 			}
 
-			if ((t = edje_object_data_get(edje, "value")))
-			{
+				if ((t = edje_object_data_get(edje, "value")))
+				{
 				snprintf(s, sizeof(s), device_unit_format_get(device), device_data_get(device));
 				edje_object_part_text_set(edje, "value.text", s);
+				}
+				edje_object_signal_emit(edje, "updated", "over");
 			}
-			edje_object_signal_emit(edje, "updated", "over");
 		}
 	}
 }/*map_data_update*/

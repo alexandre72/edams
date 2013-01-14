@@ -96,9 +96,7 @@ _layout_samples_test(Evas_Object *layout)
 
 	if ((t = elm_layout_data_get(layout, "title")))
 	{
-		snprintf(s, sizeof(s), "%d - %s",
-								device_id_get(sample),
-								device_name_get(sample));
+		snprintf(s, sizeof(s), "%s", device_name_get(sample));
 		elm_object_part_text_set(layout, "title.text", s);
 	}
 
