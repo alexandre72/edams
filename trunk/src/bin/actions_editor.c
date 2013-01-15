@@ -20,6 +20,7 @@
 
 #include <Elementary.h>
 
+#include "action.h"
 #include "device.h"
 #include "edams.h"
 #include "path.h"
@@ -42,10 +43,34 @@ static void _list_action_add(Device *device, Action *action);
  *
  */
 static void
-_hoversel_selected_cb(void *data, Evas_Object *obj, void *event_info)
+_hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
 	evas_object_data_set(obj, "selected", elm_object_item_data_get(event_info));
+
+	Action_Type type = (Action_Type)elm_object_item_data_get(event_info);
+	Evas_Object *entry = elm_object_name_find(win, "data entry", -1);
+
+	switch(type)
+	{
+		case CMND_ACTION:
+				elm_object_text_set(entry, "DEVICE=<sensor name>TYPE=<sensor type>CURRENT=<value to which device should be set>[DATA1=<additional data>]");
+				break;
+		case MAIL_ACTION:
+				elm_object_text_set(entry, "BODY=<Message body>TO=<Email address>FROM=<Email Address of Sender>SUBJECT=<Subject of Email>");
+				break;
+		case EXEC_ACTION:
+				elm_object_text_set(entry, "EXEC=<Path of program to exec>TERMINAL=<false/true>");
+				break;
+		case DEBUG_ACTION:
+				elm_object_text_set(entry, "PRINT=<Message to display>");
+				 break;
+
+		case UNKNOWN_ACTION:
+		case ACTION_TYPE_LAST:
+				return ;
+				break;
+	}
 }
 
 
@@ -54,7 +79,7 @@ _hoversel_selected_cb(void *data, Evas_Object *obj, void *event_info)
  *Callback called in button "remove" object when clicked signal is emitted.
  */
 static void
-_button_remove_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_remove_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *list = elm_object_name_find(win, "actions list", -1);
 
@@ -76,7 +101,7 @@ _button_remove_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_
  *Callback called in button "add" object when clicked signal is emitted.
  */
 static void
-_button_add_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Device *device;
 	Evas_Object *entry, *hoversel;

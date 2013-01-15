@@ -28,6 +28,7 @@ typedef struct
 	char *cosm_apikey;
 	char *gnuplot_path;
 	char *map_background;
+	char *smtp_server; 			/*[SMTP SERVER=<address of SMTP server>]*/
 	Eina_Bool softemu;
 	Eina_Bool debug;
 } Settings;

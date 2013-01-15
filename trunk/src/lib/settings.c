@@ -82,6 +82,7 @@ const Settings
 	EET_STRING_SETTINGS_READ("map/map_background",settings->map_background);
 	EET_STRING_SETTINGS_READ("edams/cosm_apikey",settings->cosm_apikey);
 	EET_STRING_SETTINGS_READ("edams/gnuplot_path",settings->gnuplot_path);
+	EET_STRING_SETTINGS_READ("edams/smtp_server",settings->smtp_server);
 	eet_close(ef);
 
 	set_debug_mode(settings->debug);
@@ -90,7 +91,7 @@ const Settings
 	debug(stdout, _("Software emulation is %s"), settings->softemu?_("enabled"):_("disabled"));
 	debug(stdout, _("Map background file is '%s'"), settings->map_background);
 	debug(stdout, _("Gnuplot path is '%s'"), settings->gnuplot_path);
-
+	debug(stdout, _("Smtp server is '%s'"), settings->smtp_server);
 	return settings;
 }
 
@@ -102,6 +103,7 @@ edams_settings_write(Settings *settings)
 	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_WRITE);
 	EET_STRING_SETTINGS_WRITE("edams/cosm_apikey", settings->cosm_apikey);
 	EET_STRING_SETTINGS_WRITE("edams/gnuplot_path", settings->gnuplot_path);
+	EET_STRING_SETTINGS_WRITE("edams/smtp_server", settings->smtp_server);
 	EET_STRING_SETTINGS_WRITE("map/map_background", settings->map_background);
 	EET_BOOL_SETTINGS_WRITE("edams/softemu", settings->softemu);
 	EET_BOOL_SETTINGS_WRITE("edams/debug", settings->debug);
@@ -117,6 +119,7 @@ Settings *edams_settings_free(Settings *settings)
 	eina_stringshare_del(settings->gnuplot_path);
 	eina_stringshare_del(settings->cosm_apikey);
 	eina_stringshare_del(settings->map_background);
+	eina_stringshare_del(settings->smtp_server);
 	FREE(settings);
 	return NULL;
 }
