@@ -706,7 +706,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
    	icon = elm_icon_add(bx);
 	evas_object_name_set(icon, "status icon");
-   	evas_object_size_hint_min_set(icon, 16, 16);
+   	evas_object_size_hint_min_set(icon, 24, 24);
    	evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
    	evas_object_show(icon);
    	elm_box_pack_end(bx, icon);

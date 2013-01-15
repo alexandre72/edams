@@ -54,6 +54,10 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 							 elm_object_text_get(elm_object_name_find
 												 (win, "gnuplot path entry", -1)));
 
+	eina_stringshare_replace(&(app->settings->smtp_server),
+							 elm_object_text_get(elm_object_name_find
+												 (win, "smtp server entry", -1)));
+
 	app->settings->softemu = elm_check_state_get(elm_object_name_find(win, "emulation checkb", -1));
 	app->settings->debug = elm_check_state_get(elm_object_name_find(win, "debug checkb", -1));
 
@@ -61,7 +65,7 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	app->settings = edams_settings_get();
 
 	evas_object_del(win);
-}
+}/*_button_apply_clicked_cb*/
 
 
 /*
@@ -105,7 +109,7 @@ _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__
 	myfileselector_set_title(myfs, _("Select a picture file"));
 	evas_object_data_set(myfs->win, "entry", entry);
 	evas_object_smart_callback_add(myfs->action_bt, "clicked", _myfileselector_button_action_clicked_cb, myfs);
-}
+}/*_button_open_file_clicked_cb*/
 
 
 /*
@@ -212,6 +216,20 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_object_text_set(entry, app->settings->gnuplot_path);
 	elm_object_content_set(frame, entry);
+
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("SMTP server adress:"));
+	elm_grid_pack(grid, frame, 1, 69, 99, 15);
+	evas_object_show(frame);
+
+	entry = elm_entry_add(win);
+	evas_object_name_set(entry, "smtp server entry");
+	elm_entry_scrollable_set(entry, EINA_TRUE);
+	elm_entry_editable_set(entry, EINA_TRUE);
+	elm_entry_single_line_set(entry, EINA_TRUE);
+	evas_object_show(entry);
+	elm_object_content_set(frame, entry);
+	elm_object_text_set(entry, app->settings->smtp_server);
 
 	bx = elm_box_add(win);
 	elm_box_horizontal_set(bx, EINA_TRUE);
