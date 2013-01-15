@@ -34,9 +34,14 @@ static Evas_Object *win = NULL;
 /*Callbacks*/
 static void _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _button_remove_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info);
 
 /*Others funcs*/
 static void _list_action_add(Device *device, Action *action);
+//static void mail_action_editor();
+
+
 
 
 /*
@@ -47,6 +52,9 @@ _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
 	evas_object_data_set(obj, "selected", elm_object_item_data_get(event_info));
+
+
+	if(strcmp(evas_object_name_get(obj), "type hoversel") != 0 ) return;
 
 	Action_Type type = (Action_Type)elm_object_item_data_get(event_info);
 	Evas_Object *entry = elm_object_name_find(win, "data entry", -1);
@@ -137,6 +145,32 @@ _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 
 
 /*
+ *Callback called in list "actions" when item clicked signal is emitted.
+ */
+static void
+_list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
+{
+	Evas_Object *entry, *hoversel;
+	Action *action = (Action *)elm_object_item_data_get(event_info);
+
+	entry = elm_object_name_find(win, "ifvalue entry", -1);
+	elm_object_text_set(entry, action_ifvalue_get(action));
+
+	hoversel = elm_object_name_find(win, "ifcondition hoversel", -1);
+	elm_object_text_set(hoversel, action_condition_to_str(action_ifcondition_get(action)));
+	evas_object_data_set(hoversel, "selected", (void*)(unsigned int)action_ifcondition_get(action));
+
+
+	hoversel = elm_object_name_find(win, "type hoversel", -1);
+	elm_object_text_set(hoversel, action_type_to_str(action_type_get(action)));
+	evas_object_data_set(hoversel, "selected", (void*)(unsigned int)action_type_get(action));
+
+	entry = elm_object_name_find(win, "data entry", -1);
+	elm_object_text_set(entry, action_data_get(action));
+}
+
+
+/*
  *
  */
 static void
@@ -152,7 +186,7 @@ _list_action_add(Device *device, Action *action)
 							action_type_to_str(action_type_get(action)),
 							action_data_get(action));
 
-	elm_list_item_append(list, strdup(s), NULL, NULL, NULL, action);
+	elm_list_item_append(list, strdup(s), NULL, NULL, _list_item_selected_cb, action);
 	elm_list_go(list);
 }
 
@@ -247,12 +281,13 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *ev
 	evas_object_show(frame);
 
    	entry = elm_entry_add(win);
+   	elm_entry_editable_set(entry, EINA_FALSE);
    	evas_object_name_set(entry, "ifvalue entry");
 	elm_object_content_set(frame, entry);
 
    	hoversel = elm_hoversel_add(gd);
    	evas_object_name_set(hoversel, "type hoversel");
-   	elm_object_text_set(hoversel, _("Type"));
+   	elm_object_text_set(hoversel, _("Action"));
 	elm_box_pack_end(bx, hoversel);
 	for(x = 0;x != ACTION_TYPE_LAST;x++)
 	{
@@ -264,7 +299,7 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *ev
 
    	frame = elm_frame_add(win);
 	elm_box_pack_end(bx, frame);
-   	elm_layout_text_set(frame, NULL, _("Data"));
+   	elm_layout_text_set(frame, NULL, _("Argument"));
    	evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_show(frame);
