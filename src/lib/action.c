@@ -35,7 +35,7 @@ exec_action(const char *data)
 	fprintf(stdout, "******************************\n");
 	fprintf(stdout, "DEBUG:ECORE_EXE_PIPE '%s'\n", data);
 	fprintf(stdout, "******************************\n");
-
+/*
 	child_handle = ecore_exe_pipe_run(data,
                                     ECORE_EXE_PIPE_WRITE |
                                     ECORE_EXE_PIPE_READ_LINE_BUFFERED |
@@ -59,6 +59,7 @@ exec_action(const char *data)
 		debug(stdout, _("The child process has PID:%d"), child_pid);
 		return EINA_TRUE;
 	}
+*/
 }
 
 
@@ -69,7 +70,7 @@ Eina_Bool
 debug_action(const char *data)
 {
 	fprintf(stdout, "******************************\n");
-	fprintf(stdout, "DEBUG:ACTION with argument '%s'\n", data);
+	fprintf(stdout, "DEBUG:PRINT '%s'\n", data);
 	fprintf(stdout, "******************************\n");
 }
 

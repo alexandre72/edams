@@ -20,7 +20,6 @@ collections {
 #include "thermometer.edc"
 #include "counter.edc"
 
-
 group
 {
 	name: "elm/icon/xpl/default";
