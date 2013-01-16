@@ -111,7 +111,7 @@ _button_quit_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, voi
 static Eina_Bool
 _statusbar_timer_cb(void *data __UNUSED__)
 {
-	char s[512];
+	char s[64];
 	time_t timestamp;
 	struct tm *t;
 
@@ -122,7 +122,7 @@ _statusbar_timer_cb(void *data __UNUSED__)
 	elm_object_text_set(label, s);
 
 	Evas_Object *icon = elm_object_name_find(app->win, "status icon", -1);
-	elm_image_file_set(icon, "dialog-information", NULL);
+	elm_icon_standard_set(icon, "help-about");
 
 	return EINA_FALSE;
 }/*_notify_timeout_cb*/
@@ -141,7 +141,9 @@ statusbar_text_set(const char *msg, const char *ic)
 	elm_object_text_set(label, msg);
 
 	icon = elm_object_name_find(app->win, "status icon", -1);
-	elm_image_file_set(icon, edams_edje_theme_file_get(), ic);
+
+	if(!elm_icon_standard_set(icon, ic))
+		elm_image_file_set(icon, edams_edje_theme_file_get(), ic);
 
 	ecore_timer_add(5.0, _statusbar_timer_cb, NULL);
 }/*statusbar_text_set*/
@@ -261,6 +263,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
         sscanf(str, "%[^'!']!%[^'!']!%s", name, type, sval);
         free(str);
 
+
         /* TODO:handle case of device has been changed(type, name) and inform user about it*/
         /*Register new devices to EDAMS*/
         if ((device = device_new(name)))
@@ -268,6 +271,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
                 device_type_set(device, device_str_to_type(type));
                 device_class_set(device, SENSOR_BASIC);
                 device_save(device);
+				statusbar_text_set(_("New xPL sensor.basic has been found"), "elm/icon/xpl/default");
 
                 /*Add new device to edams devices Eina_List*/
                 app->devices = eina_list_append(app->devices, device);
@@ -338,8 +342,7 @@ _button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUS
 {
 	if (!app->location)
 	{
-		statusbar_text_set(_
-					("Couldn't remove widgets:no location selected!"), "dialog-error");
+		statusbar_text_set(_("Couldn't remove widgets:no location selected!"), "dialog-error");
 		return;
 	}
 
@@ -477,6 +480,8 @@ _location_naviframe_content_set(Location * location)
 		elm_image_resizable_set(ic, 1, 0);
 
 		Device *device = widget_device_get(widget);
+		if(!device) continue;
+
 		snprintf(s, sizeof(s), "%d - %s", widget_id_get(widget), device_name_get(device));
 		elm_list_item_append(list, strdup(s), ic, NULL, NULL, widget);
 		device_free(device);
@@ -672,6 +677,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(naviframe);
 
+
 	Location *location;
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
@@ -682,10 +688,13 @@ EAPI_MAIN int elm_main(int argc, char **argv)
    		evas_object_show(icon);
 		Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), icon, icon,  NULL, location);
 		elm_object_item_data_set(it, location);
+
 		it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content_set(location), NULL);
 		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 		elm_object_item_data_set(it, location);
 	}
+
+
 
 	Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);
@@ -705,6 +714,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_show(bx);
 
    	icon = elm_icon_add(bx);
+   	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_name_set(icon, "status icon");
    	evas_object_size_hint_min_set(icon, 24, 24);
    	evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
@@ -720,6 +730,9 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	elm_box_pack_end(bx, label);
    	evas_object_show(label);
 
+	elm_image_resizable_set(icon, EINA_TRUE, EINA_TRUE);
+	elm_image_aspect_fixed_set(icon, EINA_TRUE);
+	elm_image_fill_outside_set(icon, EINA_FALSE);
 
 	sep = elm_separator_add(app->win);
 	elm_separator_horizontal_set(sep, EINA_TRUE);

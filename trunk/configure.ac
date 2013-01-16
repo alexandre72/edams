@@ -51,7 +51,7 @@ requirements="\
 PKG_CHECK_MODULES([EDAMS], [${requirements}])
 
 PKG_CHECK_MODULES([EMOTION],
-        [emotion >= 1.0.99 ],
+        [emotion >= 1.7],
         [have_emotion="yes"],
         [have_emotion="no"])
 AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
@@ -111,7 +111,6 @@ echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  edje_cc..............: $edje_cc"
-echo "  elm_prefs_cc.........: $elm_prefs_cc"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'su
 do')"
