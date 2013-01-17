@@ -19,6 +19,7 @@
  */
 
 #include <Elementary.h>
+#include <stdio.h>
 
 #include "action.h"
 #include "device.h"
@@ -99,12 +100,12 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 		Evas_Object *entry = elm_object_name_find(cwin, "exec entry", -1);
 		Evas_Object *check = elm_object_name_find(cwin, "terminal check", -1);
 
-		asprintf(&s, "EXEC=%s*TERMINAL=%s", elm_object_text_get(entry), elm_check_state_get(check) ? "true" : "false");
+		asprintf(&s, "{\"EXEC\":\"%s\",\"TERMINAL\":\"%s\"}", elm_object_text_get(entry), elm_check_state_get(check) ? "true" : "false");
 	}
 	else if(strcmp(title, _("Edit debug")) == 0)
 	{
 		Evas_Object *entry = elm_object_name_find(cwin, "debug entry", -1);
-		asprintf(&s, "PRINT=%s", elm_object_text_get(entry));
+		asprintf(&s, "{\"PRINT\":\"%s\"}", elm_object_text_get(entry));
 	}
 	else if(strcmp(title, _("Edit mail")) == 0)
 	{
@@ -113,7 +114,7 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 		Evas_Object *subject_entry = elm_object_name_find(cwin, "subject entry", -1);
 		Evas_Object *body_entry = elm_object_name_find(cwin, "body entry", -1);
 
-		asprintf(&s, "BODY=%s*TO=%sFROM=%sSUBJECT=%s",
+		asprintf(&s, "{\"BODY\":\"%s\",\"TO\":\"%s\",\"FROM\":\"%s\",\"SUBJECT\":\"%s\"}",
 						elm_object_text_get(from_entry),
 						elm_object_text_get(to_entry),
 						elm_object_text_get(subject_entry),

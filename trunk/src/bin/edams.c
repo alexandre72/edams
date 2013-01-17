@@ -589,7 +589,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
 	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
 	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-	elm_toolbar_item_append(app->toolbar, "map", _("Global Map"), map_new, app);
+	elm_toolbar_item_append(app->toolbar, "map", _("Global View"), map_new, app);
 	elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
 	elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);
 	elm_toolbar_item_append(app->toolbar, "application-exit", _("Quit"), _button_quit_clicked_cb, app);
