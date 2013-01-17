@@ -53,9 +53,9 @@
 	   	eet_write(ef, _field, "0", strlen("0")+1, 0); \
 
 
-//
-//
-//
+/*
+ *
+ */
 const Settings
 *edams_settings_get(void)
 {
@@ -65,7 +65,7 @@ const Settings
 
 	if(!settings)
 	{
-		debug(stderr, _("ERROR:Couldn't calloc Settings struct!"));
+		debug(stderr, _("Can't calloc Settings struct"));
 		return NULL;
 	}
 
@@ -83,6 +83,8 @@ const Settings
 	EET_STRING_SETTINGS_READ("edams/cosm_apikey",settings->cosm_apikey);
 	EET_STRING_SETTINGS_READ("edams/gnuplot_path",settings->gnuplot_path);
 	EET_STRING_SETTINGS_READ("edams/smtp_server",settings->smtp_server);
+	EET_STRING_SETTINGS_READ("edams/smtp_username",settings->smtp_username);
+	EET_STRING_SETTINGS_READ("edams/smtp_userpwd",settings->smtp_userpwd);
 	eet_close(ef);
 
 	set_debug_mode(settings->debug);
@@ -93,28 +95,40 @@ const Settings
 	debug(stdout, _("Gnuplot path is '%s'"), settings->gnuplot_path);
 	debug(stdout, _("Smtp server is '%s'"), settings->smtp_server);
 	return settings;
-}
+}/*edams_settings_get*/
 
+
+/*
+ *
+ */
 void
 edams_settings_write(Settings *settings)
 {
 	Eet_File *ef;
 
 	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_WRITE);
+
+	EET_BOOL_SETTINGS_WRITE("edams/softemu", settings->softemu);
+	EET_BOOL_SETTINGS_WRITE("edams/debug", settings->debug);
+	EET_STRING_SETTINGS_WRITE("map/map_background", settings->map_background);
 	EET_STRING_SETTINGS_WRITE("edams/cosm_apikey", settings->cosm_apikey);
 	EET_STRING_SETTINGS_WRITE("edams/gnuplot_path", settings->gnuplot_path);
 	EET_STRING_SETTINGS_WRITE("edams/smtp_server", settings->smtp_server);
-	EET_STRING_SETTINGS_WRITE("map/map_background", settings->map_background);
-	EET_BOOL_SETTINGS_WRITE("edams/softemu", settings->softemu);
-	EET_BOOL_SETTINGS_WRITE("edams/debug", settings->debug);
+	EET_STRING_SETTINGS_WRITE("edams/smtp_username", settings->smtp_username);
+	EET_STRING_SETTINGS_WRITE("edams/smtp_userpwd", settings->smtp_userpwd);
+
 	set_debug_mode(settings->debug);
 
 	eet_close(ef);
-}
+}/*edams_settings_write
 
 
 
-Settings *edams_settings_free(Settings *settings)
+/*
+ *
+ */
+Settings *
+edams_settings_free(Settings *settings)
 {
 	eina_stringshare_del(settings->gnuplot_path);
 	eina_stringshare_del(settings->cosm_apikey);
@@ -122,4 +136,4 @@ Settings *edams_settings_free(Settings *settings)
 	eina_stringshare_del(settings->smtp_server);
 	FREE(settings);
 	return NULL;
-}
+}/*edams_settings_free*/

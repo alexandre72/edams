@@ -25,12 +25,14 @@
 
 typedef struct
 {
-	char *cosm_apikey;
-	char *gnuplot_path;
-	char *map_background;
-	char *smtp_server; 			/*[SMTP SERVER=<address of SMTP server>]*/
-	Eina_Bool softemu;
-	Eina_Bool debug;
+	char *cosm_apikey;			/*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
+	char *gnuplot_path;			/*Gnuplot path. Eg '/usr/bin/gnuplot'*/
+	char *map_background;		/*Background user in global view.*/
+	char *smtp_server; 			/*SMTP server. Eg 'smtp://smtp.gmail.com:587'*/
+	char *smtp_username;		/*SMTP user password. Eg 'myemailaddress@gmail.com'*/
+	char *smtp_userpwd;			/*SMTP user password. Eg 'PASSWORD123'*/
+	Eina_Bool softemu;			/*Sotfware emulation, mainly used to test EDAMS*/
+	Eina_Bool debug;			/*Use printf to help to debug EDAMS.*/
 } Settings;
 
 const Settings *edams_settings_get(void);
