@@ -31,7 +31,6 @@ static void _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, v
 static void _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _myfileselector_button_action_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
-
 /*
  *
  */
@@ -56,7 +55,15 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 
 	eina_stringshare_replace(&(app->settings->smtp_server),
 							 elm_object_text_get(elm_object_name_find
-												 (win, "smtp server entry", -1)));
+												 (win, "smtp user entry", -1)));
+
+	eina_stringshare_replace(&(app->settings->smtp_username),
+							 elm_object_text_get(elm_object_name_find
+												 (win, "smtp username entry", -1)));
+
+	eina_stringshare_replace(&(app->settings->smtp_userpwd),
+							 elm_object_text_get(elm_object_name_find
+												 (win, "smtp userpwd entry", -1)));
 
 	app->settings->softemu = elm_check_state_get(elm_object_name_find(win, "emulation checkb", -1));
 	app->settings->debug = elm_check_state_get(elm_object_name_find(win, "debug checkb", -1));
@@ -66,7 +73,6 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 
 	evas_object_del(win);
 }/*_button_apply_clicked_cb*/
-
 
 /*
  *
@@ -93,7 +99,7 @@ _myfileselector_button_action_clicked_cb(void *data, Evas_Object * obj __UNUSED_
 		}
 	}
 	myfileselector_close(myfs);
-}
+}/*_myfileselector_button_action_clicked_cb*/
 
 
 /*
@@ -119,9 +125,8 @@ void
 preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win, *grid;
-	Evas_Object *icon, *bx, *frame;
-	Evas_Object *button, *check;
-	Evas_Object *entry;
+	Evas_Object *icon, *bx, *frame, *separator;
+	Evas_Object *button, *check, *entry;
 
 	App_Info *app = (App_Info *) data;
 
@@ -138,7 +143,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Cosm API key:"));
-	elm_grid_pack(grid, frame, 1, 1, 99, 15);
+	elm_grid_pack(grid, frame, 1, 1, 99, 13);
 	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
@@ -158,20 +163,20 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	check = elm_check_add(win);
 	evas_object_name_set(check, "emulation checkb");
 	elm_object_text_set(check, _("Emulation"));
-	elm_grid_pack(grid, check, 0, 20, 30, 10);
+	elm_grid_pack(grid, check, 0, 15, 45, 5);
 	elm_check_state_set(check, app->settings->softemu);
 	evas_object_show(check);
 
 	check = elm_check_add(win);
 	evas_object_name_set(check, "debug checkb");
 	elm_object_text_set(check, _("Debug with printf"));
-	elm_grid_pack(grid, check, 30, 20, 50, 10);
+	elm_grid_pack(grid, check, 30, 15, 45, 5);
 	elm_check_state_set(check, app->settings->debug);
 	evas_object_show(check);
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Map background image:"));
-	elm_grid_pack(grid, frame, 1, 30, 99, 15);
+	elm_grid_pack(grid, frame, 1, 21, 99, 13);
 	evas_object_show(frame);
 
 	bx = elm_box_add(win);
@@ -203,7 +208,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Gnuplot path:"));
-	elm_grid_pack(grid, frame, 1, 49, 99, 15);
+	elm_grid_pack(grid, frame, 1, 35, 99, 13);
 	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
@@ -219,7 +224,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("SMTP server adress:"));
-	elm_grid_pack(grid, frame, 1, 69, 99, 15);
+	elm_grid_pack(grid, frame, 1, 49, 99, 13);
 	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
@@ -231,11 +236,45 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_object_content_set(frame, entry);
 	elm_object_text_set(entry, app->settings->smtp_server);
 
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("SMTP username:"));
+	elm_grid_pack(grid, frame, 1, 63, 99, 13);
+	evas_object_show(frame);
+
+	entry = elm_entry_add(win);
+	evas_object_name_set(entry, "smtp username entry");
+	elm_entry_scrollable_set(entry, EINA_TRUE);
+	elm_entry_editable_set(entry, EINA_TRUE);
+	elm_entry_single_line_set(entry, EINA_TRUE);
+	evas_object_show(entry);
+	elm_object_content_set(frame, entry);
+	elm_object_text_set(entry, app->settings->smtp_username);
+
+	frame = elm_frame_add(win);
+	elm_object_text_set(frame, _("SMTP password:"));
+	elm_grid_pack(grid, frame, 1, 77, 99, 13);
+	evas_object_show(frame);
+
+	entry = elm_entry_add(win);
+	evas_object_name_set(entry, "smtp userpwd entry");
+	elm_entry_password_set(entry, EINA_TRUE);
+	elm_entry_scrollable_set(entry, EINA_TRUE);
+	elm_entry_editable_set(entry, EINA_TRUE);
+	elm_entry_single_line_set(entry, EINA_TRUE);
+	evas_object_show(entry);
+	elm_object_content_set(frame, entry);
+	elm_object_text_set(entry, app->settings->smtp_userpwd);
+
 	bx = elm_box_add(win);
 	elm_box_horizontal_set(bx, EINA_TRUE);
 	elm_box_homogeneous_set(bx, EINA_TRUE);
 	elm_grid_pack(grid, bx, 1, 90, 99, 10);
 	evas_object_show(bx);
+
+	separator = elm_separator_add(win);
+	elm_separator_horizontal_set(separator, EINA_TRUE);
+	elm_box_pack_end(bx, separator);
+	evas_object_show(separator);
 
 	button = elm_button_add(win);
 	icon = elm_icon_add(win);
@@ -259,6 +298,11 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
 	evas_object_smart_callback_add(button, "clicked", window_clicked_close_cb, win);
 
-	evas_object_resize(win, 400, 400);
+	separator = elm_separator_add(win);
+	elm_separator_horizontal_set(separator, EINA_TRUE);
+	elm_box_pack_end(bx, separator);
+	evas_object_show(separator);
+
+	evas_object_resize(win, 400, 450);
 	evas_object_show(win);
 }

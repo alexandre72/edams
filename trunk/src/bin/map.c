@@ -12,7 +12,7 @@
 #define DEFAULT_WIDTH 800
 #define DEFAULT_HEIGHT 600
 
-#define _evas_smart_example_type "Evas_Smart_Example"
+#define _evas_smart_example_type "Evas_Smart_Group"
 #define EVT_CHILDREN_NUMBER_CHANGED "children,changed"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -20,13 +20,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 	{NULL, NULL}
 };
 
-typedef struct _Evas_Smart_Example_Data Evas_Smart_Example_Data;
+typedef struct _Evas_Smart_Group_Data Evas_Smart_Group_Data;
 
 
 #define MAX_CHILD 50
 
 
-struct _Evas_Smart_Example_Data
+struct _Evas_Smart_Group_Data
 {
 	Evas_Object_Smart_Clipped_Data base;
 	Evas_Object *children[MAX_CHILD], *border, *text;
@@ -34,11 +34,11 @@ struct _Evas_Smart_Example_Data
 };
 
 
-#define EVAS_SMART_EXAMPLE_DATA_GET(o, ptr) \
-  Evas_Smart_Example_Data * ptr = evas_object_smart_data_get(o)
+#define EVAS_SMART_GROUP_DATA_GET(o, ptr) \
+  Evas_Smart_Group_Data * ptr = evas_object_smart_data_get(o)
 
-#define EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN(o, ptr)        \
-  EVAS_SMART_EXAMPLE_DATA_GET(o, ptr);                       \
+#define EVAS_SMART_GROUP_DATA_GET_OR_RETURN(o, ptr)        \
+  EVAS_SMART_GROUP_DATA_GET(o, ptr);                       \
   if (!ptr)                                                  \
     {                                                        \
        debug(stderr, _("No widget data for object %p (%s)"), \
@@ -48,8 +48,8 @@ struct _Evas_Smart_Example_Data
        return;                                               \
     }
 
-#define EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  EVAS_SMART_EXAMPLE_DATA_GET(o, ptr);                         \
+#define EVAS_SMART_GROUP_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EVAS_SMART_GROUP_DATA_GET(o, ptr);                         \
   if (!ptr)                                                    \
     {                                                          \
        debug(stderr, _("No widget data for object %p (%s)"),   \
@@ -89,7 +89,7 @@ _on_child_del(void *data, Evas * evas __UNUSED__, Evas_Object * o, void *einfo _
 	Evas_Object *example_smart = data;
 	long idx;
 
-	EVAS_SMART_EXAMPLE_DATA_GET(example_smart, priv);
+	EVAS_SMART_GROUP_DATA_GET(example_smart, priv);
 
 	idx = (long)evas_object_data_get(o, "index");
 	idx--;
@@ -149,7 +149,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 
 			if (evas_object_smart_parent_get(o))
 			{
-				EVAS_SMART_EXAMPLE_DATA_GET(evas_object_smart_parent_get(o), priv);
+				EVAS_SMART_GROUP_DATA_GET(evas_object_smart_parent_get(o), priv);
 
 				// Get parent(grid) geometry
 				evas_object_geometry_get(priv->border, &prect.x, &prect.y, &prect.w, &prect.h);
@@ -183,7 +183,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 				eet_write(ef, key, s, strlen(s) + 1, 0);
 
 				// Update children geometry
-				EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
+				EVAS_SMART_GROUP_DATA_GET(o, priv);
 				int x;
 				for (x = 0; x != MAX_CHILD; x++)
 				{
@@ -208,7 +208,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 static void
 _evas_smart_example_smart_add(Evas_Object * o)
 {
-	EVAS_SMART_DATA_ALLOC(o, Evas_Smart_Example_Data);
+	EVAS_SMART_DATA_ALLOC(o, Evas_Smart_Group_Data);
 
 	// This is a filled rectangle in the smart object's area, delimiting location size and position
 	priv->border = evas_object_rectangle_add(evas_object_evas_get(o));
@@ -234,7 +234,7 @@ _evas_smart_example_smart_add(Evas_Object * o)
 static void
 _evas_smart_example_smart_del(Evas_Object * o)
 {
-	EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
+	EVAS_SMART_GROUP_DATA_GET(o, priv);
 
 	int x = 0;
 	for (x = 0; x != MAX_CHILD; x++)
@@ -256,7 +256,7 @@ _evas_smart_example_smart_del(Evas_Object * o)
 static void
 _evas_smart_example_smart_show(Evas_Object * o)
 {
-	EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
+	EVAS_SMART_GROUP_DATA_GET(o, priv);
 
 	int x = 0;
 	for (x = 0; x != MAX_CHILD; x++)
@@ -277,7 +277,7 @@ _evas_smart_example_smart_show(Evas_Object * o)
 static void
 _evas_smart_example_smart_hide(Evas_Object * o)
 {
-	EVAS_SMART_EXAMPLE_DATA_GET(o, priv);
+	EVAS_SMART_GROUP_DATA_GET(o, priv);
 
 	int x = 0;
 	for (x = 0; x != MAX_CHILD; x++)
@@ -320,7 +320,7 @@ _evas_smart_example_smart_calculate(Evas_Object * o)
 	Evas_Coord x, y, w, h;
 
 
-	EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN(o, priv);
+	EVAS_SMART_GROUP_DATA_GET_OR_RETURN(o, priv);
 	evas_object_geometry_get(o, &x, &y, &w, &h);
 
 	// Set border size/position.
@@ -390,7 +390,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 {
 	Eina_List *childs = NULL;
 
-	EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+	EVAS_SMART_GROUP_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
 
 	evas_object_text_text_set(priv->text, location_name_get(location));
 
@@ -408,7 +408,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 
 		if (!priv->children[x])
 		{
-			debug(stderr, _("Couldn't create Edje_Object!"));
+			debug(stderr, _("Can't create Edje_Object!"));
 			continue;
 		}
 
@@ -419,7 +419,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 			{
 				debug(stderr,
 					  _
-					  ("Couldn't load group Edje group '%s' from Edje file '%s'"),
+					  ("Can't load group Edje group '%s' from Edje file '%s'"),
 					  widget_name_get(widget), edams_edje_theme_file_get());
 				evas_object_del(priv->children[x]);
 				continue;
@@ -432,7 +432,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 			{
 				debug(stderr,
 					  _
-					  ("Couldn't load group Edje group '%s' from Edje file '%s'"),
+					  ("Can't load group Edje group '%s' from Edje file '%s'"),
 					  widget_name_get(widget), edams_edje_theme_file_get());
 				evas_object_del(priv->children[x]);
 				continue;
@@ -480,7 +480,7 @@ evas_smart_example_add(Evas * evas)
  *
  */
 static void
-_evas_smart_example_remove_do(Evas_Smart_Example_Data * priv, Evas_Object * child, int idx)
+_evas_smart_example_remove_do(Evas_Smart_Group_Data * priv, Evas_Object * child, int idx)
 {
 	priv->children[idx] = NULL;
 	priv->child_count--;
@@ -498,7 +498,7 @@ evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 {
 	long idx;
 
-	EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+	EVAS_SMART_GROUP_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
 
 
 	int x = 0;
@@ -671,7 +671,7 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 	debug(stdout, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
 	ecore_evas_shaped_set(ee, 0);
 	ecore_evas_borderless_set(ee, 0);
-	ecore_evas_title_set(ee, _("Global map"));
+	ecore_evas_title_set(ee, _("Global view"));
 	ecore_evas_callback_resize_set(ee, _ecore_evas_resize_cb);
 	evas = ecore_evas_get(ee);
 
