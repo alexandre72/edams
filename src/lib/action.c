@@ -21,6 +21,7 @@
 #include <Ecore.h>
 
 #include "action.h"
+#include "cJSON.h"
 #include "utils.h"
 
 /*
@@ -32,11 +33,12 @@ exec_action(const char *data)
    pid_t child_pid;
    Ecore_Exe *child_handle;
 
-	fprintf(stdout, "******************************\n");
-	fprintf(stdout, "DEBUG:ECORE_EXE_PIPE '%s'\n", data);
-	fprintf(stdout, "******************************\n");
-/*
-	child_handle = ecore_exe_pipe_run(data,
+	cJSON *root = cJSON_Parse(data);
+	cJSON *exec = cJSON_GetObjectItem(root,"EXEC");
+	cJSON *terminal = cJSON_GetObjectItem(root,"TERMINAL");
+	fprintf(stdout, "Execute %s with '%s' arg\n", cJSON_Print(exec), cJSON_Print(terminal));
+
+	child_handle = ecore_exe_pipe_run(cJSON_Print(exec),
                                     ECORE_EXE_PIPE_WRITE |
                                     ECORE_EXE_PIPE_READ_LINE_BUFFERED |
                                     ECORE_EXE_PIPE_READ, NULL);
@@ -51,16 +53,18 @@ exec_action(const char *data)
 
 	if (child_pid == -1)
    	{
-		debug(stderr, _("Could not retrive the PID"));
+		debug(stderr, _("Could not retrieve the PID"));
 		return EINA_FALSE;
 	}
 	else
 	{
-		debug(stdout, _("The child process has PID:%d"), child_pid);
+		debug(stdout, _("The child process has PID:%d\n"), child_pid);
+		//statusbar_text_set(_("Launching '%s' with PID:%d"), "dialog-informations");
 		return EINA_TRUE;
 	}
-*/
+	cJSON_Delete(root);
 }
+
 
 
 /*
@@ -69,9 +73,16 @@ exec_action(const char *data)
 Eina_Bool
 debug_action(const char *data)
 {
-	fprintf(stdout, "******************************\n");
-	fprintf(stdout, "DEBUG:PRINT '%s'\n", data);
-	fprintf(stdout, "******************************\n");
+	cJSON *root = cJSON_Parse(data);
+	cJSON *item = cJSON_GetObjectItem(root,"PRINT");
+
+	if(item)
+		fprintf(stdout, "%s", cJSON_Print(item));
+	else
+		return EINA_FALSE;
+
+	cJSON_Delete(root);
+	return EINA_TRUE;
 }
 
 

@@ -20,6 +20,7 @@
 
 #include <Elementary.h>
 #include <Ecore_Con.h>
+#include "cJSON.h"
 #include "cosm.h"
 #include "edams.h"
 #include "utils.h"
@@ -70,6 +71,17 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 							device_name_get(device),
 							device_data_get(device));
 
+	cJSON *root,*fmt;
+	root=cJSON_CreateObject();
+	cJSON_AddItemToObject(root, "version", cJSON_CreateString("1.0.0"));
+	cJSON_AddItemToObject(root, "datastreams", fmt=cJSON_CreateObject());
+	cJSON_AddStringToObject(fmt,"id", device_name_get(device));
+	cJSON_AddStringToObject(fmt,"current_value", cJSON_CreateString(device_data_get(device)));
+	cJSON_AddStringToObject(fmt,"label", cJSON_CreateString(device_units_get(device)));
+	cJSON_AddStringToObject(fmt,"symbol", cJSON_CreateString(device_unit_symbol_get(device)));
+	cJSON_Delete(root);
+	printf("cJSON RENDERED:%s\n", cJSON_Print(root));
+
 	r = ecore_con_url_post(cosm_url, s, strlen(s), "text/json");
 	if (!r)
      {
@@ -112,6 +124,7 @@ cosm_location_feed_add(App_Info *app, Location *location)
 
 	char *locale = setlocale(LC_NUMERIC, NULL);
 	setlocale(LC_NUMERIC, "POSIX");
+
 	snprintf(s, sizeof(s), ("{\"title\":\"%s data\", \"version\":\"1.0.0\", \"location\": { \"disposition\":\"fixed\", \"name\":\"%s\", \"lat\":%'.2f, \"exposure\":\"indoor\", \"lon\":%'.2f, \"domain\":\"physical\"}}"),
 					location_name_get(location),
 					location_name_get(location),
@@ -119,12 +132,28 @@ cosm_location_feed_add(App_Info *app, Location *location)
 					location_longitude_get(location));
 	setlocale(LC_NUMERIC, locale);
 
+	cJSON *root,*fmt;
+	root=cJSON_CreateObject();
+	snprintf(s, sizeof(s), "%s data", location_name_get(location));
+	cJSON_AddItemToObject(root, "title", cJSON_CreateString(s));
+	cJSON_AddItemToObject(root, "version", cJSON_CreateString("1.0.0"));
+	cJSON_AddItemToObject(root, "location", fmt=cJSON_CreateObject());
+	cJSON_AddStringToObject(fmt,"name", location_name_get(location));
+	cJSON_AddStringToObject(fmt,"disposition", "fixed");
+	cJSON_AddStringToObject(fmt,"exposure", "indoor");
+	cJSON_AddStringToObject(fmt,"domain", "physical");
+	//cJSON_AddNumberToObject(fmt,"la", location_latitude_get(location));
+	//cJSON_AddNumberToObject(fmt,"lon", location_longitude_get(location));
+	printf("cJSON RENDERED:%s\n", cJSON_Print(root));
+	cJSON_Delete(root);
+
   	r = ecore_con_url_post(cosm_url, s, strlen(s), NULL);
 	if (!r)
      {
 	    debug(stderr, _("Couldn't realize url PUT request"));
 		return r;
      }
+
 
 	return EINA_TRUE;
 }
