@@ -22,6 +22,7 @@
 #include <stdio.h>
 
 #include "action.h"
+#include "cJSON.h"
 #include "device.h"
 #include "edams.h"
 #include "myfileselector.h"
@@ -90,6 +91,9 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 	char *s;
 
 	const char *title = elm_win_title_get(cwin);
+	cJSON *root;
+
+	root=cJSON_CreateObject();
 
 	if(strcmp(title, _("Edit cmnd action")) == 0)
 	{
@@ -100,12 +104,14 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 		Evas_Object *entry = elm_object_name_find(cwin, "exec entry", -1);
 		Evas_Object *check = elm_object_name_find(cwin, "terminal check", -1);
 
-		asprintf(&s, "{\"EXEC\":\"%s\",\"TERMINAL\":\"%s\"}", elm_object_text_get(entry), elm_check_state_get(check) ? "true" : "false");
+		cJSON_AddItemToObject(root, "EXEC", cJSON_CreateString(elm_object_text_get(entry)));
+		cJSON_AddItemToObject(root, "TERMINAL", cJSON_CreateString(elm_check_state_get(check) ? "true" : "false"));
 	}
 	else if(strcmp(title, _("Edit debug")) == 0)
 	{
 		Evas_Object *entry = elm_object_name_find(cwin, "debug entry", -1);
-		asprintf(&s, "{\"PRINT\":\"%s\"}", elm_object_text_get(entry));
+
+		cJSON_AddItemToObject(root, "PRINT", cJSON_CreateString(elm_object_text_get(entry)));
 	}
 	else if(strcmp(title, _("Edit mail")) == 0)
 	{
@@ -114,18 +120,18 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 		Evas_Object *subject_entry = elm_object_name_find(cwin, "subject entry", -1);
 		Evas_Object *body_entry = elm_object_name_find(cwin, "body entry", -1);
 
-		asprintf(&s, "{\"BODY\":\"%s\",\"TO\":\"%s\",\"FROM\":\"%s\",\"SUBJECT\":\"%s\"}",
-						elm_object_text_get(from_entry),
-						elm_object_text_get(to_entry),
-						elm_object_text_get(subject_entry),
-						elm_object_text_get(body_entry));
+		cJSON_AddItemToObject(root, "FROM", cJSON_CreateString(elm_object_text_get(from_entry)));
+		cJSON_AddItemToObject(root, "TO", cJSON_CreateString(elm_object_text_get(to_entry)));
+		cJSON_AddItemToObject(root, "SUBJECT", cJSON_CreateString(elm_object_text_get(subject_entry)));
+		cJSON_AddItemToObject(root, "BODY", cJSON_CreateString(elm_object_text_get(body_entry)));
 	}
 	else
 	{
 		debug(stderr, _("Internal error in file %s at %d"), __FILE__, __LINE__);
 	}
 
-	evas_object_data_set(win, "data arg", s);
+	evas_object_data_set(win, "data arg", strdup(cJSON_PrintUnformatted(root)));
+	cJSON_Delete(root);
 	evas_object_del(cwin);
 }/*_button_edit_arg_apply_clicked_cb*/
 

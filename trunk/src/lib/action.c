@@ -30,13 +30,16 @@
 Eina_Bool
 exec_action(const char *data)
 {
-   pid_t child_pid;
-   Ecore_Exe *child_handle;
+   	pid_t child_pid;
+   	Ecore_Exe *child_handle;
 
 	cJSON *root = cJSON_Parse(data);
+
+	if(!root) return EINA_FALSE;
+
 	cJSON *exec = cJSON_GetObjectItem(root,"EXEC");
 	cJSON *terminal = cJSON_GetObjectItem(root,"TERMINAL");
-	fprintf(stdout, "Execute %s with '%s' arg\n", cJSON_Print(exec), cJSON_Print(terminal));
+	fprintf(stdout, "Execute %s with terminal=%s\n", cJSON_PrintUnformatted(exec), cJSON_PrintUnformatted(terminal));
 
 	child_handle = ecore_exe_pipe_run(cJSON_Print(exec),
                                     ECORE_EXE_PIPE_WRITE |
@@ -46,6 +49,7 @@ exec_action(const char *data)
    	if (child_handle == NULL)
 	{
         debug(stderr, _("Could not create a child process!"));
+		cJSON_Delete(root);
 		return EINA_FALSE;
 	}
 
@@ -54,17 +58,53 @@ exec_action(const char *data)
 	if (child_pid == -1)
    	{
 		debug(stderr, _("Could not retrieve the PID"));
+		cJSON_Delete(root);
 		return EINA_FALSE;
 	}
 	else
 	{
 		debug(stdout, _("The child process has PID:%d\n"), child_pid);
 		//statusbar_text_set(_("Launching '%s' with PID:%d"), "dialog-informations");
+		cJSON_Delete(root);
 		return EINA_TRUE;
 	}
-	cJSON_Delete(root);
 }
 
+
+/*
+ *
+ */
+Eina_Bool
+mail_action(const char *data)
+{
+	cJSON *root = cJSON_Parse(data);
+
+	if(!root) return EINA_FALSE;
+
+	cJSON *from = cJSON_GetObjectItem(root, "FROM");
+	cJSON *to = cJSON_GetObjectItem(root, "TO");
+	cJSON *subject = cJSON_GetObjectItem(root, "SUBJECT");
+	cJSON *body = cJSON_GetObjectItem(root, "BODY");
+
+	if(from && to && subject && body)
+	{
+		fprintf(stdout, "From:%s\n", cJSON_PrintUnformatted(from));
+		fprintf(stdout, "To:%s\n", cJSON_PrintUnformatted(to));
+		fprintf(stdout, "Subject:%s\n", cJSON_PrintUnformatted(subject));
+		fprintf(stdout, "Body:%s\n", cJSON_PrintUnformatted(body));
+
+		//ecore_con_url_url_set(url_con, "smtp://smtp.gmail.com:587");
+		//ecore_con_url_httpauth_set(url_con, "username", "userpwd", EINA_TRUE);
+
+		cJSON_Delete(root);
+		return EINA_TRUE;
+	}
+	else
+	{
+		cJSON_Delete(root);
+		return EINA_FALSE;
+	}
+}
 
 
 /*
@@ -74,10 +114,13 @@ Eina_Bool
 debug_action(const char *data)
 {
 	cJSON *root = cJSON_Parse(data);
+
+	if(!root) return EINA_FALSE;
+
 	cJSON *item = cJSON_GetObjectItem(root,"PRINT");
 
 	if(item)
-		fprintf(stdout, "%s", cJSON_Print(item));
+		fprintf(stdout, "%s\n", cJSON_PrintUnformatted(item));
 	else
 		return EINA_FALSE;
 
@@ -103,6 +146,7 @@ action_parse(Action *action)
 		case CMND_ACTION:
 				break;
 		case MAIL_ACTION:
+				return mail_action(action_data_get(action));
 				break;
 		case EXEC_ACTION:
 				return exec_action(action_data_get(action));
