@@ -80,7 +80,7 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
 	cJSON_AddStringToObject(fmt,"label", cJSON_CreateString(device_units_get(device)));
 	cJSON_AddStringToObject(fmt,"symbol", cJSON_CreateString(device_unit_symbol_get(device)));
 	cJSON_Delete(root);
-	printf("cJSON RENDERED:%s\n", cJSON_Print(root));
+	printf("cJSON RENDERED:%s\n", cJSON_PrintUnformatted(root));
 
 	r = ecore_con_url_post(cosm_url, s, strlen(s), "text/json");
 	if (!r)
@@ -144,7 +144,7 @@ cosm_location_feed_add(App_Info *app, Location *location)
 	cJSON_AddStringToObject(fmt,"domain", "physical");
 	//cJSON_AddNumberToObject(fmt,"la", location_latitude_get(location));
 	//cJSON_AddNumberToObject(fmt,"lon", location_longitude_get(location));
-	printf("cJSON RENDERED:%s\n", cJSON_Print(root));
+	printf("cJSON RENDERED:%s\n", cJSON_PrintUnformatted(root));
 	cJSON_Delete(root);
 
   	r = ecore_con_url_post(cosm_url, s, strlen(s), NULL);
