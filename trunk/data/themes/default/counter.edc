@@ -21,13 +21,14 @@
 
 group
 {
+	name: "widget/counter/icon";
+    min: 32 32;
+
 	images
 	{
 		image: "counter_icon.png" COMP;
 	}
 
-	name: "widget/counter/icon";
-    min: 32 32;
       parts
       {
       	part
