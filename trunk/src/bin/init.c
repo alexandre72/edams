@@ -38,13 +38,16 @@ static int xpl_init(App_Info * app)
 
 	// Setup xPL.
 	if (!xPL_initialize(xPL_getParsedConnectionType()))
+	{
+		debug(stderr, _("Can't init xPL service"));
 		return 0;
+	}
 
-	// Create an xpl service.
-	app->edamsService = xPL_createService("edams", "xpl", "vesta");
-	xPL_setServiceVersion(app->edamsService, XPL_VERSION);
+	/*Create an xpl service*/
+	app->edamsService = xPL_createService("edams", "xpl", "edams.xpl");
+	xPL_setServiceVersion(app->edamsService, VERSION);
 
-	// Enable the service
+	/*Enable the service*/
 	xPL_setServiceEnabled(app->edamsService, EINA_TRUE);
 
 	return 0;

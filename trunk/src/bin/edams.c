@@ -238,9 +238,12 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 static void
 xpl_process_messages()
 {
+  signal(SIGTERM, shutdown);
+  signal(SIGINT, shutdown);
+
 	for (;;)
 	{
-		xPL_processMessages(100);
+		xPL_processMessages(-1);
 		sleep(1);
 	}
 }/*xpl_process_messages*/
@@ -752,6 +755,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
     pipe = ecore_pipe_add(handler, NULL);
 	xPL_addServiceListener(app->edamsService, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
+
 	child_pid = fork();
 
 	if (!child_pid)
