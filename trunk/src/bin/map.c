@@ -522,12 +522,27 @@ evas_smart_group_remove(Evas_Object * o, Evas_Object * child)
 static Eina_Bool
 _timer_cb(void *data)
 {
-	Evas_Object *stat_img = data;
+	Evas_Object *img = data;
 
-	evas_object_del(stat_img);
+	evas_object_del(img);
 
 	return EINA_FALSE;
 }/*_timer_cb*/
+
+
+/*
+ *
+ */
+static void
+widget_gnuplot_redraw(Widget *widget)
+{
+	Evas_Object *img = evas_object_name_find(evas, "stat_img");
+	Device *device = widget_device_get(widget);
+
+	evas_object_image_file_set(img, gnuplot_device_png_write(device), NULL);
+	evas_object_image_reload(img);
+}/*widget_gnuplot_redraw*/
+
 
 
 /*
@@ -549,6 +564,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 				if(device)
 				{
 					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
+					evas_object_data_set(o, "stat_img", stat_img);
 					evas_object_image_alpha_set(stat_img, EINA_TRUE);
     				evas_object_image_file_set(stat_img, gnuplot_device_png_write(device), NULL);
 					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
@@ -559,7 +575,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 					}
 
 					evas_object_image_scale(stat_img, 600, 300);
-					evas_object_move(stat_img, 300,  300);
+					evas_object_move(stat_img, 0,  400);
 				    evas_object_show(stat_img);
 					ecore_timer_add(2.0, _timer_cb, stat_img);
 					evas_object_show(stat_img);
@@ -621,6 +637,11 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			evas_object_resize(o, o_geometry.w, o_geometry.h);
 			return;
 		}
+
+		else if(!strcmp(ev->keyname, "Escape"))
+		{
+	   	 	ecore_main_loop_quit();
+		}
 	}
 }/*_on_keydown*/
 
@@ -657,6 +678,7 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 	debug(stdout, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
 	ecore_evas_shaped_set(ee, 0);
 	ecore_evas_borderless_set(ee, 0);
+	ecore_evas_fullscreen_set(ee, EINA_TRUE);
 	ecore_evas_title_set(ee, _("Global view"));
 	ecore_evas_callback_resize_set(ee, _ecore_evas_resize_cb);
 	evas = ecore_evas_get(ee);
@@ -725,6 +747,20 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 		evas_object_show(smt);
 	}
 
+	Evas_Object *stat_img  = evas_object_image_filled_add(evas);
+	evas_object_name_set(stat_img, "stat_img");
+	evas_object_image_alpha_set(stat_img, EINA_TRUE);
+    evas_object_image_file_set(stat_img, "/home/alex/DHT11.6.png", NULL);
+	err = evas_object_image_load_error_get(stat_img);
+    if (err != EVAS_LOAD_ERROR_NONE)
+	{
+		debug(stdout, _("Can't load Edje image!"));
+		return;
+	}
+	evas_object_image_scale(stat_img, 200, 200);
+	evas_object_move(stat_img, 0,  480);
+	evas_object_show(stat_img);
+
 	ecore_evas_show(ee);
 	ecore_main_loop_begin();
 	eet_close(ef);
@@ -772,6 +808,8 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 							 	widget_id_get(widget),
 					 			location_name_get(location));
 		Evas_Object *edje = evas_object_name_find(evas, s);
+
+		widget_gnuplot_redraw(widget);
 
 		//Parse Edje widget's messages/actions.
 		if (edje)
