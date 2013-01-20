@@ -405,6 +405,7 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 		priv->children[x] = edje_object_add(evas_object_evas_get(o));
 		snprintf(s, sizeof(s), "%d_%s_edje", widget_id_get(widget), location_name_get(location));
 		evas_object_name_set(priv->children[x], s);
+		evas_object_data_set(priv->children[x], "widget", (void *)widget);
 
 		if (!priv->children[x])
 		{
@@ -414,40 +415,32 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 
 		if (strstr(widget_name_get(widget), "default"))
 		{
-			if (!edje_object_file_set
-				(priv->children[x], edams_edje_theme_file_get(), "meter/counter"))
+			if(!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), "meter/counter"))
 			{
-				debug(stderr,
-					  _
-					  ("Can't load group Edje group '%s' from Edje file '%s'"),
-					  widget_name_get(widget), edams_edje_theme_file_get());
+				debug(stderr, _("Can't load group Edje group '%s' from Edje file '%s'"),
+					 											 widget_name_get(widget),
+					 											 edams_edje_theme_file_get());
 				evas_object_del(priv->children[x]);
 				continue;
 			}
 		}
 		else
 		{
-			if (!edje_object_file_set
-				(priv->children[x], edams_edje_theme_file_get(), widget_name_get(widget)))
+			if (!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), widget_name_get(widget)))
 			{
-				debug(stderr,
-					  _
-					  ("Can't load group Edje group '%s' from Edje file '%s'"),
-					  widget_name_get(widget), edams_edje_theme_file_get());
+				debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
+					  											  	widget_name_get(widget),
+					  							  					edams_edje_theme_file_get());
 				evas_object_del(priv->children[x]);
 				continue;
 			}
 		}
 		evas_object_propagate_events_set(priv->children[x], EINA_FALSE);
-		evas_object_event_callback_add(priv->children[x],
-									   EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
-		evas_object_event_callback_add(priv->children[x],
-									   EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out, NULL);
-		evas_object_event_callback_add(priv->children[x],
-									   EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, NULL);
+		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
+		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out, NULL);
+		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, NULL);
 
 		_evas_smart_group_child_callbacks_register(o, priv->children[x], 0);
-		evas_object_data_set(priv->children[x], "widget", widget);
 		evas_object_smart_member_add(priv->children[x], o);
 		evas_object_smart_changed(o);
 		priv->child_count++;
@@ -603,8 +596,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			evas_object_resize(o, o_geometry.w, o_geometry.h);
 			char s[64];
 			char key[64];
-			snprintf(s, sizeof(s), "%d;%d;%d;%d", o_geometry.x, o_geometry.y,
-					 o_geometry.w, o_geometry.h);
+			snprintf(s, sizeof(s), "%d;%d;%d;%d", o_geometry.x, o_geometry.y, o_geometry.w, o_geometry.h);
 			snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
 			eet_write(ef, key, s, strlen(s) + 1, 0);
 			return;
