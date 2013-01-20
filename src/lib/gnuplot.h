@@ -25,7 +25,7 @@
 #include "device.h"
 #include "edams.h"
 
-const char *gnuplot_device_png_write(App_Info *app, Device *device);
-Eina_Bool gnuplot_device_data_write(App_Info *app, Device *device);
+const char *gnuplot_device_png_write(Device *device);
+Eina_Bool gnuplot_device_data_write(Device *device);
 
 #endif /*__GNUPLOT_H*/

@@ -26,7 +26,26 @@
 #include "utils.h"
 
 
+typedef struct
+{
+	char *cosm_apikey;			/*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
+	char *gnuplot_path;			/*Gnuplot path. Eg '/usr/bin/gnuplot'*/
+	char *map_background;		/*Background user in global view.*/
+	char *smtp_server; 			/*SMTP server. Eg 'smtp://smtp.gmail.com:587'*/
+	char *smtp_username;		/*SMTP user password. Eg 'myemailaddress@gmail.com'*/
+	char *smtp_userpwd;			/*SMTP user password. Eg 'PASSWORD123'*/
+	Eina_Bool softemu;			/*Sotfware emulation, mainly used to test EDAMS*/
+	Eina_Bool debug;			/*Use printf to help to debug EDAMS.*/
+} Settings;
+
+
+static Settings *settings = NULL;
+static Eet_File *ef = NULL;
+
+
 #define EET_STRING_SETTINGS_READ(_field, _var) \
+	char *ret; \
+	int size; \
    	ret = eet_read(ef, _field, &size); \
    	if(ret) \
    	{ \
@@ -35,16 +54,14 @@
    	}	\
 
 #define EET_BOOL_SETTINGS_READ(_field, _var) \
+	char *ret; \
+	int size; \
    	ret = eet_read(ef, _field, &size); \
    	if(ret) \
    	{ \
 		_var = atoi(ret) ? EINA_TRUE : EINA_FALSE; \
    		FREE(ret);	\
    	} \
-
-#define EET_STRING_SETTINGS_WRITE(_field, _var) 		\
-	if(_var) 											\
-   		eet_write(ef, _field, _var, strlen(_var)+1, 0); \
 
 
 #define EET_BOOL_SETTINGS_WRITE(_field, _var) 			\
@@ -57,80 +74,217 @@
 /*
  *
  */
-const Settings
-*edams_settings_get(void)
+Eina_Bool
+edams_settings_debug_get()
 {
-	Eet_File *ef;
-
-    Settings *settings = calloc(1, sizeof(Settings));
-
-	if(!settings)
-	{
-		debug(stderr, _("Can't calloc Settings struct"));
-		return NULL;
-	}
-
-	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ);
-
-	char *ret;
-	int size;
-	settings->cosm_apikey = NULL;
-	settings->softemu = EINA_FALSE;
-	settings->debug = EINA_FALSE;
-
 	EET_BOOL_SETTINGS_READ("edams/debug", settings->debug);
-	EET_BOOL_SETTINGS_READ("edams/softemu", settings->softemu);
-	EET_STRING_SETTINGS_READ("map/map_background", settings->map_background);
-	EET_STRING_SETTINGS_READ("edams/cosm_apikey",settings->cosm_apikey);
-	EET_STRING_SETTINGS_READ("edams/gnuplot_path", settings->gnuplot_path);
-	EET_STRING_SETTINGS_READ("edams/smtp_server", settings->smtp_server);
-	EET_STRING_SETTINGS_READ("edams/smtp_username", settings->smtp_username);
-	EET_STRING_SETTINGS_READ("edams/smtp_userpwd", settings->smtp_userpwd);
-	eet_close(ef);
-
-	set_debug_mode(settings->debug);
-	debug(stdout, _("Debug is %s"), settings->debug?_("enabled"):_("disabled"));
-	debug(stdout, _("Cosm data handling options is %s"), settings->cosm_apikey?_("enabled"):_("disabled"));
-	debug(stdout, _("Software emulation is %s"), settings->softemu?_("enabled"):_("disabled"));
-	debug(stdout, _("Map background file is '%s'"), settings->map_background);
-	debug(stdout, _("Gnuplot path is '%s'"), settings->gnuplot_path);
-	debug(stdout, _("Smtp server is '%s'"), settings->smtp_server);
-	return settings;
-}/*edams_settings_get*/
+	return settings->debug;
+}/*edams_settings_debug_get*/
 
 
 /*
  *
  */
 void
-edams_settings_write(Settings *settings)
+edams_settings_debug_set(Eina_Bool isdebug)
 {
-	Eet_File *ef;
+	set_debug_mode(isdebug);
+	EET_BOOL_SETTINGS_WRITE("edams/debug", isdebug);
+	debug(stdout, _("Debug is %s"), isdebug?_("enabled"):_("disabled"));
+}/*edams_settings_debug_set*/
 
-	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_WRITE);
 
-	EET_BOOL_SETTINGS_WRITE("edams/softemu", settings->softemu);
-	EET_BOOL_SETTINGS_WRITE("edams/debug", settings->debug);
-	EET_STRING_SETTINGS_WRITE("map/map_background", settings->map_background);
-	EET_STRING_SETTINGS_WRITE("edams/cosm_apikey", settings->cosm_apikey);
-	EET_STRING_SETTINGS_WRITE("edams/gnuplot_path", settings->gnuplot_path);
-	EET_STRING_SETTINGS_WRITE("edams/smtp_server", settings->smtp_server);
-	EET_STRING_SETTINGS_WRITE("edams/smtp_username", settings->smtp_username);
-	EET_STRING_SETTINGS_WRITE("edams/smtp_userpwd", settings->smtp_userpwd);
+/*
+ *
+ */
+Eina_Bool
+edams_settings_softemu_get()
+{
+	EET_BOOL_SETTINGS_READ("edams/softemu", settings->softemu);
+	return settings->softemu;
+}/*edams_settings_softemu_get*/
 
-	set_debug_mode(settings->debug);
 
-	eet_close(ef);
-}/*edams_settings_write*/
+/*
+ *
+ */
+void
+edams_settings_softemu_set(Eina_Bool softemu)
+{
+	EET_BOOL_SETTINGS_WRITE("edams/softemu", softemu);
+	debug(stdout, _("Software emulation is %s"), softemu?_("enabled"):_("disabled"));
+}/*edams_settings_softemu_set*/
+
+
+/*
+ *
+ */
+const char*
+edams_settings_map_background_get()
+{
+	EET_STRING_SETTINGS_READ("map/map_background", settings->map_background);
+	return settings->map_background;
+}/*edams_settings_map_background_get*/
 
 
 
 /*
  *
  */
-Settings *
-edams_settings_free(Settings *settings)
+void
+edams_settings_map_background_set(const char *map_background)
 {
+    EINA_SAFETY_ON_NULL_RETURN(map_background);
+    eet_write(ef, "map/map_background", map_background, strlen(map_background)+1, 0);
+	debug(stdout, _("Map background file is '%s'"), map_background);
+}/*edams_settings_map_background_set*/
+
+
+/*
+ *
+ */
+const char*
+edams_settings_cosm_apikey_get()
+{
+	EET_STRING_SETTINGS_READ("edams/cosm_apikey",settings->cosm_apikey);
+	return settings->cosm_apikey;
+}/*edams_settings_cosm_apikey_get*/
+
+
+/*
+ *
+ */
+void
+edams_settings_cosm_apikey_set(const char *cosm_apikey)
+{
+    EINA_SAFETY_ON_NULL_RETURN(cosm_apikey);
+    eet_write(ef, "edams/cosm_apikey", cosm_apikey, strlen(cosm_apikey)+1, 0);;
+	debug(stdout, _("Cosm data handling options is %s"), cosm_apikey?_("enabled"):_("disabled"));
+}/*edams_settings_cosm_apikey_set*/
+
+/*
+ *
+ */
+const char*
+edams_settings_gnuplot_path_get()
+{
+	EET_STRING_SETTINGS_READ("edams/gnuplot_path", settings->gnuplot_path);
+	return settings->gnuplot_path;
+}/*edams_settings_gnuplot_path_get*/
+
+/*
+ *
+ */
+void
+edams_settings_gnuplot_path_set(const char *gnuplot_path)
+{
+    EINA_SAFETY_ON_NULL_RETURN(gnuplot_path);
+    eet_write(ef, "edams/gnuplot_path", gnuplot_path, strlen(gnuplot_path)+1, 0);;
+	debug(stdout, _("Gnuplot path is '%s'"), gnuplot_path);
+}/*edams_settings_gnuplot_path_set*/
+
+
+/*
+ *
+ */
+const char*
+edams_settings_smtp_server_get()
+{
+	EET_STRING_SETTINGS_READ("edams/smtp_server", settings->smtp_server);
+	return settings->smtp_server;
+}/*edams_settings_smtp_server_get*/
+
+
+/*
+ *
+ */
+void
+edams_settings_smtp_server_set(const char *smtp_server)
+{
+    EINA_SAFETY_ON_NULL_RETURN(smtp_server);
+    eet_write(ef, "edams/smtp_server", smtp_server, strlen(smtp_server)+1, 0);;
+	debug(stdout, _("Smtp server is '%s'"), smtp_server);
+}/*edams_settings_smtp_server_set*/
+
+
+/*
+ *
+ */
+const char*
+edams_settings_smtp_username_get()
+{
+	EET_STRING_SETTINGS_READ("edams/smtp_username", settings->smtp_username);
+	return settings->smtp_username;
+}/*edams_settings_smtp_username_get*/
+
+
+/*
+ *
+ */
+void
+edams_settings_smtp_username_set(const char *smtp_username)
+{
+    EINA_SAFETY_ON_NULL_RETURN(smtp_username);
+    eet_write(ef, "edams/smtp_username", smtp_username, strlen(smtp_username)+1, 0);;
+}/*edams_settings_smtp_username_set*/
+
+
+/*
+ *
+ */
+const char*
+edams_settings_smtp_userpwd_get()
+{
+	EET_STRING_SETTINGS_READ("edams/smtp_userpwd", settings->smtp_userpwd);
+	return settings->smtp_userpwd;
+}/*edams_settings_smtp_userpwd_get*/
+
+
+
+/*
+ *
+ */
+void
+edams_settings_smtp_userpwd_set(const char *smtp_userpwd)
+{
+    EINA_SAFETY_ON_NULL_RETURN(smtp_userpwd);
+    eet_write(ef, "edams/smtp_userpwd", smtp_userpwd, strlen(smtp_userpwd)+1, 0);;
+}/*edams_settings_smtp_username_set*/
+
+
+
+/*
+ *
+ */
+void
+edams_settings_init()
+{
+    settings = calloc(1, sizeof(Settings));
+
+	if(!settings)
+	{
+		debug(stderr, _("Can't calloc Settings struct"));
+		return;
+	}
+
+	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE);
+
+	settings->cosm_apikey = NULL;
+	settings->softemu = EINA_FALSE;
+	settings->debug = edams_settings_debug_get();
+
+	set_debug_mode(settings->debug);
+}/*edams_settings_init*/
+
+
+/*
+ *
+ */
+void
+edams_settings_shutdown()
+{
+	eet_close(ef);
+
 	eina_stringshare_del(settings->gnuplot_path);
 	eina_stringshare_del(settings->cosm_apikey);
 	eina_stringshare_del(settings->map_background);
@@ -138,5 +292,4 @@ edams_settings_free(Settings *settings)
 	eina_stringshare_del(settings->smtp_username);
 	eina_stringshare_del(settings->smtp_userpwd);
 	FREE(settings);
-	return NULL;
-}/*edams_settings_free*/
+}/*edams_settings_shutdown*/

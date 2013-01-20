@@ -86,7 +86,7 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	}
 
 	App_Info *app= 	evas_object_data_get(win, "app");
-	cosm_location_feed_add(app, location);
+	cosm_location_feed_add(location);
 	location_save(location);
 
 	// Append location to locations list.

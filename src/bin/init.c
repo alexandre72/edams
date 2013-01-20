@@ -114,10 +114,7 @@ static int paths_init(App_Info * app)
 	strcpy(s, edams_data_path_get());
 	if (ecore_file_is_dir(s) == EINA_FALSE)
 	{
-		if (app->settings->debug)
-			debug(stdout,
-				  _
-				  ("It appears that it's the first time you run EDAMS. To be used, EDAMS needs some database files containing items. I'll copy some default items files, but you can easily remove them and create new ones(highly recommended)!"));
+			debug(stdout, _("It appears that it's the first time you run EDAMS. To be used, EDAMS needs some database files containing items. I'll copy some default items files, but you can easily remove them and create new ones(highly recommended)!"));
 		ecore_file_mkpath(edams_data_path_get());
 	}
 
@@ -152,6 +149,7 @@ static int i18n_init(App_Info * app __UNUSED__)
 int edams_init(App_Info * app)
 {
 	i18n_init(app);
+	edams_settings_init();
 	efl_init(app);
 	paths_init(app);
 	locations_init();

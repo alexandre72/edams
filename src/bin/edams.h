@@ -48,7 +48,6 @@ typedef struct
 	Eina_List *locations;
 	Eina_List *devices;
 	Location *location;
-	Settings *settings;
 
 	xPL_ServicePtr 	edamsService ;
 	xPL_MessagePtr 	edamsMessageStat ;

@@ -575,7 +575,7 @@ Eina_Bool xPL_sendRawMessage(String theData, int dataLen) {
     debug(stdout,"Unable to broadcast message, %s (%d)", strerror(errno), errno);
     return EINA_FALSE;
   }
-  debug(stdout,"Broadcasted %d bytes (of %d attempted)", bytesSent, dataLen);
+  //debug(stdout,"Broadcasted %d bytes (of %d attempted)", bytesSent, dataLen);
 
   /* Okey dokey then */
   return EINA_TRUE;

@@ -34,7 +34,6 @@ Evas_Object *waiting_win = NULL;
 static Eina_Bool _url_feed_add_complete_cb(void *data, int type, void *event_info);
 static Eina_Bool _url_feed_delete_complete_cb(void *data, int type, void *event_info);
 static Eina_Bool _url_datastream_update_complete_cb(void *data, int type, void *event_info);
-static Eina_Bool cosm_apikey_set(Ecore_Con_Url *cosm_url, const char *key);
 static void waiting_win_create();
 
 
@@ -42,13 +41,13 @@ static void waiting_win_create();
  *Update datastream from cosm with device's data. Return EINA_TRUE if success.
  */
 Eina_Bool
-cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
+cosm_device_datastream_update(Location *location, Device *device)
 {
 	Ecore_Con_Url *cosm_url = NULL;
 	char *s;
 
 	//Don't add cosm device datastream if no feed!
-	if(!location || (location_cosm_feedid_get(location) == 0) || !app->settings->cosm_apikey)
+	if(!location || (location_cosm_feedid_get(location) == 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
 
@@ -61,8 +60,8 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
      }
 	FREE(s);
 
-	ecore_con_url_verbose_set(cosm_url, app->settings->debug);
-	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
+	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
+   	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
    	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, NULL);
 
 	cJSON *root, *datastreams, *fmt,*unit;
@@ -101,13 +100,13 @@ cosm_device_datastream_update(App_Info *app, Location *location, Device *device)
  *Add location feed to cosm. Return EINA_TRUE if success.
  */
 Eina_Bool
-cosm_location_feed_add(App_Info *app, Location *location)
+cosm_location_feed_add(Location *location)
 {
 	Ecore_Con_Url *cosm_url = NULL;
 	char s[512];
 
 	//Don't add cosm url feed if already there...
-	if(!location || (location_cosm_feedid_get(location) != 0) || !app->settings->cosm_apikey)
+	if(!location || (location_cosm_feedid_get(location) != 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
 	waiting_win_create();
@@ -123,8 +122,8 @@ cosm_location_feed_add(App_Info *app, Location *location)
 		debug(stderr, _("Couldn't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
-	ecore_con_url_verbose_set(cosm_url, app->settings->debug);
-	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
+	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
+   	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());;
    	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_add_complete_cb, location);
 
 	char *locale = setlocale(LC_NUMERIC, NULL);
@@ -166,13 +165,13 @@ cosm_location_feed_add(App_Info *app, Location *location)
  *Delete location feed from cosm. Return EINA_TRUE if success.
  */
 Eina_Bool
-cosm_location_feed_delete(App_Info *app, Location *location)
+cosm_location_feed_delete(Location *location)
 {
 	Ecore_Con_Url *cosm_url = NULL;
 	char s[512];
 
 	//Don't delete if no cosm feedid cosm or null location
-	if(!location || (location_cosm_feedid_get(location) == 0) || !app->settings->cosm_apikey)
+	if(!location || (location_cosm_feedid_get(location) == 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
 	waiting_win_create();
@@ -188,8 +187,8 @@ cosm_location_feed_delete(App_Info *app, Location *location)
 	    debug(stderr, _("Couldn't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
-	ecore_con_url_verbose_set(cosm_url, app->settings->debug);
-	cosm_apikey_set(cosm_url, app->settings->cosm_apikey);
+	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
+   	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
    	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, strdup(location_name_get(location)));
 
 	if(!ecore_con_url_post(cosm_url, s, strlen(s), NULL))
@@ -201,17 +200,6 @@ cosm_location_feed_delete(App_Info *app, Location *location)
 	return EINA_TRUE;
 }/*cosm_location_feed_delete*/
 
-
-/*
- *
- */
-static Eina_Bool
-cosm_apikey_set(Ecore_Con_Url *cosm_url, const char *key)
-{
-   	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", key);
-
-	return EINA_TRUE;
-}/*cosm_apikey_set*/
 
 
 /*
