@@ -12,7 +12,7 @@
 #define DEFAULT_WIDTH 800
 #define DEFAULT_HEIGHT 600
 
-#define _evas_smart_example_type "Evas_Smart_Group"
+#define _evas_smart_group_type "Evas_Smart_Group"
 #define EVT_CHILDREN_NUMBER_CHANGED "children,changed"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -59,7 +59,7 @@ struct _Evas_Smart_Group_Data
        return val;                                             \
     }
 
-EVAS_SMART_SUBCLASS_NEW(_evas_smart_example_type, _evas_smart_example,
+EVAS_SMART_SUBCLASS_NEW(_evas_smart_group_type, _evas_smart_group,
 						Evas_Smart_Class, Evas_Smart_Class,
 						evas_object_smart_clipped_class_get, _smart_callbacks);
 
@@ -102,19 +102,19 @@ _on_child_del(void *data, Evas * evas __UNUSED__, Evas_Object * o, void *einfo _
 
 
 static void
-_evas_smart_example_child_callbacks_unregister(Evas_Object * obj)
+_evas_smart_group_child_callbacks_unregister(Evas_Object * obj)
 {
 	evas_object_data_set(obj, "index", NULL);
 	evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE, _on_child_del);
-}/*_evas_smart_example_child_callbacks_unregister*/
+}/*_evas_smart_group_child_callbacks_unregister*/
 
 
 static void
-_evas_smart_example_child_callbacks_register(Evas_Object * o, Evas_Object * child, long idx)
+_evas_smart_group_child_callbacks_register(Evas_Object * o, Evas_Object * child, long idx)
 {
 	evas_object_event_callback_add(child, EVAS_CALLBACK_FREE, _on_child_del, o);
 	evas_object_data_set(child, "index", (void *)(++idx));
-}/*_evas_smart_example_child_callbacks_register*/
+}/*_evas_smart_group_child_callbacks_register*/
 
 
 static void
@@ -206,7 +206,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
  *Create and setup a new example smart object's internals
  */
 static void
-_evas_smart_example_smart_add(Evas_Object * o)
+_evas_smart_group_smart_add(Evas_Object * o)
 {
 	EVAS_SMART_DATA_ALLOC(o, Evas_Smart_Group_Data);
 
@@ -227,12 +227,12 @@ _evas_smart_example_smart_add(Evas_Object * o)
 	evas_object_smart_member_add(priv->text, o);
 
 	// Add border to smart
-	_evas_smart_example_parent_sc->add(o);
-}/*_evas_smart_example_add*/
+	_evas_smart_group_parent_sc->add(o);
+}/*_evas_smart_group_add*/
 
 
 static void
-_evas_smart_example_smart_del(Evas_Object * o)
+_evas_smart_group_smart_del(Evas_Object * o)
 {
 	EVAS_SMART_GROUP_DATA_GET(o, priv);
 
@@ -241,20 +241,20 @@ _evas_smart_example_smart_del(Evas_Object * o)
 	{
 		if (priv->children[x])
 		{
-			_evas_smart_example_child_callbacks_unregister(priv->children[0]);
+			_evas_smart_group_child_callbacks_unregister(priv->children[0]);
 			priv->children[x] = NULL;
 		}
 	}
 
-	_evas_smart_example_parent_sc->del(o);
-}/*_evas_smart_example_smart_del*/
+	_evas_smart_group_parent_sc->del(o);
+}/*_evas_smart_group_smart_del*/
 
 
 /*
  *
  */
 static void
-_evas_smart_example_smart_show(Evas_Object * o)
+_evas_smart_group_smart_show(Evas_Object * o)
 {
 	EVAS_SMART_GROUP_DATA_GET(o, priv);
 
@@ -267,15 +267,15 @@ _evas_smart_example_smart_show(Evas_Object * o)
 
 	evas_object_show(priv->border);
 	evas_object_show(priv->text);
-	_evas_smart_example_parent_sc->show(o);
-}/*_evas_smart_example_smart_show*/
+	_evas_smart_group_parent_sc->show(o);
+}/*_evas_smart_group_smart_show*/
 
 
 /*
  *
  */
 static void
-_evas_smart_example_smart_hide(Evas_Object * o)
+_evas_smart_group_smart_hide(Evas_Object * o)
 {
 	EVAS_SMART_GROUP_DATA_GET(o, priv);
 
@@ -288,15 +288,15 @@ _evas_smart_example_smart_hide(Evas_Object * o)
 
 	evas_object_hide(priv->border);
 
-	_evas_smart_example_parent_sc->hide(o);
-}/*_evas_smart_example_smart_hide*/
+	_evas_smart_group_parent_sc->hide(o);
+}/*_evas_smart_group_smart_hide*/
 
 
 /*
  *
  */
 static void
-_evas_smart_example_smart_resize(Evas_Object * o, Evas_Coord w, Evas_Coord h)
+_evas_smart_group_smart_resize(Evas_Object * o, Evas_Coord w, Evas_Coord h)
 {
 	Evas_Coord ow, oh;
 	evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
@@ -305,14 +305,14 @@ _evas_smart_example_smart_resize(Evas_Object * o, Evas_Coord w, Evas_Coord h)
 
 	//Trigger recalculation.
 	evas_object_smart_changed(o);
-}/*_evas_smart_example_smart_resize*/
+}/*_evas_smart_group_smart_resize*/
 
 
 /*
  * Act on child objects' properties, before rendering
  */
 static void
-_evas_smart_example_smart_calculate(Evas_Object * o)
+_evas_smart_group_smart_calculate(Evas_Object * o)
 {
 	char key[64];
 	char *ret;
@@ -359,25 +359,25 @@ _evas_smart_example_smart_calculate(Evas_Object * o)
 			evas_object_event_callback_add(priv->children[n], EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 		}
 	}
-}/*_evas_smart_example_smart_calculate*/
+}/*_evas_smart_group_smart_calculate*/
 
 
 /*
  * Setup our smart interface
  */
 static void
-_evas_smart_example_smart_set_user(Evas_Smart_Class * sc)
+_evas_smart_group_smart_set_user(Evas_Smart_Class * sc)
 {
 	// Specializing these two
-	sc->add = _evas_smart_example_smart_add;
-	sc->del = _evas_smart_example_smart_del;
-	sc->show = _evas_smart_example_smart_show;
-	sc->hide = _evas_smart_example_smart_hide;
+	sc->add = _evas_smart_group_smart_add;
+	sc->del = _evas_smart_group_smart_del;
+	sc->show = _evas_smart_group_smart_show;
+	sc->hide = _evas_smart_group_smart_hide;
 
 	// Clipped smart object has no hook on resizes or calculations
-	sc->resize = _evas_smart_example_smart_resize;
-	sc->calculate = _evas_smart_example_smart_calculate;
-}/*_evas_smart_example_smart_set_user*/
+	sc->resize = _evas_smart_group_smart_resize;
+	sc->calculate = _evas_smart_group_smart_calculate;
+}/*_evas_smart_group_smart_set_user*/
 
 
 /*
@@ -386,7 +386,7 @@ _evas_smart_example_smart_set_user(Evas_Smart_Class * sc)
  *
  */
 Eina_List *
-evas_smart_example_location_add(Evas_Object * o, Location * location)
+evas_smart_group_location_add(Evas_Object * o, Location * location)
 {
 	Eina_List *childs = NULL;
 
@@ -446,7 +446,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 		evas_object_event_callback_add(priv->children[x],
 									   EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, NULL);
 
-		_evas_smart_example_child_callbacks_register(o, priv->children[x], 0);
+		_evas_smart_group_child_callbacks_register(o, priv->children[x], 0);
 		evas_object_data_set(priv->children[x], "widget", widget);
 		evas_object_smart_member_add(priv->children[x], o);
 		evas_object_smart_changed(o);
@@ -461,7 +461,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 										(void *)(long)priv->child_count);
 
 	return childs;
-}/*evas_smart_example_location_add*/
+}/*evas_smart_group_location_add*/
 
 
 
@@ -470,10 +470,10 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
  *Add a new smart object to a canvas.
  */
 Evas_Object *
-evas_smart_example_add(Evas * evas)
+evas_smart_group_add(Evas * evas)
 {
-	return evas_object_smart_add(evas, _evas_smart_example_smart_class_new());
-}/*evas_smart_example_add*/
+	return evas_object_smart_add(evas, _evas_smart_group_smart_class_new());
+}/*evas_smart_group_add*/
 
 
 
@@ -481,13 +481,13 @@ evas_smart_example_add(Evas * evas)
  *
  */
 static void
-_evas_smart_example_remove_do(Evas_Smart_Group_Data * priv, Evas_Object * child, int idx)
+_evas_smart_group_remove_do(Evas_Smart_Group_Data * priv, Evas_Object * child, int idx)
 {
 	priv->children[idx] = NULL;
 	priv->child_count--;
-	_evas_smart_example_child_callbacks_unregister(child);
+	_evas_smart_group_child_callbacks_unregister(child);
 	evas_object_smart_member_del(child);
-}/*_evas_smart_example_remove_do*/
+}/*_evas_smart_group_remove_do*/
 
 
 
@@ -495,7 +495,7 @@ _evas_smart_example_remove_do(Evas_Smart_Group_Data * priv, Evas_Object * child,
  *Remove a child element, return its pointer (or NULL on errors)
  */
 Evas_Object *
-evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
+evas_smart_group_remove(Evas_Object * o, Evas_Object * child)
 {
 	long idx;
 
@@ -513,14 +513,14 @@ evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 	idx = (long)evas_object_data_get(child, "index");
 	idx--;
 
-	_evas_smart_example_remove_do(priv, child, idx);
+	_evas_smart_group_remove_do(priv, child, idx);
 
 	evas_object_smart_callback_call(o, EVT_CHILDREN_NUMBER_CHANGED,
 									(void *)(long)priv->child_count);
 	evas_object_smart_changed(o);
 
 	return child;
-}/*evas_smart_example_remove*/
+}/*evas_smart_group_remove*/
 
 
 /*
@@ -707,7 +707,7 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 		Eina_Rectangle smart_geometry;
 		Evas_Object *smt;
 
-		smt = evas_smart_example_add(evas);
+		smt = evas_smart_group_add(evas);
 		snprintf(s, sizeof(s), "%s_smart", location_name_get(location));
 		evas_object_name_set(smt, s);
 		snprintf(key, sizeof(key), "map/%s", evas_object_name_get(smt));
@@ -729,7 +729,7 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 		}
 		evas_object_move(smt, smart_geometry.x, smart_geometry.y);
 		evas_object_resize(smt, smart_geometry.w, smart_geometry.h);
-		evas_smart_example_location_add(smt, location);
+		evas_smart_group_location_add(smt, location);
 		evas_object_show(smt);
 	}
 
