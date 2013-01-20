@@ -743,8 +743,8 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_show(app->win);
 
 	mail_action("{\"FROM\":\"alexandre.dussart@laposte.net\",\"TO\":\"alexandre.dussart@laposte.net\",\"SUBJECT\":\"Bot EDAMS\",\"BODY\":\"TEST\"}");
-	exec_action("{\"EXEC\":\"/usr/bin/gedit\",\"TERMINAL\":\"false\"}");
-	debug_action("{\"PRINT\":\"pwet\"}");
+	//exec_action("{\"EXEC\":\"/usr/bin/gedit\",\"TERMINAL\":\"false\"}");
+	//debug_action("{\"PRINT\":\"pwet\"}");
 
 	Ecore_Pipe *pipe;
 	pid_t child_pid;

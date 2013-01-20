@@ -76,7 +76,6 @@ static int efl_init(App_Info * app)
 		debug(stdout, _("Ecore_Con_Url pipeline has been enabled"));
 		ecore_con_url_pipeline_set(EINA_TRUE);
 	}
-	//ecore_con_url_pipeline_set(EINA_FALSE);
 
 	ecore_evas_init();
 	edje_init();

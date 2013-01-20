@@ -447,6 +447,7 @@ evas_smart_example_location_add(Evas_Object * o, Location * location)
 									   EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, NULL);
 
 		_evas_smart_example_child_callbacks_register(o, priv->children[x], 0);
+		evas_object_data_set(priv->children[x], "widget", widget);
 		evas_object_smart_member_add(priv->children[x], o);
 		evas_object_smart_changed(o);
 		priv->child_count++;
@@ -505,7 +506,7 @@ evas_smart_example_remove(Evas_Object * o, Evas_Object * child)
 	for (x = 0; x != MAX_CHILD; x++)
 	{
 		if (priv->children[x] != child)
-			debug(stderr,_("You are trying to remove something not belonging to the smart object"));
+			debug(stderr,_("You are trying to remove something not belonging to the Group_Smart object"));
 		return NULL;
 	}
 
@@ -544,20 +545,14 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 {
 	Evas_Event_Key_Down *ev = einfo;
 
-
 	if(evas_object_smart_parent_get(o))
 	{
-		char id[255];
-		Device *device;
-
-		sscanf(evas_object_name_get(o), "%*[^'_']_%[^'_']_%*[^'_']_edje", id);
-
-/*
-		device = devices_list_device_with_id_get(app->devices, atoi(id));
-
 			// Key 's' show data device in graphics generated from gnuplot(PNG format).
 			if (strcmp(ev->keyname, "s") == 0)
 			{
+				Widget *widget = evas_object_data_get(o, "widget");
+				Device *device = widget_device_get(widget);
+
 				if(device)
 				{
 					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
@@ -578,7 +573,6 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			}
 			return;
 		}
-		*/
 	}
 	else
 	{
