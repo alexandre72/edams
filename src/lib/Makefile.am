@@ -15,6 +15,7 @@ lib_LTLIBRARIES = libedams.la
 libedams_la_SOURCES = \
 action.c \
 cJSON.c \
+emulation.c \
 gnuplot.c \
 myfileselector.c \
 path.c \
@@ -24,7 +25,6 @@ settings.c \
 cosm.c \
 utils.c \
 xPL-config.c \
-xPL-hub.c \
 xPL-io.c \
 xPL-listeners.c \
 xPL-message.c \

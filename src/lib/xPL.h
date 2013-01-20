@@ -391,11 +391,4 @@ extern Eina_Bool xPL_removeRawListener(xPL_rawListener);
 typedef void (* xPL_messageListener)(xPL_MessagePtr, xPL_ObjectPtr);
 extern void xPL_addMessageListener(xPL_messageListener, xPL_ObjectPtr);
 extern Eina_Bool xPL_removeMessageListener(xPL_messageListener);
-
-/** Built-in hub support **/
-/* NOTE: The xPLLib must be initialize in xcStandalone mode */
-/* in order to use a hub.                                   */
-extern Eina_Bool xPL_startHub();
-extern void xPL_stopHub();
-extern Eina_Bool xPL_isHubRunning();
 #endif /*__XPL_H*/
