@@ -32,7 +32,8 @@ static int paths_init(App_Info * app);
 static int efl_init(App_Info * app);
 
 
-static int xpl_init(App_Info * app)
+static int
+xpl_init(App_Info * app)
 {
 	debug(stdout, _("Initialize xPL service..."));
 
@@ -55,7 +56,8 @@ static int xpl_init(App_Info * app)
 
 
 
-static int efl_init(App_Info * app)
+static int
+efl_init(App_Info * app)
 {
 	debug(stdout, _("Initialize Enlightenment Foundation Libraries..."));
 
@@ -104,7 +106,8 @@ static int efl_init(App_Info * app)
 }
 
 
-static int paths_init(App_Info * app)
+static int
+paths_init(App_Info * app)
 {
 	debug(stdout, _("Checking EDAMS useful paths..."));
 
@@ -132,7 +135,8 @@ static int paths_init(App_Info * app)
 }
 
 
-static int i18n_init(App_Info * app __UNUSED__)
+static int
+ i18n_init(App_Info * app __UNUSED__)
 {
 #if ENABLE_NLS
 	setlocale(LC_ALL, "");
@@ -146,7 +150,8 @@ static int i18n_init(App_Info * app __UNUSED__)
 
 
 
-int edams_init(App_Info * app)
+int
+edams_init(App_Info * app)
 {
 	i18n_init(app);
 	edams_settings_init();
@@ -155,5 +160,6 @@ int edams_init(App_Info * app)
 	locations_init();
 	devices_init();
 	xpl_init(app);
+
 	return 0;
 }

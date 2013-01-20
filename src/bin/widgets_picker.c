@@ -86,13 +86,10 @@ _layout_samples_test(Evas_Object *layout)
 		edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
 	}
 
-	if ((t = elm_layout_data_get(layout, "action")))
-	{
-		if (atoi(device_data_get(sample)) == 0)
-			elm_object_signal_emit(layout, "end", "over");
-		else
-			elm_object_signal_emit(layout, "animate", "over");
-	}
+	if (atoi(device_data_get(sample)) == 0)
+		elm_object_signal_emit(layout, "false", "over");
+	else
+		elm_object_signal_emit(layout, "true", "over");
 
 	if ((t = elm_layout_data_get(layout, "title")))
 	{
@@ -227,7 +224,7 @@ widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 		char *group;
 		EINA_LIST_FOREACH(groups, l, group)
 		{
-			if (strncmp(group, "meter/", 6) == 0)
+			if (strncmp(group, "widget/", 6) == 0)
 			{
 				if(!strstr(group, "/icon"))
 				{

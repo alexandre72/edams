@@ -36,7 +36,7 @@ struct _Widget
     const char * name;				//Widget name associated(edc widget group name) e.g. 'meter/counter'.
     unsigned int device_id;			//Device id associated e.g '12'.
     const char *device_filename;	//Device filename associated e.g 'temperature1.eet'.
-    unsigned int id;			//Device widget position in Eina_List.
+    unsigned int id;				//Device widget position in Eina_List.
 };
 
 

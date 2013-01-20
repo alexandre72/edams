@@ -566,6 +566,14 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	// Initialize edams.
 	edams_init(app);
 
+	//Add a registered virtual device, to allow adding special widgets like mail checker, clock.
+	Device *device;
+	if(device = device_new(_("virtual")))
+	{
+		device_save(device);
+		device_free(device);
+	}
+
 	//Load registered devices.
 	app->devices = devices_list_get();
 
@@ -680,7 +688,6 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(naviframe);
 
-
 	Location *location;
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
@@ -696,8 +703,6 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 		elm_object_item_data_set(it, location);
 	}
-
-
 
 	Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);

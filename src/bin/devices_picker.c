@@ -223,15 +223,14 @@ devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
      // Fill gengrid with detected devices.
     Eina_List *l;
     Device *device;
+    GenGridItem *ti;
 
     EINA_LIST_FOREACH(app->devices, l, device)
     {
-    	GenGridItem *ti;
         ti = calloc(1, sizeof(*ti));
        	ti->device = device_clone(device);
         ti->gg_it = elm_gengrid_item_append(gengrid, gic, ti, NULL, NULL);
     }
-
 	// Item_class_ref is needed for gic.
 	// Some items can be added in callbacks.
     elm_gengrid_item_class_ref(gic);
