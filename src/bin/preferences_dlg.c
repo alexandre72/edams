@@ -45,28 +45,22 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	App_Info *app = (App_Info *) evas_object_data_get(win, "app");
 
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
-		if(!elm_entry_is_empty(entry))
-			edams_settings_cosm_apikey_set( elm_object_text_get(entry));
+	edams_settings_cosm_apikey_set( elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "map background entry", -1);
-		if(!elm_entry_is_empty(entry))
-			edams_settings_map_background_set(elm_object_text_get(entry));
+	edams_settings_map_background_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "gnuplot path entry", -1);
-		if(!elm_entry_is_empty(entry))
-			edams_settings_gnuplot_path_set(elm_object_text_get(entry));
+	edams_settings_gnuplot_path_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "smtp server entry", -1);
-		if(!elm_entry_is_empty(entry))
-			edams_settings_smtp_server_set( elm_object_text_get(entry));
+	edams_settings_smtp_server_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "smtp username entry", -1);
-		if(!elm_entry_is_empty(entry))
-			edams_settings_smtp_username_set(elm_object_text_get(entry));
+	edams_settings_smtp_username_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "smtp userpwd entry", -1);
-		if(!elm_entry_is_empty(entry))
-			edams_settings_smtp_userpwd_set( elm_object_text_get(entry));
+	edams_settings_smtp_userpwd_set( elm_object_text_get(entry));
 
 	check = elm_object_name_find(win, "emulation check", -1);
 	edams_settings_softemu_set(elm_check_state_get(check));

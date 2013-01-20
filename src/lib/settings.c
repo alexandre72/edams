@@ -134,7 +134,6 @@ edams_settings_map_background_get()
 void
 edams_settings_map_background_set(const char *map_background)
 {
-    EINA_SAFETY_ON_NULL_RETURN(map_background);
     eet_write(ef, "map/map_background", map_background, strlen(map_background)+1, 0);
 	debug(stdout, _("Map background file is '%s'"), map_background);
 }/*edams_settings_map_background_set*/
@@ -157,7 +156,6 @@ edams_settings_cosm_apikey_get()
 void
 edams_settings_cosm_apikey_set(const char *cosm_apikey)
 {
-    EINA_SAFETY_ON_NULL_RETURN(cosm_apikey);
     eet_write(ef, "edams/cosm_apikey", cosm_apikey, strlen(cosm_apikey)+1, 0);;
 	debug(stdout, _("Cosm data handling options is %s"), cosm_apikey?_("enabled"):_("disabled"));
 }/*edams_settings_cosm_apikey_set*/
@@ -178,7 +176,6 @@ edams_settings_gnuplot_path_get()
 void
 edams_settings_gnuplot_path_set(const char *gnuplot_path)
 {
-    EINA_SAFETY_ON_NULL_RETURN(gnuplot_path);
     eet_write(ef, "edams/gnuplot_path", gnuplot_path, strlen(gnuplot_path)+1, 0);;
 	debug(stdout, _("Gnuplot path is '%s'"), gnuplot_path);
 }/*edams_settings_gnuplot_path_set*/
@@ -201,7 +198,6 @@ edams_settings_smtp_server_get()
 void
 edams_settings_smtp_server_set(const char *smtp_server)
 {
-    EINA_SAFETY_ON_NULL_RETURN(smtp_server);
     eet_write(ef, "edams/smtp_server", smtp_server, strlen(smtp_server)+1, 0);;
 	debug(stdout, _("Smtp server is '%s'"), smtp_server);
 }/*edams_settings_smtp_server_set*/
@@ -224,7 +220,6 @@ edams_settings_smtp_username_get()
 void
 edams_settings_smtp_username_set(const char *smtp_username)
 {
-    EINA_SAFETY_ON_NULL_RETURN(smtp_username);
     eet_write(ef, "edams/smtp_username", smtp_username, strlen(smtp_username)+1, 0);;
 }/*edams_settings_smtp_username_set*/
 
@@ -247,7 +242,6 @@ edams_settings_smtp_userpwd_get()
 void
 edams_settings_smtp_userpwd_set(const char *smtp_userpwd)
 {
-    EINA_SAFETY_ON_NULL_RETURN(smtp_userpwd);
     eet_write(ef, "edams/smtp_userpwd", smtp_userpwd, strlen(smtp_userpwd)+1, 0);;
 }/*edams_settings_smtp_username_set*/
 
