@@ -111,15 +111,16 @@ _button_quit_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, voi
 static Eina_Bool
 _statusbar_timer_cb(void *data __UNUSED__)
 {
-	char s[64];
+	const char *s;
 	time_t timestamp;
 	struct tm *t;
 
 	Evas_Object *label = elm_object_name_find(app->win, "status text", -1);
 	timestamp = time(NULL);
 	t = localtime(&timestamp);
-  	snprintf(s, sizeof(s), _("EDAMS v%s - %02d/%02d/%d"),PACKAGE_VERSION, (int)t->tm_mday, (int)t->tm_mon + 1, 1900 + (int)t->tm_year);
+  	asprintf(&s, _("EDAMS v%s - %02d/%02d/%d"),PACKAGE_VERSION, (int)t->tm_mday, (int)t->tm_mon + 1, 1900 + (int)t->tm_year);
 	elm_object_text_set(label, s);
+	FREE(s);
 
 	Evas_Object *icon = elm_object_name_find(app->win, "status icon", -1);
 	elm_icon_standard_set(icon, "help-about");

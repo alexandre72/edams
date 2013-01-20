@@ -42,15 +42,16 @@
    		FREE(ret);	\
    	} \
 
-#define EET_STRING_SETTINGS_WRITE(_field, _var) \
-   	eet_write(ef, _field, _var, strlen(_var)+1, 0); \
+#define EET_STRING_SETTINGS_WRITE(_field, _var) 		\
+	if(_var) 											\
+   		eet_write(ef, _field, _var, strlen(_var)+1, 0); \
 
 
-#define EET_BOOL_SETTINGS_WRITE(_field, _var) \
-	if(_var == EINA_TRUE) \
-	   	eet_write(ef, _field, "1", strlen("1")+1, 0); \
-	else \
-	   	eet_write(ef, _field, "0", strlen("0")+1, 0); \
+#define EET_BOOL_SETTINGS_WRITE(_field, _var) 			\
+	if(_var == EINA_TRUE) 								\
+	   	eet_write(ef, _field, "1", strlen("1")+1, 0);	\
+	else 												\
+	   	eet_write(ef, _field, "0", strlen("0")+1, 0); 	\
 
 
 /*

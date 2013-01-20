@@ -38,35 +38,42 @@ static void
 _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *win;
+	Evas_Object *entry;
+	Evas_Object *check;
 
 	win = (Evas_Object *) data;
 	App_Info *app = (App_Info *) evas_object_data_get(win, "app");
 
-	eina_stringshare_replace(&(app->settings->cosm_apikey),
-							 elm_object_text_get(elm_object_name_find
-												 (win, "cosm api key entry", -1)));
-	eina_stringshare_replace(&(app->settings->map_background),
-							 elm_object_text_get(elm_object_name_find
-												 (win, "map background entry", -1)));
+	entry = elm_object_name_find(win, "cosm api key entry", -1);
+		if(!elm_entry_is_empty(entry))
+			eina_stringshare_replace(&(app->settings->cosm_apikey), elm_object_text_get(entry));
 
-	eina_stringshare_replace(&(app->settings->gnuplot_path),
-							 elm_object_text_get(elm_object_name_find
-												 (win, "gnuplot path entry", -1)));
+	entry =elm_object_name_find(win, "map background entry", -1);
+		if(!elm_entry_is_empty(entry))
+			eina_stringshare_replace(&(app->settings->map_background), elm_object_text_get(entry));
 
-	eina_stringshare_replace(&(app->settings->smtp_server),
-							 elm_object_text_get(elm_object_name_find
-												 (win, "smtp user entry", -1)));
+	entry =elm_object_name_find(win, "gnuplot path entry", -1);
+		if(!elm_entry_is_empty(entry))
+			eina_stringshare_replace(&(app->settings->gnuplot_path), elm_object_text_get(entry));
 
-	eina_stringshare_replace(&(app->settings->smtp_username),
-							 elm_object_text_get(elm_object_name_find
-												 (win, "smtp username entry", -1)));
 
-	eina_stringshare_replace(&(app->settings->smtp_userpwd),
-							 elm_object_text_get(elm_object_name_find
-												 (win, "smtp userpwd entry", -1)));
+	entry =elm_object_name_find(win, "smtp server entry", -1);
+		if(!elm_entry_is_empty(entry))
+			eina_stringshare_replace(&(app->settings->smtp_server), elm_object_text_get(entry));
 
-	app->settings->softemu = elm_check_state_get(elm_object_name_find(win, "emulation checkb", -1));
-	app->settings->debug = elm_check_state_get(elm_object_name_find(win, "debug checkb", -1));
+	entry =elm_object_name_find(win, "smtp username entry", -1);
+		if(!elm_entry_is_empty(entry))
+			eina_stringshare_replace(&(app->settings->smtp_username), elm_object_text_get(entry));
+
+	entry =elm_object_name_find(win, "smtp userpwd entry", -1);
+		if(!elm_entry_is_empty(entry))
+			eina_stringshare_replace(&(app->settings->smtp_userpwd), elm_object_text_get(entry));
+
+	check = elm_object_name_find(win, "emulation check", -1);
+	app->settings->softemu = elm_check_state_get(check);
+
+	check = elm_object_name_find(win, "debug check", -1);
+	app->settings->debug = elm_check_state_get(check);
 
 	edams_settings_write(app->settings);
 	app->settings = edams_settings_get();
@@ -161,14 +168,14 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	evas_object_show(bx);
 
 	check = elm_check_add(win);
-	evas_object_name_set(check, "emulation checkb");
+	evas_object_name_set(check, "emulation check");
 	elm_object_text_set(check, _("Emulation"));
 	elm_grid_pack(grid, check, 0, 15, 45, 5);
 	elm_check_state_set(check, app->settings->softemu);
 	evas_object_show(check);
 
 	check = elm_check_add(win);
-	evas_object_name_set(check, "debug checkb");
+	evas_object_name_set(check, "debug check");
 	elm_object_text_set(check, _("Debug with printf"));
 	elm_grid_pack(grid, check, 30, 15, 45, 5);
 	elm_check_state_set(check, app->settings->debug);
