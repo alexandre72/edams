@@ -43,7 +43,7 @@ gnuplot_device_data_file_get(Device *device)
  *Write png data graph from device data and return png data path.
  */
 const char *
-gnuplot_device_png_write(App_Info *app, Device *device)
+gnuplot_device_png_write(Device *device)
 {
 	//TODO:should handle xrange to let user select data period(monthly, years, daily, hour).
 	//fprintf(gnuplotPipe, "set xrange [\"01-01-2013-17:36:00\":\"31-01-2013-17:37:00\"]\n");
@@ -53,14 +53,14 @@ gnuplot_device_png_write(App_Info *app, Device *device)
 
 	char s[PATH_MAX];
 
-	if(!app->settings->gnuplot_path)
+	if(!edams_settings_gnuplot_path_get())
 	{
 		debug(stderr, _("Gnuplot binary path isn't set!"));
 		return NULL;
 	}
 
 	FILE *gnuplot_pipe;
-	snprintf(s, sizeof(s), "%s", app->settings->gnuplot_path);
+	snprintf(s, sizeof(s), "%s", edams_settings_gnuplot_path_get());
 	gnuplot_pipe = popen(s, "w");
 	if (gnuplot_pipe)
 	{
@@ -78,7 +78,7 @@ gnuplot_device_png_write(App_Info *app, Device *device)
 	}
 	else
 	{
-		debug(stderr, _("Couldn't found gnuplot binary in path:%s"), app->settings->gnuplot_path);
+		debug(stderr, _("Couldn't found gnuplot binary in path:%s"), edams_settings_gnuplot_path_get());
 		return NULL;
 	}
 
@@ -90,7 +90,7 @@ gnuplot_device_png_write(App_Info *app, Device *device)
  *Write/update gnuplot device data file.
  */
 Eina_Bool
-gnuplot_device_data_write(App_Info *app, Device *device)
+gnuplot_device_data_write(Device *device)
 {
 	if(!device) return EINA_FALSE;
 

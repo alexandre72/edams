@@ -550,7 +550,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 				{
 					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
 					evas_object_image_alpha_set(stat_img, EINA_TRUE);
-    				evas_object_image_file_set(stat_img, gnuplot_device_png_write(app, device), NULL);
+    				evas_object_image_file_set(stat_img, gnuplot_device_png_write(device), NULL);
 					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
     				if (err != EVAS_LOAD_ERROR_NONE)
 					{
@@ -666,19 +666,19 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 
 	Evas_Object *bg;
 
-	if (app->settings->map_background)
+	if (edams_settings_map_background_get())
 		bg = evas_object_image_filled_add(evas);
 	else
 		bg = evas_object_rectangle_add(evas);
 
 	evas_object_name_set(bg, "background image");
-	evas_object_image_file_set(bg, app->settings->map_background, NULL);
+	evas_object_image_file_set(bg, edams_settings_map_background_get(), NULL);
 	evas_object_image_alpha_set(bg, EINA_TRUE);
 	Evas_Load_Error err = evas_object_image_load_error_get(bg);
 
 	if (err != EVAS_LOAD_ERROR_NONE)
 	{
-		debug(stderr, _("Can't load image file from '%s'"), app->settings->map_background);
+		debug(stderr, _("Can't load image file from '%s'"),	edams_settings_map_background_get());
 		evas_object_del(bg);
 		bg = evas_object_rectangle_add(evas);
 	}

@@ -174,7 +174,7 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 
 		if(location)
 		{
-			cosm_location_feed_delete(app, location);
+			cosm_location_feed_delete(location);
 			location_remove(location);
 			snprintf(s, sizeof(s), _("Location '%s' have been removed."), location_name_get(location));
 			elm_object_item_del(it);
@@ -322,14 +322,14 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 		}
 
         /*Write gnuplot file with updated device's data*/
-        gnuplot_device_data_write(app, device);
+        gnuplot_device_data_write(device);
 
         /*Parse all locations and sync with global and cosm*/
         Location *location;
         EINA_LIST_FOREACH(app->locations, l, location)
         {
                 /*Sync device's data with gnuplot, global map and cosm*/
-                cosm_device_datastream_update(app, location, device);
+                cosm_device_datastream_update(location, device);
                 map_widget_data_update(app, location, device);
         }
 
@@ -562,7 +562,6 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	}
 	app->argc = argc;
 	app->argv = argv;
-	app->settings = edams_settings_get();
 
 	// Initialize edams.
 	edams_init(app);

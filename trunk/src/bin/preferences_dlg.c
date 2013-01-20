@@ -46,37 +46,33 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
 		if(!elm_entry_is_empty(entry))
-			eina_stringshare_replace(&(app->settings->cosm_apikey), elm_object_text_get(entry));
+			edams_settings_cosm_apikey_set( elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "map background entry", -1);
 		if(!elm_entry_is_empty(entry))
-			eina_stringshare_replace(&(app->settings->map_background), elm_object_text_get(entry));
+			edams_settings_map_background_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "gnuplot path entry", -1);
 		if(!elm_entry_is_empty(entry))
-			eina_stringshare_replace(&(app->settings->gnuplot_path), elm_object_text_get(entry));
-
+			edams_settings_gnuplot_path_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "smtp server entry", -1);
 		if(!elm_entry_is_empty(entry))
-			eina_stringshare_replace(&(app->settings->smtp_server), elm_object_text_get(entry));
+			edams_settings_smtp_server_set( elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "smtp username entry", -1);
 		if(!elm_entry_is_empty(entry))
-			eina_stringshare_replace(&(app->settings->smtp_username), elm_object_text_get(entry));
+			edams_settings_smtp_username_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "smtp userpwd entry", -1);
 		if(!elm_entry_is_empty(entry))
-			eina_stringshare_replace(&(app->settings->smtp_userpwd), elm_object_text_get(entry));
+			edams_settings_smtp_userpwd_set( elm_object_text_get(entry));
 
 	check = elm_object_name_find(win, "emulation check", -1);
-	app->settings->softemu = elm_check_state_get(check);
+	edams_settings_softemu_set(elm_check_state_get(check));
 
 	check = elm_object_name_find(win, "debug check", -1);
-	app->settings->debug = elm_check_state_get(check);
-
-	edams_settings_write(app->settings);
-	app->settings = edams_settings_get();
+	edams_settings_debug_set(elm_check_state_get(check));
 
 	evas_object_del(win);
 }/*_button_apply_clicked_cb*/
@@ -160,7 +156,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
-	elm_object_text_set(entry, app->settings->cosm_apikey);
+	elm_object_text_set(entry, edams_settings_cosm_apikey_get());
 
 	bx = elm_box_add(win);
 	evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -171,14 +167,14 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	evas_object_name_set(check, "emulation check");
 	elm_object_text_set(check, _("Emulation"));
 	elm_grid_pack(grid, check, 0, 15, 45, 5);
-	elm_check_state_set(check, app->settings->softemu);
+	elm_check_state_set(check, edams_settings_softemu_get());
 	evas_object_show(check);
 
 	check = elm_check_add(win);
 	evas_object_name_set(check, "debug check");
 	elm_object_text_set(check, _("Debug with printf"));
 	elm_grid_pack(grid, check, 30, 15, 45, 5);
-	elm_check_state_set(check, app->settings->debug);
+	elm_check_state_set(check, edams_settings_debug_get());
 	evas_object_show(check);
 
 	frame = elm_frame_add(win);
@@ -199,7 +195,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_box_pack_end(bx, entry);
 	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_object_text_set(entry, app->settings->map_background);
+	elm_object_text_set(entry, edams_settings_map_background_get());
 
 	button = elm_button_add(win);
 	elm_object_text_set(button, _("Open..."));
@@ -226,7 +222,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	evas_object_show(entry);
 	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_object_text_set(entry, app->settings->gnuplot_path);
+	elm_object_text_set(entry, edams_settings_gnuplot_path_get());
 	elm_object_content_set(frame, entry);
 
 	frame = elm_frame_add(win);
@@ -241,7 +237,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
-	elm_object_text_set(entry, app->settings->smtp_server);
+	elm_object_text_set(entry, edams_settings_smtp_server_get());
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("SMTP username:"));
@@ -255,7 +251,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
-	elm_object_text_set(entry, app->settings->smtp_username);
+	elm_object_text_set(entry, edams_settings_smtp_username_get());
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("SMTP password:"));
@@ -270,7 +266,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
-	elm_object_text_set(entry, app->settings->smtp_userpwd);
+	elm_object_text_set(entry, edams_settings_smtp_userpwd_get());
 
 	bx = elm_box_add(win);
 	elm_box_horizontal_set(bx, EINA_TRUE);

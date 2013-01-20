@@ -23,19 +23,22 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
-typedef struct
-{
-	char *cosm_apikey;			/*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
-	char *gnuplot_path;			/*Gnuplot path. Eg '/usr/bin/gnuplot'*/
-	char *map_background;		/*Background user in global view.*/
-	char *smtp_server; 			/*SMTP server. Eg 'smtp://smtp.gmail.com:587'*/
-	char *smtp_username;		/*SMTP user password. Eg 'myemailaddress@gmail.com'*/
-	char *smtp_userpwd;			/*SMTP user password. Eg 'PASSWORD123'*/
-	Eina_Bool softemu;			/*Sotfware emulation, mainly used to test EDAMS*/
-	Eina_Bool debug;			/*Use printf to help to debug EDAMS.*/
-} Settings;
 
-const Settings *edams_settings_get(void);
-Settings *edams_settings_free(Settings *settings);
-void edams_settings_write(Settings *settings);
+Eina_Bool edams_settings_debug_get();
+Eina_Bool edams_settings_softemu_get();
+const char *edams_settings_map_background_get();
+const char *edams_settings_cosm_apikey_get();
+const char *edams_settings_gnuplot_path_get();
+const char *edams_settings_smtp_server_get();
+const char *edams_settings_smtp_username_get();
+const char *edams_settings_smtp_userpwd_get();
+
+void edams_settings_debug_set(Eina_Bool debug);
+void edams_settings_softemu_set(Eina_Bool softemu);
+void edams_settings_cosm_apikey_set(const char *cosm_apikey);
+void edams_settings_map_background_set(const char *map_background);
+void edams_settings_gnuplot_path_set(const char *gnuplot_path);
+void edams_settings_smtp_server_set(const char *smtp_server);
+void edams_settings_smtp_username_set(const char *smtp_username);
+void edams_settings_smtp_userpwd_set(const char *smtp_userpwd);
 #endif /* __SETTINGS_H__ */

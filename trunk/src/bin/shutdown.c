@@ -66,7 +66,7 @@ int edams_shutdown(App_Info * app)
 	app->devices = devices_list_free(app->devices);
 	locations_shutdown();
 	devices_shutdown();
-	edams_settings_free(app->settings);
+	edams_settings_shutdown();
 	FREE(app);
 
 	efl_shutdown(app);
