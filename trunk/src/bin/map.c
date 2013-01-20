@@ -415,7 +415,7 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 
 		if (strstr(widget_name_get(widget), "default"))
 		{
-			if(!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), "meter/counter"))
+			if(!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), "widget/counter"))
 			{
 				debug(stderr, _("Can't load group Edje group '%s' from Edje file '%s'"),
 					 											 widget_name_get(widget),
@@ -755,7 +755,6 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
     if (err != EVAS_LOAD_ERROR_NONE)
 	{
 		debug(stdout, _("Can't load Edje image!"));
-		return;
 	}
 	evas_object_image_scale(stat_img, 200, 200);
 	evas_object_move(stat_img, 0,  480);
@@ -831,13 +830,10 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 				edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
 			}
 
-			if ((t = edje_object_data_get(edje, "action")))
-			{
-				if (atoi(device_data_get(device)) == 0)
-					edje_object_signal_emit(edje, "end", "over");
-				else
-					edje_object_signal_emit(edje, "animate", "over");
-			}
+			if (atoi(device_data_get(device)) == 0)
+				edje_object_signal_emit(edje, "false", "over");
+			else
+				edje_object_signal_emit(edje, "true", "over");
 
 			if ((t = edje_object_data_get(edje, "title")))
 			{

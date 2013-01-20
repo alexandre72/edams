@@ -26,7 +26,7 @@ group
 		image: "thermometer_icon.png" COMP;
 	}
 
-	name: "meter/thermometer/icon";
+	name: "widget/thermometer/icon";
     min: 32 32;
       parts
       {
@@ -50,7 +50,7 @@ group
 	min: 16 60;
 	max: 16 60;
 
-	name: "meter/thermometer";
+	name: "widget/thermometer";
 	images
 	{
 		image: "thermometer_base.png" COMP;
@@ -62,7 +62,6 @@ group
 	{
 		item: "value" "value.text";
 		item: "drag" "EDJE_MESSAGE_FLOAT 1";
-
 		item: "description" "Thermometer display value in a classic red gauge, with numerical value display on the top. Mostly useful with temperature sensor device.";
 		item: "tags" "temperature,humidity,rpm";
 	}
