@@ -99,6 +99,12 @@ const char * action_ifvalue_get(const Action *action);
 Action_Type  action_type_get(const Action *action);
 const char * action_data_get(const Action *action);
 
+void action_ifcondition_set(Action *action, Condition ifcondition);
+void action_ifvalue_set(const Action *action, const char *ifvalue);
+void action_type_set(Action *action, Action_Type type);
+void action_data_set(const Action *action, const char *data);
+
+
 void device_action_add(Device *device, Action *action);
 void device_action_del(Device *device,Action *action);
 Action *device_action_get(const Device *device, unsigned int nth);

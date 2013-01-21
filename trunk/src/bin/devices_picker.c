@@ -18,6 +18,7 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
 #include <Elementary.h>
 
 #include "devices_picker.h"
@@ -53,11 +54,8 @@ static char *
 _gengrid_devices_text_get(void *data, Evas_Object * obj __UNUSED__, const char *part __UNUSED__)
 {
 	const GenGridItem *ti = data;
-	char buf[256];
 
-	snprintf(buf, sizeof(buf), "%s", device_name_get(ti->device));
-
-	return strdup(buf);
+	return strdup(device_name_get(ti->device));
 }/*_gengrid_devices_text_get*/
 
 
@@ -119,19 +117,20 @@ _button_select_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, v
 	Evas_Object *gg = (Evas_Object *) elm_object_name_find(win, "devices gengrid", -1);
 	Elm_Object_Item *it = elm_gengrid_selected_item_get(gg);
 
-	if (!it)
-		return;
+	if (!it) return;
+
 	GenGridItem *ggi = elm_object_item_data_get(it);
 	Widget *widget;
 	widget = widget_new(NULL, ggi->device);
 	location_widgets_add(app->location, widget);
 	location_save(app->location);
 
-	char s[256];
-	snprintf(s, sizeof(s), _("Widget for device '%s' have been added to location '%s'."),
-							device_name_get(ggi->device),
-							location_name_get(app->location));
+	char *s;
+	asprintf(&s, _("Widget for device '%s' have been added to location '%s'."),
+													device_name_get(ggi->device),
+												location_name_get(app->location));
 	statusbar_text_set(s, "elm/icon/device/default");
+	FREE(s);
 
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));

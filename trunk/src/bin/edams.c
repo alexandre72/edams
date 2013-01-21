@@ -112,7 +112,7 @@ _button_quit_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, voi
 static Eina_Bool
 _statusbar_timer_cb(void *data __UNUSED__)
 {
-	const char *s;
+	char *s;
 	time_t timestamp;
 	struct tm *t;
 
@@ -157,7 +157,6 @@ statusbar_text_set(const char *msg, const char *ic)
 static void
 _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	char s[256];
 	Evas_Object *list;
 	Elm_Object_Item *it;
 
@@ -175,9 +174,10 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 
 		if(location)
 		{
+			char *s;
 			cosm_location_feed_delete(location);
 			location_remove(location);
-			snprintf(s, sizeof(s), _("Location '%s' have been removed."), location_name_get(location));
+			asprintf(&s, _("Location '%s' have been removed."), location_name_get(location));
 			elm_object_item_del(it);
 
 			app->locations = locations_list_location_remove(app->locations, location);
@@ -187,6 +187,7 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 			elm_naviframe_item_pop(naviframe);
 
 			statusbar_text_set(s, "dialog-information");
+			FREE(s);
 		}
 	}
 }/*_button_remove_location_clicked_cb*/
@@ -216,7 +217,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)ontrol.basic' is trig
 static void
 _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data __UNUSED__)
 {
-    char buf[256] = "0";
+    char buf[351] = "0";
     xPL_NameValueListPtr values_names;
 
 	Ecore_Pipe *pipe = (Ecore_Pipe *) data;
@@ -239,9 +240,6 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 static void
 xpl_process_messages()
 {
-  signal(SIGTERM, shutdown);
-  signal(SIGINT, shutdown);
-
 	for (;;)
 	{
 		xPL_processMessages(-1);
@@ -256,10 +254,9 @@ xpl_process_messages()
 static void
 handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
-        char s[PATH_MAX] = "0";
         char name[255];
-        char type[255];
-        char sval[4] = "0";
+        char type[64];
+        char sval[32] = "0";
         Device *device;
 
         char *str = malloc(sizeof(char) * len + 1);
@@ -267,7 +264,6 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
         str[len] = '\0';
         sscanf(str, "%[^'!']!%[^'!']!%s", name, type, sval);
         free(str);
-
 
         /* TODO:handle case of device has been changed(type, name) and inform user about it*/
         /*Register new devices to EDAMS*/
@@ -285,8 +281,10 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
         /*Or try to load it instead...*/
         else
         {
-                snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+                char *s;
+                asprintf(&s, "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
                 device = device_load(s);
+                FREE(s);
         }
 
         if(!device)
@@ -319,6 +317,9 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 					case MORE_OR_EGAL_TO:
 							if(atoi(device_data_get(device)) >= atoi(action_ifvalue_get(action))) action_parse(action);
 							break;
+					case UNKNOWN_CONDITION:
+					case CONDITION_LAST:
+							break;
 				}
 		}
 
@@ -343,7 +344,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
  *Callback called in ctxpopup object when "remove" item is selected
  */
 static void
-_button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	if (!app->location)
 	{
@@ -351,41 +352,28 @@ _button_remove_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUS
 		return;
 	}
 
-	Evas_Object *list = elm_object_name_find(app->win, "widgets list", -1);
-
+	Evas_Object *list = data;
 	Elm_Object_Item *selected_item = elm_list_selected_item_get(list);
+
+	if(!selected_item) return;
+
 	Widget *widget = elm_object_item_data_get(selected_item);
-	Device *device = device_load(widget_device_filename_get(widget));
+	Device *device = widget_device_get(widget);
 
 	location_widgets_del(app->location, widget);
    	elm_object_item_del(selected_item);
 	location_save(app->location);
 
-	char s[256];
-	snprintf(s, sizeof(s), _("Widget for device '%s' have been removed from location '%s'."),
-							device_name_get(device),
-							location_name_get(app->location));
+	char *s;
+	asprintf(&s,  _("Widget for device '%s' have been removed from location '%s'."),
+																device_name_get(device),
+																location_name_get(app->location));
 	statusbar_text_set(s, "elm/icon/device/default");
+	FREE(s);
 
-
-	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));
+	//Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
+	//elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));
 }/*_button_remove_widget_clicked_cb*/
-
-
-
-#define ICON_NEW(ic, _icon)									  	\
-   if (_icon)                                         			\
-     {                                                 			\
-        ic = elm_icon_add(app->win);               				\
-        elm_icon_standard_set(ic, _icon);                      	\
-        elm_image_resizable_set(ic, EINA_FALSE, EINA_TRUE);   	\
-		elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME); \
-     }                                                         	\
-   else                                                        	\
-      ic = NULL;												\
-
-
 
 
 /*
@@ -403,72 +391,81 @@ _list_widgets_sort_cb(const void *pa, const void *pb)
 }/*_list_widgets_sort_cb*/
 
 
+
+
+static Evas_Object *
+_entry_append_item_provider_cb(void *images __UNUSED__, Evas_Object *entry, const char *item)
+{
+   Evas_Object *image = NULL;;
+
+	printf("****item provider:%s\n", item);
+
+	if (!strcmp(item, "xpl-logo"))
+	{
+		char buf[1024];
+		snprintf(buf, sizeof(buf), "%s/images/icon_10.png", elm_app_data_dir_get());
+        image = evas_object_image_filled_add(evas_object_evas_get(entry));
+        evas_object_image_file_set(image, buf, NULL);
+
+/*
+        image = evas_object_image_filled_add(evas_object_evas_get(entry));
+        evas_object_image_file_set(image, edams_edje_theme_file_get(), "elm/icon/xpl/default");
+        */
+	}
+	return image;
+}
+
+
+
 /*
  *
  */
 Evas_Object *
 _location_naviframe_content_set(Location * location)
 {
-	Evas_Object *gd;
+	Evas_Object *grid;
 	Evas_Object *bx, *frame;
 	Evas_Object *list;
-	Evas_Object *img, *ic;
-	Evas_Object *en, *bt;
-	char s[256];
+	Evas_Object *icon;
+	Evas_Object *entry, *bt;
+	char *s;
 
 	if (!location) return NULL;
 
-	gd = elm_grid_add(app->win);
-	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(gd, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_grid_size_set(gd, 100, 100);
-	evas_object_show(gd);
+	grid = elm_grid_add(app->win);
+	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_grid_size_set(grid, 100, 100);
+	evas_object_show(grid);
 
 	frame = elm_frame_add(app->win);
 	elm_object_text_set(frame, _("Informations"));
-	elm_grid_pack(gd, frame, 1, 1, 99, 30);
+	elm_grid_pack(grid, frame, 1, 1, 99, 30);
 	evas_object_show(frame);
 
-   	bx = elm_box_add(app->win);
-   	elm_box_horizontal_set(bx, EINA_TRUE);
-   	evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	elm_win_resize_object_add(app->win, bx);
-   	evas_object_show(bx);
-
-	img = elm_image_add(app->win);
-	elm_image_smooth_set(img, EINA_TRUE);
-	elm_image_aspect_fixed_set(img, EINA_TRUE);
-	elm_image_resizable_set(img, EINA_FALSE, EINA_TRUE);
-
-	if (!elm_image_file_set(img, location_filename_get(location), "/image/0"))
-	{
-		elm_image_file_set(img, edams_edje_theme_file_get(), "default/nopicture");
-	}
-   	evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(bx, img);
-	evas_object_show(img);
-
-   	en = elm_entry_add(app->win);
-   	elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
-   	snprintf(s, sizeof(s),"%s\n%s", location_name_get(location), location_cosm_feedid_get(location) ? "Feed added to cosm" : "Feed not added to cosm");
-   	elm_object_text_set(en, s);
-   	evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   	elm_box_pack_end(bx, en);
-	evas_object_show(en);
-
-	elm_object_content_set(frame, bx);
+   	entry = elm_entry_add(app->win);
+   	elm_entry_scrollable_set(entry, EINA_TRUE);
+   	//snprintf(s, sizeof(s),"%s\n%s", location_name_get(location), location_cosm_feedid_get(location) ? "Feed added to cosm" : "Feed not added to cosm");
+    asprintf(&s, "Item<item size=32x32 vsize=full href=xpl-logo</item>");
+   	elm_object_text_set(entry, "Item<item size=32x32 vsize=full href=aa</item>");
+   	FREE(s);
+   	elm_entry_context_menu_disabled_set(entry, EINA_TRUE);
+	elm_entry_item_provider_append(entry, _entry_append_item_provider_cb, NULL);
+   	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_show(entry);
+	elm_object_content_set(frame, entry);
 
 	frame = elm_frame_add(app->win);
 	elm_object_text_set(frame, _("Widgets"));
-	elm_grid_pack(gd, frame, 1, 31, 99, 49);
+	elm_grid_pack(grid, frame, 1, 31, 99, 49);
 	evas_object_show(frame);
 
 	list = elm_list_add(app->win);
+	asprintf(&s, "%s widgets list", location_name_get(location));
+	evas_object_name_set(list, s);
+	FREE(s);
 	elm_scroller_policy_set(list, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_ON);
 	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS);
-	evas_object_name_set(list, "widgets list");
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
 
@@ -477,75 +474,78 @@ _location_naviframe_content_set(Location * location)
 	widgets = location_widgets_list_get(location);
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
-		Evas_Object *ic;
-		ic = elm_icon_add(app->win);
-		snprintf(s, sizeof(s), "%s/icon", widget_name_get(widget));
-   		elm_image_file_set(ic, edams_edje_theme_file_get(), s);
-		elm_image_aspect_fixed_set(ic, EINA_TRUE);
-		elm_image_resizable_set(ic, 1, 0);
-
 		Device *device = widget_device_get(widget);
 		if(!device) continue;
 
-		snprintf(s, sizeof(s), "%d - %s", widget_id_get(widget), device_name_get(device));
-		elm_list_item_append(list, strdup(s), ic, NULL, NULL, widget);
+		Evas_Object *icon;
+		icon = elm_icon_add(app->win);
+		asprintf(&s, "%s/icon", widget_name_get(widget));
+   		elm_image_file_set(icon, edams_edje_theme_file_get(), s);
+   		FREE(s);
+		elm_image_aspect_fixed_set(icon, EINA_TRUE);
+		elm_image_resizable_set(icon, 1, 0);
+
+		asprintf(&s, "%d - %s", widget_id_get(widget), device_name_get(device));
+		elm_list_item_append(list, strdup(s), icon, NULL, NULL, widget);
+		FREE(s);
 		device_free(device);
 	}
 	elm_list_go(list);
 
 	bx = elm_box_add(app->win);
 	elm_box_horizontal_set(bx, EINA_TRUE);
-	elm_grid_pack(gd, bx, 1, 81, 90, 10);
+	elm_grid_pack(grid, bx, 1, 81, 90, 10);
 	evas_object_show(bx);
 
 	bt = elm_button_add(app->win);
 	elm_object_text_set(bt, _("Edit"));
-    ic = elm_icon_add(app->win);
-    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(ic, "document-properties");
-    elm_object_part_content_set(bt, "icon", ic);
+    icon = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(icon, "document-properties");
+    elm_object_part_content_set(bt, "icon", icon);
 	elm_box_pack_end(bx, bt);
     evas_object_smart_callback_add(bt, "clicked", widgets_picker_add, app);
     evas_object_show(bt);
 
 	bt = elm_button_add(app->win);
 	elm_object_text_set(bt, _("Actions"));
-    ic = elm_icon_add(app->win);
-    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(ic, "document-properties");
-    elm_object_part_content_set(bt, "icon", ic);
+    icon = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(icon, "document-properties");
+    elm_object_part_content_set(bt, "icon", icon);
 	elm_box_pack_end(bx, bt);
-    evas_object_smart_callback_add(bt, "clicked", actions_editor_add, app);
+    evas_object_smart_callback_add(bt, "clicked", actions_editor_add, list);
     evas_object_show(bt);
 
     bt = elm_button_add(app->win);
     elm_object_text_set(bt, _("Add"));
-	ic = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "device-add");
-	elm_object_part_content_set(bt, "icon", ic);
+	icon = elm_icon_add(app->win);
+	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(icon, "device-add");
+	elm_object_part_content_set(bt, "icon", icon);
 	elm_box_pack_end(bx, bt);
 	evas_object_smart_callback_add(bt, "clicked", devices_picker_add, app);
 	evas_object_show(bt);
 
 	bt = elm_button_add(app->win);
 	elm_object_text_set(bt, _("Remove"));
-    ic = elm_icon_add(app->win);
-    elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(ic, "device-remove");
-    elm_object_part_content_set(bt, "icon", ic);
+    icon = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(icon, "device-remove");
+    elm_object_part_content_set(bt, "icon", icon);
 	elm_box_pack_end(bx, bt);
-    evas_object_smart_callback_add(bt, "clicked", _button_remove_widget_clicked_cb, NULL);
+    evas_object_smart_callback_add(bt, "clicked", _button_remove_widget_clicked_cb, list);
     evas_object_show(bt);
 
-	return gd;
+	return grid;
 }/*_location_naviframe_content_set*/
 
 
 /*
  * Edams main loop.
  */
-EAPI_MAIN int elm_main(int argc, char **argv)
+EAPI_MAIN int
+elm_main(int argc, char **argv)
 {
 
 	Evas_Object *vbx, *vbx2, *bg, *frame;
@@ -558,7 +558,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	if (!app)
 	{
-		fprintf(stderr, _("\033[31mERROR:\033[0mCan't allocate App_Info struct!\n"));
+		fprintf(stderr, _("\033[31mERROR:\033[0mCan't calloc App_Info struct!\n"));
 		exit(-1);
 	}
 	app->argc = argc;
@@ -675,14 +675,6 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_show(bt);
 	evas_object_smart_callback_add(bt, "clicked", _button_remove_location_clicked_cb, list);
 
-	frame = elm_frame_add(app->win);
-	evas_object_name_set(frame, "location frame");
-	evas_object_size_hint_align_set(frame, -1.0, -1.0);
-	evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_object_part_content_set(panes, "right", frame);
-	evas_object_show(frame);
-
 	naviframe = elm_naviframe_add(app->win);
 	elm_naviframe_content_preserve_on_pop_set(naviframe, EINA_FALSE);
 	evas_object_name_set(naviframe, "naviframe");
@@ -708,8 +700,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 	elm_list_go(list);
-
-	elm_object_content_set(frame, naviframe);
+	elm_object_part_content_set(panes, "right", naviframe);
 
 	/*Setup status bar to inform user.*/
 	sep = elm_separator_add(app->win);
@@ -751,7 +742,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	evas_object_resize(app->win, 700, 500);
 	evas_object_show(app->win);
 
-	mail_action("{\"FROM\":\"alexandre.dussart@laposte.net\",\"TO\":\"alexandre.dussart@laposte.net\",\"SUBJECT\":\"Bot EDAMS\",\"BODY\":\"TEST\"}");
+	//mail_action("{\"FROM\":\"alexandre.dussart@laposte.net\",\"TO\":\"alexandre.dussart@laposte.net\",\"SUBJECT\":\"Bot EDAMS\",\"BODY\":\"TEST\"}");
 	//exec_action("{\"EXEC\":\"/usr/bin/gedit\",\"TERMINAL\":\"false\"}");
 	//debug_action("{\"PRINT\":\"pwet\"}");
 
@@ -781,5 +772,5 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 	edams_shutdown(app);
 
 	return EXIT_SUCCESS;
-}/*main*/
+}/*elm_main*/
 ELM_MAIN()

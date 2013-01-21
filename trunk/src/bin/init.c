@@ -22,10 +22,11 @@
 #include <Ecore_File.h>
 #include <Elementary.h>
 
-#include "edams.h"
-#include "utils.h"
-#include "path.h"
 #include "device.h"
+#include "edams.h"
+#include "path.h"
+#include "settings.h"
+#include "utils.h"
 
 static int xpl_init(App_Info * app);
 static int paths_init(App_Info * app);
@@ -107,7 +108,7 @@ efl_init(App_Info * app)
 
 
 static int
-paths_init(App_Info * app)
+paths_init(App_Info * app __UNUSED__)
 {
 	debug(stdout, _("Checking EDAMS useful paths..."));
 

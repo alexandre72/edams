@@ -129,6 +129,7 @@ cosm_location_feed_add(Location *location)
 	cJSON_AddItemToObject(root, "version", cJSON_CreateString("1.0.0"));
 	cJSON_AddItemToObject(root, "location", fmt=cJSON_CreateObject());
 	cJSON_AddStringToObject(fmt, "name", location_name_get(location));
+	cJSON_AddStringToObject(fmt, "description", location_description_get(location));
 	cJSON_AddStringToObject(fmt, "disposition", "fixed");
 	cJSON_AddStringToObject(fmt, "exposure", "indoor");
 	cJSON_AddStringToObject(fmt, "domain", "physical");
