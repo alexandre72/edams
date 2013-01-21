@@ -24,10 +24,12 @@
 #include "edams.h"
 #include "location.h"
 #include "locations_creator.h"
+#include "map.h"
 #include "myfileselector.h"
 #include "path.h"
 
-/*Global window elm object*/
+
+/*Global elm objects*/
 Evas_Object *win;
 
 /*Callbacks*/
@@ -70,9 +72,12 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 
 	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
 	Elm_Map_Name *name = evas_object_data_get(map, "name Elm_Map_Name");
-	elm_map_name_region_get(name, &lon, &lat);
-	location_longitude_set(location, lon);
-	location_latitude_set(location, lat);
+	if(name)
+	{
+		elm_map_name_region_get(name, &lon, &lat);
+		location_longitude_set(location, lon);
+		location_latitude_set(location, lat);
+	}
 
 	eo = NULL;
 	ee = ecore_evas_new(NULL, 10, 10, 50, 50, NULL);
@@ -95,19 +100,22 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	cosm_location_feed_add(location);
 	location_save(location);
 
-	// Append location to locations list.
+	//Add location to locations list.
 	Evas_Object *list = elm_object_name_find(app->win, "locations list", -1);
 	Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), NULL, NULL, NULL, location);
 	//elm_object_item_del_cb_set(it, _list_item_location_delete_cb);
 	elm_list_go(list);
 	elm_list_item_bring_in(it);
 
-	// Append location to naviframe and set it contents.
+	//Add location to naviframe and set it contents.
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
 	it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content_set(location), NULL);
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 	elm_object_item_data_set(it, location);
 	elm_naviframe_item_promote(it);
+
+	//Add location to global view.
+	//map_location_add(location);
 
 	if (eo)
 	{
@@ -180,9 +188,13 @@ _map_name_loaded_cb(void *data, Evas_Object * obj __UNUSED__, void *ev __UNUSED_
 	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
 	Elm_Map_Name *name = evas_object_data_get(map, "name Elm_Map_Name");
 
-	elm_map_name_region_get(name, &lon, &lat);
-	elm_map_region_bring_in(map, lon, lat);
+	if(name)
+	{
+		elm_map_name_region_get(name, &lon, &lat);
+		elm_map_region_bring_in(map, lon, lat);
+	}
 }/*_map_name_loaded_cb*/
+
 
 
 /*
