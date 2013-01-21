@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdio.h>
 
 #include <Elementary.h>
 #include <Ecore_File.h>
@@ -146,7 +147,7 @@ statusbar_text_set(const char *msg, const char *ic)
 	if(!elm_icon_standard_set(icon, ic))
 		elm_image_file_set(icon, edams_edje_theme_file_get(), ic);
 
-	ecore_timer_add(5.0, _statusbar_timer_cb, NULL);
+	ecore_timer_add(6.0, _statusbar_timer_cb, NULL);
 }/*statusbar_text_set*/
 
 
@@ -450,7 +451,7 @@ _location_naviframe_content_set(Location * location)
 
    	en = elm_entry_add(app->win);
    	elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
-   	snprintf(s, sizeof(s),"%s", location_name_get(location));
+   	snprintf(s, sizeof(s),"%s\n%s", location_name_get(location), location_cosm_feedid_get(location) ? "Feed added to cosm" : "Feed not added to cosm");
    	elm_object_text_set(en, s);
    	evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -568,7 +569,7 @@ EAPI_MAIN int elm_main(int argc, char **argv)
 
 	//Add a registered virtual device, to allow adding special widgets like mail checker, clock.
 	Device *device;
-	if(device = device_new(_("virtual")))
+	if((device = device_new(_("virtual"))))
 	{
 		device_save(device);
 		device_free(device);

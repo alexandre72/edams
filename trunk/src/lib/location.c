@@ -267,6 +267,8 @@ location_new(unsigned int id, const char * name, const char * description)
     location->creation = eina_stringshare_add(s);
 	location->revision = NULL;
 	location->version = 0x0002;
+	location->latitude = -1;
+	location->longitude = -1;
     location->cosm_feedid = 0;
 
     return location;
