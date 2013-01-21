@@ -10,9 +10,10 @@ EDAMS supporte:
   * Le protocole xPL
   * La gestion de vos données via cosm.com(ex-pachube.com)
   * La gestion des pièces de votre habitation ainsi que la géolocalisation.
-  * La représentation des données dans des gadgets(widgets).
-  * Une carte complète des périphériques avec la possibilité d'agencer des widgets comme bon vous semble.
-  * La génération de graphiques via gnuplot avec contrôle du rendu dans la carte complètes.
+  * Des widgets pour une représentation graphiques des données.
+  * Des widgets pour des tâches spéciales(vérificateur de mails, horloge...)
+  * Une vue globale des widgets groupés par localité avec la possibilité d'agencer les widgets comme bon vous semble.
+  * La génération de graphiques via gnuplot avec contrôle du rendu dans la vue globale.
   * La gestion d'actions prédéfinies lorsque les données issues des capteurs remplissent certaines conditions(envoyer un mail lorsque la température du capteur XY est inférieure à 12, executer un programme externe lorsque le taux d'humidité est supérieur ou égal à 70, régler l'intensité lumineuse d'une lampe lorsque la nuit arrive...).
 
 Pour utiliser EDAMS au mieux, il vous sera nécessaire d'installer les programmes et librairies suivants:
@@ -28,7 +29,5 @@ Des paquets sont disponibles pour la majorité des distributions. EDAMS est enco
   * make
   * sudo make install
 
-
 Pour la partie matérielle, je vous recommande:
-  * Arduino
-  * http://connectingstuff.net/blog/xpl-arduino/
+  * Arduino avec la librairie xPL.Arduino pour créer simplement des périphériques "parlants" xPL: http://connectingstuff.net/blog/xpl-arduino
