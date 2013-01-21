@@ -129,7 +129,7 @@ cosm_location_feed_add(Location *location)
 	cJSON_AddItemToObject(root, "version", cJSON_CreateString("1.0.0"));
 	cJSON_AddItemToObject(root, "location", fmt=cJSON_CreateObject());
 	cJSON_AddStringToObject(fmt, "name", location_name_get(location));
-	cJSON_AddStringToObject(fmt, "description", location_description_get(location));
+	//cJSON_AddStringToObject(fmt, "description", location_description_get(location));
 	cJSON_AddStringToObject(fmt, "disposition", "fixed");
 	cJSON_AddStringToObject(fmt, "exposure", "indoor");
 	cJSON_AddStringToObject(fmt, "domain", "physical");
@@ -168,6 +168,8 @@ cosm_location_feed_delete(Location *location)
 	if(!location || (location_cosm_feedid_get(location) == 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
+	int feedid = location_cosm_feedid_get(location);
+
 	debug(stderr, _("Delete cosm feed for '%s'..."), location_name_get(location));
 
 	asprintf(&s, "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
@@ -179,7 +181,7 @@ cosm_location_feed_delete(Location *location)
      }
 	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
-   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)(int)location_cosm_feedid_get(location));
+   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)(int)feedid);
 
 	if(!ecore_con_url_post(cosm_url, s, strlen(s), NULL))
 	{
@@ -240,6 +242,7 @@ _url_feed_add_complete_cb(void *data, int type __UNUSED__, void *event_info)
 				asprintf(&s, _("Location has been added to cosm with feedid '%d'"), feedid);
 				statusbar_text_set(s, "elm/icon/cosm/default");
 				FREE(s);
+				update_naviframe_content(location);
 				return EINA_TRUE;
 			}
      	}
@@ -264,7 +267,7 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, void *event_info)
    	{
 	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
 		{
-			statusbar_text_set(_("A location feed hasn't been created, maybe cosm server is down or it's an internet connection problem?"), "elm/icon/cosm/default");
+			statusbar_text_set(_("A location feed hasn't been deleted, maybe cosm server is down or it's an internet connection problem?"), "elm/icon/cosm/default");
 			return EINA_FALSE;
 		}
    		else if(strncmp(str, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)

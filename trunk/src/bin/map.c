@@ -69,9 +69,9 @@ static const int TEMP_MIN = -30;
 static const int TEMP_MAX = 50;
 
 
-// Globals.
+/*Global Evas objects*/
 static Ecore_Evas *ee = NULL;
-static Evas *evas;
+static Evas *evas = NULL;
 static Eina_Rectangle geometry;
 static App_Info *app;
 Eet_File *ef;
@@ -651,7 +651,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
  *
  */
 void
-map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	app = (App_Info *) data;
 
@@ -714,37 +714,7 @@ map_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __
 	Eina_List *l;
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
-		char s[64];
-		char key[64];
-		char *ret = NULL;
-		int size;
-		Eina_Rectangle smart_geometry;
-		Evas_Object *smt;
-
-		smt = evas_smart_group_add(evas);
-		snprintf(s, sizeof(s), "%s_smart", location_name_get(location));
-		evas_object_name_set(smt, s);
-		snprintf(key, sizeof(key), "map/%s", evas_object_name_get(smt));
-
-		if (ef)
-			ret = eet_read(ef, key, &size);
-		if (ret)
-		{
-			sscanf(ret, "%d;%d;%d;%d", &smart_geometry.x, &smart_geometry.y,
-				   &smart_geometry.w, &smart_geometry.h);
-			free(ret);
-		}
-		else
-		{
-			smart_geometry.x = geometry.w / 4;
-			smart_geometry.y = geometry.h / 4;
-			smart_geometry.w = geometry.w / 2;
-			smart_geometry.h = geometry.h / 2;
-		}
-		evas_object_move(smt, smart_geometry.x, smart_geometry.y);
-		evas_object_resize(smt, smart_geometry.w, smart_geometry.h);
-		evas_smart_group_location_add(smt, location);
-		evas_object_show(smt);
+		map_location_add(location);
 	}
 
 	Evas_Object *stat_img  = evas_object_image_filled_add(evas);
@@ -780,6 +750,53 @@ map_quit()
 }/*map_quit*/
 
 
+
+/*
+ *
+ */
+void
+map_location_add(Location *location)
+{
+	if (!evas || !ee || !ef || !location) return;
+
+	char s[64];
+	char key[64];
+	char *ret = NULL;
+	int size;
+	Eina_Rectangle smart_geometry;
+	Evas_Object *smt;
+
+	smt = evas_smart_group_add(evas);
+	snprintf(s, sizeof(s), "%s_smart", location_name_get(location));
+	evas_object_name_set(smt, s);
+	snprintf(key, sizeof(key), "map/%s", evas_object_name_get(smt));
+
+	ret = eet_read(ef, key, &size);
+	if (ret)
+	{
+		sscanf(ret, "%d;%d;%d;%d",
+					&smart_geometry.x,
+					&smart_geometry.y,
+					&smart_geometry.w,
+					&smart_geometry.h);
+		free(ret);
+	}
+	else
+	{
+		smart_geometry.x = geometry.w / 4;
+		smart_geometry.y = geometry.h / 4;
+		smart_geometry.w = geometry.w / 2;
+		smart_geometry.h = geometry.h / 2;
+	}
+	evas_object_move(smt, smart_geometry.x, smart_geometry.y);
+	evas_object_resize(smt, smart_geometry.w, smart_geometry.h);
+	evas_smart_group_location_add(smt, location);
+	evas_object_show(smt);
+}/*map_location_add*/
+
+
+
+
 /*
  *Sync map widgets with device data.
  */
@@ -788,8 +805,7 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 {
 	// Sync device data with location device data(if affected to any
 	// location!).
-
-	if (!ee || !app || !location || !device) return;
+	if (!evas || !ee || !ef || !app || !location || !device) return;
 
 	//Parse all location widget's and update Edje widget's objects.
 	Eina_List *l, *widgets;

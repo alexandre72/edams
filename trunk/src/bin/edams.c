@@ -370,9 +370,6 @@ _button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 																location_name_get(app->location));
 	statusbar_text_set(s, "elm/icon/device/default");
 	FREE(s);
-
-	//Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
-	//elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(app->location));
 }/*_button_remove_widget_clicked_cb*/
 
 
@@ -402,20 +399,21 @@ _entry_append_item_provider_cb(void *images __UNUSED__, Evas_Object *entry, cons
 
 	if (!strcmp(item, "xpl-logo"))
 	{
-		char buf[1024];
-		snprintf(buf, sizeof(buf), "%s/images/icon_10.png", elm_app_data_dir_get());
-        image = evas_object_image_filled_add(evas_object_evas_get(entry));
-        evas_object_image_file_set(image, buf, NULL);
-
-/*
         image = evas_object_image_filled_add(evas_object_evas_get(entry));
         evas_object_image_file_set(image, edams_edje_theme_file_get(), "elm/icon/xpl/default");
-        */
 	}
 	return image;
 }
 
 
+/*
+ *
+ */
+void update_naviframe_content(Location *location)
+{
+	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
+	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(location));
+}/*update_naviframe_content*/
 
 /*
  *
@@ -445,8 +443,8 @@ _location_naviframe_content_set(Location * location)
    	entry = elm_entry_add(app->win);
    	elm_entry_scrollable_set(entry, EINA_TRUE);
    	//snprintf(s, sizeof(s),"%s\n%s", location_name_get(location), location_cosm_feedid_get(location) ? "Feed added to cosm" : "Feed not added to cosm");
-    asprintf(&s, "Item<item size=32x32 vsize=full href=xpl-logo</item>");
-   	elm_object_text_set(entry, "Item<item size=32x32 vsize=full href=aa</item>");
+    asprintf(&s, "Name:%s Cosm feedid:%d<item size=32x32 vsize=full href=xpl-logo</item>", location_name_get(location), location_cosm_feedid_get(location));
+   	elm_object_text_set(entry, s);
    	FREE(s);
    	elm_entry_context_menu_disabled_set(entry, EINA_TRUE);
 	elm_entry_item_provider_append(entry, _entry_append_item_provider_cb, NULL);
@@ -685,14 +683,19 @@ elm_main(int argc, char **argv)
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
    		icon = elm_icon_add(app->win);
-   		elm_image_file_set(icon, location_filename_get(location), "/image/0");
-   		evas_object_size_hint_min_set(icon, 48, 48);
-   		evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
-   		evas_object_show(icon);
-		Elm_Object_Item *it = elm_list_item_append(list, location_name_get(location), icon, icon,  NULL, location);
-		elm_object_item_data_set(it, location);
+   		if(!elm_image_file_set(icon, location_filename_get(location), "/image/0"))
+   		{
+	   		evas_object_size_hint_min_set(icon, 48, 48);
+   			evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
+   			evas_object_show(icon);
+			elm_list_item_append(list, location_name_get(location), icon, icon,  NULL, location);
+   		}
+   		else
+   		{
+			elm_list_item_append(list, location_name_get(location), NULL, NULL,  NULL, location);
+   		}
 
-		it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content_set(location), NULL);
+		Elm_Object_Item *it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content_set(location), NULL);
 		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 		elm_object_item_data_set(it, location);
 	}
