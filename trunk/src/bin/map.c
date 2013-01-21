@@ -471,48 +471,29 @@ evas_smart_group_add(Evas * evas)
 
 
 /*
- *
- */
-static void
-_evas_smart_group_remove_do(Evas_Smart_Group_Data * priv, Evas_Object * child, int idx)
-{
-	priv->children[idx] = NULL;
-	priv->child_count--;
-	_evas_smart_group_child_callbacks_unregister(child);
-	evas_object_smart_member_del(child);
-}/*_evas_smart_group_remove_do*/
-
-
-
-/*
  *Remove a child element, return its pointer (or NULL on errors)
  */
 Evas_Object *
-evas_smart_group_remove(Evas_Object * o, Evas_Object * child)
+evas_smart_group_remove(Evas_Object * o )
 {
-	long idx;
-
 	EVAS_SMART_GROUP_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
 
-
-	int x = 0;
-	for (x = 0; x != MAX_CHILD; x++)
+	int n = 0;
+	for (n = 0; n != MAX_CHILD; n++)
 	{
-		if (priv->children[x] != child)
-			debug(stderr,_("You are trying to remove something not belonging to the Group_Smart object"));
-		return NULL;
+		if (priv->children[n])
+		{
+			_evas_smart_group_child_callbacks_unregister(priv->children[n]);
+			evas_object_smart_member_del(priv->children[n]);
+			priv->children[n] = NULL;
+			priv->child_count--;
+		}
 	}
 
-	idx = (long)evas_object_data_get(child, "index");
-	idx--;
-
-	_evas_smart_group_remove_do(priv, child, idx);
-
-	evas_object_smart_callback_call(o, EVT_CHILDREN_NUMBER_CHANGED,
-									(void *)(long)priv->child_count);
+	evas_object_smart_callback_call(o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
 	evas_object_smart_changed(o);
 
-	return child;
+	return NULL;
 }/*evas_smart_group_remove*/
 
 
@@ -642,6 +623,13 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 		{
 	   	 	ecore_main_loop_quit();
 		}
+
+   		if (strcmp(ev->keyname, "w") == 0)
+		{
+			evas_smart_group_remove(o);
+			evas_object_del(o);
+			return;
+		}
 	}
 }/*_on_keydown*/
 
@@ -757,6 +745,10 @@ map_quit()
 void
 map_location_add(Location *location)
 {
+
+	/*TODO:Ok it's great, but it should be better to habe map_location_del too*/
+	/*to avoid segfault when a location has been removed*/
+	/*I know location associated to smart group no? maybe deleting group should works?*/
 	if (!evas || !ee || !ef || !location) return;
 
 	char s[64];

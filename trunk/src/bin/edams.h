@@ -56,7 +56,7 @@ typedef struct
 
 
 Evas_Object*_location_naviframe_content_set(Location *location);
-void update_naviframe_content(location);
+void update_naviframe_content(Location *location);
 void statusbar_text_set(const char *msg, const char *ic);
 
 #endif /* __EDAMS_H__ */
