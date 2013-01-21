@@ -28,13 +28,9 @@
 #include "edams.h"
 #include "utils.h"
 
-Evas_Object *waiting_win = NULL;
-
-
 static Eina_Bool _url_feed_add_complete_cb(void *data, int type, void *event_info);
 static Eina_Bool _url_feed_delete_complete_cb(void *data, int type, void *event_info);
 static Eina_Bool _url_datastream_update_complete_cb(void *data, int type, void *event_info);
-static void waiting_win_create();
 
 
 /*
@@ -55,7 +51,7 @@ cosm_device_datastream_update(Location *location, Device *device)
 	cosm_url = ecore_con_url_custom_new(s, "PUT");
    	if (!cosm_url)
      {
-	    debug(stderr, _("Couldn't create Ecore_Con_Url object"));
+	    debug(stderr, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
 	FREE(s);
@@ -88,7 +84,7 @@ cosm_device_datastream_update(Location *location, Device *device)
 
 	if(!ecore_con_url_post(cosm_url, s, strlen(s), "text/json"))
 	{
-	   	debug(stderr, _("Couldn't realize url PUT request"));
+	   	debug(stderr, _("Can't realize url PUT request"));
 		return EINA_FALSE;
 	}
 	FREE(s);
@@ -103,59 +99,56 @@ Eina_Bool
 cosm_location_feed_add(Location *location)
 {
 	Ecore_Con_Url *cosm_url = NULL;
-	char s[512];
+	char *s;
 
 	//Don't add cosm url feed if already there...
 	if(!location || (location_cosm_feedid_get(location) != 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
-	waiting_win_create();
-	snprintf(s, sizeof(s), _("Creating cosm feed for '%s'..."), location_name_get(location));
-	Evas_Object *pb = elm_object_name_find(waiting_win, "pb",-1);
-   	elm_object_text_set(pb, s);
-   	evas_object_show(waiting_win);
+	debug(stderr, _("Creating cosm feed for '%s'..."), location_name_get(location));
 
    	cosm_url = ecore_con_url_custom_new("http://api.cosm.com/v2/feeds", "POST");
 
    	if (!cosm_url)
      {
-		debug(stderr, _("Couldn't create Ecore_Con_Url object"));
+		debug(stderr, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
 	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());;
-   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_add_complete_cb, location);
+   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_add_complete_cb, (void*)location);
 
-	char *locale = setlocale(LC_NUMERIC, NULL);
-	setlocale(LC_NUMERIC, "POSIX");
-
-	snprintf(s, sizeof(s), ("{\"title\":\"%s data\", \"version\":\"1.0.0\", \"location\": { \"disposition\":\"fixed\", \"name\":\"%s\", \"lat\":%'.2f, \"exposure\":\"indoor\", \"lon\":%'.2f, \"domain\":\"physical\"}}"),
-					location_name_get(location),
-					location_name_get(location),
-					location_latitude_get(location),
-					location_longitude_get(location));
-	setlocale(LC_NUMERIC, locale);
+    char *locale = setlocale(LC_NUMERIC, NULL);
+     setlocale(LC_NUMERIC, "POSIX");
 
 	cJSON *root,*fmt;
 	root=cJSON_CreateObject();
-	snprintf(s, sizeof(s), "%s data", location_name_get(location));
+	asprintf(&s, "%s data", location_name_get(location));
 	cJSON_AddItemToObject(root, "title", cJSON_CreateString(s));
+	FREE(s);
 	cJSON_AddItemToObject(root, "version", cJSON_CreateString("1.0.0"));
 	cJSON_AddItemToObject(root, "location", fmt=cJSON_CreateObject());
-	cJSON_AddStringToObject(fmt,"name", location_name_get(location));
-	cJSON_AddStringToObject(fmt,"disposition", "fixed");
-	cJSON_AddStringToObject(fmt,"exposure", "indoor");
-	cJSON_AddStringToObject(fmt,"domain", "physical");
-	//cJSON_AddNumberToObject(fmt,"la", location_latitude_get(location));
-	//cJSON_AddNumberToObject(fmt,"lon", location_longitude_get(location));
-	printf("cJSON RENDERED:%s\n", cJSON_Print(root));
+	cJSON_AddStringToObject(fmt, "name", location_name_get(location));
+	cJSON_AddStringToObject(fmt, "disposition", "fixed");
+	cJSON_AddStringToObject(fmt, "exposure", "indoor");
+	cJSON_AddStringToObject(fmt, "domain", "physical");
+
+	if(location_latitude_get(location) != -1)
+		cJSON_AddNumberToObject(fmt, "lat", location_latitude_get(location));
+
+	if(location_longitude_get(location) != -1)
+		cJSON_AddNumberToObject(fmt, "lon", location_longitude_get(location));
+
+	s = cJSON_PrintUnformatted(root);
 	cJSON_Delete(root);
+    setlocale(LC_NUMERIC, locale);
 
 	if(!ecore_con_url_post(cosm_url, s, strlen(s), NULL))
 	{
-		debug(stderr, _("Couldn't realize url PUT request"));
+		debug(stderr, _("Can't realize url PUT request"));
 		return EINA_FALSE;
 	}
+	FREE(s);
 
 	return EINA_TRUE;
 }/*cosm_location_feed_add*/
@@ -168,34 +161,31 @@ Eina_Bool
 cosm_location_feed_delete(Location *location)
 {
 	Ecore_Con_Url *cosm_url = NULL;
-	char s[512];
+	char *s;
 
 	//Don't delete if no cosm feedid cosm or null location
 	if(!location || (location_cosm_feedid_get(location) == 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
-	waiting_win_create();
-	snprintf(s, sizeof(s), _("Delete cosm feed for '%s'..."), location_name_get(location));
-	Evas_Object *pb = elm_object_name_find(waiting_win, "pb",-1);
-   	elm_object_text_set(pb, s);
-   	evas_object_show(waiting_win);
+	debug(stderr, _("Delete cosm feed for '%s'..."), location_name_get(location));
 
-	snprintf(s, sizeof(s), "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
+	asprintf(&s, "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
 	cosm_url = ecore_con_url_custom_new(s, "DELETE");
    	if (!cosm_url)
      {
-	    debug(stderr, _("Couldn't create Ecore_Con_Url object"));
+	    debug(stderr, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
 	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
-   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, strdup(location_name_get(location)));
+   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)(int)location_cosm_feedid_get(location));
 
 	if(!ecore_con_url_post(cosm_url, s, strlen(s), NULL))
 	{
-		debug(stderr, _("Couldn't realize url PUT request"));
+		debug(stderr, _("Can't realize url PUT request"));
 		return EINA_FALSE;
 	}
+	FREE(s);
 
 	return EINA_TRUE;
 }/*cosm_location_feed_delete*/
@@ -235,25 +225,25 @@ _url_feed_add_complete_cb(void *data, int type __UNUSED__, void *event_info)
 	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
 		{
 			statusbar_text_set(_("A location feed hasn't been created, maybe cosm server is down or it's an internet connection problem?"), "elm/icon/cosm/default");
-			evas_object_del(waiting_win);
 			return EINA_FALSE;
 		}
-		if(strncmp(str, "Location:", 9) == 0)
+		else if(strncmp(str, "Location:", 9) == 0)
 		{
 			unsigned int feedid;
 			if (sscanf(str, "Location: http://api.cosm.com/v2/feeds/%d", &feedid)==1)
 			{
-                Location *location = (Location *)data;
-		     	location_cosm_feedid_set(location, feedid);
+				Location *location = data;
+				location_cosm_feedid_set(location, feedid);
 				location_save(location);
-				char s[128];
-				snprintf(s, sizeof(s), _("Location with cosm feedid '%d' for '%s' has been added with success"), location_cosm_feedid_get(location), location_name_get(location));
+				char *s;
+				asprintf(&s, _("Location has been added to cosm with feedid '%d'"), feedid);
 				statusbar_text_set(s, "elm/icon/cosm/default");
+				FREE(s);
+				return EINA_TRUE;
 			}
      	}
 	}
 
-	evas_object_del(waiting_win);
 	return EINA_TRUE;
 }/*_url_feed_add_complete_cb*/
 
@@ -274,51 +264,17 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, void *event_info)
 	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
 		{
 			statusbar_text_set(_("A location feed hasn't been created, maybe cosm server is down or it's an internet connection problem?"), "elm/icon/cosm/default");
-			evas_object_del(waiting_win);
 			return EINA_FALSE;
 		}
-   		if(strncmp(str, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
+   		else if(strncmp(str, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
 		{
-                char *location = (char *)data;
-				char s[128];
-				snprintf(s, sizeof(s), _("Location '%s' has been deleted with success"), location);
+				char *s;
+				asprintf(&s, _("Location with feedid '%d' has been removed from cosm"), (int)data);
 				statusbar_text_set(s, "elm/icon/cosm/default");
-				FREE(location);
+				FREE(s);
+				return EINA_TRUE;
 		}
 	}
 
-	evas_object_del(waiting_win);
 	return EINA_TRUE;
 }/*_url_feed_delete_complete_cb*/
-
-
-/*
- *
- */
-static void
-waiting_win_create()
-{
-	Evas_Object *bx, *pb, *bg;
-	waiting_win = elm_win_add(NULL, "waiting_win", ELM_WIN_SPLASH);
-	elm_win_title_set(waiting_win, _("Generating feeds, wait please..."));
-	elm_win_center(waiting_win, EINA_TRUE,  EINA_TRUE);
-
-	bg = elm_bg_add(waiting_win);
-	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(waiting_win, bg );
-	evas_object_show(bg );
-
-	bx = elm_box_add(waiting_win);
-	evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(waiting_win, bx);
-	evas_object_show(bx);
-
-	pb = elm_progressbar_add(waiting_win);
-	evas_object_name_set(pb, "pb");
-	evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
-   	evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	elm_progressbar_pulse_set(pb, EINA_TRUE);
-   	elm_box_pack_end(bx, pb);
-	elm_progressbar_pulse(pb, EINA_TRUE);
-   	evas_object_show(pb);
-}/*waiting_win_create*/
