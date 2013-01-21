@@ -126,9 +126,10 @@ _list_item_widgets_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED
 
 	if((t = elm_layout_data_get(layout, "description")))
 	{
-		char s[256];
-	   	snprintf(s, sizeof(s), "Description:%s", t);
+		char *s;
+		asprintf(&s, _("Description:%s"), t);
    		elm_object_text_set(entry, s);
+   		FREE(s);
    	}
    	else
    	{
@@ -141,23 +142,25 @@ _list_item_widgets_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED
  *Callback called in button "apply" object when clicked signal is emitted.
  */
 static void
-_button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	App_Info *app = data;
+	char *s;
 	Elm_Object_Item *item;
 
+	App_Info *app = data;
 	Evas_Object *list = elm_object_name_find(win, "widgets picker list", -1);
 
 	item = elm_list_selected_item_get(list);
-	const char *s = elm_object_item_data_get(item);
 
-	if ((!item) || (!s)) return;
+	if (!item) return;
 
-	Evas_Object *app_list = elm_object_name_find(app->win, "widgets list", -1);
-	Elm_Object_Item *selected_item = elm_list_selected_item_get(app_list);
+	asprintf(&s, "%s widgets list", location_name_get(app->location));
+	Evas_Object *widgets_list = elm_object_name_find(app->win, s, -1);
+	FREE(s);
+	Elm_Object_Item *selected_item = elm_list_selected_item_get(widgets_list);
 	Widget *widget = elm_object_item_data_get(selected_item);
 
-    widget_name_set(widget, s);
+    widget_name_set(widget, elm_object_item_data_get(item));
 
 	location_save(app->location);
 

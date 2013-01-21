@@ -24,6 +24,9 @@
 #define __SETTINGS_H__
 
 
+void edams_settings_init();
+void edams_settings_shutdown();
+
 Eina_Bool edams_settings_debug_get();
 Eina_Bool edams_settings_softemu_get();
 const char *edams_settings_map_background_get();

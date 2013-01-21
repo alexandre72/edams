@@ -106,7 +106,7 @@ action_new(Condition ifcondition, const char *ifvalue, Action_Type type, const c
 
     if (!action)
        {
-          debug(stderr, _("Couldn't calloc Action struct"));
+          debug(stderr, _("Can't calloc Action struct"));
           return NULL;
        }
 
@@ -144,7 +144,7 @@ action_ifcondition_get(const Action *action)
 
 
 
-inline void
+void
 action_ifvalue_set(const Action *action, const char *ifvalue)
 {
     EINA_SAFETY_ON_NULL_RETURN(action);
@@ -176,7 +176,7 @@ action_type_get(const Action *action)
 
 
 
-inline void
+void
 action_data_set(const Action *action, const char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(action);
@@ -245,6 +245,7 @@ device_new(const char * name)
 	char s[PATH_MAX];
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+	//TODO:handle case when device name already exist, can be an, updated device type?
 	if(ecore_file_exists(s))
 	{
 		debug(stderr, _("Eet file '%s' already exist. Device name should be unique into your xpl network or maybe have you  replaced your xPL device with new one(with another type, class...)?"), s);
@@ -255,7 +256,7 @@ device_new(const char * name)
 
     if (!device)
 	{
-		debug(stderr, _("Couldn't calloc Device struct"));
+		debug(stderr, _("Can't calloc Device struct"));
 		return NULL;
 	}
 
@@ -363,7 +364,7 @@ device_type_set(Device *device, const Type_Flags type)
 	{
 		default:
 		case UNKNOWN_TYPE:
-						debug(stderr, _("Couldn't set an unknown Type_Flags to device '%s'"), device_name_get(device));
+						debug(stderr, _("Can't set an unknown Type_Flags to device '%s'"), device_name_get(device));
 						break;
 		case GENERIC:
 					device_units_set(device, _("Generic"));
@@ -546,7 +547,7 @@ device_image_set(Device *device, Evas_Object *image)
     Eet_File *ef = eet_open(device->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
       {
-        debug(stderr, _("Couldn't open Eet file '%s' in writing mode"), device->__eet_filename);
+        debug(stderr, _("Can't open Eet file '%s' in write mode"), device->__eet_filename);
         return;
       }
 
@@ -636,10 +637,10 @@ device_save(Device *device)
     Eet_File *ef;
     Eina_Bool ret;
 
-    ef = eet_open(device->__eet_filename, EET_FILE_MODE_READ_WRITE);
+    ef = eet_open(device->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
 	{
-		debug(stderr, _("Couldn't open Eet file '%s' in writing mode"), device->__eet_filename);
+		debug(stderr, _("Can't open Eet file '%s' in write mode"), device->__eet_filename);
 		return EINA_FALSE;
 	}
 
@@ -648,7 +649,7 @@ device_save(Device *device)
 
 	if (!ret)
 	{
-		debug(stderr, _("Couldn't write any data to Eet file '%s'"), device->__eet_filename);
+		debug(stderr, _("Can't write any data to Eet file '%s'"), device->__eet_filename);
 		return EINA_FALSE;
 	}
 
@@ -667,7 +668,7 @@ device_load(const char *filename)
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
 	{
-		debug(stderr, _("Couldn't open Eet file '%s' in reading mode"), filename);
+		debug(stderr, _("Can't open Eet file '%s' in read mode"), filename);
         return NULL;
 	}
 
@@ -716,7 +717,7 @@ devices_list_get()
 
 					if (eina_error_get())
 					{
-						debug(stderr, _("Couldn't allocate Eina list node"));
+						debug(stderr, _("Can't alloc Eina_List node"));
 						exit(-1);
 					}
 				}
@@ -766,7 +767,7 @@ device_clone(const Device *src)
     Device *dst = calloc(1, sizeof(Device));
     if (!dst)
 	{
-		debug(stderr, _("Couldn't calloc Device struct"));
+		debug(stderr, _("Can't calloc Device struct"));
 		return NULL;
 	}
 

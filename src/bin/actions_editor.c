@@ -85,11 +85,9 @@ _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__
  *
  */
 static void
-_button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *cwin = (Evas_Object *)data;
-	char *s;
-
 	const char *title = elm_win_title_get(cwin);
 	cJSON *root;
 
@@ -140,7 +138,7 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
  *
  */
 static void
-_button_arg_edit_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_button_arg_edit_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *grid;
 	Evas_Object *icon, *bx, *frame;
@@ -159,7 +157,6 @@ _button_arg_edit_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_show(grid);
-
 
 	switch(type)
 	{
@@ -278,6 +275,10 @@ _button_arg_edit_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 				elm_entry_single_line_set(entry, EINA_TRUE);
 				evas_object_show(entry);
 				elm_object_content_set(frame, entry);
+				break;
+
+		case UNKNOWN_ACTION:
+		case ACTION_TYPE_LAST:
 				break;
 	}
 
@@ -430,17 +431,17 @@ _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 static void
 _list_action_add(Device *device, Action *action)
 {
-	char s[512];
+	char *s;
 	Evas_Object *list = elm_object_name_find(win, "actions list", -1);
 
-	snprintf(s, sizeof(s), _("If %s value %s %s then %s with arg=%s"),
-							device_name_get(device),
-							action_condition_to_str(action_ifcondition_get(action)),
-							action_ifvalue_get(action),
-							action_type_to_str(action_type_get(action)),
-							action_data_get(action));
+	asprintf(&s, _("If %s value %s %s then %s with arg=%s"),
+										device_name_get(device),
+										action_condition_to_str(action_ifcondition_get(action)),
+										action_ifvalue_get(action),
+										action_type_to_str(action_type_get(action)),
+									action_data_get(action));
 
-	elm_list_item_append(list, strdup(s), NULL, NULL, _list_item_selected_cb, action);
+	elm_list_item_append(list, s, NULL, NULL, _list_item_selected_cb, action);
 	elm_list_go(list);
 }/*_list_action_add*/
 
@@ -449,31 +450,26 @@ _list_action_add(Device *device, Action *action)
  *
  */
 void
-actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *event_info __UNUSED__)
+actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __UNUSED__)
 {
-	char s[256];
-
-	Widget *widget;
-	Device *device;
-
+	char *s;
 	Evas_Object *entry, *hoversel;
 	Evas_Object *grid;
 	Evas_Object *icon, *bx, *frame;
 	Evas_Object *button;
 	Evas_Object *list;
 
-	App_Info *app = (App_Info *) data;
-
-	Evas_Object *widgets_list = elm_object_name_find(app->win, "widgets list", -1);
+	Evas_Object *widgets_list = data;
 	Elm_Object_Item *selected_item = elm_list_selected_item_get(widgets_list);
 
-	if(!(widget = elm_object_item_data_get(selected_item))) return;
+	if(!selected_item) return;
 
-	if(!(device = device_load(widget_device_filename_get(widget)))) return;
+	Widget *widget = elm_object_item_data_get(selected_item);
+	Device *device = widget_device_get(widget);
 
-	snprintf(s, sizeof(s), _("Edit actions for '%s' xPL device"), device_name_get(device));
-
+	asprintf(&s, _("Edit actions for '%s' xPL device"), device_name_get(device));
 	win = elm_win_util_standard_add("actions_editor", s);
+	FREE(s);
 	evas_object_data_set(win, "device", device);
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);

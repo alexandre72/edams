@@ -33,7 +33,7 @@
 
 struct _Widget
 {
-    const char * name;				//Widget name associated(edc widget group name) e.g. 'meter/counter'.
+    const char * name;				//Widget name associated(edc widget group name) e.g. 'widget/counter'.
     unsigned int device_id;			//Device id associated e.g '12'.
     const char *device_filename;	//Device filename associated e.g 'temperature1.eet'.
     unsigned int id;				//Device widget position in Eina_List.
@@ -96,11 +96,11 @@ widget_new(const char * name, Device *device)
 
     if (!widget)
 	{
-		debug(stderr, _("Couldn't calloc Widget struct"));
+		debug(stderr, _("Can't calloc Widget struct"));
     	return NULL;
 	}
 
-    widget->name = eina_stringshare_add(name ? name : "meter/counter");
+    widget->name = eina_stringshare_add(name ? name : "widget/counter");
     widget->device_filename = device_filename_get(device);
 
     return widget;
@@ -163,7 +163,7 @@ widget_device_get(const Widget *widget)
 
 	if(!device)
 	{
-		debug(stderr, _("Couldn't load device associated to widget '%d'"), widget->id);
+		debug(stderr, _("Can't load device from widget '%d-%s'"), widget->name, widget->id);
 		return NULL;
 	}
 
@@ -244,10 +244,10 @@ location_new(unsigned int id, const char * name, const char * description)
     Location *location = calloc(1, sizeof(Location));
 
     if (!location)
-       {
-          debug(stderr, _("Couldn't calloc Location struct"));
-          return NULL;
-       }
+	{
+		debug(stderr, _("Can't calloc Location struct"));
+		return NULL;
+	}
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s", edams_locations_data_path_get(), _filename_create());
     location->__eet_filename = eina_stringshare_add(s);
@@ -406,11 +406,15 @@ void
 location_image_set(Location *location, Evas_Object *image)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
+    EINA_SAFETY_ON_NULL_RETURN(image);
 
-    Eet_File *ef = eet_open(location->__eet_filename, EET_FILE_MODE_WRITE);
+    Eet_File *ef;
+    Eina_Bool ret;
+
+    ef = eet_open(location->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
       {
-        debug(stderr, _("Couldn't open '%s' for writing"), location->__eet_filename);
+        debug(stderr, _("Can't open Eet file '%s' in write mode"), location->__eet_filename);
         return;
       }
 
@@ -420,8 +424,14 @@ location_image_set(Location *location, Evas_Object *image)
 	evas_object_image_size_get(image, &image_w, &image_h);
 	image_alpha = evas_object_image_alpha_get(image);
 	image_data = evas_object_image_data_get(image, EINA_FALSE);
+
 	eet_data_image_write(ef, "/image/0", image_data, image_w, image_h, image_alpha, 1, 95, 0);
-	eet_close(ef);
+    eet_close(ef);
+
+	if (!ret)
+	{
+		debug(stderr, _("Can't write any data to Eet file '%s'"), location->__eet_filename);
+	}
 }
 
 
@@ -513,7 +523,7 @@ location_load(const char *filename)
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
       {
-        debug(stderr, _("Couldn't open '%s' for read"), filename);
+        debug(stderr, _("Can't open Eet file '%s' in read mode"), filename);
         return NULL;
       }
 
@@ -545,10 +555,10 @@ location_save(Location *location)
     Eet_File *ef;
     Eina_Bool ret;
 
-    ef = eet_open(location->__eet_filename, EET_FILE_MODE_READ_WRITE);
+    ef = eet_open(location->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
 	{
-		debug(stderr, _("Couldn't open '%s' for writing"), location->__eet_filename);
+        debug(stderr, _("Can't open Eet file '%s' in write mode"), location->__eet_filename);
 		return EINA_FALSE;
 	}
 
@@ -557,7 +567,7 @@ location_save(Location *location)
 
 	if (!ret)
 	{
-		debug(stderr, _("Couldn't write any data to Eet file '%s'"), location->__eet_filename);
+		debug(stderr, _("Can't write any data to Eet file '%s'"), location->__eet_filename);
 		return EINA_FALSE;
 	}
 
@@ -590,7 +600,7 @@ location_remove(Location *location)
 
 	if(!ecore_file_remove(location->__eet_filename))
 	{
-	    debug(stderr, _("Couldn't remove Eet location file '%s'"), location->__eet_filename);
+	    debug(stderr, _("Can't remove Eet location file '%s'"), location->__eet_filename);
 	    return EINA_FALSE;
 	}
 
@@ -679,7 +689,7 @@ locations_list_get()
 					locations = eina_list_append(locations, location);
 					if (eina_error_get())
 					{
-						debug(stderr, _("Couldn't allocate Eina_List node!"));
+						debug(stderr, _("Can't alloc Eina_List node"));
 						exit(-1);
 					}
 				}

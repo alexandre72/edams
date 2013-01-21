@@ -44,24 +44,30 @@ static void _button_goto_clicked_cb(void *data, Evas_Object * obj __UNUSED__, vo
 static void
 _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	char s[256];
+	char *s;
 	const char *f, *g;
+	double lon;
+	double lat;
+	Evas *evas;
 	Evas_Object *win;
 	Evas_Object *img;
 	Evas_Object *eo;
 	Ecore_Evas *ee;
-	Evas *evas;
+	Evas_Object *entry;
 	Location *location;
 
 	win = (Evas_Object *) data;
 
 	location = location_new(0, NULL, NULL);
 
-	location_name_set(location,
-					  elm_object_text_get(elm_object_name_find(win, "location name entry", -1)));
+	entry = elm_object_name_find(win, "location name entry", -1);
+	if(!elm_entry_is_empty(entry))
+		location_name_set(location, elm_object_text_get(entry));
 
-	double lon;
-	double lat;
+	entry = elm_object_name_find(win, "location description entry", -1);
+	if(!elm_entry_is_empty(entry))
+		location_description_set(location, elm_object_text_get(entry));
+
 	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
 	Elm_Map_Name *name = evas_object_data_get(map, "name Elm_Map_Name");
 	elm_map_name_region_get(name, &lon, &lat);
@@ -109,8 +115,9 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 		elm_image_file_set(img, location_filename_get(location), "/image/0");
 	}
 
-	snprintf(s, sizeof(s), _("Location %s has been created."), location_name_get(location));
+	asprintf(&s, _("Location %s has been created."), location_name_get(location));
 	statusbar_text_set(s, "dialog-information");
+	FREE(s);
 	evas_object_del(win);
 }/*_button_apply_clicked_cb*/
 

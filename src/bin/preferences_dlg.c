@@ -42,7 +42,6 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	Evas_Object *check;
 
 	win = (Evas_Object *) data;
-	App_Info *app = (App_Info *) evas_object_data_get(win, "app");
 
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
 	edams_settings_cosm_apikey_set( elm_object_text_get(entry));
@@ -125,10 +124,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	Evas_Object *icon, *bx, *frame, *separator;
 	Evas_Object *button, *check, *entry;
 
-	App_Info *app = (App_Info *) data;
-
 	win = elm_win_util_standard_add("settings", _("Settings"));
-	evas_object_data_set(win, "app", app);
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
 
