@@ -21,6 +21,7 @@ collections {
 #include "thermometer.edc"
 #include "counter.edc"
 #include "clock.edc"
+#include "switch.edc"
 group
 {
 	name: "elm/icon/xpl/default";

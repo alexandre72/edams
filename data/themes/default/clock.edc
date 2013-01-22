@@ -28,10 +28,10 @@ group
 {
 	images
 	{
-		image: "clock_icon.png" COMP;
+		image: "clockdigital_icon.png" COMP;
 	}
 
-	name: "widget/clock/digital/icon";
+	name: "widget/virtual/clock/digital/icon";
     min: 32 32;
       parts
       {
@@ -43,7 +43,7 @@ group
                	aspect: 1 1;
                	aspect_preference: BOTH;
             	state: "default" 0;
-		   		image.normal: "clock_icon.png";
+		   		image.normal: "clockdigital_icon.png";
             }
          }
       }
@@ -51,15 +51,15 @@ group
 
 
 
-group {
-
+group
+{
 	data
 	{
-			item: "description" "Digital clock, no very useful for sensor's device.";
-			item: "tags" "clock,timer";
+			item: "description" "Digital clock, show current time.";
+			item: "tags" "clock,timer,time";
 	}
 
-	name: "widget/clock/digital";
+	name: "widget/virtual/clock/digital";
    min: 64 16;
    max: 512 128;
    images.image: "digit_na.png" COMP;
@@ -608,7 +608,7 @@ group
 		image: "clock_icon.png" COMP;
 	}
 
-	name: "widget/clock/main/icon";
+	name: "widget/virtual/clock/main/icon";
     min: 32 32;
       parts
       {
@@ -628,12 +628,12 @@ group
 
 group
 {
-	name: "widget/clock/main";
+	name: "widget/virtual/clock/main";
 
 	data
 	{
-		item: "description" "Analog clock, no very useful for sensor's device.";
-		item: "tags" "clock,timer";
+		item: "description" "Analog clock, show current time.";
+		item: "tags" "clock,timer,time";
 	}
 
    images.image: "clock_base.png" COMP;

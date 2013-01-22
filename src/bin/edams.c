@@ -1,4 +1,5 @@
-/*
+
+	/*
  * edams.c
  * This file is part of EDAMS
  *
@@ -270,7 +271,6 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
         if ((device = device_new(name)))
         {
                 device_type_set(device, device_str_to_type(type));
-                device_class_set(device, SENSOR_BASIC);
                 device_save(device);
 				statusbar_text_set(_("New xPL sensor.basic has been found"), "elm/icon/xpl/default");
 
@@ -569,6 +569,15 @@ elm_main(int argc, char **argv)
 	Device *device;
 	if((device = device_new(_("virtual"))))
 	{
+		device_class_set(device, VIRTUAL_CLASS);
+		device_save(device);
+		device_free(device);
+	}
+
+	//Add a registered virtual control.basic device, to allow adding xPL that can be controlled .
+	if((device = device_new(_("xPL control.basic"))))
+	{
+		device_class_set(device, CONTROL_BASIC_CLASS);
 		device_save(device);
 		device_free(device);
 	}

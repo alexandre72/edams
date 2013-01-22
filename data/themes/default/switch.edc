@@ -1,0 +1,87 @@
+
+group
+{
+	images
+	{
+		image: "switch_icon.png" COMP;
+	}
+
+	name: "widget/control.basic/switch/icon";
+    min: 32 32;
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "switch_icon.png";
+            }
+         }
+      }
+}
+
+
+
+group
+{
+	name: "widget/control.basic/switch";
+	min: 60 60;
+
+	data
+	{
+			item: "description" "Switch control can be used to set binary value like enable/disable true/false...";
+			item: "tags" "switch,binary";
+	}
+
+	images
+	{
+		image: "switch_off.png" COMP;
+		image: "switch_on.png" COMP;
+	}
+
+	parts
+	{
+		part
+       	{
+			name: "base";
+            type: IMAGE;
+
+				description
+				{
+                    state: "off" 0.0;
+					aspect: 1 1;
+					aspect_preference: BOTH;
+                    image.normal: "switch_off.png";
+                }
+		        description
+		        {
+		            state: "on" 0.0;
+		            inherit: "default" 0.0;
+                    image.normal: "switch_on.png";
+		        }
+			}
+	}/*parts*/
+	programs
+	{
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "off";
+			source: "base";
+			action: STATE_SET "on" 0.0;
+			target: "base";
+		}
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "on";
+			source: "base";
+			action: STATE_SET "off" 0.0;
+			target: "base";
+		}
+	}/*programs*/
+}
