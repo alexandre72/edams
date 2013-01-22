@@ -60,7 +60,7 @@ _layout_samples_test(Evas_Object *layout)
 	char s[32];
     srand((unsigned int)time((time_t *)NULL));
 	sample = device_new("sample device");
-	device_type_set(sample, prandom(TYPE_LAST));
+	device_type_set(sample, prandom(DEVICE_TYPE_LAST));
 
 	snprintf(s, sizeof(s), "%d", prandom(24));
 	device_data_set(sample, s);
@@ -174,8 +174,7 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
  *
  */
 void
-widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
-					void *event_info __UNUSED__)
+widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *gd;
 	Evas_Object *ic, *bx, *frame;
@@ -185,7 +184,20 @@ widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 
 	App_Info *app = (App_Info *) data;
 
-	win = elm_win_util_standard_add("settings", _("Settings"));
+	char *s;
+	asprintf(&s, "%s widgets list", location_name_get(app->location));
+	Evas_Object *widgets_list = elm_object_name_find(app->win, s, -1);
+	FREE(s);
+	Elm_Object_Item *selected_item = elm_list_selected_item_get(widgets_list);
+
+	if(!selected_item) return;
+
+	Widget *widget = elm_object_item_data_get(selected_item);
+	Device *device = widget_device_get(widget);
+
+	asprintf(&s, _("Edit widget properties for '%s' xPL device"), device_name_get(device));
+	win = elm_win_util_standard_add("widgets_picker", s);
+	FREE(s);
 	evas_object_data_set(win, "app", app);
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
@@ -226,20 +238,19 @@ widgets_picker_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 		char *group;
 		EINA_LIST_FOREACH(groups, l, group)
 		{
-			if (strncmp(group, "widget/", 6) == 0)
+			asprintf(&s, "widget/%s", device_class_to_str(device_class_get(device)));
+			if((strncmp(group, s, strlen(s)) == 0) && (!strstr(group, "/icon")))
 			{
-				if(!strstr(group, "/icon"))
-				{
-					Evas_Object *ic;
-					char s[256];
-					ic = elm_icon_add(win);
-					snprintf(s, sizeof(s), "%s/icon", group);
-			   		elm_image_file_set(ic, edams_edje_theme_file_get(), s);
-					elm_image_aspect_fixed_set(ic, EINA_TRUE);
-					elm_image_resizable_set(ic, 1, 0);
-					elm_list_item_append(list, group, ic, NULL, _list_item_widgets_selected_cb, group);
-				}
+				Evas_Object *ic;
+				ic = elm_icon_add(win);
+				asprintf(&s, "%s/icon", group);
+			   	elm_image_file_set(ic, edams_edje_theme_file_get(), s);
+			   	FREE(s);
+				elm_image_aspect_fixed_set(ic, EINA_TRUE);
+				elm_image_resizable_set(ic, 1, 0);
+				elm_list_item_append(list, group, ic, NULL, _list_item_widgets_selected_cb, group);
 			}
+			FREE(s);
 		}
 		edje_file_collection_list_free(groups);
 	}

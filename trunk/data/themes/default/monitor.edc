@@ -25,7 +25,7 @@ group
 		image: "monitor_icon.png" COMP;
 	}
 
-	name: "widget/monitor/icon";
+	name: "widget/sensor.basic/monitor/icon";
     min: 32 32;
       parts
       {
@@ -49,7 +49,7 @@ group
 	min: 100 100;
     max: 100 100;
 
-	name: "widget/monitor";
+	name: "widget/sensor.basic/monitor";
 	images
       {
          image: "monitor_base.png" COMP;
@@ -59,7 +59,7 @@ group
 	{
 		item: "title" "title.text";
 		item: "description" "Monitor display boolean data in a monitor with an red animated guy when data is > 0. Sensor name is displayed at the bottom. Mostly useful when using boolean/input/switches xPL sensor device. Maybe you can use it in your xPL alarm system?";
-		item: "tags" "input,switches";
+		item: "tags" "sensor.basic,input,switches";
 	}
 
       parts

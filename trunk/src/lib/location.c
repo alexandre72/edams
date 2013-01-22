@@ -33,7 +33,7 @@
 
 struct _Widget
 {
-    const char * name;				//Widget name associated(edc widget group name) e.g. 'widget/counter'.
+    const char * name;				//Widget name associated(edc widget group name) e.g. 'widget/sensor.basic/counter'.
     unsigned int device_id;			//Device id associated e.g '12'.
     const char *device_filename;	//Device filename associated e.g 'temperature1.eet'.
     unsigned int id;				//Device widget position in Eina_List.
@@ -92,6 +92,8 @@ _widget_shutdown(void)
 Widget *
 widget_new(const char * name, Device *device)
 {
+	EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
+
     Widget *widget = calloc(1, sizeof(Widget));
 
     if (!widget)
@@ -100,8 +102,22 @@ widget_new(const char * name, Device *device)
     	return NULL;
 	}
 
-    widget->name = eina_stringshare_add(name ? name : "widget/counter");
-    widget->device_filename = device_filename_get(device);
+
+	if(name)
+	{
+	    widget->name = eina_stringshare_add(name);
+	}
+	else
+	{
+		if(device_class_get(device) == CONTROL_BASIC_CLASS)
+			widget->name = eina_stringshare_add("widget/control.basic/switch");
+		else if(device_class_get(device) == VIRTUAL_CLASS)
+	   	 	widget->name = eina_stringshare_add("widget/virtual/clock/main");
+		else
+	   	 	widget->name = eina_stringshare_add("widget/sensor.basic/counter");
+	}
+
+    widget->device_filename = eina_stringshare_add(device_filename_get(device));
 
     return widget;
 }
@@ -425,7 +441,7 @@ location_image_set(Location *location, Evas_Object *image)
 	image_alpha = evas_object_image_alpha_get(image);
 	image_data = evas_object_image_data_get(image, EINA_FALSE);
 
-	eet_data_image_write(ef, "/image/0", image_data, image_w, image_h, image_alpha, 1, 95, 0);
+	ret = eet_data_image_write(ef, "/image/0", image_data, image_w, image_h, image_alpha, 1, 95, 0);
     eet_close(ef);
 
 	if (!ret)

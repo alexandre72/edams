@@ -21,7 +21,7 @@
 
 group
 {
-	name: "widget/counter/icon";
+	name: "widget/sensor.basic/counter/icon";
     min: 32 32;
 
 	images
@@ -61,14 +61,14 @@ group
 	min: 80 35;
  	max: 80 35;
 
-    name: "widget/counter";
+    name: "widget/sensor.basic/counter";
 
 		data
 		{
 			item: "value" "value.text";
 			item: "title" "title.text";
 			item: "description" "Counter display numerical data in a standard numerical way in green LCD like screen. Sensor name is displayed at the bottom.";
-			item: "tags" "temperature,humidity,rpm";
+			item: "tags" "sensor.basic,temperature,humidity,rpm";
 
 		}
 

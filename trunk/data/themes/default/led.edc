@@ -20,7 +20,7 @@
 
 group
 {
-	name: "widget/led/icon";
+	name: "widget/sensor.basic/led/icon";
 
 	images
 	{
@@ -47,13 +47,13 @@ group
 
 
 group {
-	name: "widget/led";
+	name: "widget/sensor.basic/led";
 
 	data
 	{
 		item: "title" "title.text";
 		item: "description" "Led widget show binary(TRUE/FALSE) value.";
-		item: "tags" "input,output,switches";
+		item: "tags" "sensor.basic,input,output,switches";
 	}
 
 

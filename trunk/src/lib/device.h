@@ -25,46 +25,60 @@
 #include <Eina.h>
 #include <Evas.h>
 
-#define DEVICE_FILE_VERSION 0x0005
+#define DEVICE_FILE_VERSION 0x0006
 
 typedef struct _Device Device;
 typedef struct _Action Action;
 
 
-typedef enum _Type_Flags
+typedef enum _Device_Type
 {
-	UNKNOWN_TYPE	= (0),
-	BATTERY			= (1),      //battery - a battery level in percent.
-	COUNT			= (2),     	//count - a counter value (door openings, rain fall, etc)
-	CURRENT			= (3),	   	//current - a current value in Amps.
-	DIRECTION		= (4),    	//direction - direction, represented as degrees from north (0-360, 0=north, 180=south, etc)
-	DISTANCE		= (5),    	//distance - distance measurments. Default unit of measure is meters.
-	ENERGY			= (6),    	//energy - consumption of energy over a preiod of time in kWh (kilowatt hours)
-	FAN				= (7),    	//fan - a fan speed in RPM
-	GENERIC			= (8),      //generic - a generic analogue value who's units of measurement are application specific
-	HUMIDITY		= (9),    	//humidity - a relative humidity percentage (0 to 100, no percent sign)
-	INPUT			= (10),    	//input - a switch that can either be current=HIGH (on), current=LOW (off) or current=PULSE (representing a button press)
-	OUPUT			= (11),    	//output - a change in an output state with values of LOW and HIGH
-	POWER			= (12),    	//power - instantaneous energy consumption level in kW
-	PRESSURE		= (13),    	//pressure - a pressure value in Pascals (N/m2)
-	SETPOINT		= (14),    	//setpoint - a thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius.
-	SPEED			= (15),   	//speed - a generic speed. Default unit of measure is Miles per Hour.
-	TEMP			= (16),		//temp - a temperature value in degrees. Default unit of measure is centigrade/celsius.
-	UV				= (17),    	//uv - UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index
-	VOLTAGE			= (18), 	//voltage - a voltage value in Volts.
-	VOLUME			= (19),    	//volume - a volume in m3. Often used as a measure of gas and water consumption.
-	WEIGHT			= (20),    	//weight - the default unit is kilograms (yes, kilograms are a unit of mass, not weight)
-	TYPE_LAST
-}Type_Flags;
+	UNKNOWN_DEVICE_TYPE					= (0),
+	BATTERY_SENSOR_BASIC_TYPE			= (1),      //battery - a battery level in percent.
+	COUNT_SENSOR_BASIC_TYPE				= (2),     	//count - a counter value (door openings, rain fall, etc)
+	CURRENT_SENSOR_BASIC_TYPE			= (3),	   	//current - a current value in Amps.
+	DIRECTION_SENSOR_BASIC_TYPE			= (4),    	//direction - direction, represented as degrees from north (0-360, 0=north, 180=south, etc)
+	DISTANCE_SENSOR_BASIC_TYPE			= (5),    	//distance - distance measurments. Default unit of measure is meters.
+	ENERGY_SENSOR_BASIC_TYPE			= (6),    	//energy - consumption of energy over a preiod of time in kWh (kilowatt hours)
+	FAN_SENSOR_BASIC_TYPE				= (7),    	//fan - a fan speed in RPM
+	GENERIC_SENSOR_BASIC_TYPE			= (8),      //generic - a generic analogue value who's units of measurement are application specific
+	HUMIDITY_SENSOR_BASIC_TYPE			= (9),    	//humidity - a relative humidity percentage (0 to 100, no percent sign)
+	INPUT_SENSOR_BASIC_TYPE				= (10),    	//input - a switch that can either be current=HIGH (on), current=LOW (off) or current=PULSE (representing a button press)
+	OUTPUT_SENSOR_BASIC_TYPE			= (11),    	//output - a change in an output state with values of LOW and HIGH
+	POWER_SENSOR_BASIC_TYPE				= (12),    	//power - instantaneous energy consumption level in kW
+	PRESSURE_SENSOR_BASIC_TYPE			= (13),    	//pressure - a pressure value in Pascals (N/m2)
+	SETPOINT_SENSOR_BASIC_TYPE			= (14),    	//setpoint - a thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius.
+	SPEED_SENSOR_BASIC_TYPE				= (15),   	//speed - a generic speed. Default unit of measure is Miles per Hour.
+	TEMP_SENSOR_BASIC_TYPE				= (16),		//temp - a temperature value in degrees. Default unit of measure is centigrade/celsius.
+	UV_SENSOR_BASIC_TYPE				= (17),    	//uv - UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index
+	VOLTAGE_SENSOR_BASIC_TYPE			= (18), 	//voltage - a voltage value in Volts.
+	VOLUME_SENSOR_BASIC_TYPE			= (19),    	//volume - a volume in m3. Often used as a measure of gas and water consumption.
+	WEIGHT_SENSOR_BASIC_TYPE			= (20),    	//weight - the default unit is kilograms (yes, kilograms are a unit of mass, not weight)
+	BALANCE_CONTROL_BASIC_TYPE			= (21),  /*balance - -100 to +100*/
+	FLAG_CONTROL_BASIC_TYPE				= (22),  /*flag - set, clear, neutral*/
+	INFRARED_CONTROL_BASIC_TYPE			= (23),  /*infrared - send, enable_rx, disable_rx, enable_tx, disable_tx, sendx (send x times)*/
+	INPUT_CONTROL_BASIC_TYPE			= (24),  /*input - enable, disable*/
+	MACRO_CONTROL_BASIC_TYPE			= (25),  /*macro - enable, disable, do*/
+	MUTE_CONTROL_BASIC_TYPE				= (26),  /*mute - yes, no*/
+	OUTPUT_CONTROL_BASIC_TYPE			= (27),  /*output - enable, disable, high, low, toggle, pulse*/
+	VARIABLE_CONTROL_BASIC_TYPE			= (28),  /*variable - inc, dec, 0-255 (for set)*/
+	PERIODIC_CONTROL_BASIC_TYPE			= (29),  /*periodic - started, enable, disable*/
+	SCHEDULED_CONTROL_BASIC_TYPE		= (30), /*scheduled - started, enable, disable*/
+	SLIDER_CONTROL_BASIC_TYPE			= (31), /*slider -	nn = set to value (0-255), +nn = increment by nn, -nn = decrement by nn,
+											n% = set to nn (where nn is a percentage - 0-100%)*/
+	TIMER_CONTROL_BASIC_TYPE			= (32), /*timer - went off, start, stop, halt, resume*/
+	DEVICE_TYPE_LAST,
+}Device_Type;
 
 
-typedef enum _Class_Flags
+typedef enum _Device_Class_
 {
-	UNKNOWN_CLASS			= (0),
-	SENSOR_BASIC			= (1),
-	CONTROL_BASIC			= (2),
+	UNKNOWN_DEVICE_CLASS	= (0),
+	SENSOR_BASIC_CLASS		= (1),
+	CONTROL_BASIC_CLASS		= (2),
+	VIRTUAL_CLASS			= (3),
 	CLASS_LAST
-}Class_Flags;
+}Device_Class;
 
 
 typedef enum _Action_Type
@@ -114,10 +128,12 @@ void device_actions_list_clear(Device *device);
 void device_actions_list_set(Device *device, Eina_List *list);
 
 /*Convert funcs*/
-Type_Flags device_str_to_type(const char *s);
-const char *device_type_to_str(Type_Flags type);
-Class_Flags device_str_to_class(const char *s);
-const char *device_class_to_str(Class_Flags type);
+Device_Type device_str_to_type(const char *s);
+const char *device_type_to_str(Device_Type type);
+
+Device_Class device_str_to_class(const char *s);
+const char *device_class_to_str(Device_Class type);
+
 const char *action_condition_to_str(Condition condition);
 Condition action_str_to_condition(const char *s);
 
@@ -133,10 +149,9 @@ Eina_Bool device_save(Device *device);
 Device *device_load(const char *filename);
 
 void device_name_set(Device *device, const char * name);
-void device_class_set(Device *device, Class_Flags class);
-void device_type_set(Device *device, Type_Flags type);
+void device_class_set(Device *device, Device_Class class);
+void device_type_set(Device *device, Device_Type type);
 void device_description_set(Device *device, const char * description);
-void device_datasheeturl_set(Device *device, const char * datasheeturl);
 void device_image_set(Device *device, Evas_Object *image);
 void device_creation_set(Device *device, const char * creation);
 void device_data_set(Device *device, const char * data);
@@ -146,10 +161,9 @@ void device_unit_symbol_set(Device *device, const char *unit_symbol);
 
 const char *device_filename_get(Device *device);
 const char * device_name_get(const Device *device);
-Class_Flags device_class_get(const Device *device);
-Type_Flags device_type_get(const Device *device);
+Device_Class device_class_get(const Device *device);
+Device_Type device_type_get(const Device *device);
 const char * device_description_get(const Device *device);
-const char * device_datasheeturl_get(const Device *device);
 const char * device_creation_get(const Device *device);
 const char * device_data_get(const Device *device);
 const char * device_units_get(const Device *device);
