@@ -187,7 +187,6 @@ group
          }
         program
          {
-            name: "updated,start";
             signal: "updated";
             source: "over";
             action: STATE_SET "show" 0.0;
@@ -195,7 +194,8 @@ group
             target: "update";
             after: "hover2";
          }
-         program {
+         program
+         {
             name: "hover2";
             source: "over";
             action: STATE_SET "default" 0.0;
