@@ -42,8 +42,7 @@ group
             }
          }
       }
-}
-
+}/*group widget/sensor.basic/led/icon*/
 
 
 group {
@@ -53,7 +52,7 @@ group {
 	{
 		item: "title" "title.text";
 		item: "description" "Led widget show binary(TRUE/FALSE) value.";
-		item: "tags" "sensor.basic,input,output,switches";
+		item: "tags" "input,output,switches";
 	}
 
 
@@ -100,7 +99,6 @@ group {
                }
             }
          }
-
 	part
 	{
 		name: "over";
@@ -111,7 +109,6 @@ group {
                	color: 0 0 0 0;
 		}
 	}
-
    }
    programs
    {
@@ -123,11 +120,12 @@ group {
          transition: BOUNCE 0.4 0.5 4;
          target: "base";
       }
-      program {
+      program
+      {
          signal: "false";
          source: "over";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
    }
-}
+}/*group widget/sensor.basic/led*/

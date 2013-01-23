@@ -512,11 +512,15 @@ group
          signal: "load"; source: "";
          script {
             reset();
+
          }
+         after: "show_seconds";
       }
-      program {
-         signal: "e,state,date,on"; source: "e";
-         script {
+		program
+		{
+		signal: "e,state,date,on"; source: "e";
+         script
+         {
             set_int(do_date, 1);
             set_state(PART:"timearea", "date", 0.0);
             set_state(PART:"e.text.today", "date", 0.0);
@@ -533,6 +537,7 @@ group
          }
       }
       program {
+      	name: "show_seconds";
          signal: "e,state,seconds,on"; source: "e";
          script {
             set_int(do_seconds, 1);
@@ -863,8 +868,10 @@ group
          script {
             clock_cb(0);
          }
+		after: "show_seconds";
       }
       program {
+		 name : "show_seconds";
          signal: "e,state,seconds,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "seconds";
@@ -884,7 +891,8 @@ group
             clock_cb(0);
          }
       }
-      program {
+      program
+      {
          signal: "e,state,seconds,off"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "seconds";

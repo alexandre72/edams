@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FriLogos 0.1\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
-"POT-Creation-Date: 2013-01-14 16:56+0100\n"
+"POT-Creation-Date: 2013-01-23 16:08+0100\n"
 "PO-Revision-Date: 2013-01-14 17:06+0100\n"
 "Last-Translator: Alexandre Dussart <alexandre.dussart@laposte.net>\n"
 "Language-Team: français <alexandre.dussart@laposte.net>\n"
@@ -22,180 +22,259 @@ msgstr ""
 msgid "About E.D.A.M.S..."
 msgstr "A propos d'E.D.A.M.S..."
 
-#: src/bin/about_dlg.c:67 src/bin/actions_editor.c:284
-#: src/bin/devices_picker.c:201 src/bin/locations_creator.c:347
-#: src/bin/preferences_dlg.c:238 src/bin/widgets_picker.c:286
-#: src/lib/utils.c:114
+#: src/bin/about_dlg.c:67 src/bin/actions_editor.c:296
+#: src/bin/actions_editor.c:592 src/bin/devices_picker.c:200
+#: src/bin/locations_creator.c:366 src/bin/preferences_dlg.c:288
+#: src/bin/widgets_picker.c:294 src/lib/utils.c:114
 msgid "Close"
 msgstr "Fermer"
 
-#: src/bin/actions_editor.c:123
+#: src/bin/actions_editor.c:78
+#, fuzzy
+msgid "Select a program"
+msgstr "Sélectionner un capteur"
+
+#: src/bin/actions_editor.c:96 src/bin/actions_editor.c:164
+#, fuzzy
+msgid "Edit cmnd action"
+msgstr "Ajouter une localité"
+
+#: src/bin/actions_editor.c:100 src/bin/actions_editor.c:223
+#, fuzzy
+msgid "Edit exec"
+msgstr "Éditer"
+
+#: src/bin/actions_editor.c:108 src/bin/actions_editor.c:264
+msgid "Edit debug"
+msgstr ""
+
+#: src/bin/actions_editor.c:114 src/bin/actions_editor.c:167
+#, fuzzy
+msgid "Edit mail"
+msgstr "Envoyer mail"
+
+#: src/bin/actions_editor.c:128
+#, c-format
+msgid "Internal error in file %s at %d"
+msgstr ""
+
+#: src/bin/actions_editor.c:170
+msgid "From:"
+msgstr ""
+
+#: src/bin/actions_editor.c:183
+msgid "To:"
+msgstr ""
+
+#: src/bin/actions_editor.c:196
+msgid "Subject:"
+msgstr ""
+
+#: src/bin/actions_editor.c:209
+msgid "Body:"
+msgstr ""
+
+#: src/bin/actions_editor.c:226
+msgid "Path of program:"
+msgstr ""
+
+#: src/bin/actions_editor.c:245 src/bin/locations_creator.c:269
+#: src/bin/preferences_dlg.c:191
+msgid "Open..."
+msgstr "Ouvrir..."
+
+#: src/bin/actions_editor.c:258
+msgid "Exec in terminal"
+msgstr ""
+
+#: src/bin/actions_editor.c:267
+msgid "Printf message:"
+msgstr ""
+
+#: src/bin/actions_editor.c:307 src/bin/locations_creator.c:355
+#: src/bin/preferences_dlg.c:277 src/bin/widgets_picker.c:283
+msgid "Ok"
+msgstr "Ok"
+
+#: src/bin/actions_editor.c:437
 #, c-format
 msgid "If %s value %s %s then %s with arg=%s"
 msgstr "Si %svaleur %s %s alors %s avec l'argument=%s"
 
-#: src/bin/actions_editor.c:162
+#: src/bin/actions_editor.c:470
 #, c-format
 msgid "Edit actions for '%s' xPL device"
 msgstr "Éditeur d'actions pour le périphérique xPL '%s'"
 
-#: src/bin/actions_editor.c:178
+#: src/bin/actions_editor.c:486
 msgid "Actions list"
 msgstr "Liste des actions"
 
-#: src/bin/actions_editor.c:196
+#: src/bin/actions_editor.c:504 src/bin/actions_editor.c:538
 msgid "Action"
 msgstr "Action"
 
-#: src/bin/actions_editor.c:206
+#: src/bin/actions_editor.c:514
 msgid "Condition"
 msgstr "Condition"
 
-#: src/bin/actions_editor.c:219
+#: src/bin/actions_editor.c:527
 msgid "Value"
 msgstr "Valeur"
 
-#: src/bin/actions_editor.c:230
-msgid "Type"
-msgstr "Type"
+#: src/bin/actions_editor.c:550
+#, fuzzy
+msgid "Edit..."
+msgstr "Editer le nom..."
 
-#: src/bin/actions_editor.c:242
-msgid "Data"
-msgstr "Données"
-
-#: src/bin/actions_editor.c:262 src/bin/edams.c:462 src/bin/edams.c:590
+#: src/bin/actions_editor.c:570 src/bin/edams.c:519 src/bin/edams.c:664
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/bin/actions_editor.c:273 src/bin/edams.c:472 src/bin/edams.c:601
+#: src/bin/actions_editor.c:581 src/bin/edams.c:529 src/bin/edams.c:675
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/bin/devices_picker.c:131
+#: src/bin/devices_picker.c:129
 #, c-format
 msgid "Widget for device '%s' have been added to location '%s'."
 msgstr "Un widget pour le périphérique '%s' a été ajouté à la localité '%s'."
 
-#: src/bin/devices_picker.c:153
+#: src/bin/devices_picker.c:152
 msgid "Select a device"
 msgstr "Sélectionner un périphérique"
 
-#: src/bin/devices_picker.c:191
+#: src/bin/devices_picker.c:190
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/bin/edams.c:119
+#: src/bin/edams.c:123
 #, c-format
 msgid "EDAMS v%s - %02d/%02d/%d"
 msgstr "EDAMS v%s - %02d/%02d/%d"
 
-#: src/bin/edams.c:163
+#: src/bin/edams.c:169
 msgid "Can't remove:no location selected!"
 msgstr "Impossible de supprimer:aucune localité sélectionnée!"
 
-#: src/bin/edams.c:174
+#: src/bin/edams.c:181
 #, c-format
 msgid "Location '%s' have been removed."
 msgstr "La localité '%s' a été supprimée."
 
-#: src/bin/edams.c:220
-#, c-format
-msgid "Received sensor.basic"
-msgstr "Reçu sensor.basic"
+#: src/bin/edams.c:275
+#, fuzzy
+msgid "New xPL sensor.basic has been found"
+msgstr "Le nouveau capteur '%d-%s' a été créé."
 
-#: src/bin/edams.c:235 src/lib/device.c:745
-#, c-format
-msgid "%d devices registered"
-msgstr "%d de périphériques enregistrés"
-
-#: src/bin/edams.c:246
+#: src/bin/edams.c:292
 #, c-format
 msgid "Couldn't registered new device '%s'"
 msgstr "Impossible d'enregistrer le nouveau périphérique '%s'"
 
-#: src/bin/edams.c:292
+#: src/bin/edams.c:338
+#, c-format
+msgid "Sensors registered:%d"
+msgstr "Capteurs enregistrés:%d"
+
+#: src/bin/edams.c:351
 msgid "Couldn't remove widgets:no location selected!"
 msgstr "Impossible de supprimer:aucune localité sélectionnée!"
 
-#: src/bin/edams.c:307
+#: src/bin/edams.c:368
 #, c-format
 msgid "Widget for device '%s' have been removed from location '%s'."
 msgstr "Le widget pour périphérique '%s' a été supprimé de la localité '%s'."
 
-#: src/bin/edams.c:370
+#: src/bin/edams.c:439
 msgid "Informations"
 msgstr "Informations"
 
-#: src/bin/edams.c:406 src/bin/widgets_picker.c:216
+#: src/bin/edams.c:457 src/bin/widgets_picker.c:225
 msgid "Widgets"
 msgstr "Widgets"
 
-#: src/bin/edams.c:442
+#: src/bin/edams.c:499
 msgid "Edit"
 msgstr "Éditer"
 
-#: src/bin/edams.c:452
+#: src/bin/edams.c:509
 msgid "Actions"
 msgstr "Actions"
 
-#: src/bin/edams.c:501
-#, c-format
-msgid "[31mERROR:[0mCan't allocate App_Info struct!\n"
+#: src/bin/edams.c:559
+#, fuzzy, c-format
+msgid "[31mERROR:[0mCan't calloc App_Info struct!\n"
 msgstr "[31mERREUR:[0mImpossible d'allouer App_Info struct!\n"
 
-#: src/bin/edams.c:518
+#: src/bin/edams.c:570
+msgid "virtual"
+msgstr ""
+
+#: src/bin/edams.c:578
+#, fuzzy
+msgid "xPL control.basic"
+msgstr "Envoyer cmnd à control.basic"
+
+#: src/bin/edams.c:592
 msgid "Enlightened Domotics Alarm Monitoring System"
 msgstr "Enlightened Domotics Alarm Monitoring System"
 
-#: src/bin/edams.c:537
-msgid "Global Map"
+#: src/bin/edams.c:611
+#, fuzzy
+msgid "Global View"
 msgstr "Carte Générale"
 
-#: src/bin/edams.c:538
+#: src/bin/edams.c:612
 msgid "Preferences"
 msgstr "Préférences"
 
-#: src/bin/edams.c:539
+#: src/bin/edams.c:613
 msgid "About"
 msgstr "A propos"
 
-#: src/bin/edams.c:540
+#: src/bin/edams.c:614
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/bin/edams.c:564
+#: src/bin/edams.c:638
 msgid "Locations"
 msgstr "Localités"
 
-#: src/bin/init.c:37
+#: src/bin/init.c:39
 msgid "Initialize xPL service..."
 msgstr "Initialisation du service xPL..."
 
-#: src/bin/init.c:57
+#: src/bin/init.c:44
+#, fuzzy
+msgid "Can't init xPL service"
+msgstr "Initialisation du service xPL..."
+
+#: src/bin/init.c:63
 msgid "Initialize Enlightenment Foundation Libraries..."
 msgstr "Initialisation des Librairies de Fondation d'Enlightenment"
 
-#: src/bin/init.c:61
+#: src/bin/init.c:67
 msgid "Couldn't init Eina"
 msgstr "Impossible d'initialiser Eina!"
 
-#: src/bin/init.c:70
+#: src/bin/init.c:76
 msgid "Couldn't init Ecore_Con or Ecore_Con_Url"
 msgstr "Impossible d'initialiser Ecore_Con ou Ecore_Con_Url"
 
-#: src/bin/init.c:76
+#: src/bin/init.c:82
 msgid "Ecore_Con_Url pipeline has been enabled"
 msgstr "Le pipeline Ecore_Con_Url a été activé"
 
-#: src/bin/init.c:86
+#: src/bin/init.c:91
 msgid "Couldn't init Elementary"
 msgstr "Impossible d'initialiser Elementary"
 
-#: src/bin/init.c:107
+#: src/bin/init.c:113
 msgid "Checking EDAMS useful paths..."
 msgstr "Vérification des répertoires internes à EDAMS..."
 
-#: src/bin/init.c:118
+#: src/bin/init.c:121
 msgid ""
 "It appears that it's the first time you run EDAMS. To be used, EDAMS needs "
 "some database files containing items. I'll copy some default items files, "
@@ -207,115 +286,116 @@ msgstr ""
 "conseillé d'adapter EDAMS à ses besoins pour profiter pleinement de son "
 "utilisation."
 
-#: src/bin/locations_creator.c:112
+#: src/bin/locations_creator.c:126
 #, c-format
 msgid "Location %s has been created."
 msgstr "La localité %s a été créée."
 
-#: src/bin/locations_creator.c:157 src/bin/preferences_dlg.c:105
+#: src/bin/locations_creator.c:172 src/bin/preferences_dlg.c:111
 msgid "Select a picture file"
 msgstr "Sélectionner un fichier image..."
 
-#: src/bin/locations_creator.c:217
+#: src/bin/locations_creator.c:236
 msgid "Add a location"
 msgstr "Ajouter une localité"
 
-#: src/bin/locations_creator.c:230
+#: src/bin/locations_creator.c:249
 msgid "Photo"
 msgstr "Photo"
 
-#: src/bin/locations_creator.c:250 src/bin/preferences_dlg.c:189
-msgid "Open..."
-msgstr "Ouvrir..."
-
-#: src/bin/locations_creator.c:262
+#: src/bin/locations_creator.c:281
 msgid "Name:"
 msgstr "Nom:"
 
-#: src/bin/locations_creator.c:275
+#: src/bin/locations_creator.c:294
 msgid "Description:"
 msgstr "Description:"
 
-#: src/bin/locations_creator.c:288
+#: src/bin/locations_creator.c:307
 msgid "Geolocalization:"
 msgstr "Géolocalisation:"
 
-#: src/bin/locations_creator.c:318
+#: src/bin/locations_creator.c:337
 msgid "Go to"
 msgstr "Aller à"
-
-#: src/bin/locations_creator.c:336 src/bin/preferences_dlg.c:227
-#: src/bin/widgets_picker.c:275
-msgid "Ok"
-msgstr "Ok"
 
 #: src/bin/map.c:44 src/bin/map.c:55
 #, c-format
 msgid "No widget data for object %p (%s)"
 msgstr "Pas de données pour l'object widget %p (%s)"
 
-#: src/bin/map.c:411
-msgid "Couldn't create Edje_Object!"
+#: src/bin/map.c:412
+#, fuzzy
+msgid "Can't create Edje_Object!"
 msgstr "Impossible de créer un Edje_Object!"
 
-#: src/bin/map.c:422 src/bin/map.c:435
+#: src/bin/map.c:420 src/bin/map.c:431
 #, c-format
-msgid "Couldn't load group Edje group '%s' from Edje file '%s'"
+msgid "Can't load group Edje group '%s' from Edje file '%s'"
 msgstr ""
 
-#: src/bin/map.c:508
-msgid "You are trying to remove something not belonging to the smart object"
-msgstr ""
-
-#: src/bin/map.c:568
+#: src/bin/map.c:554 src/bin/map.c:715
 msgid "Can't load Edje image!"
 msgstr "Impossible de charger une image Edje!"
 
-#: src/bin/map.c:665
+#: src/bin/map.c:662
 msgid "Can't construct Ecore_Evas"
 msgstr "Impossible de construire un Ecore_Evas!"
 
-#: src/bin/map.c:669
+#: src/bin/map.c:666
 #, c-format
 msgid "Using Ecore_Evas '%s' engine"
 msgstr "Utilisation du moteur Ecore_Evas '%s'"
 
-#: src/bin/map.c:672
-msgid "Global map"
-msgstr "Carte générale"
+#: src/bin/map.c:670
+#, fuzzy
+msgid "Global view"
+msgstr "Carte Générale"
 
-#: src/bin/map.c:677
+#: src/bin/map.c:675
 msgid "Ecore_Evas has been correctly initalized"
 msgstr "Ecore_Evas a été correctement initialisé"
 
-#: src/bin/map.c:693
+#: src/bin/map.c:691
 #, c-format
 msgid "Can't load image file from '%s'"
 msgstr "Impossible de charger une image du fichier '%s'"
 
-#: src/bin/preferences_dlg.c:124 src/bin/widgets_picker.c:191
+#: src/bin/preferences_dlg.c:127
 msgid "Settings"
 msgstr "Préférences"
 
-#: src/bin/preferences_dlg.c:136
+#: src/bin/preferences_dlg.c:138
 msgid "Cosm API key:"
 msgstr "Clé API Cosm"
 
-#: src/bin/preferences_dlg.c:156
+#: src/bin/preferences_dlg.c:158
 msgid "Emulation"
 msgstr "Emulation"
 
-#: src/bin/preferences_dlg.c:163
+#: src/bin/preferences_dlg.c:165
 msgid "Debug with printf"
 msgstr "Déboguage avec printf"
 
-#: src/bin/preferences_dlg.c:169
+#: src/bin/preferences_dlg.c:171
 msgid "Map background image:"
 msgstr "Fond d'écran carte générale"
 
-#: src/bin/preferences_dlg.c:201
+#: src/bin/preferences_dlg.c:203
 msgid "Gnuplot path:"
 msgstr "Répertoire gnuplot:"
+
+#: src/bin/preferences_dlg.c:219
+msgid "SMTP server adress:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:233
+msgid "SMTP username:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:247
+msgid "SMTP password:"
+msgstr ""
 
 #: src/bin/shutdown.c:37
 msgid "Shutdown xPL..."
@@ -329,70 +409,71 @@ msgstr "Extinction des Fondations de Libraries d'Enlightenment..."
 msgid "Free allocated memory..."
 msgstr "Libération de la mémoire allouée..."
 
-#: src/bin/widgets_picker.c:204 src/lib/myfileselector.c:279
+#: src/bin/widgets_picker.c:130
+#, c-format
+msgid "Description:%s"
+msgstr "Description:%s"
+
+#: src/bin/widgets_picker.c:198
+#, fuzzy, c-format
+msgid "Edit widget properties for '%s' xPL device"
+msgstr "Éditeur d'actions pour le périphérique xPL '%s'"
+
+#: src/bin/widgets_picker.c:213 src/lib/myfileselector.c:279
 msgid "Preview"
 msgstr "Aperçu"
 
-#: src/bin/widgets_picker.c:252
+#: src/bin/widgets_picker.c:260
 msgid "Description"
 msgstr "Description"
 
-#: src/lib/cosm.c:54 src/lib/cosm.c:108 src/lib/cosm.c:158
-msgid "Couldn't create Ecore_Con_Url object"
+#: src/lib/cosm.c:54 src/lib/cosm.c:114 src/lib/cosm.c:179
+#, fuzzy
+msgid "Can't create Ecore_Con_Url object"
 msgstr "Impossible de créer un objet Ecore_Con_Url"
 
-#: src/lib/cosm.c:78 src/lib/cosm.c:127
-msgid "Couldn't realize url PUT request"
+#: src/lib/cosm.c:87 src/lib/cosm.c:149 src/lib/cosm.c:188
+msgid "Can't realize url PUT request"
 msgstr ""
 
-#: src/lib/cosm.c:99
+#: src/lib/cosm.c:108
 #, c-format
 msgid "Creating cosm feed for '%s'..."
 msgstr "Création d'un flux cosm pour '%s'..."
 
-#: src/lib/cosm.c:149
+#: src/lib/cosm.c:173
 #, fuzzy, c-format
 msgid "Delete cosm feed for '%s'..."
 msgstr "Effacer les élements sélectionnés..."
 
-#: src/lib/cosm.c:168
-msgid "Couldn't realize url DELETE request"
-msgstr ""
-
-#: src/lib/cosm.c:221
+#: src/lib/cosm.c:230
 msgid ""
 "A location feed hasn't been created, maybe cosm server is down or it's an "
 "internet connection problem?"
 msgstr ""
 
-#: src/lib/cosm.c:232
-#, c-format
-msgid "Location with cosm feedid '%d' for '%s' has been added with success"
-msgstr ""
-"Le flux cosm avec id '%d'  pour la localité '%s' a été créée avec succès"
+#: src/lib/cosm.c:242
+#, fuzzy, c-format
+msgid "Location has been added to cosm with feedid '%d'"
+msgstr "La pièce %s a été créée."
 
-#: src/lib/cosm.c:256
+#: src/lib/cosm.c:270
 msgid ""
 "A location feed hasn't been deleted, maybe cosm server is down or it's an "
 "internet connection problem?"
 msgstr ""
 
-#: src/lib/cosm.c:262
+#: src/lib/cosm.c:276
 #, fuzzy, c-format
-msgid "Location '%s' has been deleted with success"
-msgstr "La pièce %s a été créée."
+msgid "Location with feedid '%d' has been removed from cosm"
+msgstr "La localité '%s' a été supprimée."
 
-#: src/lib/cosm.c:278
+#: src/lib/device.c:108
 #, fuzzy
-msgid "Generating feeds, wait please..."
-msgstr "Génération des fichiers images..."
-
-#: src/lib/device.c:110
-#, fuzzy
-msgid "Couldn't calloc Action struct"
+msgid "Can't calloc Action struct"
 msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
 
-#: src/lib/device.c:252
+#: src/lib/device.c:249
 #, c-format
 msgid ""
 "Eet file '%s' already exist. Device name should be unique into your xpl "
@@ -400,85 +481,85 @@ msgid ""
 "another type, class...)?"
 msgstr ""
 
-#: src/lib/device.c:260 src/lib/device.c:786
+#: src/lib/device.c:257 src/lib/device.c:790
 #, fuzzy
-msgid "Couldn't calloc Device struct"
+msgid "Can't calloc Device struct"
 msgstr "Impossible d'allouer de la mémoire pour la structure Screen!"
 
-#: src/lib/device.c:383
+#: src/lib/device.c:364
 #, fuzzy, c-format
-msgid "Couldn't set an unknown Type_Flags to device '%s'"
+msgid "Can't set an unknown Type_Flags to device '%s'"
 msgstr "Impossible d'écrire un fichier Eet %s!"
 
-#: src/lib/device.c:386
+#: src/lib/device.c:368
 msgid "Generic"
 msgstr "Générique"
 
-#: src/lib/device.c:391
+#: src/lib/device.c:374
 msgid "Percent"
 msgstr "Pourcent"
 
-#: src/lib/device.c:396
+#: src/lib/device.c:380
 msgid "Counter"
 msgstr "Compteur"
 
-#: src/lib/device.c:401
+#: src/lib/device.c:386
 msgid "Amps"
 msgstr "Ampères"
 
-#: src/lib/device.c:406
+#: src/lib/device.c:392
 msgid "Degrees"
 msgstr "Degrés"
 
-#: src/lib/device.c:411
+#: src/lib/device.c:398
 msgid "Meters"
 msgstr "Mètres"
 
-#: src/lib/device.c:416
+#: src/lib/device.c:404
 msgid "Kilowatt hours"
 msgstr ""
 
-#: src/lib/device.c:421
+#: src/lib/device.c:410
 msgid "Rotation/min"
 msgstr ""
 
-#: src/lib/device.c:426
+#: src/lib/device.c:416
 msgid "Humidity ratio"
 msgstr "Taux d'humidité"
 
-#: src/lib/device.c:431
+#: src/lib/device.c:422
 msgid "Input"
 msgstr "Entrée"
 
-#: src/lib/device.c:436
+#: src/lib/device.c:428
 msgid "Output"
 msgstr "Sortie"
 
-#: src/lib/device.c:441
+#: src/lib/device.c:434
 msgid "Kilowatt"
 msgstr ""
 
-#: src/lib/device.c:446
+#: src/lib/device.c:440
 msgid "Pascals"
 msgstr ""
 
-#: src/lib/device.c:451 src/lib/device.c:461
+#: src/lib/device.c:446 src/lib/device.c:457
 msgid "Celsius"
 msgstr "Celsius"
 
-#: src/lib/device.c:456
+#: src/lib/device.c:451
 msgid "Miles per Hour"
 msgstr ""
 
-#: src/lib/device.c:466
+#: src/lib/device.c:463
 msgid "UV"
 msgstr "UV"
 
-#: src/lib/device.c:471
+#: src/lib/device.c:469
 msgid "Volts"
 msgstr "Volts"
 
-#: src/lib/device.c:476
+#: src/lib/device.c:475
 msgid "Cubic meter"
 msgstr ""
 
@@ -486,53 +567,55 @@ msgstr ""
 msgid "Kilograms"
 msgstr "Kilogrammes"
 
-#: src/lib/device.c:566 src/lib/device.c:659
+#: src/lib/device.c:570 src/lib/device.c:663 src/lib/location.c:433
+#: src/lib/location.c:577
 #, fuzzy, c-format
-msgid "Couldn't open Eet file '%s' in writing mode"
+msgid "Can't open Eet file '%s' in write mode"
 msgstr "Impossible d'ouvrir un fichier '%s'!"
 
-#: src/lib/device.c:668 src/lib/location.c:561
+#: src/lib/device.c:672 src/lib/location.c:449 src/lib/location.c:586
 #, fuzzy, c-format
-msgid "Couldn't write any data to Eet file '%s'"
+msgid "Can't write any data to Eet file '%s'"
 msgstr "Impossible d'écrire un fichier Eet %s!"
 
-#: src/lib/device.c:687
+#: src/lib/device.c:691 src/lib/location.c:542
 #, fuzzy, c-format
-msgid "Couldn't open Eet file '%s' in reading mode"
+msgid "Can't open Eet file '%s' in read mode"
 msgstr "Impossible d'ouvrir un fichier '%s'!"
 
-#: src/lib/device.c:697 src/lib/location.c:528
+#: src/lib/device.c:701 src/lib/location.c:553
 #, fuzzy, c-format
 msgid "Eet file '%s' %#x was too old, upgrading it to %#x"
 msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x!\n"
 
-#: src/lib/device.c:736
-msgid "Couldn't allocate Eina list node"
-msgstr "Impossible d'allouer un nœud dans la liste Eina"
+#: src/lib/device.c:740 src/lib/location.c:708
+#, fuzzy
+msgid "Can't alloc Eina_List node"
+msgstr "Impossible d'allouer un nœud dans la liste!"
 
-#: src/lib/device.c:769
+#: src/lib/device.c:749
+#, c-format
+msgid "%d devices registered"
+msgstr "%d de périphériques enregistrés"
+
+#: src/lib/device.c:773
 #, c-format
 msgid "%d Device struct of Eina_list freed"
 msgstr ""
 
-#: src/lib/device.c:825
-#, c-format
-msgid "Couldn't return device with id '%d' from devices list"
-msgstr ""
-
-#: src/lib/device.c:925
+#: src/lib/device.c:914
 msgid "Send control.basic cmnd"
 msgstr "Envoyer cmnd à control.basic"
 
-#: src/lib/device.c:926
+#: src/lib/device.c:915
 msgid "Send mail"
 msgstr "Envoyer mail"
 
-#: src/lib/device.c:927
+#: src/lib/device.c:916
 msgid "Execute external program"
 msgstr "Exécuter programme externe"
 
-#: src/lib/device.c:928
+#: src/lib/device.c:917
 msgid "Debug stuff for testing purpose"
 msgstr ""
 
@@ -550,52 +633,37 @@ msgstr ""
 msgid "Couldn't open gnuplot device data file '%s'"
 msgstr "Impossible de supprimer un fichier Eet: '%s'!"
 
-#: src/lib/location.c:99
+#: src/lib/location.c:101
 #, fuzzy
-msgid "Couldn't calloc Widget struct"
+msgid "Can't calloc Widget struct"
 msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
 
-#: src/lib/location.c:169
+#: src/lib/location.c:182
 #, fuzzy, c-format
-msgid "Couldn't load device associated to widget '%d'"
+msgid "Can't load device from widget '%d-%s'"
 msgstr "Impossible de supprimer un fichier Eet: '%s'!"
 
-#: src/lib/location.c:251
+#: src/lib/location.c:264
 #, fuzzy
-msgid "Couldn't calloc Location struct"
+msgid "Can't calloc Location struct"
 msgstr "Impossible d'allouer de la mémoire pour la struct Settings!"
 
-#: src/lib/location.c:414 src/lib/location.c:552
+#: src/lib/location.c:619
 #, fuzzy, c-format
-msgid "Couldn't open '%s' for writing"
-msgstr "Impossible d'ouvrir un fichier '%s'!"
-
-#: src/lib/location.c:517
-#, fuzzy, c-format
-msgid "Couldn't open '%s' for read"
-msgstr "Impossible d'ouvrir un fichier '%s'!"
-
-#: src/lib/location.c:594
-#, fuzzy, c-format
-msgid "Couldn't remove Eet location file '%s'"
+msgid "Can't remove Eet location file '%s'"
 msgstr "Impossible de supprimer un fichier Eet: '%s'!"
 
-#: src/lib/location.c:598
+#: src/lib/location.c:623
 #, fuzzy, c-format
 msgid "Eet Location file '%s' has been removed"
 msgstr "La localité '%s' a été supprimée."
 
-#: src/lib/location.c:623
+#: src/lib/location.c:648
 #, c-format
 msgid "%d Location struct of Eina_list freed"
 msgstr ""
 
-#: src/lib/location.c:683
-#, fuzzy
-msgid "Couldn't allocate Eina_List node!"
-msgstr "Impossible d'allouer un nœud dans la liste!"
-
-#: src/lib/location.c:693
+#: src/lib/location.c:718
 #, c-format
 msgid "%d locations registered"
 msgstr "%d de localités enregistrés."
@@ -677,42 +745,48 @@ msgstr "Annuler"
 msgid "Open"
 msgstr "Ouvrir"
 
-#: src/lib/settings.c:68
-msgid "ERROR:Couldn't calloc Settings struct!"
-msgstr "ERREUR:Impossible d'allouer de la mémoire pour la structure Settings!"
-
-#: src/lib/settings.c:88
+#: src/lib/settings.c:93
 #, c-format
 msgid "Debug is %s"
 msgstr "Débogguage est %s"
 
-#: src/lib/settings.c:88 src/lib/settings.c:89 src/lib/settings.c:90
+#: src/lib/settings.c:93 src/lib/settings.c:115 src/lib/settings.c:160
 msgid "enabled"
 msgstr "activé"
 
-#: src/lib/settings.c:88 src/lib/settings.c:89 src/lib/settings.c:90
+#: src/lib/settings.c:93 src/lib/settings.c:115 src/lib/settings.c:160
 msgid "disabled"
 msgstr "désactivé"
 
-#: src/lib/settings.c:89
-#, c-format
-msgid "Cosm data handling options is %s"
-msgstr ""
-
-#: src/lib/settings.c:90
+#: src/lib/settings.c:115
 #, c-format
 msgid "Software emulation is %s"
 msgstr "Émulation logicielle %s"
 
-#: src/lib/settings.c:91
+#: src/lib/settings.c:138
 #, c-format
 msgid "Map background file is '%s'"
 msgstr "Le fichier pour le fond d'écran de la carte générale est '%s'"
 
-#: src/lib/settings.c:92
+#: src/lib/settings.c:160
+#, c-format
+msgid "Cosm data handling options is %s"
+msgstr ""
+
+#: src/lib/settings.c:180
 #, c-format
 msgid "Gnuplot path is '%s'"
 msgstr "Répertoire pour gnuplot est '%s'"
+
+#: src/lib/settings.c:202
+#, c-format
+msgid "Smtp server is '%s'"
+msgstr ""
+
+#: src/lib/settings.c:260
+#, fuzzy
+msgid "Can't calloc Settings struct"
+msgstr "ERREUR:Impossible d'allouer de la mémoire pour la structure Settings!"
 
 #: src/lib/sound.c:38
 msgid "Sound support with Emotion has been enabled"
@@ -730,15 +804,6 @@ msgstr ""
 #: src/lib/utils.c:99
 msgid "Confirmation"
 msgstr "Confirmation"
-
-#: src/lib/xPL-hub.c:371
-#, c-format
-msgid "Couldn't rebroadcast to client on port %d, %s (%d)"
-msgstr ""
-
-#: src/lib/xPL-hub.c:390
-msgid "Couldn't format message for rebroadcast - message is lost"
-msgstr ""
 
 #: src/lib/xPL-message.c:518
 #, c-format
@@ -853,6 +918,37 @@ msgstr ""
 msgid "Error parsing network message - ignored"
 msgstr ""
 
+#~ msgid "Type"
+#~ msgstr "Type"
+
+#~ msgid "Data"
+#~ msgstr "Données"
+
+#~ msgid "Received sensor.basic"
+#~ msgstr "Reçu sensor.basic"
+
+#~ msgid "Global map"
+#~ msgstr "Carte générale"
+
+#~ msgid "Location with cosm feedid '%d' for '%s' has been added with success"
+#~ msgstr ""
+#~ "Le flux cosm avec id '%d'  pour la localité '%s' a été créée avec succès"
+
+#, fuzzy
+#~ msgid "Generating feeds, wait please..."
+#~ msgstr "Génération des fichiers images..."
+
+#~ msgid "Couldn't allocate Eina list node"
+#~ msgstr "Impossible d'allouer un nœud dans la liste Eina"
+
+#, fuzzy
+#~ msgid "Couldn't open '%s' for writing"
+#~ msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#, fuzzy
+#~ msgid "Couldn't open '%s' for read"
+#~ msgstr "Impossible d'ouvrir un fichier '%s'!"
+
 #, fuzzy
 #~ msgid "Device Creator"
 #~ msgstr "Créateur de capteurs"
@@ -872,9 +968,6 @@ msgstr ""
 
 #~ msgid "No"
 #~ msgstr "Non"
-
-#~ msgid "Sensors registered:%d"
-#~ msgstr "Capteurs enregistrés:%d"
 
 #, fuzzy
 #~ msgid "Devices Creator"
@@ -917,9 +1010,6 @@ msgstr ""
 #~ msgid "Room:%s"
 #~ msgstr "Pièce:%s"
 
-#~ msgid "Description:%s"
-#~ msgstr "Description:%s"
-
 #~ msgid "Sensors:"
 #~ msgstr "Capteurs:"
 
@@ -934,9 +1024,6 @@ msgstr ""
 
 #~ msgid "Rooms"
 #~ msgstr "Pièces"
-
-#~ msgid "Select a sensor"
-#~ msgstr "Sélectionner un capteur"
 
 #~ msgid "Can't load module %s: %s"
 #~ msgstr "Impossible de charger le module %s: %s"
@@ -970,9 +1057,6 @@ msgstr ""
 
 #~ msgid "About edams..."
 #~ msgstr "A propos d'E.D.A.M.S..."
-
-#~ msgid "New sensor '%d-%s' has been created."
-#~ msgstr "Le nouveau capteur '%d-%s' a été créé."
 
 #~ msgid "INFO:%d sensors registered on serial line...\n"
 #~ msgstr "INFO:%d capteurs trouvés sur la liaison série...\n"
@@ -1848,9 +1932,6 @@ msgstr ""
 
 #~ msgid "Moved %s to \"%s\" subgroup."
 #~ msgstr "Déplacement du sous-groupe \"%s\" vers le groupe \"%s\"."
-
-#~ msgid "Edit name..."
-#~ msgstr "Editer le nom..."
 
 #~ msgid "Move to group..."
 #~ msgstr "Déplacer vers le groupe..."

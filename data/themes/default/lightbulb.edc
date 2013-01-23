@@ -1,0 +1,117 @@
+/*
+ * lightbulb.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDA. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+group
+{
+	name: "widget/sensor.basic/lightbulb/icon";
+
+	images
+	{
+	image: "lightbulb_icon.png" COMP;
+	}
+
+    min: 32 32;
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "lightbulb_icon.png";
+            }
+         }
+      }
+}/*group widget/sensor.basic/lightbulb/icon*/
+
+
+
+
+group
+{
+	name: "widget/sensor.basic/lightbulb";
+	data
+	{
+		item: "description" "Light bulb sensor can be used to show binary value like enable/disable true/false. Ideally you can use it with light bulb or lamp.";
+		item: "tags" "switch,binary,light";
+	}
+
+	images
+	{
+		image: "lightbulb_off.png" COMP;
+		image: "lightbulb_on.png" COMP;
+	}
+
+	parts
+	{
+		part
+       	{
+			name: "base";
+            type: IMAGE;
+
+				description
+				{
+                    state: "off" 0.0;
+					aspect: 1 1;
+					aspect_preference: BOTH;
+                    image.normal: "lightbulb_off.png";
+                }
+		        description
+		        {
+		            state: "on" 0.0;
+		            inherit: "default" 0.0;
+                    image.normal: "lightbulb_on.png";
+		        }
+			}
+
+		part
+		{
+			name: "over";
+			type: RECT;
+			description
+			{
+				state: "default" 0.0;
+               	color: 0 0 0 0;
+			}
+		}
+	}/*parts*/
+	programs
+	{
+		program
+		{
+			signal: "true";
+			source: "over";
+			action: STATE_SET "on" 0.0;
+			transition: DIVIS 0.6 0.0 0.8;
+			target: "base";
+		}
+		program
+		{
+			signal: "false";
+			source: "over";
+			action: STATE_SET "off" 0.0;
+			target: "base";
+		}
+	}/*programs*/
+}/*group widget/sensor.basic/switch*/

@@ -17,6 +17,7 @@ externals {
 collections {
 #include "about.edc"
 #include "led.edc"
+#include "lightbulb.edc"
 #include "monitor.edc"
 #include "thermometer.edc"
 #include "counter.edc"
