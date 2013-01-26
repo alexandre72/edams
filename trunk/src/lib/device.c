@@ -43,11 +43,10 @@ struct _Device
     Device_Class class;				//Class of xpl device e.g. 'SENSOR_BASIC_CLASS'.
     Device_Type type;				//Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'.
     const char *description;		//Description of device e.g.'I2C sensor'.
-    const char *data;				//Current data of xpl device.
+    const char *current;			//Current data of xpl device.
     const char *data1;				//Additional data. Used for control.basic cmnd structure message.
 	const char *units;  			//The units of the device e.g. 'Celsius'.
 	const char *unit_symbol;		//The symbol of the unit e.g. 'C'.
-	const char *unit_format;		//The unit format in c printf style e.g.g '%f'.
     const char *creation;			//Creation date of device Eet file.
 	const char *revision;			//Revision date of device Eet file.
     unsigned int version;			//Version of device Eet file.
@@ -205,7 +204,7 @@ _device_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "name", name, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "class", class, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "type", type, EET_T_UINT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "data", data, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "current", current, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "data1", data1, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "description", description, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "creation", creation, EET_T_STRING);
@@ -213,7 +212,6 @@ _device_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "version", version, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "units", units, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "unit_symbol", unit_symbol, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "unit_format", unit_format, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_LIST(_device_descriptor, Device, "actions", actions, _action_descriptor);
 }
 
@@ -267,11 +265,10 @@ device_new(const char * name)
     device->class = UNKNOWN_DEVICE_CLASS;
     device->type = UNKNOWN_DEVICE_TYPE;
     device->description = NULL;
-    device->data = NULL;
+    device->current = NULL;
     device->data1 = NULL;
     device->units =NULL;
     device->unit_symbol = NULL;
-    device->unit_format = NULL;
 
     //Add creation date informations.
 	time_t timestamp = time(NULL);
@@ -298,11 +295,10 @@ device_free(Device *device)
 	    eina_stringshare_del(device->__eet_filename);
     	eina_stringshare_del(device->name);
     	eina_stringshare_del(device->description);
-    	eina_stringshare_del(device->data);
+    	eina_stringshare_del(device->current);
     	eina_stringshare_del(device->data1);
     	eina_stringshare_del(device->units);
     	eina_stringshare_del(device->unit_symbol);
-    	eina_stringshare_del(device->unit_format);
     	eina_stringshare_del(device->creation);
     	eina_stringshare_del(device->revision);
 
@@ -380,120 +376,100 @@ device_type_set(Device *device, const Device_Type type)
 		case GENERIC_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Generic"));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%s");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case BATTERY_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Percent"));
 					device_unit_symbol_set(device, "%");
-					device_unit_format_set(device, "%s%%");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case COUNT_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Counter"));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%s");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case CURRENT_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Amps"));
 					device_unit_symbol_set(device, "A");
-					device_unit_format_set(device, "%sA");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case DIRECTION_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Degrees"));
 					device_unit_symbol_set(device, "°");
-					device_unit_format_set(device, "%s°");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case DISTANCE_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Meters"));
 					device_unit_symbol_set(device, "m");
-					device_unit_format_set(device, "%s m");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case ENERGY_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Kilowatt hours"));
 					device_unit_symbol_set(device, "kWh");
-					device_unit_format_set(device, "%skWh");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case FAN_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Rotation/min"));
 					device_unit_symbol_set(device, "RPM");
-					device_unit_format_set(device, "%sRPM");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case HUMIDITY_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Humidity ratio"));
 					device_unit_symbol_set(device, "%");
-					device_unit_format_set(device, "%s%%");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case INPUT_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Input"));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%s");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case OUTPUT_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Output"));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%s");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case POWER_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Kilowatt"));
 					device_unit_symbol_set(device, "kW");
-					device_unit_format_set(device, "%skW");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case PRESSURE_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Pascals"));
 					device_unit_symbol_set(device, "N/m2");
-					device_unit_format_set(device, "%sN/m2");
 					break;
 					device_class_set(device, SENSOR_BASIC_CLASS);
 		case SETPOINT_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Celsius"));
 					device_unit_symbol_set(device, "°C");
-					device_unit_format_set(device, "%s°C");
 					break;
 		case SPEED_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Miles per Hour"));
 					device_unit_symbol_set(device, "Mph");
-					device_unit_format_set(device, "%s Mph");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case TEMP_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Celsius"));
 					device_unit_symbol_set(device, "°C");
-					device_unit_format_set(device, "%s°C");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case UV_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("UV"));
 					device_unit_symbol_set(device, "");
-					device_unit_format_set(device, "%s");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case VOLTAGE_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Volts"));
 					device_unit_symbol_set(device, "V");
-					device_unit_format_set(device, "%sV");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case VOLUME_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Cubic meter"));
 					device_unit_symbol_set(device, "m3");
-					device_unit_format_set(device, "%sm3");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 		case WEIGHT_SENSOR_BASIC_TYPE:
 					device_units_set(device, _("Kilograms"));
 					device_unit_symbol_set(device, "kg");
-					device_unit_format_set(device, "%skg");
 					device_class_set(device, SENSOR_BASIC_CLASS);
 					break;
 
@@ -529,19 +505,6 @@ device_units_get(const Device *device)
     return device->units;
 }
 
-inline void
-device_unit_format_set(Device *device, const char *unit_format)
-{
-    EINA_SAFETY_ON_NULL_RETURN(device);
-    eina_stringshare_replace(&(device->unit_format), unit_format);
-}
-
-
-inline const char *
-device_unit_format_get(const Device *device)
-{
-    return device->unit_format;
-}
 
 inline void
 device_unit_symbol_set(Device *device, const char *unit_symbol)
@@ -610,17 +573,91 @@ device_creation_set(Device *device, const char *creation)
 
 
 inline const char *
-device_data_get(const Device *device)
+device_current_get(const Device *device)
 {
-    return device->data;
+    return device->current;
 }
 
 inline void
-device_data_set(Device *device, const char *data)
+device_current_set(Device *device, const char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(device);
-	eina_stringshare_replace(&(device->data), data);
+	eina_stringshare_replace(&(device->current), data);
 }
+
+
+int
+device_current_to_int(Device *device)
+{
+    if(!device || !device->current) return -1;
+
+	int ret = atoi(device->current);
+
+	switch(device->type)
+	{
+		default:
+		case UNKNOWN_DEVICE_TYPE:
+		case BATTERY_SENSOR_BASIC_TYPE:
+		case COUNT_SENSOR_BASIC_TYPE:
+		case CURRENT_SENSOR_BASIC_TYPE:
+		case DISTANCE_SENSOR_BASIC_TYPE:
+		case ENERGY_SENSOR_BASIC_TYPE:
+		case FAN_SENSOR_BASIC_TYPE:
+		case GENERIC_SENSOR_BASIC_TYPE:
+		case POWER_SENSOR_BASIC_TYPE:
+		case PRESSURE_SENSOR_BASIC_TYPE:
+		case SETPOINT_SENSOR_BASIC_TYPE:
+		case SPEED_SENSOR_BASIC_TYPE:
+		case TEMP_SENSOR_BASIC_TYPE:
+		case UV_SENSOR_BASIC_TYPE:
+		case VOLTAGE_SENSOR_BASIC_TYPE:
+		case VOLUME_SENSOR_BASIC_TYPE:
+		case WEIGHT_SENSOR_BASIC_TYPE:
+						return ret;
+						break;
+
+		case DIRECTION_SENSOR_BASIC_TYPE:
+
+					if(ret > 360 || ret < 0)
+					{
+						debug(stderr, _("Device '%s' received data but it seems to be misformatted."), device->name);
+						return -1;
+					}
+					else
+						return ret;
+					break;
+
+		case HUMIDITY_SENSOR_BASIC_TYPE:
+					if(ret > 100 || ret < 0)
+					{
+						debug(stderr, _("Device '%s' received data but it seems to be misformatted."), device->name);
+						return -1;
+					}
+					else
+						return ret;
+					break;
+
+		case INPUT_SENSOR_BASIC_TYPE:
+		case OUTPUT_SENSOR_BASIC_TYPE:
+					if((strcmp(device->current, "HIGH") == 0) || (strcmp(device->current, "PULSE") == 0))
+					{
+						return 1;
+					}
+					else if((strcmp(device->current, "LOW") == 0))
+					{
+						return 0;
+					}
+					else
+					{
+						debug(stderr, _("Device '%s' received data but it seems to be misformatted."), device->name);
+						return -1;
+					}
+					break;
+	}
+
+	return ret;
+}
+
 
 
 inline const char *
@@ -824,11 +861,10 @@ device_clone(const Device *src)
     dst->type = src->type;
     dst->class = src->class;
     dst->description = eina_stringshare_add(src->description);
-    dst->data = eina_stringshare_add(src->data);
+    dst->current = eina_stringshare_add(src->current);
     dst->data1 = eina_stringshare_add(src->data1);
     dst->units = eina_stringshare_add(src->units);
     dst->unit_symbol = eina_stringshare_add(src->unit_symbol);
-    dst->unit_format = eina_stringshare_add(src->unit_format);
     dst->creation = eina_stringshare_add(src->creation);
     dst->revision = eina_stringshare_add(src->revision);
     dst->version = src->version;

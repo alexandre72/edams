@@ -63,14 +63,14 @@ _layout_samples_test(Evas_Object *layout)
 	device_type_set(sample, prandom(DEVICE_TYPE_LAST));
 
 	snprintf(s, sizeof(s), "%d", prandom(24));
-	device_data_set(sample, s);
+	device_current_set(sample, s);
 
 	const char *t;
 	// Special layout case(example:temperature values are floats).
 	if ((t = elm_layout_data_get(layout, "tempvalue")))
 	{
 		int temp_x, temp_y;
-		sscanf(device_data_get(sample), "%d.%02d", &temp_x, &temp_y);
+		sscanf(device_current_get(sample), "%d.%02d", &temp_x, &temp_y);
 
 		Evas_Object *eo = elm_layout_edje_get(layout);
 		Edje_Message_Float msg;
@@ -86,7 +86,7 @@ _layout_samples_test(Evas_Object *layout)
 		edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
 	}
 
-	if (atoi(device_data_get(sample)) == 0)
+	if ((device_current_to_int(sample) == 0))
 		elm_object_signal_emit(layout, "false", "over");
 	else
 		elm_object_signal_emit(layout, "true", "over");
@@ -99,8 +99,7 @@ _layout_samples_test(Evas_Object *layout)
 
 	if ((t = elm_layout_data_get(layout, "value")))
 	{
-		snprintf(s, sizeof(s), device_unit_format_get(sample),
-							device_data_get(sample));
+		snprintf(s, sizeof(s), "%04.d%s", device_current_to_int(sample), device_unit_symbol_get(sample) ? device_unit_symbol_get(sample) : "");
 		elm_object_part_text_set(layout, "value.text", s);
 	}
 	elm_object_signal_emit(layout, "updated", "over");

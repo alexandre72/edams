@@ -825,7 +825,7 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 			if ((t = edje_object_data_get(edje, "drag")))
 			{
 				int temp_x, temp_y;
-				sscanf(device_data_get(device), "%d.%02d", &temp_x, &temp_y);
+				sscanf(device_current_get(device), "%d.%02d", &temp_x, &temp_y);
 				Edje_Message_Float msg;
 				double level =
 								(double)((temp_x + (temp_y * 0.01)) -
@@ -838,7 +838,7 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 				edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
 			}
 
-			if (atoi(device_data_get(device)) == 0)
+			if ((device_current_to_int(device) == 0))
 				edje_object_signal_emit(edje, "false", "over");
 			else
 				edje_object_signal_emit(edje, "true", "over");
@@ -849,12 +849,12 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 				edje_object_part_text_set(edje, "title.text", s);
 			}
 
-				if ((t = edje_object_data_get(edje, "value")))
-				{
-				snprintf(s, sizeof(s), device_unit_format_get(device), device_data_get(device));
+			if ((t = edje_object_data_get(edje, "value")))
+			{
+				snprintf(s, sizeof(s), "%4.d%s", device_current_to_int(device), device_unit_symbol_get(device));
 				edje_object_part_text_set(edje, "value.text", s);
-				}
-				edje_object_signal_emit(edje, "updated", "over");
+			}
+			edje_object_signal_emit(edje, "updated", "over");
 			}
 		}
 	}
