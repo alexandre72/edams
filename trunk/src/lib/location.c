@@ -482,8 +482,23 @@ inline void
 location_widgets_add(Location *location, Widget *widget)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
-    widget_id_set(widget, eina_list_count(location->widgets)+1);
     location->widgets = eina_list_append(location->widgets, widget);
+
+	Eina_List *l;
+	Widget *data;
+	int id = 0;
+
+REDO:
+ 	EINA_LIST_FOREACH(location->widgets, l, data)
+   	{
+		if(data->id == id)
+		{
+			id++;
+			goto REDO;
+		}
+	}
+
+	widget_id_set(widget, id);
 }
 
 inline void

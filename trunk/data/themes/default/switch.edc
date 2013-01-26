@@ -34,7 +34,7 @@ group
 	data
 	{
 			item: "description" "Switch control can be used to set binary value like enable/disable true/false...";
-			item: "tags" "switch,binary";
+			item: "tags" "input.control";
 	}
 
 	images
@@ -52,14 +52,14 @@ group
 
 				description
 				{
-                    state: "off" 0.0;
+                    state: "disable" 0.0;
 					aspect: 1 1;
 					aspect_preference: BOTH;
                     image.normal: "switch_off.png";
                 }
 		        description
 		        {
-		            state: "on" 0.0;
+		            state: "enable" 0.0;
 		            inherit: "default" 0.0;
                     image.normal: "switch_on.png";
 		        }
@@ -70,18 +70,32 @@ group
 		program
 		{
 			signal: "mouse,clicked,*";
-            filter: "base" "off";
+            filter: "base" "disable";
 			source: "base";
-			action: STATE_SET "on" 0.0;
+			action: STATE_SET "enable" 0.0;
 			target: "base";
 		}
 		program
 		{
 			signal: "mouse,clicked,*";
-            filter: "base" "on";
+            filter: "base" "disable";
 			source: "base";
-			action: STATE_SET "off" 0.0;
+            action: SIGNAL_EMIT "enable" "switch";
+		}
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "enable";
+			source: "base";
+			action: STATE_SET "disable" 0.0;
 			target: "base";
+		}
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "enable";
+			source: "base";
+            action: SIGNAL_EMIT "disable" "switch";
 		}
 	}/*programs*/
 }

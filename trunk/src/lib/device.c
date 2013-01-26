@@ -44,6 +44,7 @@ struct _Device
     Device_Type type;				//Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'.
     const char *description;		//Description of device e.g.'I2C sensor'.
     const char *data;				//Current data of xpl device.
+    const char *data1;				//Additional data. Used for control.basic cmnd structure message.
 	const char *units;  			//The units of the device e.g. 'Celsius'.
 	const char *unit_symbol;		//The symbol of the unit e.g. 'C'.
 	const char *unit_format;		//The unit format in c printf style e.g.g '%f'.
@@ -204,6 +205,8 @@ _device_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "name", name, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "class", class, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "type", type, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "data", data, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "data1", data1, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "description", description, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "creation", creation, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_device_descriptor, Device, "revision", creation, EET_T_STRING);
@@ -265,6 +268,7 @@ device_new(const char * name)
     device->type = UNKNOWN_DEVICE_TYPE;
     device->description = NULL;
     device->data = NULL;
+    device->data1 = NULL;
     device->units =NULL;
     device->unit_symbol = NULL;
     device->unit_format = NULL;
@@ -295,6 +299,7 @@ device_free(Device *device)
     	eina_stringshare_del(device->name);
     	eina_stringshare_del(device->description);
     	eina_stringshare_del(device->data);
+    	eina_stringshare_del(device->data1);
     	eina_stringshare_del(device->units);
     	eina_stringshare_del(device->unit_symbol);
     	eina_stringshare_del(device->unit_format);
@@ -321,12 +326,20 @@ device_name_get(const Device *device)
 inline void
 device_name_set(Device *device, const char *name)
 {
-	char s[PATH_MAX];
+	int i = 0;
+	char *s;
 
     EINA_SAFETY_ON_NULL_RETURN(device);
+	asprintf(&s, "%s"DIR_SEPARATOR_S"%s.eet", edams_devices_data_path_get(), name);
 
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet" , edams_devices_data_path_get(), name);
+	while(ecore_file_exists(s) == EINA_TRUE)
+	{
+		asprintf(&s, "%s"DIR_SEPARATOR_S"%s-%04d.eet" , edams_devices_data_path_get(), name, i);
+		i++;
+	}
+
     eina_stringshare_replace(&(device->__eet_filename), s);
+    FREE(s);
 	eina_stringshare_replace(&(device->name), name);
 }
 
@@ -609,6 +622,21 @@ device_data_set(Device *device, const char *data)
 	eina_stringshare_replace(&(device->data), data);
 }
 
+
+inline const char *
+device_data1_get(const Device *device)
+{
+    return device->data1;
+}
+
+inline void
+device_data1_set(Device *device, const char *data1)
+{
+    EINA_SAFETY_ON_NULL_RETURN(device);
+	eina_stringshare_replace(&(device->data1), data1);
+}
+
+
 const char *
 device_filename_get(Device *device)
 {
@@ -797,6 +825,7 @@ device_clone(const Device *src)
     dst->class = src->class;
     dst->description = eina_stringshare_add(src->description);
     dst->data = eina_stringshare_add(src->data);
+    dst->data1 = eina_stringshare_add(src->data1);
     dst->units = eina_stringshare_add(src->units);
     dst->unit_symbol = eina_stringshare_add(src->unit_symbol);
     dst->unit_format = eina_stringshare_add(src->unit_format);
@@ -813,7 +842,29 @@ device_clone(const Device *src)
 	}
 
 	return dst;
-}
+}/*device_clone*/
+
+
+
+/*
+ *Remove location informations file.
+ */
+Eina_Bool
+device_remove(Device *device)
+{
+	if(!device) return EINA_FALSE;
+
+	if(!ecore_file_remove(device->__eet_filename))
+	{
+	    debug(stderr, _("Can't remove Eet device file '%s'"), device->__eet_filename);
+	    return EINA_FALSE;
+	}
+
+	debug(stdout, _("Eet device file '%s' has been removed"), device->__eet_filename);
+
+	return EINA_TRUE;
+}/*device_remove*/
+
 
 
 /*
@@ -837,39 +888,39 @@ device_str_to_type(const char *s)
 {
 	if(!s) return UNKNOWN_DEVICE_TYPE;
 
-	if(strcmp(s, "battery") == 0) 		return BATTERY_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "count") == 0)	return COUNT_SENSOR_BASIC_TYPE;
-	else if(strcmp(s ,"current") == 0)	return CURRENT_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "direction") == 0)return DIRECTION_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "distance") == 0)	return DISTANCE_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "energy") == 0)	return ENERGY_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "fan") == 0)		return FAN_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "generic") == 0)	return GENERIC_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "humidity") == 0)	return HUMIDITY_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "input") == 0)	return INPUT_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "output") == 0)	return OUTPUT_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "power") == 0)	return POWER_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "pressure") == 0)	return PRESSURE_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "setpoint") == 0)	return SETPOINT_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "speed") == 0)	return SPEED_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "temp") == 0)		return TEMP_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "uv") == 0)		return UV_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "voltage") == 0)	return VOLTAGE_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "volume") == 0)	return VOLUME_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "weight") == 0)	return WEIGHT_SENSOR_BASIC_TYPE;
-	else if(strcmp(s, "balance") == 0)	return BALANCE_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "flag") == 0)		return FLAG_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "infrared") == 0)	return INFRARED_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "input") == 0)	return INPUT_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "macro") == 0)	return MACRO_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "mute") == 0)		return MUTE_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "output") == 0)	return OUTPUT_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "variable") == 0)	return VARIABLE_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "periodic") == 0)	return PERIODIC_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "scheduled") == 0)return SCHEDULED_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "slider") == 0)	return SLIDER_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "timer") == 0)	return TIMER_CONTROL_BASIC_TYPE;
-	else								return UNKNOWN_DEVICE_TYPE;
+	if(strcmp(s, "battery") == 0) 				return BATTERY_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "count") == 0)			return COUNT_SENSOR_BASIC_TYPE;
+	else if(strcmp(s ,"current") == 0)			return CURRENT_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "direction") == 0)		return DIRECTION_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "distance") == 0)			return DISTANCE_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "energy") == 0)			return ENERGY_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "fan") == 0)				return FAN_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "generic") == 0)			return GENERIC_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "humidity") == 0)			return HUMIDITY_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "input") == 0)			return INPUT_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "output") == 0)			return OUTPUT_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "power") == 0)			return POWER_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "pressure") == 0)			return PRESSURE_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "setpoint") == 0)			return SETPOINT_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "speed") == 0)			return SPEED_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "temp") == 0)				return TEMP_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "uv") == 0)				return UV_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "voltage") == 0)			return VOLTAGE_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "volume") == 0)			return VOLUME_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "weight") == 0)			return WEIGHT_SENSOR_BASIC_TYPE;
+	else if(strcmp(s, "balance") == 0)			return BALANCE_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "flag") == 0)				return FLAG_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "infrared") == 0)			return INFRARED_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "input.control") == 0)	return INPUT_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "macro") == 0)			return MACRO_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "mute") == 0)				return MUTE_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "output.control") == 0)	return OUTPUT_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "variable") == 0)			return VARIABLE_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "periodic") == 0)			return PERIODIC_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "scheduled") == 0)		return SCHEDULED_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "slider") == 0)			return SLIDER_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "timer") == 0)			return TIMER_CONTROL_BASIC_TYPE;
+	else										return UNKNOWN_DEVICE_TYPE;
 }
 
 
@@ -947,10 +998,10 @@ device_type_to_str(Device_Type type)
 	else if(type == BALANCE_CONTROL_BASIC_TYPE)		return "balance";
 	else if(type == FLAG_CONTROL_BASIC_TYPE)		return "flag";
 	else if(type == INFRARED_CONTROL_BASIC_TYPE)	return "infrared";
-	else if(type == INPUT_CONTROL_BASIC_TYPE)		return "input";
+	else if(type == INPUT_CONTROL_BASIC_TYPE)		return "input.control";
 	else if(type == MACRO_CONTROL_BASIC_TYPE)		return "macro";
 	else if(type == MUTE_CONTROL_BASIC_TYPE)		return "mute";
-	else if(type == OUTPUT_CONTROL_BASIC_TYPE)		return "output";
+	else if(type == OUTPUT_CONTROL_BASIC_TYPE)		return "output.control";
 	else if(type == VARIABLE_CONTROL_BASIC_TYPE)	return "variable";
 	else if(type == PERIODIC_CONTROL_BASIC_TYPE)	return "periodic";
 	else if(type == SCHEDULED_CONTROL_BASIC_TYPE)	return "scheduled";

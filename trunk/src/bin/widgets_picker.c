@@ -109,11 +109,54 @@ _layout_samples_test(Evas_Object *layout)
 }
 
 
+static void
+_update_cmnd_preview(char *current, char *data1)
+{
+	char *s;
+
+	Device *device = evas_object_data_get(win, "device");
+	asprintf(&s, _("<ps><ps><em>control.basic<br>\
+							{<br>\
+							<tab>device=%s<br>\
+ 							<tab>type=%s<br>\
+							<tab>current=%s<br>\
+							}<br></em>"),
+							device_name_get(device),
+							device_type_to_str(device_type_get(device)),
+							current);
+
+	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
+   	elm_object_text_set(entry, s);
+	FREE(s);
+}
+
+
+
+/*
+ *
+ */
+static void
+_layout_enable_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
+{
+	_update_cmnd_preview("enable", NULL);
+}
+
+/*
+ *
+ */
+static void
+_layout_disable_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
+{
+	_update_cmnd_preview("disable", NULL);
+}
+
+
+
 /*
  *Callback called in list "widgets" object when an item is selected
  */
 static void
-_list_item_widgets_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_widgets_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	const char *widget = data;
 	const char *t;
@@ -128,13 +171,29 @@ _list_item_widgets_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED
 	{
 		char *s;
 		asprintf(&s, _("Description:%s"), t);
-   		elm_object_text_set(entry, s);
+   		elm_object_text_set(entry, "");
    		FREE(s);
    	}
    	else
    	{
    		elm_object_text_set(entry, NULL);
    	}
+
+	/*Show cmnd schema specific parameters for control.basic widget according to edc item flags values.*/
+	Device *device = evas_object_data_get(win, "device");
+	if(device_class_get(device) == CONTROL_BASIC_CLASS)
+	{
+		if((t = elm_layout_data_get(layout, "tags")))
+		{
+			device_type_set(device, device_str_to_type(t));
+
+			if(device_type_get(device) == INPUT_CONTROL_BASIC_TYPE)
+			{
+				elm_layout_signal_callback_add(layout, "enable", "switch", _layout_enable_cb, entry);
+				elm_layout_signal_callback_add(layout, "disable", "switch", _layout_disable_cb, entry);
+			}
+		}
+	}
 }
 
 
@@ -159,9 +218,10 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	FREE(s);
 	Elm_Object_Item *selected_item = elm_list_selected_item_get(widgets_list);
 	Widget *widget = elm_object_item_data_get(selected_item);
+	Device *device = widget_device_get(widget);
 
+	device_save(device);
     widget_name_set(widget, elm_object_item_data_get(item));
-
 	location_save(app->location);
 
 	update_naviframe_content(app->location);
@@ -176,9 +236,9 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 void
 widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *gd;
-	Evas_Object *ic, *bx, *frame;
-	Evas_Object *bt;
+	Evas_Object *grid;
+	Evas_Object *icon, *box, *frame;
+	Evas_Object *button;
 	Evas_Object *entry, *list, *layout;
 	Eina_List *l, *groups;
 
@@ -198,20 +258,21 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 	asprintf(&s, _("Edit widget properties for '%s' xPL device"), device_name_get(device));
 	win = elm_win_util_standard_add("widgets_picker", s);
 	FREE(s);
-	evas_object_data_set(win, "app", app);
+	evas_object_data_set(win, "device", device);
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
 
-	gd = elm_grid_add(win);
-	elm_grid_size_set(gd, 100, 100);
-	elm_win_resize_object_add(win, gd);
-	evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(gd, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_show(gd);
+	grid = elm_grid_add(win);
+	evas_object_name_set(grid, "grid");
+	elm_grid_size_set(grid, 100, 100);
+	elm_win_resize_object_add(win, grid);
+	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_show(grid);
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Preview"));
-	elm_grid_pack(gd, frame, 1, 1, 40, 50);
+	elm_grid_pack(grid, frame, 1, 1, 40, 40);
 	evas_object_show(frame);
 
 	layout = elm_layout_add(win);
@@ -223,7 +284,7 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Widgets"));
-	elm_grid_pack(gd, frame, 41, 1, 58, 50);
+	elm_grid_pack(grid, frame, 41, 1, 58, 40);
 	evas_object_show(frame);
 
 	list = elm_list_add(win);
@@ -241,14 +302,14 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 			asprintf(&s, "widget/%s", device_class_to_str(device_class_get(device)));
 			if((strncmp(group, s, strlen(s)) == 0) && (!strstr(group, "/icon")))
 			{
-				Evas_Object *ic;
-				ic = elm_icon_add(win);
+				Evas_Object *icon;
+				icon = elm_icon_add(win);
 				asprintf(&s, "%s/icon", group);
-			   	elm_image_file_set(ic, edams_edje_theme_file_get(), s);
+			   	elm_image_file_set(icon, edams_edje_theme_file_get(), s);
 			   	FREE(s);
-				elm_image_aspect_fixed_set(ic, EINA_TRUE);
-				elm_image_resizable_set(ic, 1, 0);
-				elm_list_item_append(list, group, ic, NULL, _list_item_widgets_selected_cb, group);
+				elm_image_aspect_fixed_set(icon, EINA_TRUE);
+				elm_image_resizable_set(icon, 1, 0);
+				elm_list_item_append(list, group, icon, NULL, _list_item_widgets_selected_cb, group);
 			}
 			FREE(s);
 		}
@@ -258,10 +319,11 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Description"));
-	elm_grid_pack(gd, frame, 1, 51, 99, 60);
+	elm_grid_pack(grid, frame, 1, 41, 99, 40);
 	evas_object_show(frame);
 
    	entry = elm_entry_add(win);
+   	elm_entry_editable_set(entry, EINA_FALSE);
    	evas_object_name_set(entry, "widget description entry");
    	elm_entry_line_wrap_set(entry, ELM_WRAP_MIXED);
    	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -269,34 +331,34 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 	elm_object_content_set(frame, entry);
 	evas_object_show(entry);
 
-	bx = elm_box_add(win);
-	elm_box_horizontal_set(bx, EINA_TRUE);
-	elm_box_homogeneous_set(bx, EINA_TRUE);
-	elm_grid_pack(gd, bx, 1, 90, 99, 10);
-	evas_object_show(bx);
+	box = elm_box_add(win);
+	elm_box_horizontal_set(box, EINA_TRUE);
+	elm_box_homogeneous_set(box, EINA_TRUE);
+	elm_grid_pack(grid, box, 1, 90, 99, 10);
+	evas_object_show(box);
 
-	bt = elm_button_add(win);
-	ic = elm_icon_add(win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "apply-window");
-	elm_object_part_content_set(bt, "icon", ic);
-	elm_object_text_set(bt, _("Ok"));
-	elm_box_pack_end(bx, bt);
-	evas_object_show(bt);
-	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
-	evas_object_smart_callback_add(bt, "clicked", _button_apply_clicked_cb, app);
+	button = elm_button_add(win);
+	icon = elm_icon_add(win);
+	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(icon, "apply-window");
+	elm_object_part_content_set(button, "icon", icon);
+	elm_object_text_set(button, _("Ok"));
+	elm_box_pack_end(box, button);
+	evas_object_show(button);
+	evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
+	evas_object_smart_callback_add(button, "clicked", _button_apply_clicked_cb, app);
 
-	bt = elm_button_add(win);
-	ic = elm_icon_add(win);
-	elm_icon_order_lookup_set(ic, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(ic, "window-close");
-	elm_object_part_content_set(bt, "icon", ic);
-	elm_object_text_set(bt, _("Close"));
-	elm_box_pack_end(bx, bt);
-	evas_object_show(bt);
-	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0);
-	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
+	button = elm_button_add(win);
+	icon = elm_icon_add(win);
+	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(icon, "window-close");
+	elm_object_part_content_set(button, "icon", icon);
+	elm_object_text_set(button, _("Close"));
+	elm_box_pack_end(box, button);
+	evas_object_show(button);
+	evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
+	evas_object_smart_callback_add(button, "clicked", window_clicked_close_cb, win);
 
-	evas_object_resize(win, 400, 400);
+	evas_object_resize(win, 600, 500);
 	evas_object_show(win);
 }/*widgets_picker_add*/

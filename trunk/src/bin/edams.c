@@ -368,6 +368,13 @@ _button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 	asprintf(&s,  _("Widget for device '%s' have been removed from location '%s'."),
 																device_name_get(device),
 																location_name_get(app->location));
+
+	if(	(device_class_get(device) == CONTROL_BASIC_CLASS) ||
+		(device_class_get(device) == VIRTUAL_CLASS))
+	{
+		device_remove(device);
+	}
+
 	statusbar_text_set(s, "elm/icon/device/default");
 	FREE(s);
 }/*_button_remove_widget_clicked_cb*/
@@ -564,23 +571,6 @@ elm_main(int argc, char **argv)
 
 	// Initialize edams.
 	edams_init(app);
-
-	//Add a registered virtual device, to allow adding special widgets like mail checker, clock.
-	Device *device;
-	if((device = device_new(_("virtual"))))
-	{
-		device_class_set(device, VIRTUAL_CLASS);
-		device_save(device);
-		device_free(device);
-	}
-
-	//Add a registered virtual control.basic device, to allow adding xPL that can be controlled .
-	if((device = device_new(_("xPL control.basic"))))
-	{
-		device_class_set(device, CONTROL_BASIC_CLASS);
-		device_save(device);
-		device_free(device);
-	}
 
 	//Load registered devices.
 	app->devices = devices_list_get();
