@@ -171,7 +171,7 @@ _list_item_widgets_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *e
 	{
 		char *s;
 		asprintf(&s, _("Description:%s"), t);
-   		elm_object_text_set(entry, "");
+   		elm_object_text_set(entry, t);
    		FREE(s);
    	}
    	else
@@ -185,7 +185,13 @@ _list_item_widgets_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *e
 	{
 		if((t = elm_layout_data_get(layout, "tags")))
 		{
-			device_type_set(device, device_str_to_type(t));
+			//FIXME:Hack to avoid setting input or ouput from sensor.basic class!
+			if(strcmp(t, "input") == 0)
+			 	device_type_set(device,INPUT_CONTROL_BASIC_TYPE);
+			else if(strcmp(t, "ouput") == 0)
+			 	device_type_set(device,OUTPUT_CONTROL_BASIC_TYPE);
+			else
+				device_type_set(device, device_str_to_type(t));
 
 			if(device_type_get(device) == INPUT_CONTROL_BASIC_TYPE)
 			{
@@ -272,7 +278,7 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Preview"));
-	elm_grid_pack(grid, frame, 1, 1, 40, 40);
+	elm_grid_pack(grid, frame, 1, 1, 40, 50);
 	evas_object_show(frame);
 
 	layout = elm_layout_add(win);
@@ -284,7 +290,7 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Widgets"));
-	elm_grid_pack(grid, frame, 41, 1, 58, 40);
+	elm_grid_pack(grid, frame, 41, 1, 58, 50);
 	evas_object_show(frame);
 
 	list = elm_list_add(win);
@@ -319,7 +325,7 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Description"));
-	elm_grid_pack(grid, frame, 1, 41, 99, 40);
+	elm_grid_pack(grid, frame, 1, 51, 99, 30);
 	evas_object_show(frame);
 
    	entry = elm_entry_add(win);

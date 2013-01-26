@@ -911,10 +911,10 @@ device_str_to_type(const char *s)
 	else if(strcmp(s, "balance") == 0)			return BALANCE_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "flag") == 0)				return FLAG_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "infrared") == 0)			return INFRARED_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "input.control") == 0)	return INPUT_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "input") == 0)			return INPUT_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "macro") == 0)			return MACRO_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "mute") == 0)				return MUTE_CONTROL_BASIC_TYPE;
-	else if(strcmp(s, "output.control") == 0)	return OUTPUT_CONTROL_BASIC_TYPE;
+	else if(strcmp(s, "output") == 0)			return OUTPUT_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "variable") == 0)			return VARIABLE_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "periodic") == 0)			return PERIODIC_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "scheduled") == 0)		return SCHEDULED_CONTROL_BASIC_TYPE;
@@ -998,10 +998,10 @@ device_type_to_str(Device_Type type)
 	else if(type == BALANCE_CONTROL_BASIC_TYPE)		return "balance";
 	else if(type == FLAG_CONTROL_BASIC_TYPE)		return "flag";
 	else if(type == INFRARED_CONTROL_BASIC_TYPE)	return "infrared";
-	else if(type == INPUT_CONTROL_BASIC_TYPE)		return "input.control";
+	else if(type == INPUT_CONTROL_BASIC_TYPE)		return "input";
 	else if(type == MACRO_CONTROL_BASIC_TYPE)		return "macro";
 	else if(type == MUTE_CONTROL_BASIC_TYPE)		return "mute";
-	else if(type == OUTPUT_CONTROL_BASIC_TYPE)		return "output.control";
+	else if(type == OUTPUT_CONTROL_BASIC_TYPE)		return "output";
 	else if(type == VARIABLE_CONTROL_BASIC_TYPE)	return "variable";
 	else if(type == PERIODIC_CONTROL_BASIC_TYPE)	return "periodic";
 	else if(type == SCHEDULED_CONTROL_BASIC_TYPE)	return "scheduled";
