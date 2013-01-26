@@ -67,7 +67,7 @@ cosm_device_datastream_update(Location *location, Device *device)
 	cJSON_AddItemToObject(root, "datastreams", datastreams=cJSON_CreateArray());
 
 	fmt=cJSON_CreateObject();
-	cJSON_AddStringToObject(fmt,"current_value", device_data_get(device));
+	cJSON_AddStringToObject(fmt,"current_value", device_current_get(device));
 	cJSON_AddStringToObject(fmt,"id", device_name_get(device));
 
 	if(strlen(device_unit_symbol_get(device)) > 0)

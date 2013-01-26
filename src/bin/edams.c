@@ -292,7 +292,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
                 debug(stderr, _("Couldn't registered new device '%s'"), name);
                 return;
         }
-        device_data_set(device, sval);
+        device_current_set(device, sval);
 
 		/*Parse all device action's and to execute them(if condition is full)*/
 		Eina_List *l, *actions;
@@ -303,28 +303,27 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 				switch(action_ifcondition_get(action))
 				{
 					case EGAL_TO:
-							if(atoi(device_data_get(device)) == atoi(action_ifvalue_get(action))) action_parse(action);
+							if(device_current_to_int(device) == atoi(action_ifvalue_get(action))) action_parse(action);
 							break;
 					case LESS_THAN:
-							if(atoi(device_data_get(device)) < atoi(action_ifvalue_get(action))) action_parse(action);
+							if(device_current_to_int(device) < atoi(action_ifvalue_get(action))) action_parse(action);
 							break;
 					case MORE_THAN:
-							if(atoi(device_data_get(device)) > atoi(action_ifvalue_get(action))) action_parse(action);
+							if(device_current_to_int(device) > atoi(action_ifvalue_get(action))) action_parse(action);
 							break;
 					case LESS_OR_EGAL_TO:
-							if(atoi(device_data_get(device)) <= atoi(action_ifvalue_get(action))) action_parse(action);
+							if(device_current_to_int(device) <= atoi(action_ifvalue_get(action))) action_parse(action);
 							break;
 					case MORE_OR_EGAL_TO:
-							if(atoi(device_data_get(device)) >= atoi(action_ifvalue_get(action))) action_parse(action);
+							if(device_current_to_int(device) >= atoi(action_ifvalue_get(action))) action_parse(action);
 							break;
 					case UNKNOWN_CONDITION:
 					case CONDITION_LAST:
 							break;
 				}
 		}
-
-        /*Write gnuplot file with updated device's data*/
-        gnuplot_device_data_write(device);
+     /*Write gnuplot file with updated device's data*/
+    gnuplot_device_data_write(device);
 
         /*Parse all locations and sync with global and cosm*/
         Location *location;

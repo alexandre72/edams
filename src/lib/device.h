@@ -25,7 +25,7 @@
 #include <Eina.h>
 #include <Evas.h>
 
-#define DEVICE_FILE_VERSION 0x0006
+#define DEVICE_FILE_VERSION 0x0007
 
 typedef struct _Device Device;
 typedef struct _Action Action;
@@ -119,7 +119,6 @@ void action_ifvalue_set(const Action *action, const char *ifvalue);
 void action_type_set(Action *action, Action_Type type);
 void action_data_set(const Action *action, const char *data);
 
-
 void device_action_add(Device *device, Action *action);
 void device_action_del(Device *device,Action *action);
 Action *device_action_get(const Device *device, unsigned int nth);
@@ -140,6 +139,7 @@ Condition action_str_to_condition(const char *s);
 
 const char *action_type_to_str(Action_Type type);
 
+int device_current_to_int(Device *device);
 
 /*Device funcs*/
 Device *device_new(const char * name);
@@ -156,10 +156,9 @@ void device_type_set(Device *device, Device_Type type);
 void device_description_set(Device *device, const char * description);
 void device_image_set(Device *device, Evas_Object *image);
 void device_creation_set(Device *device, const char * creation);
-void device_data_set(Device *device, const char * data);
+void device_current_set(Device *device, const char * current);
 void device_data1_set(Device *device, const char * data1);
 void device_units_set(Device *device, const char *units);
-void device_unit_format_set(Device *device, const char *unit_format);
 void device_unit_symbol_set(Device *device, const char *unit_symbol);
 
 const char *device_filename_get(Device *device);
@@ -168,10 +167,9 @@ Device_Class device_class_get(const Device *device);
 Device_Type device_type_get(const Device *device);
 const char * device_description_get(const Device *device);
 const char * device_creation_get(const Device *device);
-const char * device_data_get(const Device *device);
+const char * device_current_get(const Device *device);
 const char * device_data1_get(const Device *device);
 const char * device_units_get(const Device *device);
-const char * device_unit_format_get(const Device *device);
 const char * device_unit_symbol_get(const Device *device);
 
 /*Devices list funcs.*/

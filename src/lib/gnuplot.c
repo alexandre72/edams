@@ -107,14 +107,14 @@ gnuplot_device_data_write(Device *device)
 		return EINA_FALSE;
 	}
 
-	fprintf(dat,  "%d-%d-%d-%d:%d:%d %s\n",
+	fprintf(dat,  "%d-%d-%d-%d:%d:%d %d\n",
 				t->tm_mday,
 				t->tm_mon+1,
 				1900+t->tm_year,
 				t->tm_hour,
 				 t->tm_min,
 				 t->tm_sec,
-				 device_data_get(device));
+				 device_current_(device));
 	fclose(dat);
 
 	return EINA_TRUE;
