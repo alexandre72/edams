@@ -34,7 +34,7 @@ group
 	data
 	{
 			item: "description" "Switch control can be used to set binary value like enable/disable true/false...";
-			item: "tags" "input.control";
+			item: "tags" "input";
 	}
 
 	images
