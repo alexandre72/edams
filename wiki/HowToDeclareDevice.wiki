@@ -23,8 +23,7 @@ msg.AddCommand_P(PSTR("current"),PSTR("22"));
 
 sensor.basic follow xPL standard, when EDAMS discover a new xPL containing sensor.basic message it can recognize it as a sensor device class.
 
-'device' follow xPL rule from sensor.basic message, it's an unique name for your device into
- your xPL network.
+'device' follow xPL rule from sensor.basic message, it's an unique name for your device into your xPL network.
 
 'type' follow xPL rule from sensor.basic message see http://xplproject.org.uk/wiki/index.php?title=Schema_-_SENSOR.BASIC to set other type(battery, weight...). EDAMS set units associated to these type(volt, celsius...). Cosm.com follow its standard too.
 
