@@ -235,6 +235,8 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 }/*_xpl_sensor_basic_handler*/
 
 
+
+
 /*
  *Child process that listen xPL messages received from xPL hub(hub is an external prog and need to be run).
  */
@@ -751,7 +753,13 @@ elm_main(int argc, char **argv)
 	pid_t child_pid;
 
     pipe = ecore_pipe_add(handler, NULL);
-	xPL_addServiceListener(app->edamsService, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
+
+ 	/*Create xPL responder(s)*/
+	xPL_addServiceListener(app->xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
+
+	/*Create xPL message to send*/
+	app->xpl_edams_message_cmnd = xPL_createBroadcastMessage(app->xpl_edams_service, xPL_MESSAGE_COMMAND);
+
 
 	child_pid = fork();
 

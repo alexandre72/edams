@@ -114,7 +114,7 @@ gnuplot_device_data_write(Device *device)
 				t->tm_hour,
 				 t->tm_min,
 				 t->tm_sec,
-				 device_current_(device));
+				 device_current_to_int(device));
 	fclose(dat);
 
 	return EINA_TRUE;

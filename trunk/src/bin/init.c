@@ -46,11 +46,11 @@ xpl_init(App_Info * app)
 	}
 
 	/*Create an xpl service*/
-	app->edamsService = xPL_createService("edams", "xpl", "edams.xpl");
-	xPL_setServiceVersion(app->edamsService, VERSION);
+	app->xpl_edams_service = xPL_createService("edams", "xpl", "edams.xpl");
+	xPL_setServiceVersion(app->xpl_edams_service, VERSION);
 
 	/*Enable the service*/
-	xPL_setServiceEnabled(app->edamsService, EINA_TRUE);
+	xPL_setServiceEnabled(app->xpl_edams_service, EINA_TRUE);
 
 	return 0;
 }
