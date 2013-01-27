@@ -99,7 +99,7 @@ _layout_samples_test(Evas_Object *layout)
 
 	if ((t = elm_layout_data_get(layout, "value")))
 	{
-		snprintf(s, sizeof(s), "%04.d%s", device_current_to_int(sample), device_unit_symbol_get(sample) ? device_unit_symbol_get(sample) : "");
+		snprintf(s, sizeof(s), "%d%s", device_current_to_int(sample), device_unit_symbol_get(sample) ? device_unit_symbol_get(sample) : "");
 		elm_object_part_text_set(layout, "value.text", s);
 	}
 	elm_object_signal_emit(layout, "updated", "over");
@@ -109,11 +109,9 @@ _layout_samples_test(Evas_Object *layout)
 
 
 static void
-_update_cmnd_preview(char *current, char *data1)
+_update_cmnd_preview(Device *device)
 {
 	char *s;
-
-	Device *device = evas_object_data_get(win, "device");
 	asprintf(&s, _("<ps><ps><em>control.basic<br>\
 							{<br>\
 							<tab>device=%s<br>\
@@ -122,7 +120,7 @@ _update_cmnd_preview(char *current, char *data1)
 							}<br></em>"),
 							device_name_get(device),
 							device_type_to_str(device_type_get(device)),
-							current);
+							device_current_get(device));
 
 	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
    	elm_object_text_set(entry, s);
@@ -135,18 +133,20 @@ _update_cmnd_preview(char *current, char *data1)
  *
  */
 static void
-_layout_enable_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
+_layout_signals_cb(void *data, Evas_Object *edje_obj __UNUSED__, const char  *emission, const char  *source)
 {
-	_update_cmnd_preview("enable", NULL);
-}
+	Device *device = data;
 
-/*
- *
- */
-static void
-_layout_disable_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
-{
-	_update_cmnd_preview("disable", NULL);
+	if(strstr(emission, "mouse")) return;
+
+	fprintf(stdout, "emission=%s\n", emission);
+	fprintf(stdout, "source=%s\n", source);
+
+	//fprintf(stdout, "data1=%s\n", data);
+
+	//device_data1_set(device, data);
+	device_current_set(device, emission);
+	_update_cmnd_preview(device);
 }
 
 
@@ -185,18 +185,11 @@ _list_item_widgets_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *e
 		if((t = elm_layout_data_get(layout, "tags")))
 		{
 			//FIXME:Hack to avoid setting input or ouput from sensor.basic class!
-			if(strcmp(t, "input") == 0)
-			 	device_type_set(device,INPUT_CONTROL_BASIC_TYPE);
-			else if(strcmp(t, "ouput") == 0)
-			 	device_type_set(device,OUTPUT_CONTROL_BASIC_TYPE);
-			else
-				device_type_set(device, device_str_to_type(t));
+			if(strcmp(t, "input") == 0)			device_type_set(device, INPUT_CONTROL_BASIC_TYPE);
+			else if(strcmp(t, "ouput") == 0)	device_type_set(device, OUTPUT_CONTROL_BASIC_TYPE);
+			else								device_type_set(device, device_str_to_type(t));
 
-			if(device_type_get(device) == INPUT_CONTROL_BASIC_TYPE)
-			{
-				elm_layout_signal_callback_add(layout, "enable", "switch", _layout_enable_cb, entry);
-				elm_layout_signal_callback_add(layout, "disable", "switch", _layout_disable_cb, entry);
-			}
+			elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, device);
 		}
 	}
 }
@@ -222,8 +215,15 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	Evas_Object *widgets_list = elm_object_name_find(app->win, s, -1);
 	FREE(s);
 	Elm_Object_Item *selected_item = elm_list_selected_item_get(widgets_list);
+
 	Widget *widget = elm_object_item_data_get(selected_item);
 	Device *device = widget_device_get(widget);
+
+	if(device_class_get(device) == CONTROL_BASIC_CLASS)
+	{
+		Device *device_sel = evas_object_data_get(win, "device");
+		device_type_set(device, device_type_get(device_sel));
+	}
 
 	device_save(device);
     widget_name_set(widget, elm_object_item_data_get(item));

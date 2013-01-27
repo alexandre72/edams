@@ -35,8 +35,8 @@ static int xpl_shutdown(App_Info * app);
 static int xpl_shutdown(App_Info * app)
 {
 	debug(stdout, _("Shutdown xPL..."));
-	xPL_setServiceEnabled(app->edamsService, EINA_FALSE);
-	xPL_releaseService(app->edamsService);
+	xPL_setServiceEnabled(app->xpl_edams_service, EINA_FALSE);
+	xPL_releaseService(app->xpl_edams_service);
 	xPL_shutdown();
 
 	return 0;
