@@ -376,7 +376,9 @@ void xPL_setMessageNamedValue(xPL_MessagePtr theMessage, String theName, String 
 }
 
 /* Set a series of NameValue pairs for a message */
-void xPL_setMessageNamedValues(xPL_MessagePtr theMessage, ...) {
+void
+xPL_setMessageNamedValues(xPL_MessagePtr theMessage, ...)
+{
   va_list argPtr;
   String theName, theValue;
 
@@ -397,7 +399,9 @@ void xPL_setMessageNamedValues(xPL_MessagePtr theMessage, ...) {
 
 
 /* Create a new message based on a service */
-static xPL_MessagePtr createSendableMessage(xPL_ServicePtr theService, xPL_MessageType messageType) {
+static xPL_MessagePtr
+createSendableMessage(xPL_ServicePtr theService, xPL_MessageType messageType)
+{
   xPL_MessagePtr theMessage;
 
   /* Allocate the message */
@@ -417,7 +421,9 @@ static xPL_MessagePtr createSendableMessage(xPL_ServicePtr theService, xPL_Messa
 }
 
 /* Create a new message based on a service */
-static xPL_MessagePtr createReceivedMessage(xPL_MessageType messageType) {
+static xPL_MessagePtr
+createReceivedMessage(xPL_MessageType messageType)
+{
   xPL_MessagePtr theMessage;
 
   /* Allocate the message */
@@ -458,7 +464,9 @@ xPL_MessagePtr xPL_createBroadcastMessage(xPL_ServicePtr theService, xPL_Message
 }
 
 /* Release a message and all it's resources */
-void xPL_releaseMessage(xPL_MessagePtr theMessage) {
+void
+xPL_releaseMessage(xPL_MessagePtr theMessage)
+{
   /* Free Parsed stuff */
   if (theMessage->receivedMessage) {
     STR_FREE(theMessage->sourceVendor);
@@ -493,7 +501,9 @@ void xPL_releaseMessage(xPL_MessagePtr theMessage) {
 }
 
 /* Write out the message */
-String xPL_formatMessage(xPL_MessagePtr theMessage) {
+String
+xPL_formatMessage(xPL_MessagePtr theMessage)
+ {
   xPL_NameValueListPtr nvList = xPL_getMessageBody(theMessage);
   xPL_NameValuePairPtr nvPair = NULL;
   int nvIndex = 0;
@@ -600,7 +610,9 @@ Eina_Bool xPL_sendMessage(xPL_MessagePtr theMessage) {
 /* returned (ABS of this number points to the failing character)                              */
 /* If we run out of bytes before we start a new block, it's likely end of stream garbage and  */
 /* we return 0 (which means parsing this message is done)                                     */
-static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, Eina_Bool forceUpperCase) {
+static int
+parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, Eina_Bool forceUpperCase)
+{
   int curState = 0, curIndex, theLength = strlen(theText);
   char theChar;
   String headerBuff = blockHeaderBuff;
@@ -761,7 +773,9 @@ static int parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr 
 
 /* Parse the name/value pairs for this message.  If they are all found and valid, then */
 /* we return EINA_TRUE.  Otherwise, EINA_FALSE.                                                  */
-static Eina_Bool parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueListPtr nameValueList) {
+static Eina_Bool
+parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueListPtr nameValueList)
+{
   int hopCount;
   String dashPtr = NULL, periodPtr = NULL;
   xPL_NameValuePairPtr theNameValue;
@@ -860,7 +874,9 @@ static Eina_Bool parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueList
 
 /* Convert a text message into a xPL message.  Return the message */
 /* or NULL if there is a parse error                              */
-xPL_MessagePtr parseMessage(String theText) {
+xPL_MessagePtr
+ parseMessage(String theText)
+{
   int textLen = strlen(theText);
   int parsedChars, parsedThisTime;
   String blockHeaderKeyword;

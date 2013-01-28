@@ -9,9 +9,9 @@ License: Lesser GPLv3+
 Group: Applications/Multimedia
 Source: %{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Alexandre Dussart <alexandre.dussart@laposte.net>}
-Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:Hylius Project(http://hylius.tuxfamily.org/)}
+Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:EDAMS Project(http://code.google.com/p/edams/}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-URL: http://hylius.tuxfamily.org/
+URL: http://code.google.com/p/edams/
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Requires: elementary, emotion
 BuildRequires: elementary-devel, emotion-devel
@@ -40,11 +40,16 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS COPYING README
 %{_bindir}/edams
 %{_datadir}/applications/edams.desktop
-%{_datadir}/edams/themes/default/default.edj
+%{_datadir}/edams/themes/default/edams.edj
 %{_datadir}/icons/edams.png
 %{_libdir}/libedams*
 #%{_datadir}/locale/*
 
 %changelog
+* Sat Jan 27 2013 Alexandre Dussart <alexandre.dussart@laposte.net> 0.8.0
+- Fix theme default.edj is edams.edj.
+- Update project URL's.
+- Bump to 0.8.0-SVN version.
+
 * Sat Dec 01 2012 Alexandre Dussart <alexandre.dussart@laposte.net> 0.4.0
 - Create rpm spec
