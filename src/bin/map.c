@@ -907,7 +907,7 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 /*
  *
  */
-void
+Eina_Bool
 xpl_control_basic_cmnd_send(Device *device)
 {
 	debug(stdout, "\
@@ -921,6 +921,12 @@ xpl_control_basic_cmnd_send(Device *device)
 					device_type_to_str(device_type_get(device)),
 					device_current_get(device));
 
+    if ((app->xpl_edams_message_cmnd = xPL_createBroadcastMessage(app->xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
+    {
+      fprintf(stderr, "Unable to create broadcast message\n");
+		return EINA_FALSE;
+    }
+
   	xPL_setSchema(app->xpl_edams_message_cmnd, "control", "basic");
 
     /*Install the value(s) and send the message*/
@@ -931,8 +937,12 @@ xpl_control_basic_cmnd_send(Device *device)
 	if(device_data1_get(device))
 	  	xPL_setMessageNamedValue(app->xpl_edams_message_cmnd, "data1", device_data1_get(device));
 
-  	/*Broadcast the message*/
-  	xPL_sendMessage(app->xpl_edams_message_cmnd);
+	/*Broadcast the message*/
+	if (!xPL_sendMessage(app->xpl_edams_message_cmnd))
+	{
+		fprintf(stderr, "Unable to send xPL message\n");
+		return EINA_FALSE;
+	}
 }/*xpl_control_basic_cmnd_send*/
 
 

@@ -29,5 +29,5 @@ void map_new(void *data, Evas_Object *obj, void *event_info);
 void map_quit();
 void map_widget_data_update(App_Info *app, Location *location, Device *device);
 void map_location_add(Location *location);
-void xpl_control_basic_cmnd_send(Device *device);
+Eina_Bool xpl_control_basic_cmnd_send(Device *device);
 #endif
