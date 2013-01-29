@@ -21,15 +21,15 @@
 group
 {
 	name: "widget/sensor.basic/led/icon";
+    min: 32 32;
 
 	images
 	{
-	image: "led_light.png" COMP;
+		image: "led_light.png" COMP;
 	}
 
-    min: 32 32;
-      parts
-      {
+    parts
+    {
       	part
       	{
 			type: IMAGE;
@@ -40,13 +40,16 @@ group
             	state: "default" 0;
 		   		image.normal: "led_light.png";
             }
-         }
-      }
+		}
+	}
 }/*group widget/sensor.basic/led/icon*/
 
 
-group {
+group
+{
 	name: "widget/sensor.basic/led";
+	min: 32 32;
+ 	max: 32 32;
 
 	data
 	{
@@ -55,50 +58,55 @@ group {
 		item: "tags" "input,output,switches";
 	}
 
+	images
+	{
+		image: "led_dark.png" COMP;
+		image: "led_light.png" COMP;
+	}
 
-   images.image: "led_dark.png" COMP;
-   images.image: "led_light.png" COMP;
-   parts
-   {
-      part
-      {
-     	 name: "base"; mouse_events: 0;
-         description
-         {
-         	state: "default" 0.0;
-            image.normal: "led_dark.png";
-            aspect: 1.0 1.0; aspect_preference: BOTH;
-            max: 32 32;
-         }
-         description
-         {
-         	state: "visible" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_light.png";
-         }
-      }
-      part
-      {
-            name: "title.text";
-            type: TEXT;
-            scale: 1;
-            description
-            {
+	parts
+	{
+		part
+      	{
+			name: "base"; mouse_events: 0;
+			description
+			{
+         		state: "default" 0.0;
+            	image.normal: "led_dark.png";
+            	aspect: 1.0 1.0; aspect_preference: BOTH;
+         	}
 
-               state: "default" 0.0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-               color: 0 0 255 255;
-               text
-               {
-                  text: "sensor";
-                  font: "Sans:style=Bold";
-                  size: 6;
-                  min: 1 1;
-                  align: 0.5 0.95;
-               }
-            }
-         }
+			description
+			{
+				state: "visible" 0.0;
+            	inherit: "default" 0.0;
+            	image.normal: "led_light.png";
+         	}
+      	}
+
+	part
+	{
+		name: "title.text";
+		type: TEXT;
+		scale: 1;
+		description
+		{
+			state: "default" 0.0;
+			rel1.relative: 0.0 0.0;
+			rel2.relative: 1.0 1.2;
+			color: 0 0 255 255;
+
+			text
+			{
+				text: "sensor";
+				font: "Sans:style=Bold";
+				size: 8;
+				min: 1 1;
+				align: 0.5 1.0;
+			}
+		}
+	}
+
 	part
 	{
 		name: "over";

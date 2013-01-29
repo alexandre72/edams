@@ -20,13 +20,13 @@
 
 group
 {
+	name: "widget/sensor.basic/monitor/icon";
+    min: 32 32;
+
 	images
 	{
 		image: "monitor_icon.png" COMP;
 	}
-
-	name: "widget/sensor.basic/monitor/icon";
-    min: 32 32;
       parts
       {
       	part
@@ -41,26 +41,28 @@ group
             }
          }
       }
-}
+}/*group widget/sensor.basic/monitor/icon*/
 
 
 group
 {
+	name: "widget/sensor.basic/monitor";
 	min: 100 100;
     max: 100 100;
 
-	name: "widget/sensor.basic/monitor";
-	images
-      {
-         image: "monitor_base.png" COMP;
-         image: "monitor_show.png" COMP;
-      }
 	data
 	{
 		item: "title" "title.text";
 		item: "description" "Monitor display boolean data in a monitor with an red animated guy when data is > 0. Sensor name is displayed at the bottom. Mostly useful when using boolean/input/switches xPL sensor device. Maybe you can use it in your xPL alarm system?";
 		item: "tags" "sensor.basic,input,switches";
 	}
+
+	images
+    {
+		image: "monitor_base.png" COMP;
+		image: "monitor_show.png" COMP;
+	}
+
 
       parts
       {
@@ -71,8 +73,6 @@ group
             description
             {
                state: "default" 0.0;
-				min: 100 100;
-      			max: 100 100;
                aspect_preference: BOTH;
                align: 0.5 0.5;
                rel1.relative: 0.0 0.0;
@@ -86,8 +86,6 @@ group
             description
             {
 			   	state: "default" 0.0;
-				min: 100 100;
-      			max: 100 100;
                	visible: 0;
 				rel1.relative: 0.0 0.3;
 				rel2.relative: 0.7 0.7;
@@ -95,7 +93,6 @@ group
             }
             description
             {
-      			max: 100 100;
 				state: "show" 0.0;
                 visible:1;
              }
@@ -110,15 +107,15 @@ group
 
                state: "default" 0.0;
                rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
+               rel2.relative: 1.0 1.1;
                color: 0 0 255 255;
                text
                {
                   text: "sensor";
                   font: "Sans:style=Bold";
-                  size: 6;
+                  size: 8;
                   min: 1 1;
-                  align: 0.5 0.95;
+                  align: 0.5 1.0;
                }
             }
          }
@@ -132,26 +129,26 @@ group
                color: 0 0 0 0;
             }
          }
-         part
-         {
+		part
+		{
             name: "update";
-            description
+			description
             {
-               state: "default" 0.0;
+               	state: "default" 0.0;
+				max: 44 11;
+               	aspect_preference: BOTH;
+	           	image.normal: "updated.png";
+               	visible: 0;
+			}
+           	description
+            {
             	max: 44 11;
-               aspect_preference: BOTH;
-	           image.normal: "updated.png";
-               visible: 0;
-           }
-           description
-            {
-            max: 44 11;
-               state: "show" 0.0;
+               	state: "show" 0.0;
 				align: 0.5 0.5;
-               visible: 1;
-               color: 0 0 0 0;
+               	visible: 1;
+               	color: 0 0 0 0;
             }
-         }
+		}/*update*/
       }
        programs
        {
@@ -202,4 +199,4 @@ group
             target: "update";
          }
       }
-   }
+}/*group widget/sensor.basic/monitor*/

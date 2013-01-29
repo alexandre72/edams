@@ -50,40 +50,46 @@ int prandom(int max)
 }
 
 
+static const int TEMP_MIN = -30;
+static const int TEMP_MAX = 50;
+
 /*
  * Send random value to current selected widget to let user see effects on it.
  */
 static void
 _layout_samples_test(Evas_Object *layout)
 {
-	Device *sample;
 	char s[32];
     srand((unsigned int)time((time_t *)NULL));
-	sample = device_new("sample device");
-	device_type_set(sample, prandom(DEVICE_TYPE_LAST));
 
+	Device *sample = evas_object_data_get(win, "device");
 	snprintf(s, sizeof(s), "%d", prandom(24));
 	device_current_set(sample, s);
 
 	const char *t;
-	// Special layout case(example:temperature values are floats).
-	if ((t = elm_layout_data_get(layout, "tempvalue")))
+	//Special widget with drag part, so need to convert device current value to float.
+	if ((t = elm_layout_data_get(layout, "drag")))
 	{
-		int temp_x, temp_y;
-		sscanf(device_current_get(sample), "%d.%02d", &temp_x, &temp_y);
-
-		Evas_Object *eo = elm_layout_edje_get(layout);
+		double level;
 		Edje_Message_Float msg;
-		double level =
-		(double)((temp_x + (temp_y * 0.01)) -
-		(-18)) / (double)(50 - (-18));
 
-		if (level < 0.0)
-			level = 0.0;
-		else if (level > 1.0)
-			level = 1.0;
+		if(device_type_get(sample) == TEMP_SENSOR_BASIC_TYPE)
+		{
+			int x, y;
+			sscanf(device_current_get(sample), "%d.%02d", &x, &y);
+			level =	(double)((x + (y * 0.01)) - TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
+
+			if (level < 0.0) level = 0.0;
+			else if (level > 1.0) level = 1.0;
+		}
+		else
+		{
+			level =	(double)device_current_to_int(sample) / 100;
+		}
+
 		msg.val = level;
-		edje_object_message_send(eo, EDJE_MESSAGE_FLOAT, 1, &msg);
+
+		edje_object_message_send(elm_layout_edje_get(layout), EDJE_MESSAGE_FLOAT, 1, &msg);
 	}
 
 	if ((device_current_to_int(sample) == 0))
@@ -104,7 +110,18 @@ _layout_samples_test(Evas_Object *layout)
 	}
 	elm_object_signal_emit(layout, "updated", "over");
 
-	device_free(sample);
+
+   	Evas_Object *edje;
+	Evas_Coord w, h;
+	elm_layout_sizing_eval(layout);
+   	edje = elm_layout_edje_get(layout);
+	edje_object_size_max_get(edje, &w, &h);
+
+   //edje_object_size_min_calc(edje, &w, &h);
+   	printf("Minimum size for this theme: %dx%d\n", w, h);
+
+	evas_object_resize(elm_layout_edje_get(layout), w, h);
+	elm_layout_sizing_eval(layout);
 }
 
 
@@ -164,8 +181,8 @@ _list_item_widgets_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *e
 	elm_layout_file_set(layout, edams_edje_theme_file_get(), widget);
 	_layout_samples_test(layout);
 
-	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
 
+	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
 	if((t = elm_layout_data_get(layout, "description")))
 	{
 		char *s;
@@ -270,9 +287,9 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 	grid = elm_grid_add(win);
 	evas_object_name_set(grid, "grid");
 	elm_grid_size_set(grid, 100, 100);
+   	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_win_resize_object_add(win, grid);
-	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_show(grid);
 
 	frame = elm_frame_add(win);
@@ -282,9 +299,9 @@ widgets_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 
 	layout = elm_layout_add(win);
 	evas_object_name_set(layout, "widget layout");
+   	evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_object_content_set(frame, layout);
-	evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_show(layout);
 
 	frame = elm_frame_add(win);
