@@ -1,8 +1,8 @@
 /*
- * thermometer.edc
+ * jauge.edc
  * This file is part of EDAMS
  *
- * Copyright (C) 2012 - Alexandre Dussart
+ * Copyright (C) 2013 - Alexandre Dussart
  *
  * EDAMS is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,15 @@
  */
 
 
+
 group
 {
 	images
 	{
-		image: "thermometer_icon.png" COMP;
+		image: "jauge_icon.png" COMP;
 	}
 
-	name: "widget/sensor.basic/thermometer/icon";
+	name: "widget/sensor.basic/jauge/icon";
     min: 32 32;
       parts
       {
@@ -38,37 +39,37 @@ group
                	aspect: 1 1;
                	aspect_preference: BOTH;
             	state: "default" 0;
-		   		image.normal: "thermometer_icon.png";
+		   		image.normal: "jauge_icon.png";
             }
          }
       }
-}/*widget/sensor.basic/thermometer/icon*/
+}/*group widget/sensor.basic/jauge/icon*/
 
 
 group
 {
-	name: "widget/sensor.basic/thermometer";
-	min: 25 100;
-	max: 25 100;
+   	name: "widget/sensor.basic/jauge";
+	min: 10 170;
+	max: 10 170;
 
 	data
 	{
 		item: "title" "title.text";
 		item: "value" "value.text";
 		item: "drag" "EDJE_MESSAGE_FLOAT 1";
-		item: "description" "Thermometer display value in a classic red gauge, with numerical value display on the top. Mostly useful with temperature sensor device.";
+		item: "description" "Jauge display value in a bar with green/reds gradient. Mostly useful with temperature sensor device or any device with bounds limits.";
 		item: "tags" "temperature,humidity,rpm";
 	}/*data*/
 
+
 	images
 	{
-		image: "thermometer_base.png" COMP;
-		image: "thermometer_filled.png" COMP;
-		image: "updated.png" COMP;
+		image: "jauge_bg.png" COMP;
+		image: "jauge_slider.png" COMP;
 	}/*images*/
 
 
-    script
+	script
 	{
 		public message(Msg_Type:type, id, ...)
 		{
@@ -76,7 +77,7 @@ group
 			{
 				new Float:val;
 				val = getfarg(2);
-				set_drag(PART:"temp_top", 0.0, val);
+				set_drag(PART:"slider", 0.0, val);
 			}
 		}
 	}/*script*/
@@ -84,100 +85,20 @@ group
 	parts
 	{
 		part
-         {
-            name: "base";
-            type: IMAGE;
-			clip_to: "fade_clip";
-            description
-            {
-               	state: "default" 0.0;
-               	aspect_preference: BOTH;
-               	align: 0.5 0.5;
-               	rel1.relative: 0.0 0.0;
-               	rel2.relative: 1.0 1.0;
-	          	image.normal: "thermometer_base.png";
-           }
-         }/*base*/
+		{
+			name: "bg";
+			type: RECT;
+
+			mouse_events: 0;
+
+			description
+			{
+				state: "default" 0.0;
+			}
+		}/*bg*/
 
          part
          {
-            name: "temp";
-            type: IMAGE;
-            clip_to: "temp_clip";
-            description
-            {
-               	state: "default" 0.0;
-               	rel1.to: "base";
-               	rel2.to: "base";
-               	image.normal: "thermometer_filled.png";
-            }
-         }/*temp*/
-		part
-		{
-			name: "fade_clip";
-			type: RECT;
-			mouse_events: 0;
-			description
-			{
-				state: "default" 0.0;
-				color: 255 255 255 255;
-			}
-		}/*fade_clip*/
-
-		part
-		{
-			name: "temp_clip";
-			type: RECT;
-			clip_to: "fade_clip";
-			mouse_events: 0;
-
-			description
-			{
-				state: "default" 0.0;
-				rel1.to_x: "base";
-				rel1.to_y: "temp_top";
-				rel2.to: "base";
-			}
-		}/*temp_clip*/
-
-		part
-		{
-            name: "temp_top";
-            type: RECT;
-            mouse_events: 0;
-
-            dragable
-            {
-               x: 0 0 0;
-               y: -1 1 0;
-               confine: "temp_limit";
-            }
-
-            description
-            {
-               state: "default" 0.0;
-               visible: 0;
-			}
-		}/*temp_top*/
-
-		part
-		{
-			name: "temp_limit";
-            type: RECT;
-            mouse_events: 0;
-            description
-            {
-				state: "default" 0.0;
-				visible: 0;
-				rel1.relative: 0.414 0.132;
-				rel1.to: "base";
-				rel2.relative: 0.588 0.95;
-				rel2.to: "base";
-			}
-		}/*temp_limit*/
-
-        part
-        {
 			name: "title.text";
             type: TEXT;
             scale: 1;
@@ -185,7 +106,7 @@ group
             {
                state: "default" 0.0;
 		       rel1.relative: 0.0 0.0;
-    		   rel2.relative: 1.0 1.15;
+    		   rel2.relative: 1.0 1.10;
                color: 0 0 255 255;
                text
                {
@@ -195,8 +116,56 @@ group
                   min: 1 1;
                   align: 0.5 1.0;
                }
-           }
-        }/*title.text*/
+            }
+         }/*title.text*/
+
+         part
+         {
+            name: "drag_area";
+            type: IMAGE;
+
+            mouse_events: 0;
+
+            description
+            {
+            	min: 10 170;
+				max: 10 170;
+               	image.normal: "jauge_bg.png";
+               	state: "default" 0.0;
+               	rel1
+               	{
+					relative: 0.0 0.0;
+                  	offset: -5 0;
+               	}
+
+               rel2
+               {
+                  	relative: 1.0 1.0;
+                  	offset: 4 0;
+               }
+            }
+         }/*drag_area*/
+
+         part
+         {
+            name: "slider";
+			type: IMAGE;
+            mouse_events: 0;
+            dragable
+            {
+               confine: "drag_area";
+               x: 0 0 0;
+               y: -1 1 0;
+            }
+
+            description
+            {
+              	min: 10 20;
+               	state: "default" 0.0;
+               	image.normal: "jauge_slider.png";
+               	visible: 1;
+            }/*slider*/
+         }
 
          part
          {
@@ -219,11 +188,10 @@ group
 					font: "Sans:style=Bold";
                   	size: 10;
                   	min: 1 1;
-                  	align: 0.5 0.5;
+                  	align: 0.0 0.5;
 				}
 			}
 		}/*value.text*/
-
 
          part
          {
@@ -238,25 +206,14 @@ group
            }
            description
             {
-            max: 44 11;
+            	max: 44 11;
                state: "show" 0.0;
 				align: 0.5 0.5;
                visible: 1;
                color: 0 0 0 0;
             }
          }/*update*/
-
-		part
-		{
-			name: "over";
-			type: RECT;
-			description
-			{
-			state: "default" 0.0;
-			color: 0 0 0 0;
-			}
-		}/*over*/
-	}/*parts*/
+      }/*parts*/
 
 	programs
 	{
@@ -278,4 +235,4 @@ group
             target: "update";
          }
       }/*programs*/
-}/*group widget/sensor.basic/thermometer*/
+}/*group widget/sensor.basic/jauge*/

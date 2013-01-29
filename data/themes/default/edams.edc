@@ -16,13 +16,15 @@ externals {
 
 collections {
 #include "about.edc"
+#include "clock.edc"
+#include "counter.edc"
+#include "jauge.edc"
 #include "led.edc"
 #include "lightbulb.edc"
 #include "monitor.edc"
-#include "thermometer.edc"
-#include "counter.edc"
-#include "clock.edc"
 #include "switch.edc"
+#include "thermometer.edc"
+
 group
 {
 	name: "elm/icon/xpl/default";

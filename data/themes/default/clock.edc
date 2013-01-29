@@ -47,44 +47,50 @@ group
             }
          }
       }
-}
+}/*widget/virtual/clock/digital/icon*/
 
 
 
 group
 {
+	name: "widget/virtual/clock/digital";
+	min: 150 30;
+	max: 150 30;
+
 	data
 	{
 			item: "description" "Digital clock, show current time.";
 			item: "tags" "clock,timer,time";
 	}
 
-	name: "widget/virtual/clock/digital";
-   min: 64 16;
-   max: 512 128;
-   images.image: "digit_na.png" COMP;
-   images.image: "digit_nm.png" COMP;
-   images.image: "digit_0.png" COMP;
-   images.image: "digit_1.png" COMP;
-   images.image: "digit_2.png" COMP;
-   images.image: "digit_3.png" COMP;
-   images.image: "digit_4.png" COMP;
-   images.image: "digit_5.png" COMP;
-   images.image: "digit_6.png" COMP;
-   images.image: "digit_7.png" COMP;
-   images.image: "digit_8.png" COMP;
-   images.image: "digit_9.png" COMP;
-   images.image: "digit_am.png" COMP;
-   images.image: "digit_pm.png" COMP;
-   images.image: "hole_tiny.png" COMP;
+	images
+	{
+   		image: "digit_na.png" COMP;
+		image: "digit_nm.png" COMP;
+		image: "digit_0.png" COMP;
+		image: "digit_1.png" COMP;
+		image: "digit_2.png" COMP;
+		image: "digit_3.png" COMP;
+		image: "digit_4.png" COMP;
+		image: "digit_5.png" COMP;
+		image: "digit_6.png" COMP;
+	   	image: "digit_7.png" COMP;
+	   	image: "digit_8.png" COMP;
+	   	image: "digit_9.png" COMP;
+	   	image: "digit_am.png" COMP;
+	   	image: "digit_pm.png" COMP;
+		image: "hole_tiny.png" COMP;
+	}
 
-
-   script {
+   script
+   {
       public do_seconds, do_24h, do_date, tick_timer;
 
-      evalsize() {
+      evalsize()
+      {
          new do24h, dosec, v[14], i, tot, mul;
-         new parts[] = {
+         new parts[] =
+         {
             PART:"hours1", PART:"hours1",
             PART:"hours2", PART:"hours2",
             PART:"mins1", PART:"mins1",
@@ -507,8 +513,10 @@ group
           }
        }
    }
-   programs {
-      program {
+   programs
+   {
+      program
+      {
          signal: "load"; source: "";
          script {
             reset();
@@ -615,9 +623,10 @@ group
 
 	name: "widget/virtual/clock/main/icon";
     min: 32 32;
-      parts
-      {
-      	part
+
+	parts
+	{
+		part
       	{
 			type: IMAGE;
             description
@@ -634,6 +643,8 @@ group
 group
 {
 	name: "widget/virtual/clock/main";
+	min: 80 80;
+	max: 80 80;
 
 	data
 	{
@@ -645,37 +656,43 @@ group
    images.image: "inset_round_hilight.png" COMP;
    images.image: "inset_round_shadow.png" COMP;
    images.image: "inset_round_shading.png" COMP;
-   set { name: "tacho_hand_big";
-      image { image: "tacho_hand_big.png" COMP; size: 73 73 99999 99999; }
-      image { image: "tacho_hand_big2.png" COMP; size: 37 37 72 72; }
-      image { image: "tacho_hand_big3.png" COMP; size: 19 19 36 36; }
-      image { image: "tacho_hand_big4.png" COMP; size: 0 0 18 18; }
+   set
+   {
+		name: "tacho_hand_big";
+      	image { image: "tacho_hand_big.png" COMP; size: 73 73 99999 99999; }
+      	image { image: "tacho_hand_big2.png" COMP; size: 37 37 72 72; }
+      	image { image: "tacho_hand_big3.png" COMP; size: 19 19 36 36; }
+      	image { image: "tacho_hand_big4.png" COMP; size: 0 0 18 18; }
    }
    images.image: "tacho_hand_big_shadow.png" COMP;
-   set { name: "tacho_hand_small_min";
-      image { image: "tacho_hand_small_min.png" COMP; size: 73 73 99999 99999; }
-      image { image: "tacho_hand_small_min2.png" COMP; size: 37 37 72 72; }
-      image { image: "tacho_hand_small_min3.png" COMP; size: 19 19 36 36; }
-      image { image: "tacho_hand_small_min4.png" COMP; size: 0 0 18 18; }
+   set
+   {
+    	name: "tacho_hand_small_min";
+      	image { image: "tacho_hand_small_min.png" COMP; size: 73 73 99999 99999; }
+      	image { image: "tacho_hand_small_min2.png" COMP; size: 37 37 72 72; }
+      	image { image: "tacho_hand_small_min3.png" COMP; size: 19 19 36 36; }
+      	image { image: "tacho_hand_small_min4.png" COMP; size: 0 0 18 18; }
    }
    images.image: "tacho_hand_small_shadow.png" COMP;
 
-   set { name: "knob";
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
+   set
+   {
+		name: "knob";
+      	image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
+      	image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
+      	image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
+      	image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
+      	image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
+      	image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
+     	image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
+      	image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
+      	image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
+      	image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
+      	image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
    }
-   min: 16 16;
-   max: 160 160;
-   script {
+
+   script
+   {
       public do_seconds, tick_timer;
 
          public clock_cb(val) {

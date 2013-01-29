@@ -65,9 +65,6 @@ EVAS_SMART_SUBCLASS_NEW(_evas_smart_group_type, _evas_smart_group,
 
 
 
-static const int TEMP_MIN = -30;
-static const int TEMP_MAX = 50;
-
 static Eina_Bool SCREEN_LOCK = EINA_FALSE;
 
 /*Global Evas objects*/
@@ -163,7 +160,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 				   prect.w, prect.h); printf("Current child geometry:x=%d y=%d\n", x, y);
 				   fprintf(stdout, "Mouse pointer is in?%s\n", eina_rectangle_coords_inside(&prect, x, y)?
 				   "TRUE":"FALSE"); if(x>=prect.w || x<=prect.x) printf("Child is OUT\n"); */
-				if (eina_rectangle_coords_inside(&prect, x, y))
+				if(eina_rectangle_coords_inside(&prect, x, y))
 				{
 					evas_object_move(o, x, y);
 
@@ -317,7 +314,7 @@ _evas_smart_group_smart_resize(Evas_Object * o, Evas_Coord w, Evas_Coord h)
 static void
 _evas_smart_group_smart_calculate(Evas_Object * o)
 {
-	char key[64];
+	char *key;
 	char *ret;
 	int size;
 	Evas_Coord x, y, w, h;
@@ -341,7 +338,7 @@ _evas_smart_group_smart_calculate(Evas_Object * o)
 		if (priv->children[n])
 		{
 			Eina_Rectangle edje_geometry;
-			snprintf(key, sizeof(key), "map/%s", evas_object_name_get(priv->children[n]));
+			asprintf(&key, "map/%s", evas_object_name_get(priv->children[n]));
 			ret = eet_read(ef, key, &size);
 			if (ret)
 			{
@@ -350,14 +347,19 @@ _evas_smart_group_smart_calculate(Evas_Object * o)
 			}
 			else
 			{
-				edje_geometry.x = x + (n * 10);
-				edje_geometry.y = y + 30;
+				edje_geometry.x = x;
+				edje_geometry.y = y;
 			}
-
-			int cw, ch;
-			edje_object_size_max_get(priv->children[n], &cw, &ch);
-			evas_object_resize(priv->children[n], 60, 60);
 			evas_object_move(priv->children[n], edje_geometry.x, edje_geometry.y);
+			FREE(key);
+
+			edje_object_size_min_get(priv->children[n], &w, &h);
+			printf("%s  min size:%d %d ", evas_object_name_get(priv->children[n]), w, h);
+			edje_object_size_max_get(priv->children[n], &w, &h);
+			printf("max size:%d %d\n", w, h);
+
+			evas_object_resize(priv->children[n], w, h);
+
 
 			evas_object_event_callback_add(priv->children[n], EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 		}
@@ -393,7 +395,12 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 {
 	Device *device = data;
 
+	if(strstr(source, "edje")) return;
 	if(strstr(emission, "mouse")) return;
+	if(strstr(emission, "show")) return;
+	if(strstr(emission, "hide")) return;
+	if(strstr(emission, "resize")) return;
+	if(strstr(emission, "load")) return;
 
 	fprintf(stdout, "emission=%s\n", emission);
 	fprintf(stdout, "source=%s\n", source);
@@ -750,6 +757,7 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 	}
 
 	//FIXME:Should be a widget, can use of swallow type?
+	/*
 	Evas_Object *stat_img  = evas_object_image_filled_add(evas);
 	evas_object_name_set(stat_img, "stat_img");
 	evas_object_image_alpha_set(stat_img, EINA_TRUE);
@@ -762,6 +770,7 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 	evas_object_image_scale(stat_img, 200, 200);
 	evas_object_move(stat_img, 0,  480);
 	evas_object_show(stat_img);
+*/
 
 	ecore_evas_show(ee);
 	ecore_main_loop_begin();
@@ -832,6 +841,9 @@ map_location_add(Location *location)
 
 
 
+static const int TEMP_MIN = -30;
+static const int TEMP_MAX = 50;
+
 
 /*
  *Sync map widgets with device data.
@@ -866,17 +878,25 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 
 			const char *t;
 
+			//Special widget with drag part, so need to convert device current value to float.
 			if ((t = edje_object_data_get(edje, "drag")))
 			{
-				int temp_x, temp_y;
-				sscanf(device_current_get(device), "%d.%02d", &temp_x, &temp_y);
+				double level;
 				Edje_Message_Float msg;
-				double level =
-							(double)((temp_x + (temp_y * 0.01)) -
-							 TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
 
-					if (level < 0.0) level = 0.0;
-					else if (level > 1.0) level = 1.0;
+				if(device_type_get(device) == TEMP_SENSOR_BASIC_TYPE)
+				{
+					int x, y;
+					sscanf(device_current_get(device), "%d.%02d", &x, &y);
+					level =	(double)((x + (y * 0.01)) - TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
+				}
+				else
+				{
+					level =	(double)device_current_to_int(device) / (double)(100);
+				}
+
+				if (level < 0.0) level = 0.0;
+				else if (level > 1.0) level = 1.0;
 
 				msg.val = level;
 				edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);

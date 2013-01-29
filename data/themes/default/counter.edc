@@ -43,52 +43,48 @@ group
             }
          }
       }
-}
+}/*widget/sensor.basic/counter/icon*/
 
 
 group
 {
+    name: "widget/sensor.basic/counter";
+	min: 100 35;
+ 	max: 100 35;
+
+	data
+	{
+		item: "value" "value.text";
+		item: "title" "title.text";
+		item: "description" "Counter display numerical data in a standard numerical way in green LCD like screen. Sensor name is displayed at the bottom.";
+		item: "tags" "sensor.basic,temperature,humidity,rpm";
+	}/*data*/
+
 	images
 	{
 		image: "counter.png" COMP;
-	}
+	}/*images*/
 
 	fonts
 	{
 	   font: "DS-Digital_Bold_Italic.ttf" "digital";
-	}
+	}/*font*/
 
-	min: 80 35;
- 	max: 80 35;
-
-    name: "widget/sensor.basic/counter";
-
-		data
+	parts
+	{
+		part
 		{
-			item: "value" "value.text";
-			item: "title" "title.text";
-			item: "description" "Counter display numerical data in a standard numerical way in green LCD like screen. Sensor name is displayed at the bottom.";
-			item: "tags" "sensor.basic,temperature,humidity,rpm";
-
-		}
-
-        parts
-        {
-	     	part
-	     	{
-				name: "entry";
-				type: IMAGE;
-				description
-            	{
-            	  	min: 80 35;
-            	  	max: 80 35;
-					state: "default" 0.0;
-		            rel1.relative: 0.0 0.0;
-    		        rel2.relative: 1.0 1.0;
-               		aspect_preference: BOTH;
-               		image.normal: "counter.png";
-                }
-             }
+			name: "entry";
+			type: IMAGE;
+			description
+			{
+				state: "default" 0.0;
+				rel1.relative: 0.0 0.0;
+				rel2.relative: 1.0 1.0;
+				aspect_preference: BOTH;
+				image.normal: "counter.png";
+			}
+		}/*entry*/
 
 		part
 		{
@@ -97,22 +93,22 @@ group
 			description
 			{
 				state: "default" 0.0;
-				color: 68 72 63 200;
-				rel1.relative: 0.1 0.1;
-				rel2.relative: 0.9 0.9;
+				color: 0 0 0 255;
+				rel1.relative: 0.0 0.0;
+				rel2.relative: 1.0 1.0;
 				text
 				{
 					font: "digital";
-					size: 16;
+					size: 20;
 					min: 1 1;
-					align: 0.5 0.47;
-					text: "8888888";
+					align: 0.5 0.5;
+					text: "88888888";
 				}
 			}
-		}
+		}/*value.text*/
 
-         part
-         {
+		part
+        {
             name: "title.text";
             type: TEXT;
             scale: 1;
@@ -121,7 +117,7 @@ group
 
                state: "default" 0.0;
 		       rel1.relative: 0.0 0.0;
-    		   rel2.relative: 1.0 1.0;
+    		   rel2.relative: 1.0 1.2;
                color: 0 0 255 255;
                text
                {
@@ -129,14 +125,15 @@ group
                   font: "Sans:style=Bold";
                   size: 8;
                   min: 1 1;
-                  align: 0.5 0.8;
+                  align: 0.5 1.0;
                }
             }
-         }
-         part
-         {
+		}/*title.text*/
+
+		part
+		{
             name: "update";
-            description
+			description
             {
                	state: "default" 0.0;
 				max: 44 11;
@@ -152,27 +149,28 @@ group
                	visible: 1;
                	color: 0 0 0 0;
             }
-         }
-    	}/*parts*/
-    	programs
-    	{
-	        program
-    	     {
-    	        name: "updated,start";
-    	        signal: "updated";
-    	        source: "over";
-    	        action: STATE_SET "show" 0.0;
-    	        transition: SINUSOIDAL 3.0;
-    	        target: "update";
-    	        after: "hover2";
-    	     }
-    	     program
-    	     {
-    	        name: "hover2";
-    	        source: "over";
-    	        action: STATE_SET "default" 0.0;
-    	        target: "update";
-	         }
+		}/*update*/
+	}/*parts*/
 
-		}/*programs*/
-	}/*group*/
+	programs
+	{
+	        program
+		{
+			name: "updated,start";
+			signal: "updated";
+			source: "over";
+			action: STATE_SET "show" 0.0;
+			transition: SINUSOIDAL 3.0;
+			target: "update";
+			after: "hover2";
+		}
+
+		program
+		{
+			name: "hover2";
+			source: "over";
+			action: STATE_SET "default" 0.0;
+			target: "update";
+		}
+	}/*programs*/
+}/*group widget/sensor.basic/counter*/

@@ -22,15 +22,15 @@
 group
 {
 	name: "widget/sensor.basic/lightbulb/icon";
+    min: 32 32;
 
 	images
 	{
-	image: "lightbulb_icon.png" COMP;
+		image: "lightbulb_icon.png" COMP;
 	}
 
-    min: 32 32;
-      parts
-      {
+    parts
+	{
       	part
       	{
 			type: IMAGE;
@@ -42,7 +42,7 @@ group
 		   		image.normal: "lightbulb_icon.png";
             }
          }
-      }
+	}
 }/*group widget/sensor.basic/lightbulb/icon*/
 
 
@@ -51,6 +51,9 @@ group
 group
 {
 	name: "widget/sensor.basic/lightbulb";
+	min: 70 70;
+ 	max: 70 70;
+
 	data
 	{
 		item: "description" "Light bulb sensor can be used to show binary value like enable/disable true/false. Ideally you can use it with light bulb or lamp.";
