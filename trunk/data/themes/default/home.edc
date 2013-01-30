@@ -1,0 +1,161 @@
+/*
+ * home.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+group
+{
+	name: "widget/virtual/home/icon";
+    min: 32 32;
+
+	images
+	{
+		image: "home_icon.png" COMP;
+	}
+
+    parts
+	{
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "home_icon.png";
+            }
+         }
+	}
+}/*group widget/virtual/home/icon*/
+
+
+group
+{
+    name: "widget/virtual/home";
+    min: 64 64;
+    max: 64 64;
+
+	data
+	{
+			item: "description" "Home widget is a button only used to quit global view";
+			item: "tags" "home";
+	}
+
+    images
+    {
+        image: "button_normal.png" COMP;
+        image: "button_clicked.png" COMP;
+        image: "home.png" COMP;
+    }
+
+    parts
+    {
+        part
+        {
+            name: "base";
+            description
+            {
+                state: "default" 0.0;
+                image.normal: "button_normal.png";
+                image.border: 4 4 3 5;
+                image.middle: SOLID;
+                rel1.offset: -1 0;
+                rel2.offset: 0 1;
+                fill.smooth: 0;
+            }
+            description
+            {
+                state: "clicked" 0.0;
+                inherit: "default" 0.0;
+                image.normal: "button_clicked.png";
+                image.border: 5 5 4 6;
+            }
+        }
+
+        part
+        {
+            name: "icon_clip";
+            type: RECT;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }
+
+        part
+        {
+            name: "e.swallow.icon";
+            type: IMAGE;
+            mouse_events: 0;
+            clip_to: "icon_clip";
+            description
+            {
+                state: "default" 0.0;
+                min: 17 17;
+                rel1.offset: 6 5;
+                rel1.to: "base";
+                rel2.relative: 1.0 1.0;
+                rel2.offset: -7 -8;
+                rel2.to: "base";
+                aspect: 1.0 1.0; aspect_preference: BOTH;
+                align: 0.5 0.5;
+                image.normal: "home.png";
+             }
+        }
+
+        part
+        {
+            name: "event"; type: RECT;
+            ignore_flags: ON_HOLD;
+            description
+            {
+                state: "default" 0.0;
+                color: 0 0 0 0;
+            }
+        }
+    }/*parts*/
+
+    programs
+    {
+        program
+        {
+            signal: "mouse,down,1";
+            source: "event";
+            action: STATE_SET "clicked" 0.0;
+            target: "base";
+        }
+
+        program
+        {
+            signal: "mouse,up,1";
+            source: "event";
+            action: STATE_SET "default" 0.0;
+            target: "base";
+        }
+
+        program
+        {
+            signal: "mouse,clicked,1*";
+            source: "event";
+            action: SIGNAL_EMIT "home" "";
+        }
+    }/*programs*/
+}/*group widget/virtual/home*/

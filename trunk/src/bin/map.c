@@ -74,13 +74,20 @@ static Eina_Rectangle geometry;
 static App_Info *app;
 Eet_File *ef;
 
+Evas_Object *cursor;
+
 static void _ecore_evas_resize_cb(Ecore_Evas * ee);
 static void _on_mouse_in(void *data __UNUSED__, Evas * evas, Evas_Object * o __UNUSED__, void *einfo);
 static void _on_mouse_out(void *data __UNUSED__, Evas * evas, Evas_Object * o __UNUSED__, void *einfo);
 static void _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo);
 static void _on_keydown(void *data, Evas * evas, Evas_Object * o, void *einfo);
 
+static void map_edition_lock_set(Eina_Bool set);
+static void map_cursor_set(const char *cur);
 
+/*
+ *
+ */
 static void
 _on_child_del(void *data, Evas * evas __UNUSED__, Evas_Object * o, void *einfo __UNUSED__)
 {
@@ -99,6 +106,9 @@ _on_child_del(void *data, Evas * evas __UNUSED__, Evas_Object * o, void *einfo _
 }/*_on_child_del*/
 
 
+/*
+ *
+ */
 static void
 _evas_smart_group_child_callbacks_unregister(Evas_Object * obj)
 {
@@ -107,6 +117,9 @@ _evas_smart_group_child_callbacks_unregister(Evas_Object * obj)
 }/*_evas_smart_group_child_callbacks_unregister*/
 
 
+/*
+ *
+ */
 static void
 _evas_smart_group_child_callbacks_register(Evas_Object * o, Evas_Object * child, long idx)
 {
@@ -115,15 +128,22 @@ _evas_smart_group_child_callbacks_register(Evas_Object * o, Evas_Object * child,
 }/*_evas_smart_group_child_callbacks_register*/
 
 
+/*
+ *
+ */
 static void
 _on_mouse_out(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o,
 			  void *einfo __UNUSED__)
 {
 	evas_object_focus_set(o, EINA_FALSE);
+
+    map_cursor_set("cursors/left_ptr");
 }/*_on_mouse_out*/
 
 
-
+/*
+ *
+ */
 static void
 _on_mouse_in(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, void *einfo __UNUSED__)
 {
@@ -131,6 +151,38 @@ _on_mouse_in(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, voi
 }/*_on_mouse_in*/
 
 
+/*
+ *
+ */
+static void
+map_cursor_set(const char *cur)
+{
+    if(cursor)
+        evas_object_del(cursor);
+
+ 	cursor = edje_object_add(evas);
+	if (!cursor)
+	{
+		debug(stderr, _("Can't create Edje object"));
+		return;
+	}
+
+    if (!edje_object_file_set(cursor, edams_edje_theme_file_get(), cur))
+    {
+        debug(stderr, _("Can't load cursor '%s' from '%s'"), cur, edams_edje_theme_file_get());
+        return;
+    }
+	evas_object_resize(cursor, 24, 24);
+    evas_object_show(cursor);
+
+    ecore_evas_object_cursor_set(ee, cursor, 0, 0, 0);
+}/*map_cursor_set*/
+
+
+
+/*
+ *
+ */
 static void
 _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo __UNUSED__)
 {
@@ -138,11 +190,18 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 
 	if (evas_object_focus_get(o) == EINA_TRUE)
 	{
+        if (evas_object_smart_parent_get(o))
+            map_cursor_set("cursors/grab");
+        else
+            map_cursor_set("cursors/dotbox");
+
 		int button_mask;
 		button_mask = evas_pointer_button_down_mask_get(evas);
 
 		if (button_mask && (1 << 0))
 		{
+            map_cursor_set("cursors/grabbing");
+
 			int x, y;
 			evas_pointer_canvas_xy_get(evas, &x, &y);
 			Eina_Rectangle prect, crect;
@@ -407,6 +466,7 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 {
 	Device *device = data;
 
+    //Skip basic's edje signal emission.
 	if(strstr(source, "edje")) return;
 	if(strstr(emission, "mouse")) return;
 	if(strstr(emission, "show")) return;
@@ -417,8 +477,18 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 	fprintf(stdout, "emission=%s\n", emission);
 	fprintf(stdout, "source=%s\n", source);
 
-	device_current_set(device, emission);
-	xpl_control_basic_cmnd_send(device);
+    if((device_class_get(device) == VIRTUAL_CLASS))
+    {
+	    if(strstr(emission, "lock,on")) map_edition_lock_set(EINA_TRUE);
+    	if(strstr(emission, "lock,off")) map_edition_lock_set(EINA_FALSE);
+    	if(strstr(emission, "home")) map_quit();
+    }
+
+    if((device_class_get(device) == CONTROL_BASIC_CLASS))
+    {
+    	device_current_set(device, emission);
+	    xpl_control_basic_cmnd_send(device);
+    }
 }/*_edje_object_signals_cb*/
 
 
@@ -480,8 +550,10 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 		}
 
 		Device *device = widget_device_get(widget);
-		if(device_class_get(device) == CONTROL_BASIC_CLASS)
+		if((device_class_get(device) == CONTROL_BASIC_CLASS) ||
+            (device_class_get(device) == VIRTUAL_CLASS))
 			edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, device);
+
 
 		evas_object_propagate_events_set(priv->children[x], EINA_FALSE);
 		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
@@ -573,6 +645,16 @@ widget_gnuplot_redraw(Widget *widget)
 }/*widget_gnuplot_redraw*/
 
 
+/*
+ *
+ */
+void
+map_edition_lock_set(Eina_Bool set)
+{
+    SCREEN_LOCK = set;
+	debug(stdout, _("Global view edition has been %s\n"), SCREEN_LOCK ? "enabled" : "disabled");
+}/*map_edition_lock_set*/
+
 
 /*
  *Callback called in smart object when a key is pressed
@@ -582,23 +664,11 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 {
 	Evas_Event_Key_Down *ev = einfo;
 
-	// Key 'l' lock/unlock screen edition(moving/resizing).
-	if (strcmp(ev->keyname, "l") == 0)
-	{
-		if(SCREEN_LOCK == EINA_FALSE) SCREEN_LOCK = EINA_TRUE;
-		else SCREEN_LOCK = EINA_FALSE;
-
-		debug(stdout, _("Global view edition has been %s\n"), SCREEN_LOCK ? "enabled" : "disabled");
-
-		return;
-	}
-
-	else if(!strcmp(ev->keyname, "Escape"))
+	if(!strcmp(ev->keyname, "Escape"))
 	{
 	   	 	ecore_main_loop_quit();
 	   	 	return;
 	}
-
 
 	if(evas_object_smart_parent_get(o))
 	{
@@ -686,13 +756,14 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			evas_object_resize(o, o_geometry.w, o_geometry.h);
 			return;
 		}
-
+/*
    		if (strcmp(ev->keyname, "w") == 0)
 		{
 			evas_smart_group_remove(o);
 			evas_object_del(o);
 			return;
 		}
+*/
 	}
 }/*_on_keydown*/
 
@@ -769,7 +840,21 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 	}
 
 
+    /*Install cursor*/
+	//Set edje module data.
+    map_cursor_set("cursors/left_ptr");
 
+	/*
+	cursor = edje_object_add(evas);
+	if (!cursor)
+	{
+		debug(stderr, _("Can't create Edje object!"));
+		return;
+	}
+    map_cursor_set("cursors/left_ptr");
+	evas_object_resize(cursor, 24, 24);
+    evas_object_show(cursor);
+*/
 	//FIXME:Should be a widget, can use of swallow type?
 	/*
 	Evas_Object *stat_img  = evas_object_image_filled_add(evas);

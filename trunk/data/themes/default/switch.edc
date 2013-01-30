@@ -1,18 +1,39 @@
+/*
+ * switch.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 
 group
 {
+	name: "widget/control.basic/switch/icon";
+    min: 32 32;
+
 	images
 	{
 		image: "switch_icon.png" COMP;
 	}
 
-	name: "widget/control.basic/switch/icon";
-    min: 32 32;
-      parts
-      {
-      	part
+    parts
+    {
+        part
       	{
-			type: IMAGE;
+		    type: IMAGE;
             description
             {
                	aspect: 1 1;
@@ -22,7 +43,7 @@ group
             }
          }
       }
-}
+}/*group widget/control.basic/switch/icon*/
 
 
 
@@ -80,7 +101,7 @@ group
 			signal: "mouse,clicked,*";
             filter: "base" "disable";
 			source: "base";
-            action: SIGNAL_EMIT "enable" "switch";
+            action: SIGNAL_EMIT "enable" "";
 		}
 		program
 		{
@@ -95,7 +116,7 @@ group
 			signal: "mouse,clicked,*";
             filter: "base" "enable";
 			source: "base";
-            action: SIGNAL_EMIT "disable" "switch";
+            action: SIGNAL_EMIT "disable" "";
 		}
 	}/*programs*/
 }
