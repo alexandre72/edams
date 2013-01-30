@@ -462,7 +462,7 @@ _evas_smart_group_smart_set_user(Evas_Smart_Class * sc)
  *
  */
 static void
-_edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
+_edje_object_signals_cb(void *data, Evas_Object *edje_obj __UNUSED__, const char  *emission, const char  *source)
 {
 	Device *device = data;
 
@@ -514,10 +514,11 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 	int x = 0;
 	EINA_LIST_FOREACH(widgets, l2, widget)
 	{
-		char s[64];
+		char *s;
 		priv->children[x] = edje_object_add(evas_object_evas_get(o));
-		snprintf(s, sizeof(s), "%d_%s_edje", widget_id_get(widget), location_name_get(location));
+		asprintf(&s, "%d_%s_edje", widget_id_get(widget), location_name_get(location));
 		evas_object_name_set(priv->children[x], s);
+        FREE(s);
 		evas_object_data_set(priv->children[x], "widget", (void *)widget);
 
 		if (!priv->children[x])
@@ -550,10 +551,19 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 		}
 
 		Device *device = widget_device_get(widget);
+
 		if((device_class_get(device) == CONTROL_BASIC_CLASS) ||
             (device_class_get(device) == VIRTUAL_CLASS))
-			edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, device);
+        {
+            if (edje_object_data_get(priv->children[x], "title"))
+			{
+				asprintf(&s, "%d - %s", widget_id_get(widget), device_name_get(device));
+				edje_object_part_text_set(priv->children[x], "title.text", s);
+                FREE(s);
+			}
 
+			edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, device);
+        }
 
 		evas_object_propagate_events_set(priv->children[x], EINA_FALSE);
 		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
@@ -800,7 +810,7 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 	debug(stdout, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
 	ecore_evas_shaped_set(ee, 0);
 	ecore_evas_borderless_set(ee, 0);
-	//ecore_evas_fullscreen_set(ee, EINA_TRUE);
+	ecore_evas_fullscreen_set(ee, EINA_TRUE);
 	ecore_evas_title_set(ee, _("Global view"));
 	ecore_evas_callback_resize_set(ee, _ecore_evas_resize_cb);
 	evas = ecore_evas_get(ee);
@@ -1062,6 +1072,8 @@ xpl_control_basic_cmnd_send(Device *device)
 		fprintf(stderr, "Unable to send xPL message\n");
 		return EINA_FALSE;
 	}
+
+    return EINA_TRUE;
 }/*xpl_control_basic_cmnd_send*/
 
 
