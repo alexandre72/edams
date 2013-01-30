@@ -54,10 +54,11 @@ group
 
 	data
 	{
-		item: "value" "value.text";
-		item: "title" "title.text";
 		item: "description" "Counter display numerical data in a standard numerical way in green LCD like screen. Sensor name is displayed at the bottom.";
+		item: "title" "title.text";
 		item: "tags" "sensor.basic,temperature,humidity,rpm";
+		item: "value" "value.text";
+
 	}/*data*/
 
 	images
