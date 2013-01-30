@@ -1,5 +1,25 @@
+/*
+ * edams.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-images {
+images
+{
     image: "icons/device-add.png" COMP;
     image: "icons/device-remove.png" COMP;
     image: "icons/device.png" COMP;
@@ -8,19 +28,27 @@ images {
     image: "images/header.png" COMP;
 	image: "icons/xpl-logo.png" COMP;
 	image: "icons/cosm-logo.png" COMP;
+	image: "cursors/left_ptr.png" COMP;
+	image: "cursors/dotbox.png" COMP;
+	image: "cursors/grab.png" COMP;
+	image: "cursors/grabbing.png" COMP;
 }
 
-externals {
+externals
+{
    external: "elm";
 }
 
-collections {
+collections
+{
 #include "about.edc"
 #include "clock.edc"
 #include "counter.edc"
+#include "home.edc"
 #include "jauge.edc"
 #include "led.edc"
 #include "lightbulb.edc"
+#include "lock.edc"
 #include "monitor.edc"
 #include "switch.edc"
 #include "thermometer.edc"
@@ -181,4 +209,79 @@ group
          }
       }
    }
+
+
+  group
+  {
+    name: "cursors/left_ptr";
+        parts
+        {
+            part
+            {
+                type: IMAGE;
+                mouse_events: 0;
+                description
+                {
+                    state: "default" 0;
+                    image.normal: "cursors/left_ptr.png";
+                }
+         }
+      }
+   }
+
+  group
+  {
+    name: "cursors/grab";
+        parts
+        {
+            part
+            {
+                type: IMAGE;
+                mouse_events: 0;
+                description
+                {
+                    state: "default" 0;
+                    image.normal: "cursors/grab.png";
+                }
+         }
+      }
+   }
+
+
+  group
+  {
+    name: "cursors/grabbing";
+       parts
+        {
+            part
+            {
+                type: IMAGE;
+                mouse_events: 0;
+                description
+                {
+                    state: "default" 0;
+                    image.normal: "cursors/grabbing.png";
+                }
+         }
+      }
+   }
+
+  group
+  {
+    name: "cursors/dotbox";
+        parts
+        {
+            part
+            {
+                type: IMAGE;
+                mouse_events: 0;
+                description
+                {
+                    state: "default" 0;
+                    image.normal: "cursors/dotbox.png";
+                }
+         }
+      }
+   }
+
 }
