@@ -83,14 +83,14 @@ group {
             }
          }
       }
-       programs
-       {
+    programs
+    {
 		program
 		{
-    	     signal: "load";
-    	     source: "";
-	         in: 2.0 0.0;
-         	after: "logo_show";
+            signal: "load";
+            source: "";
+            in: 2.0 0.0;
+            after: "logo_show";
 		}
 		program
         {

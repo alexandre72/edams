@@ -107,6 +107,12 @@ group
     {
         program
         {
+            signal: "load";
+            after: "set,lock,on";
+        }
+
+        program
+        {
 			signal: "mouse,clicked,*";
             filter: "base" "off";
             source: "event";
@@ -115,6 +121,7 @@ group
         }
         program
         {
+            name: "set,lock,on";
 			signal: "mouse,clicked,*";
             filter: "base" "off";
             source: "event";
