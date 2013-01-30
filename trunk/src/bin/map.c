@@ -160,15 +160,32 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 				   prect.w, prect.h); printf("Current child geometry:x=%d y=%d\n", x, y);
 				   fprintf(stdout, "Mouse pointer is in?%s\n", eina_rectangle_coords_inside(&prect, x, y)?
 				   "TRUE":"FALSE"); if(x>=prect.w || x<=prect.x) printf("Child is OUT\n"); */
-				if(eina_rectangle_coords_inside(&prect, x, y))
-				{
-					evas_object_move(o, x, y);
 
-					char s[64];
-					char key[64];
-					snprintf(s, sizeof(s), "%d;%d", x, y);
-					snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
-					eet_write(ef, key, s, strlen(s) + 1, 0);
+				Widget *widget = evas_object_data_get(o, "widget");
+				Device *device = widget_device_get(widget);
+
+				if(device_class_get(device) != VIRTUAL_CLASS)
+				{
+					if(eina_rectangle_coords_inside(&prect, x, y))
+					{
+						evas_object_move(o, x, y);
+
+						char s[64];
+						char key[64];
+						snprintf(s, sizeof(s), "%d;%d", x, y);
+						snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+						eet_write(ef, key, s, strlen(s) + 1, 0);
+					}
+				}
+				else
+				{
+						evas_object_move(o, x, y);
+
+						char s[64];
+						char key[64];
+						snprintf(s, sizeof(s), "%d;%d", x, y);
+						snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+						eet_write(ef, key, s, strlen(s) + 1, 0);
 				}
 			}
 			else
@@ -354,13 +371,8 @@ _evas_smart_group_smart_calculate(Evas_Object * o)
 			FREE(key);
 
 			edje_object_size_min_get(priv->children[n], &w, &h);
-			printf("%s  min size:%d %d ", evas_object_name_get(priv->children[n]), w, h);
 			edje_object_size_max_get(priv->children[n], &w, &h);
-			printf("max size:%d %d\n", w, h);
-
 			evas_object_resize(priv->children[n], w, h);
-
-
 			evas_object_event_callback_add(priv->children[n], EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 		}
 	}
@@ -755,6 +767,8 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 	{
 		map_location_add(location);
 	}
+
+
 
 	//FIXME:Should be a widget, can use of swallow type?
 	/*
