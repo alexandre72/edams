@@ -399,18 +399,24 @@ _list_widgets_sort_cb(const void *pa, const void *pb)
 
 
 static Evas_Object *
-_entry_append_item_provider_cb(void *images __UNUSED__, Evas_Object *entry, const char *item)
+_item_provider(void *images __UNUSED__, Evas_Object *en, const char *item)
 {
-   Evas_Object *image = NULL;;
+   Evas_Object *o = NULL;;
 
-	printf("****item provider:%s\n", item);
+   if (!strcmp(item, "cosm-logo"))
+  {
+   		o = elm_icon_add(en);
+   		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
+		elm_image_file_set(o, edams_edje_theme_file_get(), "elm/icon/cosm/default");
+  }
+   else if (!strcmp(item, "xpl-logo"))
+   {
+   		o = elm_icon_add(en);
+   		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
+		elm_image_file_set(o, edams_edje_theme_file_get(), "elm/icon/xpl/default");
+   }
 
-	if (!strcmp(item, "xpl-logo"))
-	{
-        image = evas_object_image_filled_add(evas_object_evas_get(entry));
-        evas_object_image_file_set(image, edams_edje_theme_file_get(), "elm/icon/xpl/default");
-	}
-	return image;
+   return o;
 }
 
 
@@ -443,27 +449,30 @@ _location_naviframe_content_set(Location * location)
 	elm_grid_size_set(grid, 100, 100);
 	evas_object_show(grid);
 
-	frame = elm_frame_add(app->win);
-	elm_object_text_set(frame, _("Informations"));
-	elm_grid_pack(grid, frame, 1, 1, 99, 30);
-	evas_object_show(frame);
-
    	entry = elm_entry_add(app->win);
    	elm_entry_scrollable_set(entry, EINA_TRUE);
-   	//snprintf(s, sizeof(s),"%s\n%s", location_name_get(location), location_cosm_feedid_get(location) ? "Feed added to cosm" : "Feed not added to cosm");
-    asprintf(&s, "Name:%s Cosm feedid:%d<item size=32x32 vsize=full href=xpl-logo</item>", location_name_get(location), location_cosm_feedid_get(location));
+    asprintf(&s, 	_("	Name:%s<br>Cosm feedid:%d"),
+    				location_name_get(location),
+    				location_cosm_feedid_get(location));
    	elm_object_text_set(entry, s);
    	FREE(s);
+
    	elm_entry_context_menu_disabled_set(entry, EINA_TRUE);
-	elm_entry_item_provider_append(entry, _entry_append_item_provider_cb, NULL);
+	elm_entry_item_provider_append(entry, _item_provider, NULL);
    	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   	elm_grid_pack(grid, entry, 1, 1, 99, 20);
 	evas_object_show(entry);
-	elm_object_content_set(frame, entry);
 
+	if(location_cosm_feedid_get(location) != 0)
+		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=cosm-logo></item>");
+/*
+	if((location_latitude_get(location) != -1) && (location_longitude_get(location) != -1))
+		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=cosm-logo></item>");
+*/
 	frame = elm_frame_add(app->win);
 	elm_object_text_set(frame, _("Widgets"));
-	elm_grid_pack(grid, frame, 1, 31, 99, 49);
+	elm_grid_pack(grid, frame, 1, 21, 99, 59);
 	evas_object_show(frame);
 
 	list = elm_list_add(app->win);
@@ -478,6 +487,12 @@ _location_naviframe_content_set(Location * location)
 	Eina_List *l, *widgets;
 	Widget *widget;
 	widgets = location_widgets_list_get(location);
+
+/*
+	if(widgets)
+		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=xpl-logo></item>");
+*/
+
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
 		Device *device = widget_device_get(widget);
@@ -547,239 +562,241 @@ _location_naviframe_content_set(Location * location)
 }/*_location_naviframe_content_set*/
 
 
+
+
+
 /*
  * Edams main loop.
  */
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
+        Evas_Object *vbx, *vbx2, *bg, *frame;
+        Evas_Object *sep;
+        Evas_Object *tb, *bt, *icon, *label, *bx, *list, *naviframe;
+        Eina_List *l;
 
-	Evas_Object *vbx, *vbx2, *bg, *frame;
-	Evas_Object *sep;
-	Evas_Object *tb, *bt, *icon, *label, *bx, *list, *naviframe;
-	Eina_List *l;
+        // Allocate and initialize App_Info struct.
+        app = calloc(1, sizeof(App_Info));
 
-	// Allocate and initialize App_Info struct.
-	app = calloc(1, sizeof(App_Info));
+        if (!app)
+        {
+                fprintf(stderr, _("\033[31mERROR:\033[0mCan't calloc App_Info struct!\n"));
+                exit(-1);
+        }
+        app->argc = argc;
+        app->argv = argv;
 
-	if (!app)
-	{
-		fprintf(stderr, _("\033[31mERROR:\033[0mCan't calloc App_Info struct!\n"));
-		exit(-1);
-	}
-	app->argc = argc;
-	app->argv = argv;
+        // Initialize edams.
+        edams_init(app);
 
-	// Initialize edams.
-	edams_init(app);
+        //Load registered devices.
+        app->devices = devices_list_get();
 
-	//Load registered devices.
-	app->devices = devices_list_get();
+        // Setup main window.
+        app->locations = locations_list_get();
 
-	// Setup main window.
-	app->locations = locations_list_get();
+        app->win = elm_win_add(NULL, "edams", ELM_WIN_BASIC);
+        elm_win_title_set(app->win, _("Enlightened Domotics Alarm Monitoring System"));
+        elm_win_autodel_set(app->win, EINA_TRUE);
+        elm_win_center(app->win, EINA_TRUE, EINA_TRUE);
 
-	app->win = elm_win_add(NULL, "edams", ELM_WIN_BASIC);
-	elm_win_title_set(app->win, _("Enlightened Domotics Alarm Monitoring System"));
-	elm_win_autodel_set(app->win, EINA_TRUE);
-	elm_win_center(app->win, EINA_TRUE, EINA_TRUE);
+        bg = elm_bg_add(app->win);
+        evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_win_resize_object_add(app->win, bg);
+        evas_object_show(bg);
 
-	bg = elm_bg_add(app->win);
-	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(app->win, bg);
-	evas_object_show(bg);
+        vbx = elm_box_add(app->win);
+        evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_win_resize_object_add(app->win, vbx);
+        evas_object_show(vbx);
 
-	vbx = elm_box_add(app->win);
-	evas_object_size_hint_weight_set(vbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(app->win, vbx);
-	evas_object_show(vbx);
+        /*Setup toolbar.*/
+        app->toolbar = elm_toolbar_add(app->win);
+        elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
+        evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
+        evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
+        elm_toolbar_item_append(app->toolbar, "map", _("Global View"), map_new, app);
+        elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
+        elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);
+        elm_toolbar_item_append(app->toolbar, "application-exit", _("Quit"), _button_quit_clicked_cb, app);
+        elm_box_pack_end(vbx, app->toolbar);
+        evas_object_show(app->toolbar);
 
-	/*Setup toolbar.*/
-	app->toolbar = elm_toolbar_add(app->win);
-	elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
-	evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
-	evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-	elm_toolbar_item_append(app->toolbar, "map", _("Global View"), map_new, app);
-	elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
-	elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);
-	elm_toolbar_item_append(app->toolbar, "application-exit", _("Quit"), _button_quit_clicked_cb, app);
-	elm_box_pack_end(vbx, app->toolbar);
-	evas_object_show(app->toolbar);
+        sep = elm_separator_add(app->win);
+        elm_separator_horizontal_set(sep, EINA_TRUE);
+        elm_box_pack_end(vbx, sep);
+        evas_object_show(sep);
 
-	sep = elm_separator_add(app->win);
-	elm_separator_horizontal_set(sep, EINA_TRUE);
-	elm_box_pack_end(vbx, sep);
-	evas_object_show(sep);
+        // Create locations list panel selector.
+        Evas_Object *panes = elm_panes_add(app->win);
+        elm_win_resize_object_add(app->win, panes);
+        evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(panes, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(vbx, panes);
+        evas_object_show(panes);
 
-	// Create locations list panel selector.
-	Evas_Object *panes = elm_panes_add(app->win);
-	elm_win_resize_object_add(app->win, panes);
-	evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(panes, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(vbx, panes);
-	evas_object_show(panes);
+        vbx2 = elm_box_add(app->win);
+        evas_object_size_hint_weight_set(vbx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(vbx2, -1.0, -1.0);
+        evas_object_show(vbx2);
 
-	vbx2 = elm_box_add(app->win);
-	evas_object_size_hint_weight_set(vbx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(vbx2, -1.0, -1.0);
-	evas_object_show(vbx2);
+        frame = elm_frame_add(app->win);
+        evas_object_size_hint_align_set(frame, -1.0, -1.0);
+        elm_object_text_set(frame, _("Locations"));
+        evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(vbx2, frame);
+        evas_object_show(frame);
 
-	frame = elm_frame_add(app->win);
-	evas_object_size_hint_align_set(frame, -1.0, -1.0);
-	elm_object_text_set(frame, _("Locations"));
-	evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(vbx2, frame);
-	evas_object_show(frame);
+        list = elm_list_add(app->win);
+        elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
+        elm_list_mode_set(list, ELM_LIST_EXPAND);
+        evas_object_name_set(list, "locations list");
+        evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_smart_callback_add(list, "selected", _list_locations_selected_cb, NULL);
+        evas_object_show(list);
+        elm_object_content_set(frame, list);
+        elm_panes_content_left_size_set(panes, 0.20);
+        elm_object_part_content_set(panes, "left", vbx2);
 
-	list = elm_list_add(app->win);
-	elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
-	elm_list_mode_set(list, ELM_LIST_EXPAND);
-	evas_object_name_set(list, "locations list");
-	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_smart_callback_add(list, "selected", _list_locations_selected_cb, NULL);
-	evas_object_show(list);
-	elm_object_content_set(frame, list);
-	elm_panes_content_left_size_set(panes, 0.20);
-	elm_object_part_content_set(panes, "left", vbx2);
+        //Table widget, contains group/subgroup genlist navigation and actions buttons like add...
+        tb = elm_table_add(app->win);
+        elm_win_resize_object_add(app->win, tb);
+        evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_box_pack_end(vbx2, tb);
+        evas_object_show(tb);
 
-	//Table widget, contains group/subgroup genlist navigation and actions buttons like add...
-	tb = elm_table_add(app->win);
-	elm_win_resize_object_add(app->win, tb);
-	evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_box_pack_end(vbx2, tb);
-	evas_object_show(tb);
+        bt = elm_button_add(app->win);
+        elm_object_text_set(bt, _("Add"));
+        icon = elm_icon_add(app->win);
+        elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+        elm_icon_standard_set(icon, "list-add");
+        elm_object_part_content_set(bt, "icon", icon);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_table_pack(tb, bt, 0, 0, 1, 1);
+        evas_object_show(bt);
+        evas_object_smart_callback_add(bt, "clicked", locations_creator_add, app);
 
-	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Add"));
-	icon = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(icon, "list-add");
-	elm_object_part_content_set(bt, "icon", icon);
-	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_table_pack(tb, bt, 0, 0, 1, 1);
-	evas_object_show(bt);
-	evas_object_smart_callback_add(bt, "clicked", locations_creator_add, app);
+        bt = elm_button_add(app->win);
+        elm_object_text_set(bt, _("Remove"));
+        icon = elm_icon_add(app->win);
+        elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+        elm_icon_standard_set(icon, "list-remove");
+        elm_object_part_content_set(bt, "icon", icon);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_table_pack(tb, bt, 0, 1, 1, 1);
+        evas_object_show(bt);
+        evas_object_smart_callback_add(bt, "clicked", _button_remove_location_clicked_cb, list);
 
-	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Remove"));
-	icon = elm_icon_add(app->win);
-	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(icon, "list-remove");
-	elm_object_part_content_set(bt, "icon", icon);
-	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_table_pack(tb, bt, 0, 1, 1, 1);
-	evas_object_show(bt);
-	evas_object_smart_callback_add(bt, "clicked", _button_remove_location_clicked_cb, list);
+        naviframe = elm_naviframe_add(app->win);
+        elm_naviframe_content_preserve_on_pop_set(naviframe, EINA_FALSE);
+        evas_object_name_set(naviframe, "naviframe");
+        evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_show(naviframe);
 
-	naviframe = elm_naviframe_add(app->win);
-	elm_naviframe_content_preserve_on_pop_set(naviframe, EINA_FALSE);
-	evas_object_name_set(naviframe, "naviframe");
-	evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_show(naviframe);
+        Location *location;
+        EINA_LIST_FOREACH(app->locations, l, location)
+        {
+                icon = elm_icon_add(app->win);
+                if(!elm_image_file_set(icon, location_filename_get(location), "/image/0"))
+                {
+                        evas_object_size_hint_min_set(icon, 48, 48);
+                        evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
+                        evas_object_show(icon);
+                        elm_list_item_append(list, location_name_get(location), icon, icon,  NULL, location);
+                }
+                else
+                {
+                        elm_list_item_append(list, location_name_get(location), NULL, NULL,  NULL, location);
+                }
 
-	Location *location;
-	EINA_LIST_FOREACH(app->locations, l, location)
-	{
-   		icon = elm_icon_add(app->win);
-   		if(!elm_image_file_set(icon, location_filename_get(location), "/image/0"))
-   		{
-	   		evas_object_size_hint_min_set(icon, 48, 48);
-   			evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
-   			evas_object_show(icon);
-			elm_list_item_append(list, location_name_get(location), icon, icon,  NULL, location);
-   		}
-   		else
-   		{
-			elm_list_item_append(list, location_name_get(location), NULL, NULL,  NULL, location);
-   		}
+                Elm_Object_Item *it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content_set(location), NULL);
+                elm_naviframe_item_title_visible_set(it, EINA_FALSE);
+                elm_object_item_data_set(it, location);
+        }
 
-		Elm_Object_Item *it = elm_naviframe_item_push(naviframe, location_name_get(location), NULL, NULL, _location_naviframe_content_set(location), NULL);
-		elm_naviframe_item_title_visible_set(it, EINA_FALSE);
-		elm_object_item_data_set(it, location);
-	}
+        Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);
+        elm_naviframe_item_title_visible_set(it, EINA_FALSE);
+        elm_list_go(list);
+        elm_object_part_content_set(panes, "right", naviframe);
 
-	Elm_Object_Item *it = elm_naviframe_item_push(naviframe, NULL, NULL, NULL, NULL, NULL);
-	elm_naviframe_item_title_visible_set(it, EINA_FALSE);
-	elm_list_go(list);
-	elm_object_part_content_set(panes, "right", naviframe);
+        /*Setup status bar to inform user.*/
+        sep = elm_separator_add(app->win);
+        elm_separator_horizontal_set(sep, EINA_TRUE);
+        elm_box_pack_end(vbx, sep);
+        evas_object_show(sep);
 
-	/*Setup status bar to inform user.*/
-	sep = elm_separator_add(app->win);
-	elm_separator_horizontal_set(sep, EINA_TRUE);
-	elm_box_pack_end(vbx, sep);
-	evas_object_show(sep);
+        bx = elm_box_add(app->win);
+        elm_box_horizontal_set(bx, EINA_TRUE);
+        elm_box_pack_end(vbx, bx);
+        evas_object_show(bx);
 
-	bx = elm_box_add(app->win);
-	elm_box_horizontal_set(bx, EINA_TRUE);
-	elm_box_pack_end(vbx, bx);
-	evas_object_show(bx);
+        icon = elm_icon_add(bx);
+        elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+        evas_object_name_set(icon, "status icon");
+        evas_object_size_hint_min_set(icon, 24, 24);
+        evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
+        evas_object_show(icon);
+        elm_box_pack_end(bx, icon);
 
-   	icon = elm_icon_add(bx);
-   	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	evas_object_name_set(icon, "status icon");
-   	evas_object_size_hint_min_set(icon, 24, 24);
-   	evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
-   	evas_object_show(icon);
-   	elm_box_pack_end(bx, icon);
+        label = elm_label_add(app->win);
+        elm_label_slide_duration_set(label, 3);
+        elm_label_slide_set(label, EINA_TRUE);
+        elm_object_style_set(label, "slide_bounce");
+        evas_object_name_set(label, "status text");
+        evas_object_show(label);
+        elm_box_pack_end(bx, label);
+        evas_object_show(label);
 
-   	label = elm_label_add(app->win);
-   	elm_label_slide_duration_set(label, 3);
-   	elm_label_slide_set(label, EINA_TRUE);
-   	elm_object_style_set(label, "slide_bounce");
-	evas_object_name_set(label, "status text");
-   	evas_object_show(label);
-	elm_box_pack_end(bx, label);
-   	evas_object_show(label);
+        elm_image_resizable_set(icon, EINA_TRUE, EINA_TRUE);
+        elm_image_aspect_fixed_set(icon, EINA_TRUE);
+        elm_image_fill_outside_set(icon, EINA_FALSE);
 
-	elm_image_resizable_set(icon, EINA_TRUE, EINA_TRUE);
-	elm_image_aspect_fixed_set(icon, EINA_TRUE);
-	elm_image_fill_outside_set(icon, EINA_FALSE);
+        sep = elm_separator_add(app->win);
+        elm_separator_horizontal_set(sep, EINA_TRUE);
+        elm_box_pack_end(vbx, sep);
+        evas_object_show(sep);
 
-	sep = elm_separator_add(app->win);
-	elm_separator_horizontal_set(sep, EINA_TRUE);
-	elm_box_pack_end(vbx, sep);
-	evas_object_show(sep);
+        evas_object_resize(app->win, 700, 500);
+        evas_object_show(app->win);
 
-	evas_object_resize(app->win, 700, 500);
-	evas_object_show(app->win);
+        //mail_action("{\"FROM\":\"alexandre.dussart@laposte.net\",\"TO\":\"alexandre.dussart@laposte.net\",\"SUBJECT\":\"Bot EDAMS\",\"BODY\":\"TEST\"}");
+        //exec_action("{\"EXEC\":\"/usr/bin/gedit\",\"TERMINAL\":\"false\"}");
+        //debug_action("{\"PRINT\":\"pwet\"}");
 
-	//mail_action("{\"FROM\":\"alexandre.dussart@laposte.net\",\"TO\":\"alexandre.dussart@laposte.net\",\"SUBJECT\":\"Bot EDAMS\",\"BODY\":\"TEST\"}");
-	//exec_action("{\"EXEC\":\"/usr/bin/gedit\",\"TERMINAL\":\"false\"}");
-	//debug_action("{\"PRINT\":\"pwet\"}");
-
-	Ecore_Pipe *pipe;
-	pid_t child_pid;
+        Ecore_Pipe *pipe;
+        pid_t child_pid;
 
     pipe = ecore_pipe_add(handler, NULL);
 
- 	/*Create xPL responder(s)*/
-	xPL_addServiceListener(app->xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
+        /*Create xPL responder(s)*/
+        xPL_addServiceListener(app->xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
 
-	/*Create xPL message to send*/
-	app->xpl_edams_message_cmnd = xPL_createBroadcastMessage(app->xpl_edams_service, xPL_MESSAGE_COMMAND);
+        /*Create xPL message to send*/
+        app->xpl_edams_message_cmnd = xPL_createBroadcastMessage(app->xpl_edams_service, xPL_MESSAGE_COMMAND);
 
 
-	child_pid = fork();
+        child_pid = fork();
 
-	if (!child_pid)
-	{
-		ecore_pipe_read_close(pipe);
-		xpl_process_messages(pipe);
-	}
-	else
-	{
-		ecore_pipe_write_close(pipe);
-		elm_run();
-	}
+        if (!child_pid)
+        {
+                ecore_pipe_read_close(pipe);
+                xpl_process_messages(pipe);
+        }
+        else
+        {
+                ecore_pipe_write_close(pipe);
+                elm_run();
+        }
 
-	map_quit();
-	ecore_pipe_del(pipe);
-	kill(child_pid, SIGKILL);
+        map_quit();
+        ecore_pipe_del(pipe);
+        kill(child_pid, SIGKILL);
 
-	edams_shutdown(app);
+        edams_shutdown(app);
 
-	return EXIT_SUCCESS;
+        return EXIT_SUCCESS;
 }/*elm_main*/
 ELM_MAIN()
