@@ -135,7 +135,8 @@ void
 edams_settings_map_background_set(const char *map_background)
 {
     eet_write(ef, "map/map_background", map_background, strlen(map_background)+1, 0);
-	debug(stdout, _("Map background file is '%s'"), map_background);
+    if(map_background)
+    	debug(stdout, _("Map background file set to '%s'"), map_background);
 }/*edams_settings_map_background_set*/
 
 
@@ -177,7 +178,8 @@ void
 edams_settings_gnuplot_path_set(const char *gnuplot_path)
 {
     eet_write(ef, "edams/gnuplot_path", gnuplot_path, strlen(gnuplot_path)+1, 0);;
-	debug(stdout, _("Gnuplot path is '%s'"), gnuplot_path);
+    if(gnuplot_path)
+    	debug(stdout, _("Gnuplot path is '%s'"), gnuplot_path);
 }/*edams_settings_gnuplot_path_set*/
 
 
@@ -199,7 +201,8 @@ void
 edams_settings_smtp_server_set(const char *smtp_server)
 {
     eet_write(ef, "edams/smtp_server", smtp_server, strlen(smtp_server)+1, 0);;
-	debug(stdout, _("Smtp server is '%s'"), smtp_server);
+    if(smtp_server)
+	    debug(stdout, _("Smtp server set to '%s'"), smtp_server);
 }/*edams_settings_smtp_server_set*/
 
 
@@ -221,6 +224,9 @@ void
 edams_settings_smtp_username_set(const char *smtp_username)
 {
     eet_write(ef, "edams/smtp_username", smtp_username, strlen(smtp_username)+1, 0);;
+    if(smtp_username)
+	    debug(stdout, _("Smtp server username set to '%s'"), smtp_username);
+
 }/*edams_settings_smtp_username_set*/
 
 
