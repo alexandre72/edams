@@ -28,9 +28,28 @@
 #include "edams.h"
 #include "utils.h"
 
-static Eina_Bool _url_feed_add_complete_cb(void *data, int type, void *event_info);
-static Eina_Bool _url_feed_delete_complete_cb(void *data, int type, void *event_info);
-static Eina_Bool _url_datastream_update_complete_cb(void *data, int type, void *event_info);
+static Eina_Bool _url_feed_add_complete_cb(void *data, int type, Ecore_Con_Event_Url_Complete *event);
+static Eina_Bool _url_feed_delete_complete_cb(void *data, int type,  Ecore_Con_Event_Url_Complete *event);
+static Eina_Bool _url_datastream_update_complete_cb(void *data, int type,  Ecore_Con_Event_Url_Complete *event);
+
+
+/*
+ *
+ */
+const char *
+cosm_server_error_to_str(int error)
+{
+    switch(error)
+    {
+        case 401: return _("401 Not Authorized");
+        case 403: return _("403 Forbidden");
+        case 404: return _("404 Not Found");
+        case 422: return _("422 Unprocessable Entity");
+        case 500: return _("500 Internal Server Error");
+        case 503: return _("503 No server error");
+    }
+}/*cosm_server_error_to_str*/
+
 
 
 /*
@@ -46,7 +65,7 @@ cosm_device_datastream_update(Location *location, Device *device)
 	if(!location || (location_cosm_feedid_get(location) == 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
-
+   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, NULL);
 	asprintf(&s, "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
 	cosm_url = ecore_con_url_custom_new(s, "PUT");
    	if (!cosm_url)
@@ -58,7 +77,6 @@ cosm_device_datastream_update(Location *location, Device *device)
 
 	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
-   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, NULL);
 
 	cJSON *root, *datastreams, *fmt,*unit;
 	root=cJSON_CreateObject();
@@ -82,7 +100,7 @@ cosm_device_datastream_update(Location *location, Device *device)
 	s = cJSON_PrintUnformatted(root);
 	cJSON_Delete(root);
 
-	if(!ecore_con_url_post(cosm_url, s, strlen(s), "text/json"))
+	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), "text/json"))
 	{
 	   	debug(stderr, _("Can't realize url PUT request"));
 		return EINA_FALSE;
@@ -105,10 +123,10 @@ cosm_location_feed_add(Location *location)
 	if(!location || (location_cosm_feedid_get(location) != 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
-	debug(stderr, _("Creating cosm feed for '%s'..."), location_name_get(location));
+	debug(stdout, _("Creating cosm feed for '%s'..."), location_name_get(location));
 
+   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, (Ecore_Event_Handler_Cb)_url_feed_add_complete_cb,NULL);
    	cosm_url = ecore_con_url_custom_new("http://api.cosm.com/v2/feeds", "POST");
-
    	if (!cosm_url)
      {
 		debug(stderr, _("Can't create Ecore_Con_Url object"));
@@ -116,14 +134,14 @@ cosm_location_feed_add(Location *location)
      }
 	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());;
-   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_add_complete_cb, (void*)location);
+    ecore_con_url_data_set(cosm_url, (void*)location);
 
     char *locale = setlocale(LC_NUMERIC, NULL);
      setlocale(LC_NUMERIC, "POSIX");
 
 	cJSON *root,*fmt;
 	root=cJSON_CreateObject();
-	asprintf(&s, "%s data", location_name_get(location));
+	asprintf(&s, "%s sensor.basic", location_name_get(location));
 	cJSON_AddItemToObject(root, "title", cJSON_CreateString(s));
 	FREE(s);
 	cJSON_AddItemToObject(root, "version", cJSON_CreateString("1.0.0"));
@@ -144,7 +162,9 @@ cosm_location_feed_add(Location *location)
 	cJSON_Delete(root);
     setlocale(LC_NUMERIC, locale);
 
-	if(!ecore_con_url_post(cosm_url, s, strlen(s), NULL))
+    printf("JSON:%s\n\n", s);
+
+	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), NULL))
 	{
 		debug(stderr, _("Can't realize url PUT request"));
 		return EINA_FALSE;
@@ -170,8 +190,9 @@ cosm_location_feed_delete(Location *location)
 
 	int feedid = location_cosm_feedid_get(location);
 
-	debug(stderr, _("Delete cosm feed for '%s'..."), location_name_get(location));
+	debug(stdout, _("Delete cosm feed for '%s'..."), location_name_get(location));
 
+   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)(int)feedid);
 	asprintf(&s, "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
 	cosm_url = ecore_con_url_custom_new(s, "DELETE");
    	if (!cosm_url)
@@ -181,9 +202,9 @@ cosm_location_feed_delete(Location *location)
      }
 	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
-   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)(int)feedid);
 
-	if(!ecore_con_url_post(cosm_url, s, strlen(s), NULL))
+
+	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), NULL))
 	{
 		debug(stderr, _("Can't realize url PUT request"));
 		return EINA_FALSE;
@@ -199,15 +220,32 @@ cosm_location_feed_delete(Location *location)
  *
  */
 static Eina_Bool
-_url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
+_url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Url_Complete *event_info)
 {
-	Ecore_Con_Event_Url_Complete *url_complete = event_info;
+    const Eina_List *headers = NULL, *it;
+    const char *header = NULL;
 
-	Eina_List *headers;
+    if((event_info->status != 201) && (event_info->status != 200))
+    {
+    printf("cosm server returned code: '%d'\n", event_info->status);
+        const char *s;
+        asprintf(&s, _("A datastream feed hasn't been updated, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
+        statusbar_text_set(s, "elm/icon/cosm/default");
+        FREE(s);
+        return ECORE_CALLBACK_RENEW;
+    }
+    else
+    {
+    	headers = ecore_con_url_response_headers_get(event_info->url_con);
 
-	headers = ecore_con_url_response_headers_get(url_complete->url_con);
+        EINA_LIST_FOREACH(headers, it, header)
+        {
+            debug(stdout, header);
+        }
+    }
 
-	return EINA_TRUE;
+    ecore_con_url_free(event_info->url_con);
+    return ECORE_CALLBACK_CANCEL;
  }/*_url_datastream_update_complete_cb*/
 
 
@@ -215,70 +253,85 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, v
  *
  */
 static Eina_Bool
-_url_feed_add_complete_cb(void *data, int type __UNUSED__, void *event_info)
+_url_feed_add_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Url_Complete *event_info)
 {
-   Ecore_Con_Event_Url_Complete *url_complete = event_info;
-   const Eina_List *headers, *l;
-   char *str;
+    const Eina_List *headers = NULL, *it;
+    const char *header = NULL;
 
-   headers = ecore_con_url_response_headers_get(url_complete->url_con);
 
-   EINA_LIST_FOREACH(headers, l, str)
-   {
-	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
-		{
-			statusbar_text_set(_("A location feed hasn't been created, maybe cosm server is down or it's an internet connection problem?"), "elm/icon/cosm/default");
-			return EINA_FALSE;
-		}
-		else if(strncmp(str, "Location:", 9) == 0)
-		{
-			unsigned int feedid;
-			if (sscanf(str, "Location: http://api.cosm.com/v2/feeds/%d", &feedid)==1)
-			{
-				Location *location = data;
-				location_cosm_feedid_set(location, feedid);
-				location_save(location);
-				char *s;
-				asprintf(&s, _("Location has been added to cosm with feedid '%d'"), feedid);
-				statusbar_text_set(s, "elm/icon/cosm/default");
-				FREE(s);
-				update_naviframe_content(location);
-				return EINA_TRUE;
-			}
-     	}
-	}
+    if((event_info->status != 201) && (event_info->status != 200))
+    {
+    printf("cosm server returned code: '%d'\n", event_info->status);
+        const char *s;
+        asprintf(&s, _("A location feed hasn't been added, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
+        statusbar_text_set(s, "elm/icon/cosm/default");
+        FREE(s);
+        return ECORE_CALLBACK_RENEW;
+    }
+    else
+    {
+        headers = ecore_con_url_response_headers_get(event_info->url_con);
 
-	return EINA_TRUE;
+         EINA_LIST_FOREACH(headers, it, header)
+        {
+		    if(strncmp(header, "Location:", 9) == 0)
+		    {
+			    unsigned int feedid;
+			    if (sscanf(header, "Location: http://api.cosm.com/v2/feeds/%d", &feedid)==1)
+			    {
+				    Location *location = ecore_con_url_data_get(event_info->url_con);;
+				    location_cosm_feedid_set(location, feedid);
+				    location_save(location);
+				    char *s;
+				    asprintf(&s, _("Location has been added to cosm with feedid '%d'"), feedid);
+				    statusbar_text_set(s, "elm/icon/cosm/default");
+				    FREE(s);
+				    update_naviframe_content(location);
+                    ecore_con_url_free(event_info->url_con);
+				    break;
+			    }
+     	    }
+	    }
+    }
+
+    return ECORE_CALLBACK_CANCEL;
 }/*_url_feed_add_complete_cb*/
 
 /*
  *
  */
 static Eina_Bool
-_url_feed_delete_complete_cb(void *data, int type __UNUSED__, void *event_info)
+_url_feed_delete_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Url_Complete *event_info)
 {
-   Ecore_Con_Event_Url_Complete *url_complete = event_info;
-   const Eina_List *headers, *l;
-   char *str;
+    const Eina_List *headers = NULL, *it;
+    const char *header = NULL;
 
-   headers = ecore_con_url_response_headers_get(url_complete->url_con);
+    if((event_info->status != 201) && (event_info->status != 200))
+    {
+    printf("cosm server returned code: '%d'\n", event_info->status);
+        const char *s;
+        asprintf(&s, _("A location feed hasn't been deleted, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
+        statusbar_text_set(s, "elm/icon/cosm/default");
+        FREE(s);
+        return ECORE_CALLBACK_RENEW;
+    }
+    else
+    {
+        headers = ecore_con_url_response_headers_get(event_info->url_con);
 
-   	EINA_LIST_FOREACH(headers, l, str)
-   	{
-	   	if(strncmp(str, "HTTP/1.1 40", strlen("HTTP/1.1 40")) == 0)
-		{
-			statusbar_text_set(_("A location feed hasn't been deleted, maybe cosm server is down or it's an internet connection problem?"), "elm/icon/cosm/default");
-			return EINA_FALSE;
-		}
-   		else if(strncmp(str, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
-		{
-				char *s;
+   	    EINA_LIST_FOREACH(headers, it, header)
+   	    {
+   	    	if(strncmp(header, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
+	    	{
+	    		char *s;
 				asprintf(&s, _("Location with feedid '%d' has been removed from cosm"), (int)data);
 				statusbar_text_set(s, "elm/icon/cosm/default");
 				FREE(s);
-				return EINA_TRUE;
-		}
-	}
+                ecore_con_url_free(event_info->url_con);
+				break;
+		    }
+	    }
+    }
 
-	return EINA_TRUE;
+    return ECORE_CALLBACK_CANCEL;
 }/*_url_feed_delete_complete_cb*/
