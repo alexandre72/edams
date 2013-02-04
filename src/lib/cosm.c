@@ -162,8 +162,6 @@ cosm_location_feed_add(Location *location)
 	cJSON_Delete(root);
     setlocale(LC_NUMERIC, locale);
 
-    printf("JSON:%s\n\n", s);
-
 	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), NULL))
 	{
 		debug(stderr, _("Can't realize url PUT request"));
@@ -240,7 +238,7 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, E
 
         EINA_LIST_FOREACH(headers, it, header)
         {
-            debug(stdout, header);
+            //debug(stdout, header);
         }
     }
 

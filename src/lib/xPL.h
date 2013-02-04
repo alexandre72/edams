@@ -5,6 +5,8 @@
 #ifndef __XPL_H
 #define __XPL_H
 
+#include "device.h"
+
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -14,6 +16,7 @@
 #include <time.h>
 
 #include <Eina.h>
+#include <Ecore.h>
 
 #define XPLLIB_VERSION "V1.3a"
 
@@ -168,6 +171,15 @@ struct _xPL_Service {
   int listenerAllocCount;
   xPL_ServiceListenerDefPtr serviceListenerList;
 };
+
+
+/*xPL misc stuff*/
+Eina_Bool xpl_control_basic_cmnd_send(Device *device);
+Eina_Bool xpl_init();
+Eina_Bool xpl_shutdown();
+void xpl_services_install(Ecore_Pipe *pipe);
+void xpl_process_messages();
+const char *xpl_control_basic_cmnd_to_str(Device *device);
 
 /* xPL Service Support */
 extern xPL_ServicePtr xPL_createService(char *, char *, char *);

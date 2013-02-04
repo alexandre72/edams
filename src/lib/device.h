@@ -172,12 +172,13 @@ const char * device_data1_get(const Device *device);
 const char * device_units_get(const Device *device);
 const char * device_unit_symbol_get(const Device *device);
 
-/*Devices list funcs.*/
+/*Devices list funcs*/
 Eina_List *devices_list_get();
 Eina_List *devices_list_free(Eina_List *devices);
 Device* devices_list_device_with_id_get(Eina_List *devices, unsigned int id);
 
-/* Global initializer / shutdown functions */
+/*Global initializer / shutdown functions*/
 void devices_init(void);
 void devices_shutdown(void);
+
 #endif /*__DEVICE_H*/

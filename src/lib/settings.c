@@ -30,11 +30,13 @@ typedef struct
 {
 	char *cosm_apikey;			/*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
 	char *gnuplot_path;			/*Gnuplot path. Eg '/usr/bin/gnuplot'*/
-	char *map_background;		/*Background user in global view.*/
+	char *map_background;		/*Background image filename used in global view.*/
 	char *smtp_server; 			/*SMTP server. Eg 'smtp://smtp.gmail.com:587'*/
 	char *smtp_username;		/*SMTP user password. Eg 'myemailaddress@gmail.com'*/
 	char *smtp_userpwd;			/*SMTP user password. Eg 'PASSWORD123'*/
-	Eina_Bool softemu;			/*Sotfware emulation, mainly used to test EDAMS*/
+	char *user_name;            /*User name. Eg 'John Doe'*/
+	char *user_mail;            /*User mail. Eg 'john.doe@imail.net'*/
+	Eina_Bool softemu;			/*TODO:Sotfware emulation, mainly used to test EDAMS.*/
 	Eina_Bool debug;			/*Use printf to help to debug EDAMS.*/
 } Settings;
 
@@ -256,6 +258,52 @@ edams_settings_smtp_userpwd_set(const char *smtp_userpwd)
 /*
  *
  */
+const char*
+edams_settings_user_mail_get()
+{
+	EET_STRING_SETTINGS_READ("edams/user_mail", settings->user_mail);
+	return settings->user_mail;
+}/*edams_settings_user_mail_get*/
+
+
+
+/*
+ *
+ */
+void
+edams_settings_user_mail_set(const char *mail)
+{
+    eet_write(ef, "edams/user_mail", mail, strlen(mail)+1, 0);;
+}/*edams_settings_user_mail_set*/
+
+
+/*
+ *
+ */
+const char*
+edams_settings_user_name_get()
+{
+	EET_STRING_SETTINGS_READ("edams/user_name", settings->user_name);
+	return settings->user_name;
+}/*edams_settings_user_mail_get*/
+
+
+
+/*
+ *
+ */
+void
+edams_settings_user_name_set(const char *user_name)
+{
+    eet_write(ef, "edams/user_name", user_name, strlen(user_name)+1, 0);;
+}/*edams_settings_user_mail_set*/
+
+
+
+
+/*
+ *
+ */
 void
 edams_settings_init()
 {
@@ -269,7 +317,14 @@ edams_settings_init()
 
 	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE);
 
+	settings->gnuplot_path = NULL;
 	settings->cosm_apikey = NULL;
+	settings->map_background = NULL;
+	settings->smtp_server = NULL;
+	settings->smtp_username = NULL;
+	settings->smtp_userpwd = NULL;
+	settings->user_name = NULL;
+	settings->user_mail = NULL;
 	settings->softemu = EINA_FALSE;
 	settings->debug = edams_settings_debug_get();
 
@@ -291,5 +346,7 @@ edams_settings_shutdown()
 	eina_stringshare_del(settings->smtp_server);
 	eina_stringshare_del(settings->smtp_username);
 	eina_stringshare_del(settings->smtp_userpwd);
+	eina_stringshare_del(settings->user_name);
+	eina_stringshare_del(settings->user_mail);
 	FREE(settings);
 }/*edams_settings_shutdown*/

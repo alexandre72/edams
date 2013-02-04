@@ -62,9 +62,8 @@ static void _button_quit_clicked_cb(void *data __UNUSED__,  Evas_Object * obj __
 static Eina_Bool _statusbar_timer_cb(void *data);
 static int _eina_list_devices_sort_cb(const void *d1, const void *d2);
 
-/*xPL sensor.basic listener*/
-static void xpl_process_messages();
-static void _xpl_sensor_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data);
+
+
 static void handler(void *data __UNUSED__, void *buf, unsigned int len);
 
 /*Functions*/
@@ -78,7 +77,7 @@ Evas_Object *_location_naviframe_content_set(Location * location);
 static void
 _list_locations_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Eina_List *its, *l;
+	Eina_List *its = NULL, *l;
 	Elm_Object_Item *it;
 
 	app->location = elm_object_item_data_get(event_info);
@@ -212,46 +211,6 @@ _eina_list_devices_sort_cb(const void *d1, const void *d2)
 
 
 /*
- *Callback called in xPL Message 'cstatic void
-handler(void *data __UNUSED__, void *buf, unsigned int len)ontrol.basic' is triggered.
- */
-static void
-_xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data __UNUSED__)
-{
-    char buf[351] = "0";
-    xPL_NameValueListPtr values_names;
-
-	Ecore_Pipe *pipe = (Ecore_Pipe *) data;
-
-	values_names = xPL_getMessageBody(msg);
-
-	snprintf(buf, sizeof(buf), "%s!%s!%s",
-                         xPL_getNamedValue(values_names, "device"),
-                         xPL_getNamedValue(values_names, "type"),
-                         xPL_getNamedValue(values_names, "current"));
-
-	ecore_pipe_write(pipe, buf, strlen(buf));
-
-}/*_xpl_sensor_basic_handler*/
-
-
-
-
-/*
- *Child process that listen xPL messages received from xPL hub(hub is an external prog and need to be run).
- */
-static void
-xpl_process_messages()
-{
-	for (;;)
-	{
-		xPL_processMessages(-1);
-		sleep(1);
-	}
-}/*xpl_process_messages*/
-
-
-/*
  *
  */
 static void
@@ -324,8 +283,8 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
 							break;
 				}
 		}
-     /*Write gnuplot file with updated device's data*/
-    gnuplot_device_data_write(device);
+        /*Write gnuplot file with updated device's data*/
+        gnuplot_device_data_write(device);
 
         /*Parse all locations and sync with global and cosm*/
         Location *location;
@@ -535,7 +494,7 @@ _location_naviframe_content_set(Location * location)
     elm_icon_standard_set(icon, "document-properties");
     elm_object_part_content_set(bt, "icon", icon);
 	elm_box_pack_end(bx, bt);
-    evas_object_smart_callback_add(bt, "clicked", actions_editor_add, list);
+    evas_object_smart_callback_add(bt, "clicked", actions_editor_add, app);
     evas_object_show(bt);
 
     bt = elm_button_add(app->win);
@@ -616,7 +575,7 @@ elm_main(int argc, char **argv)
         elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
         evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
         evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-        elm_toolbar_item_append(app->toolbar, "map", _("Global View"), map_new, app);
+        elm_toolbar_item_append(app->toolbar, "global-view", _("Global View"), map_new, app);
         elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
         elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);
         elm_toolbar_item_append(app->toolbar, "application-exit", _("Quit"), _button_quit_clicked_cb, app);
@@ -769,27 +728,23 @@ elm_main(int argc, char **argv)
         Ecore_Pipe *pipe;
         pid_t child_pid;
 
-    pipe = ecore_pipe_add(handler, NULL);
+        pipe = ecore_pipe_add(handler, NULL);
 
-        /*Create xPL responder(s)*/
-        xPL_addServiceListener(app->xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
-
-        /*Create xPL message to send*/
-        app->xpl_edams_message_cmnd = xPL_createBroadcastMessage(app->xpl_edams_service, xPL_MESSAGE_COMMAND);
-
+        xpl_services_install(pipe);
 
         child_pid = fork();
 
         if (!child_pid)
         {
                 ecore_pipe_read_close(pipe);
-                xpl_process_messages(pipe);
+                xpl_process_messages();
         }
         else
         {
                 ecore_pipe_write_close(pipe);
                 elm_run();
         }
+
 
         map_quit();
         ecore_pipe_del(pipe);

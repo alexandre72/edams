@@ -85,7 +85,8 @@ void
 window_clicked_close_cb (void *data, Evas_Object * obj __UNUSED__,
                          void *event_info __UNUSED__)
 {
-   evas_object_del (data);
+   evas_object_del(data);
+   data = NULL;
 }
 
 
