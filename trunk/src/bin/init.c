@@ -28,32 +28,9 @@
 #include "settings.h"
 #include "utils.h"
 
-static int xpl_init(App_Info * app);
+
 static int paths_init(App_Info * app);
 static int efl_init(App_Info * app);
-
-
-static int
-xpl_init(App_Info * app)
-{
-	debug(stdout, _("Initialize xPL service..."));
-
-	// Setup xPL.
-	if (!xPL_initialize(xPL_getParsedConnectionType()))
-	{
-		debug(stderr, _("Can't init xPL service"));
-		return 0;
-	}
-
-	/*Create an xpl service*/
-	app->xpl_edams_service = xPL_createService("edams", "xpl", "edams.xpl");
-	xPL_setServiceVersion(app->xpl_edams_service, VERSION);
-
-	/*Enable the service*/
-	xPL_setServiceEnabled(app->xpl_edams_service, EINA_TRUE);
-
-	return 0;
-}
 
 
 
@@ -160,7 +137,7 @@ edams_init(App_Info * app)
 	paths_init(app);
 	locations_init();
 	devices_init();
-	xpl_init(app);
+	xpl_init();
 
 	return 0;
 }

@@ -128,20 +128,9 @@ _layout_samples_test(Evas_Object *layout)
 static void
 _update_cmnd_preview(Device *device)
 {
-	char *s;
-	asprintf(&s, _("<ps><ps><em>control.basic<br>\
-							{<br>\
-							<tab>device=%s<br>\
- 							<tab>type=%s<br>\
-							<tab>current=%s<br>\
-							}<br></em>"),
-							device_name_get(device),
-							device_type_to_str(device_type_get(device)),
-							device_current_get(device));
-
 	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
-   	elm_object_text_set(entry, s);
-	FREE(s);
+
+   	elm_object_text_set(entry, xpl_control_basic_cmnd_to_str(device));
 }
 
 

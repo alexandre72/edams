@@ -913,7 +913,7 @@ device_class_to_str(Device_Class class)
 	else if(class == CONTROL_BASIC_CLASS)		return "control.basic";
 	else if(class == VIRTUAL_CLASS)				return "virtual";
 	else 									return NULL;
-}
+}/*device_class_to_str*/
 
 
 /*
@@ -957,7 +957,7 @@ device_str_to_type(const char *s)
 	else if(strcmp(s, "slider") == 0)			return SLIDER_CONTROL_BASIC_TYPE;
 	else if(strcmp(s, "timer") == 0)			return TIMER_CONTROL_BASIC_TYPE;
 	else										return UNKNOWN_DEVICE_TYPE;
-}
+}/*device_str_to_type*/
 
 
 /*
@@ -972,7 +972,7 @@ action_condition_to_str(Condition condition)
 	else if(condition == MORE_OR_EGAL_TO)	return ">=";
 	else if(condition == LESS_OR_EGAL_TO)	return "<=";
 	else 									return NULL;
-}
+}/*action_condition_to_str*/
 
 
 /*
@@ -989,7 +989,7 @@ action_str_to_condition(const char *s)
 	else if(strcmp(s, ">=") == 0)	return MORE_OR_EGAL_TO;
 	else if(strcmp(s, "<=") == 0)	return LESS_OR_EGAL_TO;
 	else							return UNKNOWN_CONDITION;
-}
+}/*action_str_to_condition*/
 
 
 /*
@@ -1003,7 +1003,7 @@ action_type_to_str(Action_Type type)
 	else if(type == EXEC_ACTION)			return _("Execute external program");
 	else if(type == DEBUG_ACTION)			return _("Debug stuff for testing purpose");
 	else 									return NULL;
-}
+}/*action_type_to_str*/
 
 
 /*
@@ -1044,4 +1044,4 @@ device_type_to_str(Device_Type type)
 	else if(type == SLIDER_CONTROL_BASIC_TYPE)		return "slider";
 	else if(type == TIMER_CONTROL_BASIC_TYPE)		return "timer";
 	else 											return NULL;
-}
+}/*device_type_to_str*/

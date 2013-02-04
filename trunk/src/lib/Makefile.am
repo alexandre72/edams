@@ -24,6 +24,7 @@ device.c \
 settings.c \
 cosm.c \
 utils.c \
+xpl.c \
 xPL-config.c \
 xPL-io.c \
 xPL-listeners.c \

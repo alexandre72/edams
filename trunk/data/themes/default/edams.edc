@@ -23,11 +23,12 @@ images
     image: "icons/device-add.png" COMP;
     image: "icons/device-remove.png" COMP;
     image: "icons/device.png" COMP;
-    image: "icons/map.png" COMP;
+    image: "icons/global-view.png" COMP;
     image: "images/header-bg.png" COMP;
     image: "images/header.png" COMP;
 	image: "icons/xpl-logo.png" COMP;
 	image: "icons/cosm-logo.png" COMP;
+	image: "icons/debug.png" COMP;
 	image: "cursors/left_ptr.png" COMP;
 	image: "cursors/dotbox.png" COMP;
 	image: "cursors/grab.png" COMP;
@@ -53,167 +54,168 @@ collections
 #include "switch.edc"
 #include "thermometer.edc"
 
-group
-{
-	name: "elm/icon/xpl/default";
-      min: 48 48;
-      parts {
-         part { name: "icon";
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/xpl-logo.png";
-                  middle: DEFAULT;
-               }
-            }
-         }
-      }
-}
 
-group
-{
-	name: "elm/icon/cosm/default";
-      min: 65 16;
-      parts {
-         part {
-         name: "icon";
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/cosm-logo.png";
-                  middle: DEFAULT;
-               }
+    group
+    {
+	    name: "elm/icon/xpl/default";
+        min: 32 32;
+        parts
+        {
+            part
+            {
+			    type: IMAGE;
+                description
+                {
+                  	aspect: 1 1;
+                 	aspect_preference: BOTH;
+            	    state: "default" 0;
+		   		    image.normal: "icons/xpl-logo.png";
+                }
             }
-         }
-      }
-}
+        }
+}   /*group elm/icon/xpl/default*/
 
-  group
-  {
-    name: "bg/header-bg";
-    min: 640 480;
+    group
+    {
+	    name: "elm/icon/cosm/default";
+        min: 32 32;
+        parts
+        {
+            part
+            {
+		    	type: IMAGE;
+                description
+                {
+                	aspect: 1 1;
+                	aspect_preference: BOTH;
+            	    state: "default" 0;
+		   		    image.normal: "icons/cosm-logo.png";
+                }
+            }
+        }
+    }/*group elm/icon/cosm/default*/
+
+    group
+    {
+	    name: "elm/icon/debug/default";
+        min: 32 32;
+        parts
+        {
+            part
+            {
+		    	type: IMAGE;
+                description
+                {
+                	aspect: 1 1;
+                	aspect_preference: BOTH;
+            	    state: "default" 0;
+		   		    image.normal: "icons/debug.png";
+                }
+            }
+        }
+    }/*group elm/icon/cosm/default*/
+
+
+    group
+    {
+        name: "bg/header";
         parts
         {
             part
             {
                 type: IMAGE;
-                mouse_events: 0;
                 description
                 {
                     state: "default" 0;
-                    image.normal: "images/header-bg.png";
+                    image.normal: "images/header.png";
                 }
-         }
-      }
-   }
-  group
-  {
-    name: "bg/header";
-    min: 250 70;
-    parts
+            }
+        }
+    }/*group bg/header*/
+
+    group
     {
-        part
+        name: "elm/icon/device-remove/default";
+        min: 32 32;
+        parts
         {
-            type: IMAGE;
-            mouse_events: 0;
-            description
+            part
             {
-                state: "default" 0;
-                image.normal: "images/header.png";
+			    type: IMAGE;
+                description
+                {
+                	aspect: 1 1;
+                	aspect_preference: BOTH;
+            	    state: "default" 0;
+		   		    image.normal: "icons/device-remove.png";
+                }
             }
-         }
-      }
-   }
+        }
+    }/*group elm/icon/device-remove/default*/
 
-  group { name: "elm/icon/device-remove/default";
-      min: 48 48;
-      parts {
-         part {
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/device-remove.png";
-                  middle: DEFAULT;
-               }
-               fill {
-               }
+    group
+    {
+        name: "elm/icon/device-add/default";
+        min: 32 32;
+        parts
+        {
+            part
+            {
+			    type: IMAGE;
+                description
+                {
+                 	aspect: 1 1;
+                	aspect_preference: BOTH;
+            	    state: "default" 0;
+		   	    	image.normal: "icons/device-add.png";
+                }
             }
-         }
-      }
-   }
-  group { name: "elm/icon/device-add/default";
-      min: 48 48;
-      parts {
-         part {
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/device-add.png";
-                  middle: DEFAULT;
-               }
-               fill {
-               }
+        }
+    }/*group elm/icon/device-add/default*/
+
+    group
+    {
+        name: "elm/icon/device/default";
+        min: 32 32;
+        parts
+        {
+            part
+            {
+			    type: IMAGE;
+                description
+                {
+               	    aspect: 1 1;
+               	    aspect_preference: BOTH;
+            	    state: "default" 0;
+		   		    image.normal: "icons/device-add.png";
+                }
             }
-         }
-      }
-   }
-  group { name: "elm/icon/device/default";
-      min: 48 48;
-      parts {
-         part {
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/device.png";
-                  middle: DEFAULT;
-               }
-               fill {
-               }
+        }
+    }/*group elm/icon/device/default*/
+
+    group
+    {
+        name: "elm/icon/global-view/default";
+        min: 32 32;
+        parts
+        {
+            part
+            {
+			    type: IMAGE;
+                description
+                {
+                	aspect: 1 1;
+               	    aspect_preference: BOTH;
+            	    state: "default" 0;
+		   		    image.normal: "icons/global-view.png";
+                }
             }
-         }
-      }
-   }
+        }
+    }/*group elm/icon/global-view/default*/
 
-
-  group { name: "elm/icon/map/default";
-      min: 48 48;
-      parts {
-         part {
-            type: IMAGE;
-            mouse_events: 0;
-            description { state: "default" 0;
-               aspect: 1 1;
-               aspect_preference: BOTH;
-               image {
-                  normal: "icons/map.png";
-                  middle: DEFAULT;
-               }
-               fill {
-               }
-            }
-         }
-      }
-   }
-
-
-  group
-  {
-    name: "cursors/left_ptr";
+    group
+    {
+        name: "cursors/left_ptr";
         parts
         {
             part
@@ -227,11 +229,11 @@ group
                 }
          }
       }
-   }
+    }/*group cursors/left_ptr*/
 
-  group
-  {
-    name: "cursors/grab";
+    group
+    {
+        name: "cursors/grab";
         parts
         {
             part
@@ -243,15 +245,15 @@ group
                     state: "default" 0;
                     image.normal: "cursors/grab.png";
                 }
-         }
-      }
-   }
+            }
+        }
+    }/*group cursors/grab*/
 
 
-  group
-  {
-    name: "cursors/grabbing";
-       parts
+    group
+    {
+        name: "cursors/grabbing";
+        parts
         {
             part
             {
@@ -262,13 +264,13 @@ group
                     state: "default" 0;
                     image.normal: "cursors/grabbing.png";
                 }
-         }
-      }
-   }
+            }
+        }
+    }/*group cursors/grabbing*/
 
-  group
-  {
-    name: "cursors/dotbox";
+    group
+    {
+        name: "cursors/dotbox";
         parts
         {
             part
@@ -280,8 +282,8 @@ group
                     state: "default" 0;
                     image.normal: "cursors/dotbox.png";
                 }
-         }
-      }
-   }
+            }
+        }
+    }/*group cursors/dotbox*/
 
-}
+}/*collections*/

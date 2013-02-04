@@ -20,9 +20,13 @@ edamsdir = $(libdir)
 edams_SOURCES = \
 about_dlg.c \
 actions_editor.c \
+cmnd_editor.c \
+debug_editor.c \
 edams.c \
+exec_editor.c \
 init.c \
 locations_creator.c \
+mail_editor.c \
 map.c \
 devices_picker.c \
 preferences_dlg.c \

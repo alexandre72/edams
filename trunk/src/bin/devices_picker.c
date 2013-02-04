@@ -331,6 +331,7 @@ devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
 	//Add a registered virtual control.basic device, to allow adding xPL that can be controlled .
 	device = device_new(_("control.basic"));
 	device_class_set(device, CONTROL_BASIC_CLASS);
+    device_type_set(device, INPUT_CONTROL_BASIC_TYPE);
 	ti = calloc(1, sizeof(*ti));
 	ti->device = device_clone(device);
 	ti->gengrid_it = elm_gengrid_item_append(gengrid, gic, ti, NULL, NULL);
@@ -347,7 +348,7 @@ devices_picker_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __
     EINA_LIST_FOREACH(app->devices, l, device)
     {
     	if((device_class_get(device) == VIRTUAL_CLASS) ||
-			(device_class_get(device) == CONTROL_BASIC_CLASS)) 	continue;
+			(device_class_get(device) == CONTROL_BASIC_CLASS))  continue;
         ti = calloc(1, sizeof(*ti));
        	ti->device = device_clone(device);
         ti->gengrid_it = elm_gengrid_item_append(gengrid, gic, ti, NULL, NULL);

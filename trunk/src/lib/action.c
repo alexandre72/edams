@@ -23,6 +23,8 @@
 #include "action.h"
 #include "cJSON.h"
 #include "utils.h"
+#include "xPL.h"
+
 
 /*
  *
@@ -39,7 +41,7 @@ exec_action(const char *data)
 
 	cJSON *exec = cJSON_GetObjectItem(root,"EXEC");
 	cJSON *terminal = cJSON_GetObjectItem(root,"TERMINAL");
-	fprintf(stdout, "Execute %s with terminal=%s\n", cJSON_PrintUnformatted(exec), cJSON_PrintUnformatted(terminal));
+	debug(stdout, _("Exec '%s'"), cJSON_PrintUnformatted(exec));
 
 	child_handle = ecore_exe_pipe_run(cJSON_Print(exec),
                                     ECORE_EXE_PIPE_WRITE |
@@ -68,7 +70,7 @@ exec_action(const char *data)
 		cJSON_Delete(root);
 		return EINA_TRUE;
 	}
-}
+}/*exec_action*/
 
 
 /*
@@ -104,7 +106,7 @@ mail_action(const char *data)
 		cJSON_Delete(root);
 		return EINA_FALSE;
 	}
-}
+}/*mail_action*/
 
 
 /*
@@ -120,13 +122,53 @@ debug_action(const char *data)
 	cJSON *item = cJSON_GetObjectItem(root,"PRINT");
 
 	if(item)
-		fprintf(stdout, "%s\n", cJSON_PrintUnformatted(item));
+		debug(stdout, "%s", cJSON_PrintUnformatted(item));
 	else
 		return EINA_FALSE;
 
 	cJSON_Delete(root);
 	return EINA_TRUE;
-}
+}/*debug_action*/
+
+
+
+/*
+ *
+ */
+Eina_Bool
+cmnd_action(const char *data)
+{
+    Device *device;
+	cJSON *root;
+    cJSON *device_filename, *current, *data1;
+
+	root = cJSON_Parse(data);
+
+	if(!root) return EINA_FALSE;
+
+	device_filename = cJSON_GetObjectItem(root, "DEVICE_FILENAME");
+	current = cJSON_GetObjectItem(root, "CURRENT");
+
+	if(device_filename && current)
+	{
+        device = device_load(device_filename);
+
+        if(!device) return EINA_FALSE;
+
+        device_current_set(device, current);
+	}
+	else
+	    return EINA_FALSE;
+
+	data1 = cJSON_GetObjectItem(root, "DATA1");
+    if(data1)
+        device_data1_set(device, data1);
+
+	cJSON_Delete(root);
+
+    return xpl_control_basic_cmnd_send(device);
+}/*cmnd_action*/
+
 
 
 /*
@@ -137,13 +179,14 @@ action_parse(Action *action)
 {
 	if(!action_data_get(action))
 	{
-		debug(stderr, _("Coulnd't execute action with no data passed in arg"));
+		debug(stderr, _("Can't execute action with no data passed in arg"));
 		return EINA_FALSE;
 	}
 
 	switch(action_type_get(action))
 	{
 		case CMND_ACTION:
+				return cmnd_action(action_data_get(action));
 				break;
 		case MAIL_ACTION:
 				return mail_action(action_data_get(action));
@@ -157,9 +200,9 @@ action_parse(Action *action)
 
 		case UNKNOWN_ACTION:
 		case ACTION_TYPE_LAST:
-				debug(stderr, _("Coulnd't execute an unknown action"));
+				debug(stderr, _("Can't execute an unknown action"));
 				return EINA_FALSE;
 				break;
 	}
 
-}
+}/*action_parse*/
