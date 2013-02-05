@@ -5,7 +5,7 @@
 #include "device.h"
 #include "gnuplot.h"
 #include "location.h"
-#include "map.h"
+#include "global_view.h"
 #include "path.h"
 #include "utils.h"
 
@@ -82,8 +82,8 @@ static void _on_mouse_out(void *data __UNUSED__, Evas * evas, Evas_Object * o __
 static void _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo);
 static void _on_keydown(void *data, Evas * evas, Evas_Object * o, void *einfo);
 
-static void map_edition_lock_set(Eina_Bool set);
-static void map_cursor_set(const char *cur);
+static void global_view_edition_lock_set(Eina_Bool set);
+static void global_view_cursor_set(const char *cur);
 
 /*
  *
@@ -137,7 +137,7 @@ _on_mouse_out(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o,
 {
 	evas_object_focus_set(o, EINA_FALSE);
 
-    map_cursor_set("cursors/left_ptr");
+    global_view_cursor_set("cursors/left_ptr");
 }/*_on_mouse_out*/
 
 
@@ -155,7 +155,7 @@ _on_mouse_in(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, voi
  *
  */
 static void
-map_cursor_set(const char *cur)
+global_view_cursor_set(const char *cur)
 {
     if(cursor)
         evas_object_del(cursor);
@@ -176,7 +176,7 @@ map_cursor_set(const char *cur)
     evas_object_show(cursor);
 
     ecore_evas_object_cursor_set(ee, cursor, 0, 0, 0);
-}/*map_cursor_set*/
+}/*global_view_cursor_set*/
 
 
 
@@ -191,16 +191,16 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 	if (evas_object_focus_get(o) == EINA_TRUE)
 	{
         if (evas_object_smart_parent_get(o))
-            map_cursor_set("cursors/grab");
+            global_view_cursor_set("cursors/grab");
         else
-            map_cursor_set("cursors/dotbox");
+            global_view_cursor_set("cursors/dotbox");
 
 		int button_mask;
 		button_mask = evas_pointer_button_down_mask_get(evas);
 
 		if (button_mask && (1 << 0))
 		{
-            map_cursor_set("cursors/grabbing");
+            global_view_cursor_set("cursors/grabbing");
 
 			int x, y;
 			evas_pointer_canvas_xy_get(evas, &x, &y);
@@ -232,7 +232,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 						char s[64];
 						char key[64];
 						snprintf(s, sizeof(s), "%d;%d", x, y);
-						snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+						snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(o));
 						eet_write(ef, key, s, strlen(s) + 1, 0);
 					}
 				}
@@ -243,7 +243,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 						char s[64];
 						char key[64];
 						snprintf(s, sizeof(s), "%d;%d", x, y);
-						snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+						snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(o));
 						eet_write(ef, key, s, strlen(s) + 1, 0);
 				}
 			}
@@ -255,7 +255,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 				char key[64];
 				evas_object_geometry_get(o, &prect.x, &prect.y, &prect.w, &prect.h);
 				snprintf(s, sizeof(s), "%d;%d;%d;%d", x, y, prect.w, prect.h);
-				snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+				snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(o));
 				eet_write(ef, key, s, strlen(s) + 1, 0);
 
 				/*Update childrens geometry of group moved.*/
@@ -268,7 +268,7 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 						evas_object_geometry_get(priv->children[x], &crect.x, &crect.y, &crect.w, &crect.h);
 
 						snprintf(s, sizeof(s), "%d;%d", crect.x, crect.y);
-						snprintf(key, sizeof(key), "map/%s", evas_object_name_get(priv->children[x]));
+						snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(priv->children[x]));
 						eet_write(ef, key, s, strlen(s) + 1, 0);
 					}
 				}
@@ -414,7 +414,7 @@ _evas_smart_group_smart_calculate(Evas_Object * o)
 		if (priv->children[n])
 		{
 			Eina_Rectangle edje_geometry;
-			asprintf(&key, "map/%s", evas_object_name_get(priv->children[n]));
+			asprintf(&key, "global_view/%s", evas_object_name_get(priv->children[n]));
 			ret = eet_read(ef, key, &size);
 			if (ret)
 			{
@@ -483,9 +483,9 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 
     if((device_class_get(device) == VIRTUAL_CLASS))
     {
-	    if(strstr(emission, "lock,on")) map_edition_lock_set(EINA_TRUE);
-    	if(strstr(emission, "lock,off")) map_edition_lock_set(EINA_FALSE);
-    	if(strstr(emission, "home")) map_quit();
+	    if(strstr(emission, "lock,on")) global_view_edition_lock_set(EINA_TRUE);
+    	if(strstr(emission, "lock,off")) global_view_edition_lock_set(EINA_FALSE);
+    	if(strstr(emission, "home")) global_view_quit();
     }
     else if((device_class_get(device) == CONTROL_BASIC_CLASS))
     {
@@ -703,11 +703,11 @@ widget_gnuplot_redraw(Widget *widget)
  *
  */
 void
-map_edition_lock_set(Eina_Bool set)
+global_view_edition_lock_set(Eina_Bool set)
 {
     SCREEN_LOCK = set;
 	debug(stdout, _("Global view edition has been %s\n"), SCREEN_LOCK ? "enabled" : "disabled");
-}/*map_edition_lock_set*/
+}/*global_view_edition_lock_set*/
 
 
 /*
@@ -786,7 +786,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			char s[64];
 			char key[64];
 			snprintf(s, sizeof(s), "%d;%d;%d;%d", o_geometry.x, o_geometry.y, o_geometry.w, o_geometry.h);
-			snprintf(key, sizeof(key), "map/%s", evas_object_name_get(o));
+			snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(o));
 			eet_write(ef, key, s, strlen(s) + 1, 0);
 			return;
 		}
@@ -827,7 +827,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
  *
  */
 void
-map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	app = (App_Info *) data;
 
@@ -864,19 +864,19 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 
 	Evas_Object *bg;
 
-	if (edams_settings_map_background_get())
+	if (edams_settings_global_view_background_get())
 		bg = evas_object_image_filled_add(evas);
 	else
 		bg = evas_object_rectangle_add(evas);
 
 	evas_object_name_set(bg, "background image");
-	evas_object_image_file_set(bg, edams_settings_map_background_get(), NULL);
+	evas_object_image_file_set(bg, edams_settings_global_view_background_get(), NULL);
 	evas_object_image_alpha_set(bg, EINA_TRUE);
 	Evas_Load_Error err = evas_object_image_load_error_get(bg);
 
 	if (err != EVAS_LOAD_ERROR_NONE)
 	{
-		debug(stderr, _("Can't load image file from '%s'"),	edams_settings_map_background_get());
+		debug(stderr, _("Can't load image file from '%s'"),	edams_settings_global_view_background_get());
 		evas_object_del(bg);
 		bg = evas_object_rectangle_add(evas);
 	}
@@ -890,13 +890,13 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 	Eina_List *l;
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
-		map_location_add(location);
+		global_view_location_add(location);
 	}
 
 
     /*Install cursor*/
 	//Set edje module data.
-    map_cursor_set("cursors/left_ptr");
+    global_view_cursor_set("cursors/left_ptr");
 
 	/*
 	cursor = edje_object_add(evas);
@@ -905,7 +905,7 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 		debug(stderr, _("Can't create Edje object!"));
 		return;
 	}
-    map_cursor_set("cursors/left_ptr");
+    global_view_cursor_set("cursors/left_ptr");
 	evas_object_resize(cursor, 24, 24);
     evas_object_show(cursor);
 */
@@ -930,19 +930,19 @@ map_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 	eet_close(ef);
 	ecore_evas_free(ee);
 	return;
-}/*map_new*/
+}/*global_view_new*/
 
 
 /*
- *Quit map proprely(free allocated stuff).
+ *Quit global_view proprely(free allocated stuff).
  */
 void
-map_quit()
+global_view_quit()
 {
 	if (!ee || !app) return;
 
 	ecore_main_loop_quit();
-}/*map_quit*/
+}/*global_view_quit*/
 
 
 
@@ -950,9 +950,9 @@ map_quit()
  *
  */
 void
-map_location_add(Location *location)
+global_view_location_add(Location *location)
 {
-	/*TODO:Ok it's great, but it should be better to habe map_location_del too*/
+	/*TODO:Ok it's great, but it should be better to habe global_view_location_del too*/
 	/*to avoid segfault when a location has been removed*/
 	/*I know location associated to smart group no? maybe deleting group should works?*/
 	if (!evas || !ee || !ef || !location) return;
@@ -967,7 +967,7 @@ map_location_add(Location *location)
 	smt = evas_smart_group_add(evas);
 	snprintf(s, sizeof(s), "%s_smart", location_name_get(location));
 	evas_object_name_set(smt, s);
-	snprintf(key, sizeof(key), "map/%s", evas_object_name_get(smt));
+	snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(smt));
 
 	ret = eet_read(ef, key, &size);
 	if (ret)
@@ -990,7 +990,7 @@ map_location_add(Location *location)
 	evas_object_resize(smt, smart_geometry.w, smart_geometry.h);
 	evas_smart_group_location_add(smt, location);
 	evas_object_show(smt);
-}/*map_location_add*/
+}/*global_view_location_add*/
 
 
 
@@ -999,10 +999,10 @@ static const int TEMP_MAX = 50;
 
 
 /*
- *Sync map widgets with device data.
+ *Sync global_view widgets with device data.
  */
 void
-map_widget_data_update(App_Info * app, Location *location, Device *device)
+global_view_widget_data_update(App_Info * app, Location *location, Device *device)
 {
 	/*Sync device data with location device data(if affected to any location!)*/
 	if (!evas || !ee || !ef || !app || !location || !device) return;
@@ -1074,7 +1074,7 @@ map_widget_data_update(App_Info * app, Location *location, Device *device)
 			edje_object_signal_emit(edje, "updated", "over");
 		}
 	}
-}/*map_data_update*/
+}/*global_view_data_update*/
 
 
 

@@ -28,16 +28,16 @@
 
 typedef struct
 {
-	char *cosm_apikey;			/*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
-	char *gnuplot_path;			/*Gnuplot path. Eg '/usr/bin/gnuplot'*/
-	char *map_background;		/*Background image filename used in global view.*/
-	char *smtp_server; 			/*SMTP server. Eg 'smtp://smtp.gmail.com:587'*/
-	char *smtp_username;		/*SMTP user password. Eg 'myemailaddress@gmail.com'*/
-	char *smtp_userpwd;			/*SMTP user password. Eg 'PASSWORD123'*/
-	char *user_name;            /*User name. Eg 'John Doe'*/
-	char *user_mail;            /*User mail. Eg 'john.doe@imail.net'*/
-	Eina_Bool softemu;			/*TODO:Sotfware emulation, mainly used to test EDAMS.*/
-	Eina_Bool debug;			/*Use printf to help to debug EDAMS.*/
+	char *cosm_apikey;			    /*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
+	char *gnuplot_path;			    /*Gnuplot path. Eg '/usr/bin/gnuplot'*/
+	char *global_view_background;   /*Global view background image filename.*/
+	char *smtp_server; 			    /*SMTP server. Eg 'smtp://smtp.gmail.com:587'*/
+	char *smtp_username;		    /*SMTP user password. Eg 'myemailaddress@gmail.com'*/
+	char *smtp_userpwd;			    /*SMTP user password. Eg 'PASSWORD123'*/
+	char *user_name;                /*User name. Eg 'John Doe'*/
+	char *user_mail;                /*User mail. Eg 'john.doe@imail.net'*/
+	Eina_Bool softemu;			    /*TODO:Sotfware emulation, mainly used to test EDAMS.*/
+	Eina_Bool debug;			    /*Use printf to help to debug EDAMS.*/
 } Settings;
 
 
@@ -122,11 +122,11 @@ edams_settings_softemu_set(Eina_Bool softemu)
  *
  */
 const char*
-edams_settings_map_background_get()
+edams_settings_global_view_background_get()
 {
-	EET_STRING_SETTINGS_READ("map/map_background", settings->map_background);
-	return settings->map_background;
-}/*edams_settings_map_background_get*/
+	EET_STRING_SETTINGS_READ("global_view/background", settings->global_view_background);
+	return settings->global_view_background;
+}/*edams_settings_global_view_background_get*/
 
 
 
@@ -134,12 +134,12 @@ edams_settings_map_background_get()
  *
  */
 void
-edams_settings_map_background_set(const char *map_background)
+edams_settings_global_view_background_set(const char *file)
 {
-    eet_write(ef, "map/map_background", map_background, strlen(map_background)+1, 0);
-    if(map_background && (strlen(map_background) > 0))
-    	debug(stdout, _("Map background file set to '%s'"), map_background);
-}/*edams_settings_map_background_set*/
+    eet_write(ef, "global_view/background", file, strlen(file)+1, 0);
+    if(file && (strlen(file) > 0))
+    	debug(stdout, _("Global view background file set to '%s'"), file);
+}/*edams_settings_global_view_background_set*/
 
 
 /*
@@ -319,7 +319,7 @@ edams_settings_init()
 
 	settings->gnuplot_path = NULL;
 	settings->cosm_apikey = NULL;
-	settings->map_background = NULL;
+	settings->global_view_background = NULL;
 	settings->smtp_server = NULL;
 	settings->smtp_username = NULL;
 	settings->smtp_userpwd = NULL;
@@ -342,7 +342,7 @@ edams_settings_shutdown()
 
 	eina_stringshare_del(settings->gnuplot_path);
 	eina_stringshare_del(settings->cosm_apikey);
-	eina_stringshare_del(settings->map_background);
+	eina_stringshare_del(settings->global_view_background);
 	eina_stringshare_del(settings->smtp_server);
 	eina_stringshare_del(settings->smtp_username);
 	eina_stringshare_del(settings->smtp_userpwd);

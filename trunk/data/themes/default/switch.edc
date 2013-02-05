@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 group
 {
 	name: "widget/control.basic/switch/icon";
@@ -55,9 +53,9 @@ group
 
 	data
 	{
-    		item: "title" "title.text";
 			item: "description" "Switch control can be used to set binary value like enable/disable true/false...";
 			item: "tags" "input";
+    		item: "title" "title.text";
 	}
 
 	images
@@ -110,8 +108,8 @@ group
                }
             }
 		}/*title.text*/
-
 	}/*parts*/
+
 	programs
 	{
 		program

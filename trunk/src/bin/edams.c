@@ -40,7 +40,7 @@
 #include "init.h"
 #include "location.h"
 #include "locations_creator.h"
-#include "map.h"
+#include "global_view.h"
 #include "path.h"
 #include "preferences_dlg.h"
 #include "shutdown.h"
@@ -290,9 +290,9 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)
         Location *location;
         EINA_LIST_FOREACH(app->locations, l, location)
         {
-                /*Sync device's data with gnuplot, global map and cosm*/
+                /*Sync device's data with gnuplot, global global_view and cosm*/
                 cosm_device_datastream_update(location, device);
-                map_widget_data_update(app, location, device);
+                global_view_widget_data_update(app, location, device);
         }
 
         debug(stdout, _("Sensors registered:%d"), eina_list_count(app->devices));
@@ -575,7 +575,7 @@ elm_main(int argc, char **argv)
         elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
         evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
         evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-        elm_toolbar_item_append(app->toolbar, "global-view", _("Global View"), map_new, app);
+        elm_toolbar_item_append(app->toolbar, "global-view", _("Global View"), global_view_new, app);
         elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
         elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);
         elm_toolbar_item_append(app->toolbar, "application-exit", _("Quit"), _button_quit_clicked_cb, app);
@@ -746,7 +746,7 @@ elm_main(int argc, char **argv)
         }
 
 
-        map_quit();
+        global_view_quit();
         ecore_pipe_del(pipe);
         kill(child_pid, SIGKILL);
 

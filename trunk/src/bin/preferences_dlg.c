@@ -46,8 +46,8 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
 	edams_settings_cosm_apikey_set( elm_object_text_get(entry));
 
-	entry =elm_object_name_find(win, "map background entry", -1);
-	edams_settings_map_background_set(elm_object_text_get(entry));
+	entry =elm_object_name_find(win, "global_view background entry", -1);
+	edams_settings_global_view_background_set(elm_object_text_get(entry));
 
 	entry =elm_object_name_find(win, "gnuplot path entry", -1);
 	edams_settings_gnuplot_path_set(elm_object_text_get(entry));
@@ -168,7 +168,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	evas_object_show(check);
 
 	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("Map background image:"));
+	elm_object_text_set(frame, _("Global view background image:"));
 	elm_grid_pack(grid, frame, 1, 21, 99, 13);
 	evas_object_show(frame);
 
@@ -177,7 +177,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	evas_object_show(bx);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "map background entry");
+	evas_object_name_set(entry, "global_view background entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
@@ -185,7 +185,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_box_pack_end(bx, entry);
 	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_object_text_set(entry, edams_settings_map_background_get());
+	elm_object_text_set(entry, edams_settings_global_view_background_get());
 
 	button = elm_button_add(win);
 	elm_object_text_set(button, _("Open..."));
