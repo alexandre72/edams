@@ -25,8 +25,8 @@
 #include <Evas.h>
 #include "edams.h"
 
-void map_new(void *data, Evas_Object *obj, void *event_info);
-void map_quit();
-void map_widget_data_update(App_Info *app, Location *location, Device *device);
-void map_location_add(Location *location);
+void global_view_new(void *data, Evas_Object *obj, void *event_info);
+void global_view_quit();
+void global_view_widget_data_update(App_Info *app, Location *location, Device *device);
+void global_view_location_add(Location *location);
 #endif

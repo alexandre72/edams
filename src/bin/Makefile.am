@@ -24,10 +24,10 @@ cmnd_editor.c \
 debug_editor.c \
 edams.c \
 exec_editor.c \
+global_view.c \
 init.c \
 locations_creator.c \
 mail_editor.c \
-map.c \
 devices_picker.c \
 preferences_dlg.c \
 shutdown.c \

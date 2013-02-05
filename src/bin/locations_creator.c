@@ -24,7 +24,6 @@
 #include "edams.h"
 #include "location.h"
 #include "locations_creator.h"
-#include "map.h"
 #include "myfileselector.h"
 #include "path.h"
 

@@ -51,6 +51,7 @@ collections
 #include "lightbulb.edc"
 #include "lock.edc"
 #include "monitor.edc"
+#include "slider.edc"
 #include "switch.edc"
 #include "thermometer.edc"
 
