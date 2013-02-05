@@ -143,7 +143,7 @@ xpl_shutdown()
  *
  */
 const char*
-xpl_control_basic_cmnd_to_str(Device *device)
+xpl_control_basic_cmnd_to_elm_str(Device *device)
 {
     const char *s;
 
@@ -175,7 +175,46 @@ xpl_control_basic_cmnd_to_str(Device *device)
     }
 
     return s;
-}/*xpl_control_basic_cmnd_to_str*/
+}/*xpl_control_basic_cmnd_to_elm_str*/
+
+
+
+
+/*
+ *
+ */
+void
+xpl_control_basic_cmnd_to_dbg(Device *device)
+{
+    if(!device_data1_get(device))
+    {
+	    debug(stdout, "control.basic\n\
+					{\n\
+					\tdevice=%s\n\
+ 					\ttype=%s\n\
+					\tcurrent=%s\n\
+					}",
+					device_name_get(device),
+					device_type_to_str(device_type_get(device)),
+					device_current_get(device));
+    }
+    else
+    {
+	    debug(stdout, "control.basic\n\
+					{\n\
+					\tdevice=%s\n\
+ 					\ttype=%s\n\
+					\tcurrent=%s\n\
+					\tdata1=%s\n\
+					}",
+					device_name_get(device),
+					device_type_to_str(device_type_get(device)),
+					device_current_get(device),
+					device_data1_get(device));
+    }
+}/*xpl_control_basic_cmnd_debug*/
+
+
 
 
 
@@ -185,6 +224,9 @@ xpl_control_basic_cmnd_to_str(Device *device)
 Eina_Bool
 xpl_control_basic_cmnd_send(Device *device)
 {
+
+    xpl_control_basic_cmnd_to_dbg(device);
+
   	xPL_setSchema(xpl_edams_message_cmnd, "control", "basic");
 
     /*Install the value(s) and send the message*/

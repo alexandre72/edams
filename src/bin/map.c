@@ -462,20 +462,24 @@ _evas_smart_group_smart_set_user(Evas_Smart_Class * sc)
  *
  */
 static void
-_edje_object_signals_cb(void *data, Evas_Object *edje_obj __UNUSED__, const char  *emission, const char  *source)
+_edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
 {
 	Device *device = data;
+    Device_Type type = device_type_get(device);
+    const char *s;
 
-    //Skip basic's edje signal emission.
+    /*Skip basic's edje signal emission*/
 	if(strstr(source, "edje")) return;
 	if(strstr(emission, "mouse")) return;
 	if(strstr(emission, "show")) return;
 	if(strstr(emission, "hide")) return;
 	if(strstr(emission, "resize")) return;
 	if(strstr(emission, "load")) return;
+	if(strstr(emission, "updated")) return;
+	if(strstr(emission, "drag,stop")) return;
 
-	fprintf(stdout, "emission=%s\n", emission);
-	fprintf(stdout, "source=%s\n", source);
+	//fprintf(stdout, "emission=%s\n", emission);
+	//fprintf(stdout, "source=%s\n", source);
 
     if((device_class_get(device) == VIRTUAL_CLASS))
     {
@@ -483,10 +487,50 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj __UNUSED__, const char
     	if(strstr(emission, "lock,off")) map_edition_lock_set(EINA_FALSE);
     	if(strstr(emission, "home")) map_quit();
     }
-
-    if((device_class_get(device) == CONTROL_BASIC_CLASS))
+    else if((device_class_get(device) == CONTROL_BASIC_CLASS))
     {
-    	device_current_set(device, emission);
+        if(strstr(emission, "drag"))
+        {
+            Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje_obj, source);
+            double val;
+
+            if(dir == EDJE_DRAG_DIR_X)
+                edje_object_part_drag_value_get(edje_obj, source, &val, NULL);
+            else if(dir == EDJE_DRAG_DIR_Y)
+                edje_object_part_drag_value_get(edje_obj, source, NULL, &val);
+            //else if(dir == EDJE_DRAG_DIR_XY)
+            // edje_object_part_drag_value_get(o, source, &hval, &vval);
+
+            /*Scale to device type format*/
+            if(type == SLIDER_CONTROL_BASIC_TYPE)
+            {
+                val = (100 * val);
+                asprintf(&s, "%d%%", (int)val);
+            }
+            else
+            {
+                val = (100 * val);
+                asprintf(&s, "%d", (int)val);
+            }
+
+            device_current_set(device, s);
+            FREE(s);
+        }
+        else
+        {
+        	device_current_set(device, emission);
+        }
+
+        /*Update widget value field*/
+	   if(edje_object_data_get(edje_obj, "value"))
+	    {
+		    asprintf(&s, "%s%s", device_current_get(device), device_unit_symbol_get(device) ? device_unit_symbol_get(device) : "");
+			edje_object_part_text_set(edje_obj, "value.text", s);
+		    FREE(s);
+        }
+
+
+
 	    xpl_control_basic_cmnd_send(device);
     }
 }/*_edje_object_signals_cb*/
