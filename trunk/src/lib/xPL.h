@@ -179,7 +179,7 @@ Eina_Bool xpl_init();
 Eina_Bool xpl_shutdown();
 void xpl_services_install(Ecore_Pipe *pipe);
 void xpl_process_messages();
-const char *xpl_control_basic_cmnd_to_str(Device *device);
+const char *xpl_control_basic_cmnd_to_elm_str(Device *device);
 
 /* xPL Service Support */
 extern xPL_ServicePtr xPL_createService(char *, char *, char *);

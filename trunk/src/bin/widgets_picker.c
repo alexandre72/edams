@@ -118,7 +118,7 @@ _layout_samples_test(Evas_Object *layout)
 	edje_object_size_max_get(edje, &w, &h);
 
    //edje_object_size_min_calc(edje, &w, &h);
-   	printf("Minimum size for this theme: %dx%d\n", w, h);
+   //	printf("Minimum size for this theme: %dx%d\n", w, h);
 
 	evas_object_resize(elm_layout_edje_get(layout), w, h);
 	elm_layout_sizing_eval(layout);
@@ -130,7 +130,7 @@ _update_cmnd_preview(Device *device)
 {
 	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
 
-   	elm_object_text_set(entry, xpl_control_basic_cmnd_to_str(device));
+   	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(device));
 }
 
 
@@ -139,20 +139,67 @@ _update_cmnd_preview(Device *device)
  *
  */
 static void
-_layout_signals_cb(void *data, Evas_Object *edje_obj __UNUSED__, const char  *emission, const char  *source)
+_layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source)
 {
 	Device *device = data;
+    Device_Type type = device_type_get(device);
+    const char *s;
 
+    /*Skip basic's edje signal emission*/
+	if(strstr(source, "edje")) return;
 	if(strstr(emission, "mouse")) return;
+	if(strstr(emission, "show")) return;
+	if(strstr(emission, "hide")) return;
+	if(strstr(emission, "resize")) return;
+	if(strstr(emission, "load")) return;
+	if(strstr(emission, "updated")) return;
+	if(strstr(emission, "drag,stop")) return;
 
-	fprintf(stdout, "emission=%s\n", emission);
-	fprintf(stdout, "source=%s\n", source);
+	//fprintf(stdout, "emission=%s\n", emission);
+	//fprintf(stdout, "source=%s\n", source);
 
-	//fprintf(stdout, "data1=%s\n", data);
+    if(strstr(emission, "drag"))
+    {
+        Evas_Object *edje_obj = elm_layout_edje_get(obj);
+        Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje_obj, source);
+        double val;
 
-	//device_data1_set(device, data);
-	device_current_set(device, emission);
-	_update_cmnd_preview(device);
+        if(dir == EDJE_DRAG_DIR_X)
+            edje_object_part_drag_value_get(edje_obj, source, &val, NULL);
+        else if(dir == EDJE_DRAG_DIR_Y)
+            edje_object_part_drag_value_get(edje_obj, source, NULL, &val);
+        //else if(dir == EDJE_DRAG_DIR_XY)
+        // edje_object_part_drag_value_get(o, source, &hval, &vval);
+
+        /*Scale to device type format*/
+        if(type == SLIDER_CONTROL_BASIC_TYPE)
+        {
+            val = (100 * val);
+            asprintf(&s, "%d%%", (int)val);
+        }
+        else
+        {
+            val = (100 * val);
+            asprintf(&s, "%d%%", (int)val);
+        }
+
+        device_current_set(device, s);
+        FREE(s);
+    }
+    else
+    {
+	    device_current_set(device, emission);
+    }
+
+	if(elm_layout_data_get(obj, "value"))
+	{
+		asprintf(&s, "%d%s", device_current_to_int(device), device_unit_symbol_get(device) ? device_unit_symbol_get(device) : "");
+		elm_object_part_text_set(obj, "value.text", s);
+		FREE(s);
+	}
+
+
+    _update_cmnd_preview(device);
 }
 
 
