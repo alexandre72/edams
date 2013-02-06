@@ -1,0 +1,48 @@
+#summary Cas d'utilisation d'EDAMS avec Arduino
+
+= Exemple sur comment utiliser l'Arduino avec EDAMS =
+
+Dans mon habitation, j'utilise Arduino avec EDAMS. Evidemment vous restez libre d'utiliser les périphériques de votre choix, la régle étant qu'EDAMS ne supporte que le protocole xPL. Chez moi, donc tous mes périphériques domotiques comprennent et parlent le protocole xPL
+
+= Details =
+
+Voici un schéma simplifié d'une installation comprennant des capteurs(sensor.basic en terminologie xPL), l'Arduino et le poste client comprenant un hub XPL et EDAMS.
+
+http://edams.googlecode.com/files/myhouse_scheme.png
+
+Le shield ethernet Arduino me permet de mettre l'Arduino à distance, le protocole xPL transitant via le réseau ethernet cela ne pose aucun soucis. Sur Arduino, j'utilise donc la librairie xPL.Arduino(voir http://code.google.com/p/xpl-arduino/), et pour déclarer des capteurs j'utilise la syntaxe suivante(propre à la librairie Arduino):
+
+{{{
+xPL_Message msg;
+
+msg.hop = 1;
+msg.type = XPL_TRIG;
+msg.SetTarget_P(PSTR("*"));
+msg.SetSchema_P(PSTR("sensor"), PSTR("basic"));
+msg.AddCommand_P(PSTR("device"),PSTR("DHT11"));
+msg.AddCommand_P(PSTR("type"),PSTR( "humidty"));
+msg.AddCommand("current", dht11.value);
+ xpl.SendMessage(&msg);
+...
+}}}
+
+Après avoir démarré le hub XPL(en mode démon avec option de débogguage activé):
+
+{{{
+alex ~/$xPL_Hub -nodaemon -xpldebug
+12/12/28 14:10:34 INFO: Running on console
+12/12/28 14:10:34 xPL_DEBUG: Checking if interface lo is valid w/flags 73
+12/12/28 14:10:34 xPL_DEBUG: Checking if interface wlan0 is valid w/flags 4163
+12/12/28 14:10:34 xPL_DEBUG: Choose interface wlan0 as default interface
+12/12/28 14:10:34 xPL_DEBUG: Auto-assigning IP address of 192.168.0.1
+12/12/28 14:10:34 xPL_DEBUG: Assigned xPL Broadcast address of 192.168.0.255, port 3865
+12/12/28 14:10:34 xPL_DEBUG: Attemping standalone xPL
+}}}
+
+...et démarré EDAMS, j'ajoute une nouvelle 'location' et remplis les informations la concernant(nom, description, photo, géolocalisation...).
+
+Maintenant, je peux la sélectionner en cliquant dessus dans la liste de l'interface administrative d'EDAMS. Dans le panneau à droite je peux consulter les éléments concernant cette location et ajouter/supprimer des widgets.
+
+Dans la fenêtre des préférences, je peux sélectionner un fichier image et l'exploiter comme arrière plan dans la vue globale. Pour créer un arrière plan, j'utilise sweethome3d(http://www.sweethome3d.com/fr/features.jsp) et dessine le plan de ma maison. Après génération d'une vue 3D j'ai ainsi un fichier image représentant ma maison en 3D que je peux exploiter avec EDAMS et la vue globale.
+
+Dans la vue globale, un rectangle avec une étiquette symbolise une pièce de la maison de façon virtuelle. Ce rectangle est déplacable(avec la souris et une bouton enfoncé) et redimensionnable(avec les touches fléchées). Ce même rectangle contient tous les widgets affectés(virtuels, xPL control.basic, xPL sensor.basic) que je peux déplacer de la même façon, les widgets sont de tailles fixes. Souvent un label est disponible pour indiquer à quel périphérique ils sont affectés.
