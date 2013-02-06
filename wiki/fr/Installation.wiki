@@ -1,0 +1,49 @@
+#summary Installation
+
+= Installation =
+
+EDAMS n'est pas encore disponible sous forme de paquetages binaires(RPMS,DEBS...). Il vous faudra donc compiler le manuellement.
+
+= Details =
+
+Pour être compilé EDAMS nécessite:
+
+ == Les EFLs (Enlightenment Foundation Libraries): Installation selon votre distribution==
+
+   * Debian,Ubuntu https://launchpad.net/~efl/+archive/trunk
+   * ArchLinux http://wiki.archlinux.org/index.php/E17
+   * Gentoo http://overlays.gentoo.org/dev/vapier/wiki/enlightenment
+   * Slackware http://slacke17.sourceforge.net/
+   * OpenSUSE http://en.opensuse.org/Portal:Enlightenment
+   * SLE, Fedora, CentOS, Mandriva  http://download.opensuse.org/repositories/X11:/Enlightenment:/Factory/
+   * Pour les autres: void la rubrique 'Releases' sur http://enlightenment.org/p.php?p=download&l=en
+
+ == xPL_Hub: Compilation et installation==
+
+  * En régle générale votre distribution possède des paquetages déjà prêt à l'emploi(ArchLinux,Fedora...), suivez la procédure habituelle avec votre gestionnaire de paquets(PACMAN, RPM...)
+  * Pour les autres, télécharger sur http://www.xpl4java.org/xPL4Linux/downloads/xPLHub.tgz et lancer la procèdure d'installation à l'aide de:
+
+{{{
+tar -xvzf xPLHub.tgz
+}}}
+
+consultez INSTALL.txt dans le répertoire xPLHub pour obtenir des renseignements sur son installation.
+
+ == EDAMS: Compilation et installation==
+
+Pour compiler EDAMS, vous aurez besoin du gestionnaire de versions subversion(svn), les outils de développement habituels(gcc autoconf, automake,libtool..). La compilation s'effectue à l'aide des commandes suivantes:
+
+{{{
+svn checkout http://edams.googlecode.com/svn/trunk/ edams-read-only
+cd edams-read-only
+sh autogen.sh
+make
+sudo make install
+}}}
+
+
+Maintenant que tout est prêt, démarrez EDAMS:
+
+{{{
+edams
+}}}
