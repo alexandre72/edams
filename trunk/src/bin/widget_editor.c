@@ -26,7 +26,7 @@
 #include "location.h"
 #include "path.h"
 #include "utils.h"
-#include "widget_wizzard.h"
+#include "widget_editor.h"
 
 static Evas_Object *win = NULL;
 static Widget *widget = NULL;
