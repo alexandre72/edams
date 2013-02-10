@@ -82,27 +82,7 @@ typedef enum _Device_Class_
 }Device_Class;
 
 
-typedef enum _Action_Type
-{
-	UNKNOWN_ACTION			= (0),
-	CMND_ACTION				= (1),
-	MAIL_ACTION				= (2),
-	EXEC_ACTION				= (3),
-	DEBUG_ACTION			= (4),
-	ACTION_TYPE_LAST
-}Action_Type;
 
-
-typedef enum _Condition_
-{
-	UNKNOWN_CONDITION		= (0),
-	EGAL_TO					= (1),
-	LESS_THAN				= (2),
-	MORE_THAN				= (3),
-	LESS_OR_EGAL_TO			= (4),
-	MORE_OR_EGAL_TO			= (5),
-	CONDITION_LAST
-}Condition;
 
 
 /* Actions */
@@ -131,8 +111,7 @@ void device_actions_list_set(Device *device, Eina_List *list);
 Device_Type device_str_to_type(const char *s);
 const char *device_type_to_str(Device_Type type);
 
-Device_Class device_str_to_class(const char *s);
-const char *device_class_to_str(Device_Class type);
+
 
 const char *action_condition_to_str(Condition condition);
 Condition action_str_to_condition(const char *s);

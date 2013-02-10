@@ -31,13 +31,13 @@
 #include "utils.h"
 #include "location.h"
 #include "settings.h"
-#include "xPL.h"
+#include "xpl.h"
 
 #define XPL_VERSION "20091005"
 
-//
-//Define App UI struct.
-//
+/*
+ *Define App UI struct.
+ */
 typedef struct
 {
 	int argc;
@@ -46,13 +46,14 @@ typedef struct
 	Evas_Object *win;
 	Evas_Object *toolbar;
 	Eina_List *locations;
-	Eina_List *devices;
 	Location *location;
+	Widget *widget;
 } App_Info;
 
 
-Evas_Object*_location_naviframe_content_set(Location *location);
-void update_naviframe_content(Location *location);
+const Eina_List *edams_locations_list_get();
 void statusbar_text_set(const char *msg, const char *ic);
+void update_naviframe_content(Location *location);
+Evas_Object*_location_naviframe_content_set(Location *location);
 
 #endif /* __EDAMS_H__ */

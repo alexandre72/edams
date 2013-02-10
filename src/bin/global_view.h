@@ -27,6 +27,11 @@
 
 void global_view_new(void *data, Evas_Object *obj, void *event_info);
 void global_view_quit();
-void global_view_widget_data_update(App_Info *app, Location *location, Device *device);
+void global_view_widget_data_update(Location *location, Widget *widget);
 void global_view_location_add(Location *location);
+
+
+static const int TEMP_MIN = -30;
+static const int TEMP_MAX = 50;
+
 #endif

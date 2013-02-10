@@ -3,8 +3,8 @@
 
 #include <stdarg.h>
 #include <sys/socket.h>
-#include "xPL.h"
-#include "xPL_priv.h"
+#include "xpl.h"
+#include "xpl-priv.h"
 #include "utils.h"
 
 #define WRITE_TEXT(x) if (!appendText(x)) return EINA_FALSE;

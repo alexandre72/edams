@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-#include "xPL.h"
-#include "xPL_priv.h"
+#include "xpl.h"
+#include "xpl-priv.h"
 #include "utils.h"
 
 #define GROW_CONFIG_LIST_BY 4

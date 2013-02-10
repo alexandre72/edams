@@ -23,7 +23,7 @@
 #include "action.h"
 #include "cJSON.h"
 #include "utils.h"
-#include "xPL.h"
+#include "xpl.h"
 
 
 /*
@@ -39,18 +39,25 @@ exec_action(const char *data)
 
 	if(!root) return EINA_FALSE;
 
-	cJSON *exec = cJSON_GetObjectItem(root,"EXEC");
-	cJSON *terminal = cJSON_GetObjectItem(root,"TERMINAL");
-	debug(stdout, _("Exec '%s'"), cJSON_PrintUnformatted(exec));
+	cJSON *jexec = cJSON_GetObjectItem(root,"EXEC");
+	cJSON *jterminal = cJSON_GetObjectItem(root,"TERMINAL");
 
-	child_handle = ecore_exe_pipe_run(cJSON_Print(exec),
+    const char *exec = cJSON_Print(jexec);
+    const char *terminal = cJSON_Print(jterminal);
+
+    strdelstr(exec, "\"");
+    strdelstr(terminal, "\"");
+
+	child_handle = ecore_exe_pipe_run(exec,
                                     ECORE_EXE_PIPE_WRITE |
                                     ECORE_EXE_PIPE_READ_LINE_BUFFERED |
                                     ECORE_EXE_PIPE_READ, NULL);
 
    	if (child_handle == NULL)
 	{
-        debug(stderr, _("Could not create a child process!"));
+        debug(stderr, _("Can't create an Ecore_Exec_Pipe process"));
+        FREE(exec);
+        FREE(terminal);
 		cJSON_Delete(root);
 		return EINA_FALSE;
 	}
@@ -59,15 +66,21 @@ exec_action(const char *data)
 
 	if (child_pid == -1)
    	{
-		debug(stderr, _("Could not retrieve the PID"));
+        debug(stderr, _("Can't create get PID of Ecore_Exec_Pipe process"));
 		cJSON_Delete(root);
+        FREE(exec);
+        FREE(terminal);
 		return EINA_FALSE;
 	}
 	else
 	{
-		debug(stdout, _("The child process has PID:%d\n"), child_pid);
-		//statusbar_text_set(_("Launching '%s' with PID:%d"), "dialog-informations");
+		const char *s;
+		asprintf(&s, _("Exec '%s' with PID '%d'"), exec, child_pid);
+		statusbar_text_set(s, "dialog-informations");
+        FREE(s);
 		cJSON_Delete(root);
+        FREE(exec);
+        FREE(terminal);
 		return EINA_TRUE;
 	}
 }/*exec_action*/
@@ -83,22 +96,35 @@ mail_action(const char *data)
 
 	if(!root) return EINA_FALSE;
 
-	cJSON *from = cJSON_GetObjectItem(root, "FROM");
-	cJSON *to = cJSON_GetObjectItem(root, "TO");
-	cJSON *subject = cJSON_GetObjectItem(root, "SUBJECT");
-	cJSON *body = cJSON_GetObjectItem(root, "BODY");
+	cJSON *jfrom = cJSON_GetObjectItem(root, "FROM");
+	cJSON *jto = cJSON_GetObjectItem(root, "TO");
+	cJSON *jsubject = cJSON_GetObjectItem(root, "SUBJECT");
+	cJSON *jbody = cJSON_GetObjectItem(root, "BODY");
+
+    const char *from = cJSON_PrintUnformatted(jfrom);
+    const char *to = cJSON_PrintUnformatted(jto);
+    const char *subject = cJSON_PrintUnformatted(jsubject);
+    const char *body = cJSON_PrintUnformatted(jbody);
+
+    strdelstr(from, "\"");
+    strdelstr(to, "\"");
+    strdelstr(subject, "\"");
+    strdelstr(body, "\"");
 
 	if(from && to && subject && body)
 	{
-		fprintf(stdout, "From:%s\n", cJSON_PrintUnformatted(from));
-		fprintf(stdout, "To:%s\n", cJSON_PrintUnformatted(to));
-		fprintf(stdout, "Subject:%s\n", cJSON_PrintUnformatted(subject));
-		fprintf(stdout, "Body:%s\n", cJSON_PrintUnformatted(body));
+		fprintf(stdout, "From:%s\n", from);
+		fprintf(stdout, "To:%s\n", to);
+		fprintf(stdout, "Subject:%s\n", subject);
+		fprintf(stdout, "Body:%s\n", body);
 
 		//ecore_con_url_url_set(url_con, "smtp://smtp.gmail.com:587");
 		//ecore_con_url_httpauth_set(url_con, "username", "userpwd", EINA_TRUE);
-
 		cJSON_Delete(root);
+		FREE(from);
+		FREE(to);
+		FREE(subject);
+		FREE(body);
 		return EINA_TRUE;
 	}
 	else
@@ -119,14 +145,19 @@ debug_action(const char *data)
 
 	if(!root) return EINA_FALSE;
 
-	cJSON *item = cJSON_GetObjectItem(root,"PRINT");
+	cJSON *jprint = cJSON_GetObjectItem(root,"PRINT");
 
-	if(item)
-		debug(stdout, "%s", cJSON_PrintUnformatted(item));
+    const char *print =cJSON_PrintUnformatted(jprint);
+
+    strdelstr(print, "\"");
+
+	if(print)
+		debug(stdout, print);
 	else
 		return EINA_FALSE;
 
 	cJSON_Delete(root);
+	FREE(print);
 	return EINA_TRUE;
 }/*debug_action*/
 
@@ -138,35 +169,35 @@ debug_action(const char *data)
 Eina_Bool
 cmnd_action(const char *data)
 {
-    Device *device;
+    Widget *widget;
 	cJSON *root;
-    cJSON *device_filename, *current, *data1;
-
+    cJSON *device, *current, *data1;
+/*
 	root = cJSON_Parse(data);
 
 	if(!root) return EINA_FALSE;
 
-	device_filename = cJSON_GetObjectItem(root, "DEVICE_FILENAME");
+	device = cJSON_GetObjectItem(root, "DEVICE");
 	current = cJSON_GetObjectItem(root, "CURRENT");
 
-	if(device_filename && current)
+	if(device && current)
 	{
         device = device_load(device_filename);
 
         if(!device) return EINA_FALSE;
 
-        device_current_set(device, current);
+        widget_xpl_current_set(device, current);
 	}
 	else
 	    return EINA_FALSE;
 
 	data1 = cJSON_GetObjectItem(root, "DATA1");
     if(data1)
-        device_data1_set(device, data1);
+        widget_xpl_data1_set(widget, data1);
 
 	cJSON_Delete(root);
-
-    return xpl_control_basic_cmnd_send(device);
+*/
+    return xpl_control_basic_cmnd_send(widget);
 }/*cmnd_action*/
 
 
@@ -185,20 +216,20 @@ action_parse(Action *action)
 
 	switch(action_type_get(action))
 	{
-		case CMND_ACTION:
+		case ACTION_TYPE_CMND:
 				return cmnd_action(action_data_get(action));
 				break;
-		case MAIL_ACTION:
+		case ACTION_TYPE_MAIL:
 				return mail_action(action_data_get(action));
 				break;
-		case EXEC_ACTION:
+		case ACTION_TYPE_EXEC:
 				return exec_action(action_data_get(action));
 				break;
-		case DEBUG_ACTION:
+		case ACTION_TYPE_DEBUG:
 				 return debug_action(action_data_get(action));
 				 break;
 
-		case UNKNOWN_ACTION:
+		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
 				debug(stderr, _("Can't execute an unknown action"));
 				return EINA_FALSE;
@@ -206,3 +237,50 @@ action_parse(Action *action)
 	}
 
 }/*action_parse*/
+
+
+
+/*
+ *Return string representation of Condition type of 'condition' arg.
+ */
+const char *
+action_condition_to_str(Condition condition)
+{
+	if(condition == CONDITION_EGAL_TO)				return "=";
+	else if(condition == CONDITION_LESS_THAN)		return "<";
+	else if(condition == CONDITION_MORE_THAN)		return ">";
+	else if(condition == CONDITION_MORE_OR_EGAL_TO)	return ">=";
+	else if(condition == CONDITION_LESS_OR_EGAL_TO)	return "<=";
+	else 							           		return NULL;
+}/*action_condition_to_str*/
+
+
+/*
+ *Return Condition representation of 's' arg.
+ */
+Condition
+action_str_to_condition(const char *s)
+{
+	if(!s) return CONDITION_UNKNOWN;
+
+	if(strcmp(s, "=") == 0) 		return CONDITION_EGAL_TO;
+	else if(strcmp(s, "<") == 0)	return CONDITION_LESS_THAN;
+	else if(strcmp(s, ">") == 0)	return CONDITION_MORE_THAN;
+	else if(strcmp(s, ">=") == 0)	return CONDITION_MORE_OR_EGAL_TO;
+	else if(strcmp(s, "<=") == 0)	return CONDITION_LESS_OR_EGAL_TO;
+	else							return CONDITION_UNKNOWN;
+}/*action_str_to_condition*/
+
+
+/*
+ *Return string description of Action_Type 'type' arg.
+ */
+const char *
+action_type_to_desc(Action_Type type)
+{
+	if(type == ACTION_TYPE_CMND)			return _("Send xPL CMND to control.basic");
+	else if(type == ACTION_TYPE_MAIL)		return _("Send a mail");
+	else if(type == ACTION_TYPE_EXEC)		return _("Execute an external program");
+	else if(type == ACTION_TYPE_DEBUG)		return _("Debug stuff for testing purpose");
+	else 									return NULL;
+}/*action_type_to_str*/

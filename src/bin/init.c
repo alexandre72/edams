@@ -22,7 +22,6 @@
 #include <Ecore_File.h>
 #include <Elementary.h>
 
-#include "device.h"
 #include "edams.h"
 #include "path.h"
 #include "settings.h"
@@ -136,7 +135,6 @@ edams_init(App_Info * app)
 	efl_init(app);
 	paths_init(app);
 	locations_init();
-	devices_init();
 	xpl_init();
 
 	return 0;

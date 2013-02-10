@@ -2,12 +2,12 @@
 #include <Ecore.h>
 #include <Edje.h>
 
-#include "device.h"
 #include "gnuplot.h"
 #include "location.h"
 #include "global_view.h"
 #include "path.h"
 #include "utils.h"
+#include "widget.h"
 
 #define DEFAULT_WIDTH 800
 #define DEFAULT_HEIGHT 600
@@ -136,7 +136,6 @@ _on_mouse_out(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o,
 			  void *einfo __UNUSED__)
 {
 	evas_object_focus_set(o, EINA_FALSE);
-
     global_view_cursor_set("cursors/left_ptr");
 }/*_on_mouse_out*/
 
@@ -190,10 +189,10 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 
 	if (evas_object_focus_get(o) == EINA_TRUE)
 	{
-        if (evas_object_smart_parent_get(o))
-            global_view_cursor_set("cursors/grab");
-        else
+	    if(strstr(evas_object_name_get(o), "_smart"))
             global_view_cursor_set("cursors/dotbox");
+        else
+            global_view_cursor_set("cursors/grab");
 
 		int button_mask;
 		button_mask = evas_pointer_button_down_mask_get(evas);
@@ -206,48 +205,41 @@ _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo 
 			evas_pointer_canvas_xy_get(evas, &x, &y);
 			Eina_Rectangle prect, crect;
 
-			if (evas_object_smart_parent_get(o))
+	        if(strstr(evas_object_name_get(o), "_edje"))
 			{
-				EVAS_SMART_GROUP_DATA_GET(evas_object_smart_parent_get(o), priv);
+				    Widget *widget = evas_object_data_get(o, "widget");
 
-				// Get parent(grid) geometry
-				evas_object_geometry_get(priv->border, &prect.x, &prect.y, &prect.w, &prect.h);
-				evas_object_geometry_get(o, &crect.x, &crect.y, &crect.w, &crect.h);
+                    if(widget_class_get(widget) != WIDGET_CLASS_VIRTUAL)
+                    {
+    				    EVAS_SMART_GROUP_DATA_GET(evas_object_smart_parent_get(o), priv);
 
-				/* FIXME:Check to see ifn't out of the priv->border bounds. Check if children is in
-				   fprintf(stdout, "Parent geometry:x=%d y=%d width=%d height=%d\n", prect.x, prect.y,
-				   prect.w, prect.h); printf("Current child geometry:x=%d y=%d\n", x, y);
-				   fprintf(stdout, "Mouse pointer is in?%s\n", eina_rectangle_coords_inside(&prect, x, y)?
-				   "TRUE":"FALSE"); if(x>=prect.w || x<=prect.x) printf("Child is OUT\n"); */
+    				    /*Get parent(grid) geometry*/
+    				    evas_object_geometry_get(priv->border, &prect.x, &prect.y, &prect.w, &prect.h);
+    				    evas_object_geometry_get(o, &crect.x, &crect.y, &crect.w, &crect.h);
 
-				Widget *widget = evas_object_data_get(o, "widget");
-				Device *device = widget_device_get(widget);
+                        prect.w = prect.w - crect.w;
+                        prect.h = prect.h - crect.h;
 
-				if(device_class_get(device) != VIRTUAL_CLASS)
-				{
-					if(eina_rectangle_coords_inside(&prect, x, y))
-					{
-						evas_object_move(o, x, y);
-
-						char s[64];
-						char key[64];
-						snprintf(s, sizeof(s), "%d;%d", x, y);
-						snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(o));
-						eet_write(ef, key, s, strlen(s) + 1, 0);
-					}
-				}
-				else
-				{
-						evas_object_move(o, x, y);
-
-						char s[64];
-						char key[64];
-						snprintf(s, sizeof(s), "%d;%d", x, y);
-						snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(o));
-						eet_write(ef, key, s, strlen(s) + 1, 0);
-				}
+    				    if(eina_rectangle_coords_inside(&prect, x, y))
+                        {
+				            evas_object_move(o, x, y);
+    				    }
+    				    else
+    				    {
+        				    return;
+    				    }
+                    }
+                    else
+                    {
+                        evas_object_move(o, x, y);
+                    }
+				    char s[64];
+					char key[64];
+					snprintf(s, sizeof(s), "%d;%d", x, y);
+					snprintf(key, sizeof(key), "global_view/%s", evas_object_name_get(o));
+					eet_write(ef, key, s, strlen(s) + 1, 0);
 			}
-			else
+            else if(strstr(evas_object_name_get(o), "_smart"))
 			{
 				evas_object_move(o, x, y);
 
@@ -464,9 +456,7 @@ _evas_smart_group_smart_set_user(Evas_Smart_Class * sc)
 static void
 _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
 {
-	Device *device = data;
-    Device_Type type = device_type_get(device);
-    const char *s;
+	Widget *widget = data;
 
     /*Skip basic's edje signal emission*/
 	if(strstr(source, "edje")) return;
@@ -481,14 +471,17 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 	//fprintf(stdout, "emission=%s\n", emission);
 	//fprintf(stdout, "source=%s\n", source);
 
-    if((device_class_get(device) == VIRTUAL_CLASS))
+    if((widget_class_get(widget) == WIDGET_CLASS_VIRTUAL))
     {
 	    if(strstr(emission, "lock,on")) global_view_edition_lock_set(EINA_TRUE);
     	if(strstr(emission, "lock,off")) global_view_edition_lock_set(EINA_FALSE);
     	if(strstr(emission, "home")) global_view_quit();
     }
-    else if((device_class_get(device) == CONTROL_BASIC_CLASS))
+    else if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
     {
+        Xpl_Type type = widget_xpl_type_get(widget);
+        const char *s;
+
         if(strstr(emission, "drag"))
         {
             Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje_obj, source);
@@ -502,7 +495,7 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
             // edje_object_part_drag_value_get(o, source, &hval, &vval);
 
             /*Scale to device type format*/
-            if(type == SLIDER_CONTROL_BASIC_TYPE)
+            if(type == XPL_TYPE_SLIDER_CONTROL_BASIC)
             {
                 val = (100 * val);
                 asprintf(&s, "%d%%", (int)val);
@@ -513,25 +506,23 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
                 asprintf(&s, "%d", (int)val);
             }
 
-            device_current_set(device, s);
+            widget_xpl_current_set(widget, s);
             FREE(s);
         }
         else
         {
-        	device_current_set(device, emission);
+        	widget_xpl_current_set(widget, emission);
         }
 
         /*Update widget value field*/
 	   if(edje_object_data_get(edje_obj, "value"))
 	    {
-		    asprintf(&s, "%s%s", device_current_get(device), device_unit_symbol_get(device) ? device_unit_symbol_get(device) : "");
+		    asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type) ? xpl_type_to_unit_symbol(type) : "");
 			edje_object_part_text_set(edje_obj, "value.text", s);
 		    FREE(s);
         }
 
-
-
-	    xpl_control_basic_cmnd_send(device);
+	    xpl_control_basic_cmnd_send(widget);
     }
 }/*_edje_object_signals_cb*/
 
@@ -551,13 +542,15 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 
 	evas_object_text_text_set(priv->text, location_name_get(location));
 
-	Eina_List *l2, *widgets;
+	Eina_List *l, *widgets = NULL;
 	Widget *widget;
 	widgets = location_widgets_list_get(location);
 
 	int x = 0;
-	EINA_LIST_FOREACH(widgets, l2, widget)
+	EINA_LIST_FOREACH(widgets, l, widget)
 	{
+        if((widget_class_get(widget) == WIDGET_CLASS_VIRTUAL)) continue;
+
 		char *s;
 		priv->children[x] = edje_object_add(evas_object_evas_get(o));
 		asprintf(&s, "%d_%s_edje", widget_id_get(widget), location_name_get(location));
@@ -571,42 +564,25 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 			continue;
 		}
 
-		if (strstr(widget_name_get(widget), "default"))
+		if (!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), widget_group_get(widget)))
 		{
-			if(!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), "widget/counter"))
-			{
-				debug(stderr, _("Can't load group Edje group '%s' from Edje file '%s'"),
-					 											 widget_name_get(widget),
-					 											 edams_edje_theme_file_get());
-				evas_object_del(priv->children[x]);
-				continue;
-			}
-		}
-		else
-		{
-			if (!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), widget_name_get(widget)))
-			{
-				debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
-					  											  	widget_name_get(widget),
+			debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
+		                                        				  	widget_group_get(widget),
 					  							  					edams_edje_theme_file_get());
-				evas_object_del(priv->children[x]);
-				continue;
-			}
+			evas_object_del(priv->children[x]);
+			continue;
 		}
 
-		Device *device = widget_device_get(widget);
-
-		if((device_class_get(device) == CONTROL_BASIC_CLASS) ||
-            (device_class_get(device) == VIRTUAL_CLASS))
+		if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
         {
-            if (edje_object_data_get(priv->children[x], "title"))
+            if(edje_object_part_exists(priv->children[x], "title.text"))
 			{
-				asprintf(&s, "%d - %s", widget_id_get(widget), device_name_get(device));
+				asprintf(&s, "%d - %s", widget_id_get(widget), widget_name_get(widget));
 				edje_object_part_text_set(priv->children[x], "title.text", s);
                 FREE(s);
 			}
 
-			edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, device);
+	    	edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
         }
 
 		evas_object_propagate_events_set(priv->children[x], EINA_FALSE);
@@ -624,8 +600,7 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 	}
 
 	if (!childs)
-		evas_object_smart_callback_call(o, EVT_CHILDREN_NUMBER_CHANGED,
-										(void *)(long)priv->child_count);
+		evas_object_smart_callback_call(o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
 
 	return childs;
 }/*evas_smart_group_location_add*/
@@ -692,9 +667,8 @@ static void
 widget_gnuplot_redraw(Widget *widget)
 {
 	Evas_Object *img = evas_object_name_find(evas, "stat_img");
-	Device *device = widget_device_get(widget);
 
-	evas_object_image_file_set(img, gnuplot_device_png_write(device), NULL);
+	evas_object_image_file_set(img, gnuplot_device_png_write(widget), NULL);
 	evas_object_image_reload(img);
 }/*widget_gnuplot_redraw*/
 
@@ -730,14 +704,13 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			if (strcmp(ev->keyname, "s") == 0)
 			{
 				Widget *widget = evas_object_data_get(o, "widget");
-				Device *device = widget_device_get(widget);
 
-				if(device)
+				if(widget)
 				{
 					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
 					evas_object_data_set(o, "stat_img", stat_img);
 					evas_object_image_alpha_set(stat_img, EINA_TRUE);
-    				evas_object_image_file_set(stat_img, gnuplot_device_png_write(device), NULL);
+    				evas_object_image_file_set(stat_img, gnuplot_device_png_write(widget), NULL);
 					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
     				if (err != EVAS_LOAD_ERROR_NONE)
 					{
@@ -891,6 +864,69 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 	EINA_LIST_FOREACH(app->locations, l, location)
 	{
 		global_view_location_add(location);
+
+		Eina_List *l2, *widgets = NULL;
+    	Widget *widget;
+    	char *key;
+	    char *ret;
+	    int size;
+	    Evas_Coord w, h;
+
+	    widgets = location_widgets_list_get(location);
+    	EINA_LIST_FOREACH(widgets, l2, widget)
+    	{
+            if((widget_class_get(widget) != WIDGET_CLASS_VIRTUAL)) continue;
+		    char *s;
+    		Evas_Object *virtual;
+
+            virtual = edje_object_add(evas);
+		    asprintf(&s, "%d_%s_edje", widget_id_get(widget), location_name_get(location));
+		    evas_object_name_set(virtual, s);
+            FREE(s);
+		    evas_object_data_set(virtual, "widget", (void *)widget);
+
+		    if (!virtual)
+		    {
+			    debug(stderr, _("Can't create Edje_Object!"));
+			    continue;
+		    }
+
+		    if (!edje_object_file_set(virtual, edams_edje_theme_file_get(), widget_group_get(widget)))
+		    {
+			    debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
+		                                        				  	widget_group_get(widget),
+					  							  					edams_edje_theme_file_get());
+			    evas_object_del(virtual);
+			    continue;
+		    }
+		    evas_object_propagate_events_set(virtual, EINA_FALSE);
+    	    edje_object_signal_callback_add(virtual, "*", "*", _edje_object_signals_cb, widget);
+		    evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, virtual);
+		    evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out, virtual);
+		    evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, virtual);
+
+		    Eina_Rectangle edje_geometry;
+		    asprintf(&key, "global_view/%s", evas_object_name_get(virtual));
+		    ret = eet_read(ef, key, &size);
+		    if (ret)
+		    {
+				sscanf(ret, "%d;%d", &edje_geometry.x, &edje_geometry.y);
+				free(ret);
+			}
+			else
+			{
+				edje_geometry.x = 100;
+				edje_geometry.y = 100;
+			}
+			evas_object_move(virtual, edje_geometry.x, edje_geometry.y);
+			FREE(key);
+
+			edje_object_size_min_get(virtual, &w, &h);
+			edje_object_size_max_get(virtual, &w, &h);
+			evas_object_resize(virtual, w, h);
+
+		    evas_object_show(virtual);
+        }
 	}
 
 
@@ -952,7 +988,7 @@ global_view_quit()
 void
 global_view_location_add(Location *location)
 {
-	/*TODO:Ok it's great, but it should be better to habe global_view_location_del too*/
+	/*TODO:Ok it's great, but it should be better to have global_view_location_del too*/
 	/*to avoid segfault when a location has been removed*/
 	/*I know location associated to smart group no? maybe deleting group should works?*/
 	if (!evas || !ee || !ef || !location) return;
@@ -994,86 +1030,75 @@ global_view_location_add(Location *location)
 
 
 
-static const int TEMP_MIN = -30;
-static const int TEMP_MAX = 50;
-
-
 /*
- *Sync global_view widgets with device data.
+ *Sync global_view widgets with xPL device's current.
  */
 void
-global_view_widget_data_update(App_Info * app, Location *location, Device *device)
+global_view_widget_data_update(Location *location, Widget *widget)
 {
-	/*Sync device data with location device data(if affected to any location!)*/
-	if (!evas || !ee || !ef || !app || !location || !device) return;
+	if (!evas || !ee || !location || !widget) return;
 
-	/*Parse all location widget's and update Edje widget's objects.*/
-	Eina_List *l, *widgets;
-	Widget *widget;
+	/*Update Edje widget objects.*/
+    widget_gnuplot_redraw(widget);
 
-	widgets = location_widgets_list_get(location);
-
-	EINA_LIST_FOREACH(widgets, l, widget)
-	{
-		if(strcmp(widget_device_filename_get(widget), device_filename_get(device)) == 0)
-		{
-			widget_gnuplot_redraw(widget);
-
-			/*Edje widget's object name follow same scheme _widgetid_locationame.*/
-			char s[128];
-			snprintf(s, sizeof(s), 	"%d_%s_edje",
+    /*All Edje widget's object name follow same scheme _widgetid_locationame_edje*/
+	char s[128];
+    snprintf(s, sizeof(s), 	"%d_%s_edje",
 								 	widget_id_get(widget),
 						 			location_name_get(location));
-			Evas_Object *edje = evas_object_name_find(evas, s);
+	Evas_Object *edje = evas_object_name_find(evas, s);
 
-			/*Parse Edje widget's messages/actions and update them.*/
-			if(!edje) continue;
+	/*Parse Edje widget's messages/actions and update them*/
+	if(!edje) return;
 
-			const char *t;
+	const char *t;
 
-			//Special widget with drag part, so need to convert device current value to float.
-			if ((t = edje_object_data_get(edje, "drag")))
-			{
-				double level;
-				Edje_Message_Float msg;
+	/*Special widget with drag part, so need to convert device current value to float*/
+	if ((t = edje_object_data_get(edje, "drag")))
+	{
+    	double level;
+    	Edje_Message_Float msg;
 
-				if(device_type_get(device) == TEMP_SENSOR_BASIC_TYPE)
-				{
-					int x, y;
-					sscanf(device_current_get(device), "%d.%02d", &x, &y);
-					level =	(double)((x + (y * 0.01)) - TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
-				}
-				else
-				{
-					level =	(double)device_current_to_int(device) / (double)(100);
-				}
-
-				if (level < 0.0) level = 0.0;
-				else if (level > 1.0) level = 1.0;
-
-				msg.val = level;
-				edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
-			}
-
-			if ((device_current_to_int(device) == 0))
-				edje_object_signal_emit(edje, "false", "over");
-			else
-				edje_object_signal_emit(edje, "true", "over");
-
-			if ((t = edje_object_data_get(edje, "title")))
-			{
-				snprintf(s, sizeof(s), "%d - %s", widget_id_get(widget), device_name_get(device));
-				edje_object_part_text_set(edje, "title.text", s);
-			}
-
-			if ((t = edje_object_data_get(edje, "value")))
-			{
-				snprintf(s, sizeof(s), "%4.d%s", device_current_to_int(device), device_unit_symbol_get(device));
-				edje_object_part_text_set(edje, "value.text", s);
-			}
-			edje_object_signal_emit(edje, "updated", "over");
+	    if(widget_xpl_type_get(widget) == XPL_TYPE_TEMP_SENSOR_BASIC)
+	    {
+			int x, y;
+			sscanf(widget_xpl_current_get(widget), "%d.%02d", &x, &y);
+			level =	(double)((x + (y * 0.01)) - TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
 		}
+		else
+		{
+	         level =	(double)atoi(widget_xpl_current_get(widget)) / 100;
+		}
+
+    	if (level < 0.0) level = 0.0;
+		else if (level > 1.0) level = 1.0;
+
+		msg.val = level;
+		edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
 	}
+
+	if (atoi(widget_xpl_current_get(widget)) == 0)
+		edje_object_signal_emit(edje, "false", "over");
+	else
+		edje_object_signal_emit(edje, "true", "over");
+
+	if(edje_object_part_exists(edje, "title.text"))
+	{
+
+		snprintf(s, sizeof(s), "%d - %s",
+		        widget_id_get(widget),
+		        widget_xpl_device_get(widget));
+		edje_object_part_text_set(edje, "title.text", s);
+	}
+
+	if(edje_object_part_exists(edje, "value.text"))
+	{
+	   	snprintf(s, sizeof(s), "%s%s",
+	   	        widget_xpl_current_get(widget),
+        	   	xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) : "");
+		edje_object_part_text_set(edje, "value.text", s);
+	}
+	edje_object_signal_emit(edje, "updated", "over");
 }/*global_view_data_update*/
 
 
@@ -1085,7 +1110,7 @@ global_view_widget_data_update(App_Info * app, Location *location, Device *devic
 static void
 _ecore_evas_resize_cb(Ecore_Evas * ee)
 {
-	//Resize background image to fit in new canvas size.
+	/*Resize background image to fit in new canvas size*/
 	ecore_evas_geometry_get(ee, NULL, NULL, &geometry.w, &geometry.h);
 	evas_object_resize(evas_object_name_find(evas, "background image"), geometry.w, geometry.h);
 }/*_ecore_evas_resize_cb*/

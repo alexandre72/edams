@@ -1,8 +1,8 @@
 /* xPL-listeners.c - handle class/type listeners */
 /* Copyright 2004 (c), Gerald R Duprey Jr */
 
-#include "xPL.h"
-#include "xPL_priv.h"
+#include "xpl.h"
+#include "xpl-priv.h"
 #include <stdarg.h>
 
 #define GROW_LIST_BY 16

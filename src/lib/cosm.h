@@ -22,11 +22,10 @@
 #ifndef __COSM_H
 #define __COSM_H
 
-#include "device.h"
 #include "edams.h"
 
 Eina_Bool cosm_location_feed_add(Location *location);
 Eina_Bool cosm_location_feed_delete(Location *location);
-Eina_Bool cosm_device_datastream_update(Location *location, Device *device);
+Eina_Bool cosm_device_datastream_update(Location *location, Widget *widget);
 
 #endif

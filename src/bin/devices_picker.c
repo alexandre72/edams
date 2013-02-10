@@ -20,9 +20,7 @@
 
 #include <stdio.h>
 #include <Elementary.h>
-
 #include "devices_picker.h"
-#include "device.h"
 #include "edams.h"
 #include "location.h"
 #include "path.h"
@@ -38,7 +36,7 @@ typedef struct _GenGridItem
 } GenGridItem;
 
 
-Evas_Object *win = NULL;
+static Evas_Object *win = NULL;
 
 static char *_gengrid_devices_text_get(void *data, Evas_Object * obj __UNUSED__, const char *part __UNUSED__);
 static Evas_Object *_gengrid_devices_content_get(void *data, Evas_Object * obj, const char *part);

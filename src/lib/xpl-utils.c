@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include "xPL.h"
-#include "xPL_priv.h"
+#include "xpl.h"
+#include "xpl-priv.h"
 
 /* static buffer to create log messages */
 static char convertBuffer[32];

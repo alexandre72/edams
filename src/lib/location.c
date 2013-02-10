@@ -20,6 +20,7 @@
 
 
 #include <Ecore_File.h>
+#include <Elementary.h>
 
 #include <limits.h>
 #include <stdio.h>
@@ -31,39 +32,217 @@
 #include "path.h"
 #include "utils.h"
 
+#define LOCATION_FILE_VERSION 0x8
+
+
+
+struct _Action
+{
+	Condition ifcondition;			/*Type of condition(=,>,<,<=,>=). e.g 'EGAL_TO'*/
+	const char *ifvalue;			/*Required condition value. e.g '5'*/
+	Action_Type type;				/*Type of action to peform. e.g 'CMND_ACTION'*/
+	const char *data;				/*Data passed to action separated in json style, depends on action type*/
+};
+
+
+/*TODO:Add in_cosm to enable/disable cosm datasteam feed*/
 struct _Widget
 {
-    const char * name;				//Widget name associated(edc widget group name) e.g. 'widget/sensor.basic/counter'.
-    unsigned int device_id;			//Device id associated e.g '12'.
-    const char *device_filename;	//Device filename associated e.g 'temperature1.eet'.
-    unsigned int id;				//Device widget position in Eina_List.
+    unsigned int id;				    /*GID of widget e.g '12'*/
+    const char * name;				    /*Name e.g 'temperature'*/
+    const char * group;				    /*Name of edc widget group e.g. 'widget/sensor.basic/counter'*/
+    Widget_Class class;                 /*Widget class. Eg 'WIDGET_CLASS_CONTROL_BASIC'*/
+
+    /*Widget xPL specifics fields*/
+    const char *xpl_device;				/*Name of xpl device 'temperature1'. Should be unique*/
+    Xpl_Type xpl_type;			    	/*Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'*/
+    const char *xpl_current;			/*Current data of xpl device*/
+    const char *xpl_data1;				/*Additional data. Used for control.basic cmnd structure message*/
+
+    /*Actions to perfoms when widget reach certains condition*/
+	Eina_List *actions;
 };
 
 
 struct _Location
 {
-    const char *__eet_filename;		//Filename name of location, generated and based on location's name.
-    unsigned int id;				//Id of location e.g. '10'.
-    const char *name;				//Name of location e.g. 'Child Location'.
-    const char *description;		//Description of location e.g.'Child's location'.
-	Exposure_Flags exposure;	 	//Whether the location is indoors or outdoors
-	double latitude; 				//The latitude of the location.
-	double longitude; 				//The longitude of the location.
-	double elevation; 				//The elevation of the location.
-    const char *creation;			//Creation date of location Eet file.
-    const char *revision;			//Revision date of location Eet file.
-	unsigned int cosm_feedid;		//The cosm url feed location e.g.g 'http://api.cosm.com/v2/feeds/0001'.
-    unsigned int version;			//Version of location Eet file.
-    Eina_List * widgets;
+    const char *__eet_filename;		/*Filename of location, generated and based on location's name*/
+    unsigned int id;				/*GID of location e.g. '10'*/
+    const char *name;				/*Name of location e.g. 'Child Location'*/
+	Exposure exposure;	 	        /*Whether the location is indoors or outdoors. e.g. 'EXPOSURE_INDOOR'*/
+	double latitude; 				/*The latitude of the location*/
+	double longitude; 				/*The longitude of the location*/
+	double elevation; 				/*The elevation of the location*/
+	unsigned int cosm_feedid;		/*The cosm url feedid location e.g 'http://api.cosm.com/v2/feeds/0001'*/
+    unsigned int version;			/*Version of location Eet file*/
+    Eina_List * widgets;            /*List of Widget struct*/
+    const char *creation;			/*Creation date of location Eet file*/
+    const char *revision;			/*Revision date of location Eet file*/
 };
 
+static const char ACTION_ENTRY[] = "action";
 static const char WIDGET_ENTRY[] = "widget";
 static const char LOCATION_ENTRY[] = "location";
 static Eet_Data_Descriptor *_location_descriptor = NULL;
 static Eet_Data_Descriptor *_widget_descriptor = NULL;
+static Eet_Data_Descriptor *_action_descriptor = NULL;
+
+/*******************************************************************************
+ *
+ *                                  ACTION FUNCS
+ *
+ ******************************************************************************/
+/*
+ *
+ */
+static inline void
+_action_init(void)
+{
+    Eet_Data_Descriptor_Class eddc;
+
+    if (_action_descriptor) return;
+
+    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Action);
+    _action_descriptor = eet_data_descriptor_stream_new(&eddc);
+
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "ifcondition", ifcondition, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "ifvalue", ifvalue, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "type", type, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_action_descriptor, Action, "data", data, EET_T_STRING);
+}/*_action_init*/
+
+/*
+ *
+ */
+static inline void
+_action_shutdown(void)
+{
+    if (!_action_descriptor) return;
+    eet_data_descriptor_free(_action_descriptor);
+    _action_descriptor = NULL;
+}/*_action_shutdown*/
+
+/*
+ *
+ */
+Action *
+action_new(Condition ifcondition, const char *ifvalue, Action_Type type, const char *data)
+{
+    Action *action = calloc(1, sizeof(Action));
+
+    if (!action)
+       {
+          debug(stderr, _("Can't calloc Action struct"));
+          return NULL;
+       }
+
+    action->ifcondition = ifcondition;
+    action->ifvalue = eina_stringshare_add(ifvalue);
+    action->type = type;
+    action->data = eina_stringshare_add(data);
+
+    return action;
+}/*action_new*/
+
+/*
+ *
+ */
+void
+action_free(Action *action)
+{
+    eina_stringshare_del(action->ifvalue);
+    eina_stringshare_del(action->data);
+    free(action);
+}/*action_free*/
+
+/*
+ *
+ */
+inline void
+action_ifcondition_set(Action *action, Condition ifcondition)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+	action->ifcondition = ifcondition;
+}/*action_ifcondition_set*/
+
+/*
+ *
+ */
+inline Condition
+action_ifcondition_get(const Action *action)
+{
+    return action->ifcondition;
+}/*action_ifcondition_get*/
+
+/*
+ *
+ */
+void
+action_ifvalue_set(const Action *action, const char *ifvalue)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+    eina_stringshare_replace(&(action->ifvalue), ifvalue);
+}/*action_ifvalue_set*/
+
+/*
+ *
+ */
+inline const char *
+action_ifvalue_get(const Action *action)
+{
+    return action->ifvalue;
+}/*action_ifvalue_get*/
 
 
+/*
+ *
+ */
+inline void
+action_type_set(Action *action, Action_Type type)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+	action->type = type;
+}/*action_type_set*/
 
+/*
+ *
+ */
+inline Action_Type
+action_type_get(const Action *action)
+{
+    return action->type;
+}/*action_type_get*/
+
+
+/*
+ *
+ */
+void
+action_data_set(const Action *action, const char *data)
+{
+    EINA_SAFETY_ON_NULL_RETURN(action);
+    eina_stringshare_replace(&(action->data), data);
+}/*action_data_set*/
+
+/*
+ *
+ */
+inline const char *
+action_data_get(const Action *action)
+{
+    return action->data;
+}/*action_data_get*/
+
+
+/*******************************************************************************
+ *
+ *                                  WIDGET FUNCS
+ *
+ ******************************************************************************/
+
+/*
+ *
+ */
 static inline void
 _widget_init(void)
 {
@@ -74,26 +253,37 @@ _widget_init(void)
     EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Widget);
     _widget_descriptor = eet_data_descriptor_stream_new(&eddc);
 
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "name", name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "device_filename", device_filename, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "id", id, EET_T_UINT);
-}
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "name", name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "group", group, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "class", class, EET_T_UINT);
 
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_device", xpl_device, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_type", xpl_type, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_current", xpl_current, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_data1", xpl_data1, EET_T_STRING);
 
+    EET_DATA_DESCRIPTOR_ADD_LIST(_widget_descriptor, Widget, "actions", actions, _action_descriptor);
+}/*_widget_init*/
+
+/*
+ *
+ */
 static inline void
 _widget_shutdown(void)
 {
     if (!_widget_descriptor) return;
     eet_data_descriptor_free(_widget_descriptor);
     _widget_descriptor = NULL;
-}
+}/*_widget_shutdown*/
 
 
+/*
+ *
+ */
 Widget *
-widget_new(const char * name, Device *device)
+widget_new(const char * name, Widget_Class class)
 {
-	EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
-
     Widget *widget = calloc(1, sizeof(Widget));
 
     if (!widget)
@@ -102,125 +292,382 @@ widget_new(const char * name, Device *device)
     	return NULL;
 	}
 
+    /*Initialize and set widget generic's fields*/
+    widget->name = eina_stringshare_add(name ? name : _("undefined"));
+    widget->class = class;
 
-	if(name)
-	{
-	    widget->name = eina_stringshare_add(name);
-	}
-	else
-	{
-		if(device_class_get(device) == CONTROL_BASIC_CLASS)
-			widget->name = eina_stringshare_add("widget/control.basic/switch");
-		else if(device_class_get(device) == VIRTUAL_CLASS)
-	   	 	widget->name = eina_stringshare_add("widget/virtual/clock/main");
-		else
-	   	 	widget->name = eina_stringshare_add("widget/sensor.basic/counter");
-	}
+    /*Set default group, according to class*/
+	if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
+		widget->group = eina_stringshare_add("widget/control.basic/switch");
+	else if(class ==  WIDGET_CLASS_VIRTUAL)
+   	 	widget->group = eina_stringshare_add("widget/virtual/clock/main");
+	else if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)
+   	 	widget->group = eina_stringshare_add("widget/sensor.basic/counter");
+    else
+        debug(stderr, _("You shouldn't create a new widget with unknown class"));
 
-    widget->device_filename = eina_stringshare_add(device_filename_get(device));
+    /*Initialize xPL specifics field*/
+    widget->xpl_device = NULL;
+    widget->xpl_type = XPL_TYPE_UNKNOWN;
+    widget->xpl_current = NULL;
+    widget->xpl_data1 = NULL;
+
+    /*Initialize actions Eina_List*/
+    widget->actions = NULL;
 
     return widget;
-}
+}/*widget_new*/
 
+
+/*
+ *
+ */
 void
 widget_free(Widget *widget)
 {
     eina_stringshare_del(widget->name);
-    eina_stringshare_del(widget->device_filename);
-    free(widget);
-}
+    eina_stringshare_del(widget->group);
 
-inline const char *
-widget_name_get(const Widget *widget)
-{
-    return widget->name;
-}
+    /*If class is set on xPL specific, so free xPL specifics field*/
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC ))
+    {
+        eina_stringshare_del(widget->xpl_device);
+        eina_stringshare_del(widget->xpl_current);
+        eina_stringshare_del(widget->xpl_data1);
+    }
 
-inline void
-widget_name_set(Widget *widget, const char *name)
-{
-    EINA_SAFETY_ON_NULL_RETURN(widget);
-    eina_stringshare_replace(&(widget->name), name);
-}
+    /*Free actions Eina_List*/
+    if (widget->actions)
+    {
+        Action *action_elem;
+        EINA_LIST_FREE(widget->actions, action_elem)
+            action_free(action_elem);
+    }
 
-inline const char *
-widget_device_filename_get(const Widget *widget)
-{
-    return widget->device_filename;
-}
+    FREE(widget);
+}/*widget_free*/
 
-inline void
-widget_device_filename_set(Widget *widget, const char *filename)
-{
-    EINA_SAFETY_ON_NULL_RETURN(widget);
-    eina_stringshare_replace(&(widget->device_filename), filename);
-}
-
+/*
+ *
+ */
 inline unsigned int
 widget_id_get(const Widget *widget)
 {
     return widget->id;
-}
+}/*widget_id_get*/
 
+
+/*
+ *
+ */
 inline void
 widget_id_set(Widget *widget, unsigned int id)
 {
     EINA_SAFETY_ON_NULL_RETURN(widget);
     widget->id = id;
-}
+}/*widget_id_set*/
 
 
-Device *
-widget_device_get(const Widget *widget)
+/*
+ *
+ */
+inline const char *
+widget_name_get(const Widget *widget)
 {
-	EINA_SAFETY_ON_NULL_RETURN_VAL(widget, NULL);
+    return widget->name;
+}/*widget_name_get*/
 
-	Device *device = device_load(widget->device_filename);
 
-	if(!device)
+/*
+ *
+ */
+inline void
+widget_name_set(Widget *widget, const char *name)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    eina_stringshare_replace(&(widget->name), name);
+}/*widget_name_set*/
+
+/*
+ *
+ */
+inline const char *
+widget_group_get(const Widget *widget)
+{
+    return widget->group;
+}/*widget_group_get*/
+
+
+/*
+ *
+ */
+inline void
+widget_group_set(Widget *widget, const char *group)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    eina_stringshare_replace(&(widget->group), group);
+}/*widget_group_set*/
+
+
+/*
+ *
+ */
+inline void
+widget_class_set(Widget *widget, const Widget_Class class)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    widget->class = class;
+}/*widget_class_set*/
+
+
+/*
+ *
+ */
+inline Widget_Class
+widget_class_get(const Widget *widget)
+{
+    return widget->class;
+}/*widget_class_get*/
+
+/*
+ *
+ */
+inline void
+widget_xpl_device_set(Widget *widget, const char *xpl_device)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+    	eina_stringshare_replace(&(widget->xpl_device), xpl_device);
+    }
+    else
+    {
+        debug(stderr, ("Can't set xpl name to a not xpl widget"));
+        return;
+    }
+}/*widget_xpl_device_set*/
+
+
+/*
+ *
+ */
+inline const char *
+widget_xpl_device_get(const Widget *widget)
+{
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+        return elm_entry_markup_to_utf8(widget->xpl_device);
+    }
+    else
+    {
+        debug(stderr, ("Can't get xpl name from a not xpl widget"));
+        return NULL;
+    }
+}/*widget_xpl_device_get*/
+
+
+
+/*
+ *
+ */
+inline void
+widget_xpl_type_set(Widget *widget, const Xpl_Type xpl_type)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+        widget->xpl_type = xpl_type;
+    }
+    else
+    {
+        debug(stderr, ("Can't set xpl type to a not xpl widget class"));
+        widget->xpl_type = XPL_TYPE_UNKNOWN;
+    }
+}/*widget_xpl_type_set*/
+
+/*
+ *
+ */
+inline Xpl_Type
+widget_xpl_type_get(const Widget *widget)
+{
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+        return widget->xpl_type;
+    }
+    else
+    {
+        debug(stderr, ("Can't get xpl type from a not xpl widget"));
+        return XPL_TYPE_UNKNOWN;
+    }
+}/*widget_xpl_type_get*/
+
+
+
+/*
+ *
+ */
+inline void
+widget_xpl_current_set(Widget *widget, const char *xpl_current)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+    	eina_stringshare_replace(&(widget->xpl_current), xpl_current);
+    }
+    else
+    {
+        debug(stderr, ("Can't set xpl current to a not xpl widget"));
+        return;
+    }
+}/*widget_xpl_current_set*/
+
+
+/*
+ *
+ */
+inline const char *
+widget_xpl_current_get(const Widget *widget)
+{
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+        return widget->xpl_current;
+    }
+    else
+    {
+        debug(stderr, ("Can't get xpl current from a not xpl widget"));
+        return NULL;
+    }
+}/*widget_xpl_current_get*/
+
+
+/*
+ *
+ */
+inline void
+widget_xpl_data1_set(Widget *widget, const char *xpl_data1)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+    	eina_stringshare_replace(&(widget->xpl_data1), xpl_data1);
+    }
+    else
+    {
+        debug(stderr, ("Can't set xpl data1 to a not xpl widget"));
+        return;
+    }
+}/*widget_xpl_current_set*/
+
+
+/*
+ *
+ */
+inline const char *
+widget_xpl_data1_get(const Widget *widget)
+{
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+        return widget->xpl_data1;
+    }
+    else
+    {
+        debug(stderr, ("Can't get xpl data1 from a not xpl widget"));
+        return NULL;
+    }
+}/*widget_xpl_current_get*/
+
+
+/*
+ *Return Eina_List of widgets that have 'device' egal to 'xpl_device'
+ */
+Eina_List *
+widgets_with_xpl_device_get(const Location *location, const char *xpl_device)
+{
+    Eina_List *widgets  = NULL, *l, *ret = NULL;
+    Widget *widget;
+
+	widgets = location_widgets_list_get(location);
+
+	EINA_LIST_FOREACH(widgets, l, widget)
 	{
-		debug(stderr, _("Can't load device from widget '%d-%s'"), widget->name, widget->id);
-		return NULL;
-	}
+	    /*Ift xPL widget class, then check xpl device*/
+        if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+           (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+           {
+                /*Compare xpl device with arg 'xpl_device', if found return widget*/
+	    	    if(strcmp(xpl_device, widget_xpl_device_get(widget)) == 0)
+	    	    {
+                    ret = eina_list_append(ret, widget);
+	            }
+            }
+    }
 
-	return device;
-}
+    return ret;
+}/*widgets_with_xpl_device_get*/
 
-
-static int
-_locations_list_sort_cb(const void *d1, const void *d2)
+/*
+ *
+ */
+inline void
+widget_action_add(Widget *widget, Action *action)
 {
-    const char *txt = location_name_get((Location*)d1);
-    const char *txt2 = location_name_get((Location*)d2);
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    widget->actions = eina_list_append(widget->actions, action);
+}/*widget_action_add*/
 
-    if(!txt) return(1);
-    if(!txt2) return(-1);
-
-    return(strcoll(txt, txt2));
-}
-
-
-static char *
-_filename_create()
+/*
+ *
+ */
+inline void
+widget_action_del(Widget *widget, Action *action)
 {
-    int i = 0;
-    char s[PATH_MAX];
-    time_t timestamp;
-	struct tm *t;
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    widget->actions = eina_list_remove(widget->actions, action);
+}/*widget_action_del*/
 
-	timestamp = time(NULL);
-	t = localtime(&timestamp);
-
-	do
-	{
-	snprintf(s, sizeof(s), "%02d%02d%02d-%03d.eet", (int)t->tm_hour, (int)t->tm_min, (int) t->tm_sec, i);
-		i++;
-	} while(ecore_file_exists(s) == EINA_TRUE);
-
-	return strdup(s);
-}
+/*
+ *
+ */
+inline Eina_List *
+widget_actions_list_get(const Widget *widget)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(widget, NULL);
+    return widget->actions;
+}/*widget_actions_list_get*/
 
 
+/*
+ *
+ */
+inline void
+widget_actions_list_set(Widget *widget, Eina_List *list)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    widget->actions = list;
+}/*widget_actions_list_set*/
+
+
+
+/*******************************************************************************
+ *
+ *                                  LOCATION FUNCS
+ *
+ ******************************************************************************/
+/*
+ *
+ */
 static inline void
 _location_init(void)
 {
@@ -233,8 +680,6 @@ _location_init(void)
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "id", id, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "name", name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "description", description, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_LIST(_location_descriptor, Location, "widgets", widgets, _widget_descriptor);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "exposure", exposure, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "latitude", latitude, EET_T_DOUBLE);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "longitude", longitude, EET_T_DOUBLE);
@@ -242,20 +687,31 @@ _location_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "revision", revision, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "version", version, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_location_descriptor, Location, "cosm_feedid", cosm_feedid, EET_T_UINT);
-}
 
+    EET_DATA_DESCRIPTOR_ADD_LIST(_location_descriptor, Location, "widgets", widgets, _widget_descriptor);
+}/*_location_init*/
+
+
+/*
+ *
+ */
 static inline void
 _location_shutdown(void)
 {
     if (!_location_descriptor) return;
     eet_data_descriptor_free(_location_descriptor);
     _location_descriptor = NULL;
-}
+}/*_location_shutdown*/
 
+
+/*
+ *Alloc and initialize new location struct
+ */
 Location *
-location_new(unsigned int id, const char * name, const char * description)
+location_new(unsigned int id, const char * name)
 {
 	char s[PATH_MAX];
+    const char *f;
 
     Location *location = calloc(1, sizeof(Location));
 
@@ -264,22 +720,25 @@ location_new(unsigned int id, const char * name, const char * description)
 		debug(stderr, _("Can't calloc Location struct"));
 		return NULL;
 	}
+    location->name = eina_stringshare_add(name ? name : _("undefined"));
 
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s", edams_locations_data_path_get(), _filename_create());
-    location->__eet_filename = eina_stringshare_add(s);
+    /*Create an unique filename to avoid conflicts*/
+	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s", edams_locations_data_path_get(), location->name);
+    f = filename_create(s);
+	location->__eet_filename = eina_stringshare_add(f);
+    FREE(f);
     location->id = id;
-    location->name = eina_stringshare_add(name ? name : "undefined");
-    location->description = eina_stringshare_add(description ? description : "undefined");
+
+    /*Initialize widgets Eina_List*/
     location->widgets = NULL;
 
-    //Add creation date informations.
+    /*Add creation date informations*/
 	time_t timestamp = time(NULL);
 	struct tm *t = localtime(&timestamp);
 	snprintf(s, sizeof(s), "%02d-%02d-%d",
 				(int)t->tm_mday,
   				(int)t->tm_mon,
   				1900+(int)t->tm_year);
-
     location->creation = eina_stringshare_add(s);
 	location->revision = NULL;
 	location->version = 0x0002;
@@ -288,16 +747,21 @@ location_new(unsigned int id, const char * name, const char * description)
     location->cosm_feedid = 0;
 
     return location;
-}
+}/*location_new*/
 
 
+/*
+ *Return Eet filename of location struct
+ */
 const char *
 location_filename_get(Location *location)
 {
      return location->__eet_filename;
-}
+}/*location_filename_get*/
 
-
+/*
+ *
+ */
 void
 location_free(Location *location)
 {
@@ -305,7 +769,6 @@ location_free(Location *location)
 	{
 	    eina_stringshare_del(location->__eet_filename);
 	    eina_stringshare_del(location->name);
-    	eina_stringshare_del(location->description);
     	if (location->widgets)
        	{
           Widget *widgets_elem;
@@ -316,9 +779,11 @@ location_free(Location *location)
     	eina_stringshare_del(location->revision);
 	    FREE(location);
 	}
-}
+}/*location_free*/
 
-
+/*
+ *
+ */
 inline unsigned int
 location_id_get(const Location *location)
 {
@@ -330,63 +795,66 @@ location_id_set(Location *location, unsigned int id)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
     location->id = id;
-}
+}/*location_id_set*/
 
 
-
+/*
+ *
+ */
 inline const char *
 location_name_get(const Location *location)
 {
     return  elm_entry_markup_to_utf8(location->name);
-}
+}/*location_name_get*/
 
-
+/*
+ *
+ */
 inline void
 location_name_set(Location *location, const char *name)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
     eina_stringshare_replace(&(location->name), name);
-}
-
-inline const char *
-location_description_get(const Location *location)
-{
-    return location->description;
-}
-
-inline void
-location_description_set(Location *location, const char *description)
-{
-    EINA_SAFETY_ON_NULL_RETURN(location);
-    eina_stringshare_replace(&(location->description), description);
-}
+}/*location_name_set*/
 
 
-inline Exposure_Flags
+/*
+ *
+ */
+inline Exposure
 location_exposure_get(const Location *location)
 {
     return location->exposure;
-}
+}/*location_exposure_get*/
 
+/*
+ *
+ */
 inline void
-location_exposure_set(Location *location, Exposure_Flags exposure)
+location_exposure_set(Location *location, Exposure exposure)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
     location->exposure = exposure;
-}
+}/*location_exposure_set*/
 
+/*
+ *
+ */
 inline double
 location_latitude_get(const Location *location)
 {
     return location->latitude;
-}
+}/*location_latitude_get*/
 
+/*
+ *
+ */
 inline void
 location_latitude_set(Location *location, double latitude)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
     location->latitude = latitude;
-}
+}/*location_latitude_set*/
 
 
 inline double
@@ -486,8 +954,9 @@ location_widgets_add(Location *location, Widget *widget)
 
 	Eina_List *l;
 	Widget *data;
-	int id = 0;
+	unsigned int id = 0;
 
+    /*Generate an unique ID to avoid widgets ID conflicts*/
 REDO:
  	EINA_LIST_FOREACH(location->widgets, l, data)
    	{
@@ -499,28 +968,29 @@ REDO:
 	}
 
 	widget_id_set(widget, id);
-}
+}/*location_widgets_add*/
 
 inline void
 location_widgets_del(Location *location, Widget *widget)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
     location->widgets = eina_list_remove(location->widgets, widget);
-}
+}/*location_widgets_del*/
+
 
 inline Widget *
 location_widgets_get(const Location *location, unsigned int nth)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(location, NULL);
     return eina_list_nth(location->widgets, nth);
-}
+}/*location_widgets_get*/
 
 inline unsigned int
 location_widgets_count(const Location *location)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(location, 0);
     return eina_list_count(location->widgets);
-}
+}/*location_widgets_count*/
 
 void
 location_widgets_list_clear(Location *location)
@@ -528,24 +998,27 @@ location_widgets_list_clear(Location *location)
     EINA_SAFETY_ON_NULL_RETURN(location);
     Widget *data;
     EINA_LIST_FREE(location->widgets, data) widget_free(data);
-}
+}/*location_widgets_list_clear*/
 
 inline Eina_List *
 location_widgets_list_get(const Location *location)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(location, NULL);
     return location->widgets;
-}
+}/*location_widgets_list_get*/
+
 
 inline void
 location_widgets_list_set(Location *location, Eina_List *list)
 {
     EINA_SAFETY_ON_NULL_RETURN(location);
     location->widgets = list;
-}
+}/*location_widgets_list_set*/
 
 
-
+/*
+ *Return location struct from Eet file 'filename'
+ */
 Location *
 location_load(const char *filename)
 {
@@ -576,16 +1049,19 @@ location_load(const char *filename)
 end:
     eet_close(ef);
     return location;
-}
+}/*location_load*/
 
 
-
+/*
+ *Write location struct to Eet file
+ */
 Eina_Bool
 location_save(Location *location)
 {
     Eet_File *ef;
     Eina_Bool ret;
 
+    /*Try to open location Eet filename in writing mode*/
     ef = eet_open(location->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
 	{
@@ -593,9 +1069,9 @@ location_save(Location *location)
 		return EINA_FALSE;
 	}
 
+    /*Try to write location data struct to Eet file opened*/
     ret = !!eet_data_write(ef, _location_descriptor, LOCATION_ENTRY, location, EINA_TRUE);
     eet_close(ef);
-
 	if (!ret)
 	{
 		debug(stderr, _("Can't write any data to Eet file '%s'"), location->__eet_filename);
@@ -603,27 +1079,34 @@ location_save(Location *location)
 	}
 
     return EINA_TRUE;
-}
+}/*location_save*/
 
 
-
+/*
+ *
+ */
 void
 locations_init(void)
 {
+    _action_init();
     _widget_init();
     _location_init();
-}
+}/*locations_init*/
 
+/*
+ *
+ */
 void
 locations_shutdown(void)
 {
+    _action_shutdown();
     _widget_shutdown();
     _location_shutdown();
-}
+}/*locations_shutdown*/
 
-//
-//Remove location informations file.
-//
+/*
+ *Remove location Eet file.
+*/
 Eina_Bool
 location_remove(Location *location)
 {
@@ -638,13 +1121,13 @@ location_remove(Location *location)
 	debug(stdout, _("Eet Location file '%s' has been removed"), location->__eet_filename);
 
 	return EINA_TRUE;
-}
+}/*location_remove*/
 
 
 
-//
-//Free locations list.
-//
+/*
+ *Free locations Eina_List
+ */
 Eina_List *
 locations_list_free(Eina_List *locations)
 {
@@ -653,6 +1136,7 @@ locations_list_free(Eina_List *locations)
 	unsigned int n = 0;
 	Location *data;
 
+    /*Free all location node of Eina_List*/
 	EINA_LIST_FREE(locations, data)
 	{
 		n++;
@@ -663,12 +1147,12 @@ locations_list_free(Eina_List *locations)
 	debug(stdout, _("%d Location struct of Eina_list freed"), n);
 
     return NULL;
-}
+}/*locations_list_free*/
 
 
-//
-//Remove 'location' from 'locations' list.
-//
+/*
+ *Remove 'location' node from 'locations' Eina_List
+ */
 Eina_List *
 locations_list_location_remove(Eina_List *locations, Location *location)
 {
@@ -684,14 +1168,14 @@ locations_list_location_remove(Eina_List *locations, Location *location)
 		}
    }
    return locations;
-}
+}/*locations_list_location_remove*/
 
 
 
 
-//
-//Read all locations infos files.
-//
+/*
+ *Return Eina_List of all locations Eet files read
+ */
 Eina_List *
 locations_list_get()
 {
@@ -731,6 +1215,6 @@ locations_list_get()
 	}
 
 	debug(stdout, _("%d locations registered"), eina_list_count(locations));
-	locations = eina_list_sort(locations, eina_list_count(locations), EINA_COMPARE_CB(_locations_list_sort_cb));
+
 	return locations;
-}
+}/*locations_list_get*/

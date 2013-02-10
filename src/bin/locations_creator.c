@@ -59,15 +59,11 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 
 	win = (Evas_Object *) data;
 
-	location = location_new(0, NULL, NULL);
+	location = location_new(0, NULL);
 
 	entry = elm_object_name_find(win, "location name entry", -1);
 	if(!elm_entry_is_empty(entry))
 		location_name_set(location, elm_object_text_get(entry));
-
-	entry = elm_object_name_find(win, "location description entry", -1);
-	if(!elm_entry_is_empty(entry))
-		location_description_set(location, elm_object_text_get(entry));
 
 	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
 	Elm_Map_Name *name = evas_object_data_get(map, "name Elm_Map_Name");
@@ -246,7 +242,7 @@ locations_creator_add(void *data, Evas_Object *obj __UNUSED__, void *event_info 
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Photo"));
-	elm_grid_pack(grid, frame, 1, 1, 26, 26);
+	elm_grid_pack(grid, frame, 1, 1, 30, 30);
 	evas_object_show(frame);
 
 	box = elm_box_add(win);
@@ -290,21 +286,8 @@ locations_creator_add(void *data, Evas_Object *obj __UNUSED__, void *event_info 
 	elm_object_content_set(frame, entry);
 
 	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("Description:"));
-	elm_grid_pack(grid, frame, 32, 15, 40, 12);
-	evas_object_show(frame);
-
-	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "location description entry");
-	elm_entry_scrollable_set(entry, EINA_TRUE);
-	elm_entry_editable_set(entry, EINA_TRUE);
-	elm_entry_single_line_set(entry, EINA_TRUE);
-	evas_object_show(entry);
-	elm_object_content_set(frame, entry);
-
-	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Geolocalization:"));
-	elm_grid_pack(grid, frame, 0, 30, 99, 50);
+	elm_grid_pack(grid, frame, 0, 31, 99, 60);
 	evas_object_show(frame);
 
 	box = elm_box_add(win);

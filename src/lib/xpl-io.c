@@ -20,8 +20,8 @@
 #include <netdb.h>
 #include <termios.h>
 
-#include "xPL.h"
-#include "xPL_priv.h"
+#include "xpl.h"
+#include "xpl-priv.h"
 #include "utils.h"
 
 #define POLL_GROW_BY 32
