@@ -42,8 +42,7 @@
 #include "preferences_dlg.h"
 #include "shutdown.h"
 #include "utils.h"
-#include "widgets_picker.h"
-#include "widget_wizzard.h"
+#include "widget_editor.h"
 
 /*Global objects*/
 App_Info *app = NULL;

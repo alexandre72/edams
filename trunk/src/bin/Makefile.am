@@ -30,7 +30,7 @@ locations_creator.c \
 mail_editor.c \
 preferences_dlg.c \
 shutdown.c \
-widget_wizzard.c
+widget_editor.c
 
 edams_LDADD = \
     $(top_builddir)/src/lib/libedams.la \
