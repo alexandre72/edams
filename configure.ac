@@ -4,7 +4,7 @@
 define([v_rev], esyscmd([sh -c "svnversion|tr -d '\n'"]))dnl
 
 m4_define([v_maj], [0])
-m4_define([v_min], [8])
+m4_define([v_min], [9])
 m4_define([v_mic], [0])
 m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])
 
@@ -90,9 +90,7 @@ data/themes/default/Makefile
 ])
 AC_OUTPUT
 
-
 ifdef([AM_GNU_GETTEXT], [AC_CONFIG_FILES([po/Makefile.in])])
-
 
 AC_OUTPUT
 echo
