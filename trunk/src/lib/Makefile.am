@@ -20,18 +20,18 @@ gnuplot.c \
 myfileselector.c \
 path.c \
 location.c \
-device.c \
 settings.c \
 cosm.c \
 utils.c \
+widget.c \
 xpl.c \
-xPL-config.c \
-xPL-io.c \
-xPL-listeners.c \
-xPL-message.c \
-xPL-service.c \
-xPL-store.c \
-xPL-utils.c
+xpl-config.c \
+xpl-io.c \
+xpl-listeners.c \
+xpl-message.c \
+xpl-service.c \
+xpl-store.c \
+xpl-utils.c
 
 libedams_la_LIBADD = \
 @EDAMS_LIBS@ \

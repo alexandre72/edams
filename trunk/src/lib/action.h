@@ -24,8 +24,33 @@
 
 #include <Eina.h>
 
-#include "device.h"
+typedef struct _Action Action;
+
+typedef enum _Condition_
+{
+	CONDITION_UNKNOWN		    = (0),
+	CONDITION_EGAL_TO		    = (1),
+	CONDITION_LESS_THAN			= (2),
+	CONDITION_MORE_THAN			= (3),
+	CONDITION_LESS_OR_EGAL_TO	= (4),
+	CONDITION_MORE_OR_EGAL_TO	= (5),
+	CONDITION_LAST
+}Condition;
+
+
+typedef enum _Action_Type
+{
+	ACTION_TYPE_UNKNOWN     = (0),
+	ACTION_TYPE_CMND		= (1),
+	ACTION_TYPE_MAIL		= (2),
+	ACTION_TYPE_EXEC		= (3),
+	ACTION_TYPE_DEBUG		= (4),
+	ACTION_TYPE_LAST
+}Action_Type;
+
 
 Eina_Bool action_parse(Action *action);
-
+const char *action_type_to_desc(Action_Type type);
+Condition action_str_to_condition(const char *s);
+const char *action_condition_to_str(Condition condition);
 #endif /*__ACTION_H*/

@@ -23,16 +23,15 @@
 
 #include "action.h"
 #include "cJSON.h"
-#include "device.h"
 #include "edams.h"
 #include "myfileselector.h"
 #include "path.h"
 #include "utils.h"
+#include "xpl.h"
 
 
-/*Global window elm object*/
+/*Global objects*/
 static Evas_Object *win = NULL;
-
 
 /*Callbacks*/
 static void _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
@@ -40,10 +39,9 @@ static void _button_remove_clicked_cb(void *data __UNUSED__, Evas_Object * obj _
 static void _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info);
 static void _button_arg_edit_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info);
+
 /*Others funcs*/
-static void _list_action_add(Evas_Object *list, Device *device, Action *action);
-
-
+static void _list_action_add(Evas_Object *list, Widget *widget, Action *action);
 
 /*
  *
@@ -59,23 +57,23 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 
     switch(type)
 	{
-	    case CMND_ACTION:
+	    case ACTION_TYPE_CMND:
                 s = cmnd_editor_values_get();
                 break;
 
-		case MAIL_ACTION:
+		case ACTION_TYPE_MAIL:
                 s = mail_editor_values_get();
                 break;
 
-   		case EXEC_ACTION:
+   		case ACTION_TYPE_EXEC:
                 s = exec_editor_values_get();
                 break;
 
-   		case DEBUG_ACTION:
+   		case ACTION_TYPE_DEBUG:
                 s = debug_editor_values_get();
                 break;
 
-		case UNKNOWN_ACTION:
+		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
             	evas_object_del(cwin);
                 return;
@@ -106,27 +104,27 @@ _button_arg_edit_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event
 
 	switch(type)
 	{
-		case CMND_ACTION:
+		case ACTION_TYPE_CMND:
 	            cwin = cmnd_editor_add(app);
                 hbox = cmnd_editor_hbox_get();
                 break;
 
-		case MAIL_ACTION:
+		case ACTION_TYPE_MAIL:
 	            cwin = mail_editor_add();
                 hbox = mail_editor_hbox_get();
                 break;
 
-		case EXEC_ACTION:
+		case ACTION_TYPE_EXEC:
 	            cwin = exec_editor_add();
                 hbox = exec_editor_hbox_get();
                 break;
 
-		case DEBUG_ACTION:
+		case ACTION_TYPE_DEBUG:
 	            cwin = debug_editor_add();
                 hbox = debug_editor_hbox_get();
 			    break;
 
-		case UNKNOWN_ACTION:
+		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
 				break;
 	}
@@ -185,11 +183,12 @@ _button_remove_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, v
 	if(!selected_item) return;
 
 	Action *action = elm_object_item_data_get(selected_item);
-	Device *device = evas_object_data_get(win, "device");
+	Widget *widget = evas_object_data_get(win, "widget");
 
-	device_action_del(device, action);
+	widget_action_del(widget, action);
    	elm_object_item_del(selected_item);
-   	device_save(device);
+    App_Info *app = evas_object_data_get(win, "app");
+    location_save(widget);
 }/*_button_remove_clicked_cb*/
 
 
@@ -201,11 +200,11 @@ static void
 _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	char *ifvalue;
-	Device *device;
+	Widget *widget;
 	Evas_Object *entry, *hoversel;
 	Evas_Object *list;
 
-	device = evas_object_data_get(win, "device");
+	widget = evas_object_data_get(win, "widget");
 
 	hoversel = elm_object_name_find(win, "ifcondition hoversel", -1);
 	Condition ifcondition = (Condition)evas_object_data_get(hoversel, "selected");
@@ -222,14 +221,15 @@ _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 
 	Action *action;
 	action = action_new(ifcondition, ifvalue , type, arg);
-	device_action_add(device, action);
-	device_save(device);
+	widget_action_add(widget, action);
+    App_Info *app = evas_object_data_get(win, "app");
+	location_save(app->location);
 
 	FREE(arg);
 	arg = evas_object_data_del(win, "data arg");
 
-	 list = elm_object_name_find(win, "actions list", -1);
-	_list_action_add(list, device, action);
+	list = elm_object_name_find(win, "actions list", -1);
+	_list_action_add(list, widget, action);
 }/*_button_add_clicked_cb*/
 
 
@@ -250,13 +250,13 @@ _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
     evas_object_data_set(hoversel, "selected", (void*)(unsigned int)action_ifcondition_get(action));
 
 	hoversel = elm_object_name_find(win, "type hoversel", -1);
-	elm_object_text_set(hoversel, action_type_to_str(action_type_get(action)));
+	elm_object_text_set(hoversel, action_type_to_desc(action_type_get(action)));
     evas_object_data_set(hoversel, "selected", (void*)(unsigned int)action_type_get(action));
 
     debug(stdout, _("If %s %s then %s(%s)"),
 					action_condition_to_str(action_ifcondition_get(action)),
 					action_ifvalue_get(action),
-					action_type_to_str(action_type_get(action)),
+					action_type_to_desc(action_type_get(action)),
                     action_data_get(action));
 
 	entry = elm_object_name_find(win, "data entry", -1);
@@ -268,13 +268,13 @@ _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
  *
  */
 static void
-_list_action_add(Evas_Object *list, Device *device, Action *action)
+_list_action_add(Evas_Object *list, Widget *widget, Action *action)
 {
 	const char *s;
 	asprintf(&s, _("If %s %s then %s"),
 										action_condition_to_str(action_ifcondition_get(action)),
 										action_ifvalue_get(action),
-										action_type_to_str(action_type_get(action)));
+										action_type_to_desc(action_type_get(action)));
 
 	Evas_Object *icon;
 	icon = elm_icon_add(win);
@@ -282,13 +282,13 @@ _list_action_add(Evas_Object *list, Device *device, Action *action)
     evas_object_size_hint_min_set(icon, 48, 48);
     evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
 
-    if(action_type_get(action) == CMND_ACTION)
+    if(action_type_get(action) == ACTION_TYPE_CMND)
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "elm/icon/xpl/default");
-    else if(action_type_get(action) == MAIL_ACTION)
+    else if(action_type_get(action) == ACTION_TYPE_MAIL)
         elm_icon_standard_set(icon, "mail-send");
-    else if(action_type_get(action) == EXEC_ACTION)
+    else if(action_type_get(action) == ACTION_TYPE_EXEC)
         elm_icon_standard_set(icon, "system-run");
-    else if(action_type_get(action) == DEBUG_ACTION)
+    else if(action_type_get(action) == ACTION_TYPE_DEBUG)
         elm_icon_standard_set(icon, "debug");
     else
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "");
@@ -310,7 +310,7 @@ void
 actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __UNUSED__)
 {
 	char *s;
-	Evas_Object *entry, *hoversel, *slider;
+	Evas_Object *hoversel, *slider;
 	Evas_Object *grid;
 	Evas_Object *icon, *bx, *frame;
 	Evas_Object *button;
@@ -326,15 +326,13 @@ actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __
 	if(!selected_item) return;
 
 	Widget *widget = elm_object_item_data_get(selected_item);
-	Device *device = widget_device_get(widget);
-    Device_Type type = device_type_get(device);
+    Xpl_Type type = widget_xpl_type_get(widget);
 
-    if(device_class_get(device) != SENSOR_BASIC_CLASS) return;
+    if(widget_class_get(widget) != WIDGET_CLASS_XPL_SENSOR_BASIC) return;
 
-	asprintf(&s, _("Edit actions for '%s' xPL device"), device_name_get(device));
+	asprintf(&s, _("Edit actions for '%s' xPL sensor.basic"), widget_xpl_device_get(widget));
 	win = elm_win_util_standard_add("actions_editor", s);
 	FREE(s);
-	evas_object_data_set(win, "device", device);
 	evas_object_data_set(win, "app", app);
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
@@ -361,16 +359,16 @@ actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __
 
 	Eina_List *l, *actions;
 	Action *action;
-	actions = device_actions_list_get(device);
+	actions = widget_actions_list_get(widget);
 	EINA_LIST_FOREACH(actions, l, action)
-		_list_action_add(list, device, action);
+		_list_action_add(list, widget, action);
 
    	hoversel = elm_hoversel_add(grid);
    	evas_object_name_set(hoversel, "ifcondition hoversel");
 	int x = 0;
 	for(x = 0;x != CONDITION_LAST;x++)
 	{
-		if(x == UNKNOWN_CONDITION) continue;
+		if(x == CONDITION_UNKNOWN) continue;
 	   	elm_hoversel_item_add(hoversel, action_condition_to_str(x), ELM_ICON_NONE, ELM_ICON_NONE, NULL, (void*)(unsigned int)x);
 	}
 	elm_grid_pack(grid, hoversel, 1, 68, 10, 8);
@@ -380,37 +378,37 @@ actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __
 
    	frame = elm_frame_add(win);
 	elm_grid_pack(grid, frame, 11, 61, 40, 20);
-   	elm_layout_text_set(frame, NULL, device_units_get(device));
+   	elm_layout_text_set(frame, NULL, xpl_type_to_units(widget_xpl_type_get(widget)));
 	evas_object_show(frame);
 
     slider = elm_slider_add(win);
    	evas_object_name_set(slider, "ifvalue slider");
     //FIXME:'%' could be a symbol format used by device unit, but it's a C printf* reserved keyword too.
     //so, try to print it correctly.
-    asprintf(&s, "%%1.0f %s", device_unit_symbol_get(device));
+    asprintf(&s, "%%1.0f %s", xpl_type_to_unit_symbol(widget_xpl_type_get(widget)));
     elm_slider_unit_format_set(slider, s);
     FREE(s);
 
     switch(type)
     {
-        case    BATTERY_SENSOR_BASIC_TYPE:
+        case    XPL_TYPE_BATTERY_SENSOR_BASIC:
                 elm_slider_min_max_set(slider, 0, 100);
                 break;
 
-        case    DIRECTION_SENSOR_BASIC_TYPE:
+        case    XPL_TYPE_DIRECTION_SENSOR_BASIC:
                 elm_slider_min_max_set(slider, 0, 360);
                 break;
 
-        case    HUMIDITY_SENSOR_BASIC_TYPE:
+        case    XPL_TYPE_HUMIDITY_SENSOR_BASIC:
                 elm_slider_min_max_set(slider, 0, 100);
                 break;
 
-        case    INPUT_SENSOR_BASIC_TYPE:
-                OUTPUT_SENSOR_BASIC_TYPE:
+        case    XPL_TYPE_INPUT_SENSOR_BASIC:
+        case    XPL_TYPE_OUTPUT_SENSOR_BASIC:
                 elm_slider_min_max_set(slider, 0, 1);
                 break;
 
-        case    UV_SENSOR_BASIC_TYPE:
+        case    XPL_TYPE_UV_SENSOR_BASIC:
                 elm_slider_min_max_set(slider, 0, 12);
                 break;
 
@@ -429,9 +427,9 @@ actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __
 	elm_grid_pack(grid, hoversel, 52, 68, 40, 8);
 	for(x = 0;x != ACTION_TYPE_LAST;x++)
 	{
-		if(x == UNKNOWN_ACTION) continue;
-		if((x == DEBUG_ACTION) && (!edams_settings_debug_get())) continue;
-		elm_hoversel_item_add(hoversel, action_type_to_str(x), ELM_ICON_NONE, ELM_ICON_NONE, NULL, (void*)(unsigned int)x);
+		if(x == ACTION_TYPE_UNKNOWN) continue;
+		if((x == ACTION_TYPE_DEBUG) && (!edams_settings_debug_get())) continue;
+		elm_hoversel_item_add(hoversel, action_type_to_desc(x), ELM_ICON_NONE, ELM_ICON_NONE, NULL, (void*)(unsigned int)x);
 	}
 	evas_object_show(hoversel);
 	evas_object_smart_callback_add(hoversel, "selected", _hoversel_selected_cb, NULL);

@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <signal.h>
-#include "xPL.h"
+#include "xpl.h"
 
 char msgSource[64] = "cdp1802-xplsend.default";
 String srcVendor = NULL;

@@ -1,4 +1,4 @@
-/* xPL_priv.h - xPLLib internal include */
+/* xpl_priv.h - xPLLib internal include */
 /* Copyright 2004 (c), Gerald R Duprey Jr */
 
 #define SAFE_FREE(x) if (x != NULL) { free(x); x = NULL; }

@@ -1,8 +1,8 @@
 /* xPL-service.c - xPL Lib Service Management */
 /* Copyright 2004 (c), Gerald R Duprey Jr */
 
-#include "xPL.h"
-#include "xPL_priv.h"
+#include "xpl.h"
+#include "xpl-priv.h"
 #include "utils.h"
 
 #define GROW_SERVICE_LIST_BY 8

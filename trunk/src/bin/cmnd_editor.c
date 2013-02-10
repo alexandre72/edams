@@ -17,14 +17,14 @@ cmnd_editor_values_get()
 	cJSON *root;
     const char *s;
 
-	Device *device = evas_object_data_get(win, "device");
-    if((!device) || (!device_current_get(device)))
+	Widget *widget = evas_object_data_get(win, "widget");
+    if((!widget) || (!widget_xpl_current_get(widget)))
         return NULL;
 
 	root=cJSON_CreateObject();
-	cJSON_AddItemToObject(root, "DEVICE_FILENAME", cJSON_CreateString(device_filename_get(device)));
-	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(device_current_get(device)));
-	//cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(device_data1_get(device)));
+	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(widget_xpl_device_get(widget)));
+	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(widget_xpl_current_get(widget)));
+	//cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(widget_xpl_data1_get(widget)));
 
     s = cJSON_PrintUnformatted(root);
 
@@ -52,13 +52,13 @@ cmnd_editor_hbox_get()
 static void
 _slider_control_basic_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    Device *device = data;
+    Widget *widget = data;
     char *s;
 
     double val = elm_slider_value_get(obj);
     asprintf(&s, "%1.0f", val);
 
-    device_current_set(device, s);
+    widget_xpl_current_set(widget, s);
 
     FREE(s);
 
@@ -75,9 +75,9 @@ static void
 
 _radio_control_basic_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    Device *device = data;
+    Widget *widget = data;
 
-    device_current_set(device, elm_object_text_get(obj));
+    widget_xpl_current_set(widget, elm_object_text_get(obj));
 }/*_radio_control_basic_changed_cb*/
 
 
@@ -92,8 +92,8 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
     Evas_Object *group, *radio, *slider;
     Evas_Object *frame;
     Evas_Object *grid = elm_object_name_find(win, "grid", -1);
-    Device *device = data;
-    Device_Type type = device_type_get(device);
+    Widget *widget = data;
+    Xpl_Type type = widget_xpl_type_get(widget);
 
 	frame = elm_frame_add(win);
     elm_object_text_set(frame, _("Value"));
@@ -102,15 +102,15 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
 
     switch(type)
     {
-        case INPUT_CONTROL_BASIC_TYPE:
-   		case MUTE_CONTROL_BASIC_TYPE:
-        case MACRO_CONTROL_BASIC_TYPE:
-        case FLAG_CONTROL_BASIC_TYPE:
-        case OUTPUT_CONTROL_BASIC_TYPE:
-		case INFRARED_CONTROL_BASIC_TYPE:
-        case PERIODIC_CONTROL_BASIC_TYPE:
-        case SCHEDULED_CONTROL_BASIC_TYPE:
-        case TIMER_CONTROL_BASIC_TYPE:
+        case XPL_TYPE_INPUT_CONTROL_BASIC:
+   		case XPL_TYPE_MUTE_CONTROL_BASIC:
+        case XPL_TYPE_MACRO_CONTROL_BASIC:
+        case XPL_TYPE_FLAG_CONTROL_BASIC:
+        case XPL_TYPE_OUTPUT_CONTROL_BASIC:
+		case XPL_TYPE_INFRARED_CONTROL_BASIC:
+        case XPL_TYPE_PERIODIC_CONTROL_BASIC:
+        case XPL_TYPE_SCHEDULED_CONTROL_BASIC:
+        case XPL_TYPE_TIMER_CONTROL_BASIC:
 
                 bx = elm_box_add(win);
                 elm_box_horizontal_set(bx, EINA_FALSE);
@@ -120,18 +120,18 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
 
                 group = radio = elm_radio_add(win);
 
-                    if(type == MUTE_CONTROL_BASIC_TYPE)
+                    if(type == XPL_TYPE_MUTE_CONTROL_BASIC)
                         elm_object_text_set(radio, "Yes");
-                      else if((type == INPUT_CONTROL_BASIC_TYPE) ||
-                            (type == MACRO_CONTROL_BASIC_TYPE) ||
-                            (type == SCHEDULED_CONTROL_BASIC_TYPE) ||
-                            (type == PERIODIC_CONTROL_BASIC_TYPE))
+                      else if((type == XPL_TYPE_INPUT_CONTROL_BASIC) ||
+                            (type == XPL_TYPE_MACRO_CONTROL_BASIC) ||
+                            (type == XPL_TYPE_SCHEDULED_CONTROL_BASIC) ||
+                            (type == XPL_TYPE_PERIODIC_CONTROL_BASIC))
                         elm_object_text_set(radio, "Enable");
-                    else if(type == FLAG_CONTROL_BASIC_TYPE)
+                    else if(type == XPL_TYPE_FLAG_CONTROL_BASIC)
                         elm_object_text_set(radio, "Set");
-                    else if(type == INFRARED_CONTROL_BASIC_TYPE)
+                    else if(type == XPL_TYPE_INFRARED_CONTROL_BASIC)
                         elm_object_text_set(radio, "Send");
-                    else if(type == TIMER_CONTROL_BASIC_TYPE)
+                    else if(type == XPL_TYPE_TIMER_CONTROL_BASIC)
                         elm_object_text_set(radio, "Off");
 
                 elm_radio_state_value_set(radio, 0);
@@ -139,23 +139,23 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                 evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
                 elm_box_pack_end(bx, radio);
                 evas_object_show(radio);
-                evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, device);
+                evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, widget);
 
                 radio = elm_radio_add(win);
                 elm_radio_group_add(radio, group);
 
-                    if(type == MUTE_CONTROL_BASIC_TYPE)
+                    if(type == XPL_TYPE_MUTE_CONTROL_BASIC)
                         elm_object_text_set(radio, "No");
-                    else if((type == INPUT_CONTROL_BASIC_TYPE) ||
-                            (type == MACRO_CONTROL_BASIC_TYPE) ||
-                            (type == SCHEDULED_CONTROL_BASIC_TYPE) ||
-                            (type == PERIODIC_CONTROL_BASIC_TYPE))
+                    else if((type == XPL_TYPE_INPUT_CONTROL_BASIC) ||
+                            (type == XPL_TYPE_MACRO_CONTROL_BASIC) ||
+                            (type == XPL_TYPE_SCHEDULED_CONTROL_BASIC) ||
+                            (type == XPL_TYPE_PERIODIC_CONTROL_BASIC))
                         elm_object_text_set(radio, "Disable");
-                    else if(type == FLAG_CONTROL_BASIC_TYPE)
+                    else if(type == XPL_TYPE_FLAG_CONTROL_BASIC)
                         elm_object_text_set(radio, "Clear");
-                    else if(type == INFRARED_CONTROL_BASIC_TYPE)
+                    else if(type == XPL_TYPE_INFRARED_CONTROL_BASIC)
                         elm_object_text_set(radio, "Enable_rx");
-                    else if(type == TIMER_CONTROL_BASIC_TYPE)
+                    else if(type == XPL_TYPE_TIMER_CONTROL_BASIC)
                             elm_object_text_set(radio, "Start");
 
                 elm_radio_state_value_set(radio, 1);
@@ -163,30 +163,30 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                 evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
                 elm_box_pack_end(bx, radio);
                 evas_object_show(radio);
-                evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, device);
+                evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, widget);
 
-                    if((type == MACRO_CONTROL_BASIC_TYPE) ||
-                        (type == FLAG_CONTROL_BASIC_TYPE) ||
-                        (type == PERIODIC_CONTROL_BASIC_TYPE) ||
-                        (type == SCHEDULED_CONTROL_BASIC_TYPE) ||
-                        (type == TIMER_CONTROL_BASIC_TYPE) ||
-                        (type == OUTPUT_CONTROL_BASIC_TYPE))
+                    if((type == XPL_TYPE_MACRO_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_FLAG_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_PERIODIC_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_SCHEDULED_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_TIMER_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_OUTPUT_CONTROL_BASIC))
                     {
                         radio = elm_radio_add(win);
                         elm_radio_group_add(radio, group);
 
-                            if((type == MACRO_CONTROL_BASIC_TYPE))
+                            if((type == XPL_TYPE_MACRO_CONTROL_BASIC))
                                 elm_object_text_set(radio, "Do");
-                            else if(type == FLAG_CONTROL_BASIC_TYPE)
+                            else if(type == XPL_TYPE_FLAG_CONTROL_BASIC)
                                 elm_object_text_set(radio, "Neutral");
-                            else if(type == OUTPUT_CONTROL_BASIC_TYPE)
+                            else if(type == XPL_TYPE_OUTPUT_CONTROL_BASIC)
                                 elm_object_text_set(radio, "high");
-                            else if(type == INFRARED_CONTROL_BASIC_TYPE)
+                            else if(type == XPL_TYPE_INFRARED_CONTROL_BASIC)
                                 elm_object_text_set(radio, "Disable_rx");
-                            else if((type == PERIODIC_CONTROL_BASIC_TYPE) ||
-                                    (type == SCHEDULED_CONTROL_BASIC_TYPE))
+                            else if((type == XPL_TYPE_PERIODIC_CONTROL_BASIC) ||
+                                    (type == XPL_TYPE_SCHEDULED_CONTROL_BASIC))
                                 elm_object_text_set(radio, "Started");
-                            else if(type == TIMER_CONTROL_BASIC_TYPE)
+                            else if(type == XPL_TYPE_TIMER_CONTROL_BASIC)
                                  elm_object_text_set(radio, "Stop");
 
                         elm_radio_state_value_set(radio, 2);
@@ -194,21 +194,21 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                         evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
                         elm_box_pack_end(bx, radio);
                         evas_object_show(radio);
-                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, device);
+                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, widget);
                     }
 
-                    if((type == INFRARED_CONTROL_BASIC_TYPE) ||
-                        (type == TIMER_CONTROL_BASIC_TYPE) ||
-                        (type == OUTPUT_CONTROL_BASIC_TYPE))
+                    if((type == XPL_TYPE_INFRARED_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_TIMER_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_OUTPUT_CONTROL_BASIC))
                     {
                         radio = elm_radio_add(win);
                         elm_radio_group_add(radio, group);
 
-                            if(type == OUTPUT_CONTROL_BASIC_TYPE)
+                            if(type == XPL_TYPE_OUTPUT_CONTROL_BASIC)
                                 elm_object_text_set(radio, "low");
-                            else if(type == INFRARED_CONTROL_BASIC_TYPE)
+                            else if(type == XPL_TYPE_INFRARED_CONTROL_BASIC)
                                 elm_object_text_set(radio, "Enable_tx");
-                            else if(type == TIMER_CONTROL_BASIC_TYPE)
+                            else if(type == XPL_TYPE_TIMER_CONTROL_BASIC)
                                  elm_object_text_set(radio, "Halt");
 
                         elm_radio_state_value_set(radio, 3);
@@ -216,21 +216,21 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                         evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
                         elm_box_pack_end(bx, radio);
                         evas_object_show(radio);
-                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, device);
+                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, widget);
                     }
 
-                   if((type == INFRARED_CONTROL_BASIC_TYPE) ||
-                        (type == TIMER_CONTROL_BASIC_TYPE) ||
-                        (type == OUTPUT_CONTROL_BASIC_TYPE))
+                   if((type == XPL_TYPE_INFRARED_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_TIMER_CONTROL_BASIC) ||
+                        (type == XPL_TYPE_OUTPUT_CONTROL_BASIC))
                     {
                         radio = elm_radio_add(win);
                         elm_radio_group_add(radio, group);
 
-                            if(type == OUTPUT_CONTROL_BASIC_TYPE)
+                            if(type == XPL_TYPE_OUTPUT_CONTROL_BASIC)
                                 elm_object_text_set(radio, "pulse");
-                          else if(type == INFRARED_CONTROL_BASIC_TYPE)
+                          else if(type == XPL_TYPE_INFRARED_CONTROL_BASIC)
                                 elm_object_text_set(radio, "Disable_tx");
-                            else if(type == TIMER_CONTROL_BASIC_TYPE)
+                            else if(type == XPL_TYPE_TIMER_CONTROL_BASIC)
                                  elm_object_text_set(radio, "Resume");
 
                         elm_radio_state_value_set(radio, 4);
@@ -238,16 +238,16 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                         evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
                         elm_box_pack_end(bx, radio);
                         evas_object_show(radio);
-                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, device);
+                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, widget);
                     }
 
 
-                    if(type == OUTPUT_CONTROL_BASIC_TYPE)
+                    if(type == XPL_TYPE_OUTPUT_CONTROL_BASIC)
                     {
                         radio = elm_radio_add(win);
                         elm_radio_group_add(radio, group);
 
-                            if(type == OUTPUT_CONTROL_BASIC_TYPE)
+                            if(type == XPL_TYPE_OUTPUT_CONTROL_BASIC)
                                 elm_object_text_set(radio, "toggle");
 
                         elm_radio_state_value_set(radio, 5);
@@ -255,23 +255,23 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                         evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
                         elm_box_pack_end(bx, radio);
                         evas_object_show(radio);
-                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, device);
+                        evas_object_smart_callback_add(radio, "changed", _radio_control_basic_changed_cb, widget);
                     }
 
 
                 elm_object_content_set(frame, bx);
                 break;
 
-	            case BALANCE_CONTROL_BASIC_TYPE:
-        		case SLIDER_CONTROL_BASIC_TYPE:
-        		case VARIABLE_CONTROL_BASIC_TYPE:
+	            case XPL_TYPE_BALANCE_CONTROL_BASIC:
+        		case XPL_TYPE_SLIDER_CONTROL_BASIC:
+        		case XPL_TYPE_VARIABLE_CONTROL_BASIC:
                                 slider = elm_slider_add(win);
                                 elm_slider_unit_format_set(slider, "%1.0f");
 
-                                if(type == BALANCE_CONTROL_BASIC_TYPE)
+                                if(type == XPL_TYPE_BALANCE_CONTROL_BASIC)
                                     elm_slider_min_max_set(slider, -100, 100);
-                                else if((type == SLIDER_CONTROL_BASIC_TYPE) ||
-                                        (type == SLIDER_CONTROL_BASIC_TYPE))
+                                else if((type == XPL_TYPE_SLIDER_CONTROL_BASIC) ||
+                                        (type == XPL_TYPE_SLIDER_CONTROL_BASIC))
                                     elm_slider_min_max_set(slider, 0, 255);
 
                                 evas_object_show(slider);
@@ -279,11 +279,32 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                                 elm_object_content_set(frame, slider);
 	                            break;
 
-                case UNKNOWN_DEVICE_TYPE:
+                case XPL_TYPE_LAST:
+                case XPL_TYPE_UNKNOWN:
+                case XPL_TYPE_BATTERY_SENSOR_BASIC:
+                case XPL_TYPE_COUNT_SENSOR_BASIC:
+                case XPL_TYPE_CURRENT_SENSOR_BASIC:
+                case XPL_TYPE_DIRECTION_SENSOR_BASIC:
+                case XPL_TYPE_DISTANCE_SENSOR_BASIC:
+                case XPL_TYPE_ENERGY_SENSOR_BASIC:
+                case XPL_TYPE_FAN_SENSOR_BASIC:
+                case XPL_TYPE_GENERIC_SENSOR_BASIC:
+                case XPL_TYPE_HUMIDITY_SENSOR_BASIC:
+                case XPL_TYPE_INPUT_SENSOR_BASIC:
+                case XPL_TYPE_OUTPUT_SENSOR_BASIC:
+                case XPL_TYPE_POWER_SENSOR_BASIC:
+                case XPL_TYPE_PRESSURE_SENSOR_BASIC:
+                case XPL_TYPE_SETPOINT_SENSOR_BASIC:
+                case XPL_TYPE_SPEED_SENSOR_BASIC:
+                case XPL_TYPE_TEMP_SENSOR_BASIC:
+                case XPL_TYPE_UV_SENSOR_BASIC:
+                case XPL_TYPE_VOLTAGE_SENSOR_BASIC:
+                case XPL_TYPE_VOLUME_SENSOR_BASIC:
+                case XPL_TYPE_WEIGHT_SENSOR_BASIC:
                 break;
     }
 
-    evas_object_data_set(win, "device", device);
+    evas_object_data_set(win, "widget", widget);
 }/*_list_control_basic_item_selected_cb*/
 
 
@@ -291,13 +312,13 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
  *
  */
 static void
-_list_control_basic_item_add(Evas_Object *list, Device *device)
+_list_control_basic_item_add(Evas_Object *list, Widget *widget)
 {
 	const char *s;
 
-	asprintf(&s, "%s %s", device_name_get(device), device_type_to_str(device_type_get(device)));
+	asprintf(&s, "%s %s", widget_xpl_device_get(widget), xpl_type_to_str(widget_xpl_type_get(widget)));
 
-	elm_list_item_append(list, s, NULL, NULL, _list_control_basic_item_selected_cb, device);
+	elm_list_item_append(list, s, NULL, NULL, _list_control_basic_item_selected_cb, widget);
 	elm_list_go(list);
 }/*_list_control_basic_item_selected_cb*/
 
@@ -306,7 +327,7 @@ _list_control_basic_item_add(Evas_Object *list, Device *device)
  *
  */
 Evas_Object *
-cmnd_editor_add(App_Info *app)
+cmnd_editor_add(Widget *widget __UNUSED__)
 {
 	Evas_Object *grid, *hbox, *frame;
 	Evas_Object *list;
@@ -336,14 +357,14 @@ cmnd_editor_add(App_Info *app)
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
 
+/*
 	Eina_List *l;
-	Device *device;
-	EINA_LIST_FOREACH(app->devices, l, device)
+	EINA_LIST_FOREACH(app->location, l, widget)
 	{
-        if(device_class_get(device) == CONTROL_BASIC_CLASS)
-    	    _list_control_basic_item_add(list, device);
+        if(widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC)
+    	    _list_control_basic_item_add(list, widget);
     }
-
+*/
 	hbox = elm_box_add(win);
 	evas_object_name_set(hbox, "hbox");
 	elm_box_horizontal_set(hbox, EINA_TRUE);

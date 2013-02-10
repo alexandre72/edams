@@ -48,6 +48,8 @@ cosm_server_error_to_str(int error)
         case 500: return _("500 Internal Server Error");
         case 503: return _("503 No server error");
     }
+
+    return NULL;
 }/*cosm_server_error_to_str*/
 
 
@@ -56,12 +58,12 @@ cosm_server_error_to_str(int error)
  *Update datastream from cosm with device's data. Return EINA_TRUE if success.
  */
 Eina_Bool
-cosm_device_datastream_update(Location *location, Device *device)
+cosm_device_datastream_update(Location *location, Widget *widget)
 {
 	Ecore_Con_Url *cosm_url = NULL;
 	char *s;
 
-	//Don't add cosm device datastream if no feed!
+	/*Don't add cosm device datastream if no feed available*/
 	if(!location || (location_cosm_feedid_get(location) == 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
@@ -75,7 +77,7 @@ cosm_device_datastream_update(Location *location, Device *device)
      }
 	FREE(s);
 
-	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
+	//ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
 
 	cJSON *root, *datastreams, *fmt,*unit;
@@ -85,14 +87,14 @@ cosm_device_datastream_update(Location *location, Device *device)
 	cJSON_AddItemToObject(root, "datastreams", datastreams=cJSON_CreateArray());
 
 	fmt=cJSON_CreateObject();
-	cJSON_AddStringToObject(fmt,"current_value", device_current_get(device));
-	cJSON_AddStringToObject(fmt,"id", device_name_get(device));
+	cJSON_AddStringToObject(fmt,"current_value", widget_xpl_current_get(widget));
+	cJSON_AddStringToObject(fmt,"id", widget_xpl_device_get(widget));
 
-	if(strlen(device_unit_symbol_get(device)) > 0)
+	if(xpl_type_to_unit_symbol(widget_xpl_type_get(widget)))
 	{
 		cJSON_AddItemToObject(fmt, "unit", unit=cJSON_CreateObject());
-		cJSON_AddStringToObject(unit,"label", device_units_get(device));
-		cJSON_AddStringToObject(unit,"symbol", device_unit_symbol_get(device));
+		cJSON_AddStringToObject(unit,"label", xpl_type_to_units(widget_xpl_type_get(widget)));
+		cJSON_AddStringToObject(unit,"symbol", xpl_type_to_unit_symbol(widget_xpl_type_get(widget)));
 	}
 
 	cJSON_AddItemToArray(datastreams, fmt);
@@ -132,7 +134,7 @@ cosm_location_feed_add(Location *location)
 		debug(stderr, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
-	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
+	//ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());;
     ecore_con_url_data_set(cosm_url, (void*)location);
 
@@ -190,7 +192,7 @@ cosm_location_feed_delete(Location *location)
 
 	debug(stdout, _("Delete cosm feed for '%s'..."), location_name_get(location));
 
-   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)(int)feedid);
+   	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)feedid);
 	asprintf(&s, "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
 	cosm_url = ecore_con_url_custom_new(s, "DELETE");
    	if (!cosm_url)
@@ -198,7 +200,7 @@ cosm_location_feed_delete(Location *location)
 	    debug(stderr, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
-	ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
+	//ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
    	ecore_con_url_additional_header_add(cosm_url, "X-ApiKey", edams_settings_cosm_apikey_get());
 
 

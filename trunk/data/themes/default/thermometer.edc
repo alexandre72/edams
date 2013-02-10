@@ -191,7 +191,7 @@ group
                {
                   text: "sensor";
                   font: "Sans:style=Bold";
-                  size: 10;
+                  size: 8;
                   min: 1 1;
                   align: 0.5 1.0;
                }

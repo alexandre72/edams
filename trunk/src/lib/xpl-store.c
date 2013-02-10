@@ -1,7 +1,7 @@
 /* xPL-store.c - memory management for xPLLib */
 
-#include "xPL.h"
-#include "xPL_priv.h"
+#include "xpl.h"
+#include "xpl-priv.h"
 #include "utils.h"
 
 #include <stdlib.h>
@@ -28,10 +28,6 @@ static itemCachePtr NameValueListCache = NULL;
 static itemCachePtr MessageCache = NULL;
 static itemCachePtr ServiceCache = NULL;
 
-static int totalNameValueAlloc = 0;
-static int totalNameValueListAlloc = 0;
-static int totalMessageAlloc = 0;
-static int totalServiceAlloc = 0;
 
 /* String cache */
 static itemCachePtr StringCache[STRING_CACHE_MAX];

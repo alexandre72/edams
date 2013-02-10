@@ -25,7 +25,6 @@
 
 #include "shutdown.h"
 #include "settings.h"
-#include "device.h"
 #include "utils.h"
 
 static int efl_shutdown(App_Info * app);
@@ -51,9 +50,7 @@ int edams_shutdown(App_Info * app)
 
 	debug(stdout, _("Free allocated memory..."));
 	app->locations = locations_list_free(app->locations);
-	app->devices = devices_list_free(app->devices);
 	locations_shutdown();
-	devices_shutdown();
 	edams_settings_shutdown();
 	FREE(app);
 

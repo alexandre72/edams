@@ -22,10 +22,10 @@
 #ifndef __GNUPLOT_H
 #define __GNUPLOT_H
 
-#include "device.h"
+#include "widget.h"
 #include "edams.h"
 
-const char *gnuplot_device_png_write(Device *device);
-Eina_Bool gnuplot_device_data_write(Device *device);
+const char *gnuplot_device_png_write(Widget *widget);
+Eina_Bool gnuplot_device_data_write(Widget *widget);
 
 #endif /*__GNUPLOT_H*/

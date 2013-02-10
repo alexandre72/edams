@@ -28,10 +28,9 @@ global_view.c \
 init.c \
 locations_creator.c \
 mail_editor.c \
-devices_picker.c \
 preferences_dlg.c \
 shutdown.c \
-widgets_picker.c
+widget_wizzard.c
 
 edams_LDADD = \
     $(top_builddir)/src/lib/libedams.la \
