@@ -1,5 +1,5 @@
 /*
- * widgets_picker.h
+ * widget_wizzard.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2013 - Alexandre Dussart
@@ -19,12 +19,12 @@
  */
 
 
-#ifndef __WIDGETSPICKER_H
-#define __WIDGETSPICKER_H
+#ifndef __WIDGETWIZZARD_H
+#define __WIDGETWIZZARD_H
 
 #include <Evas.h>
 #include "utils.h"
 
-void widgets_picker_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+void widget_wizzard_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
-#endif
+#endif /*WIDGETWIZZARD*/
