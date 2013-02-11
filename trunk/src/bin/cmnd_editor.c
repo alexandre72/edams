@@ -288,7 +288,7 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
                                     elm_slider_min_max_set(slider, 0, 255);
 
                                 evas_object_show(slider);
-                                evas_object_smart_callback_add(slider, "changed", _slider_control_basic_changed_cb, NULL);
+                                evas_object_smart_callback_add(slider, "changed", _slider_control_basic_changed_cb, widget);
                                 elm_object_content_set(frame, slider);
 	                            break;
 
@@ -370,14 +370,20 @@ cmnd_editor_add(Widget *widget __UNUSED__)
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
 
-/*
-	Eina_List *l;
-	EINA_LIST_FOREACH(app->location, l, widget)
+    Eina_List *l = NULL;
+    Location *location_elem;
+	EINA_LIST_FOREACH(edams_locations_list_get(), l, location_elem)
 	{
-        if(widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC)
-    	    _list_control_basic_item_add(list, widget);
+	    Eina_List *l2, *widgets = NULL;
+	    Widget *widget_elem;
+	    widgets = location_widgets_list_get(location_elem);
+        EINA_LIST_FOREACH(widgets, l2, widget_elem)
+        {
+            if(widget_class_get(widget_elem) == WIDGET_CLASS_XPL_CONTROL_BASIC)
+                _list_control_basic_item_add(list, widget_elem);
+        }
     }
-*/
+
 	hbox = elm_box_add(win);
 	evas_object_name_set(hbox, "hbox");
 	elm_box_horizontal_set(hbox, EINA_TRUE);

@@ -158,6 +158,23 @@ action_free(Action *action)
     free(action);
 }/*action_free*/
 
+
+/*
+ *
+ */
+Action *
+action_clone(Action *src)
+{
+    Action *ret = NULL;
+
+    ret->ifvalue = eina_stringshare_add(src->ifvalue);
+    ret->ifcondition = src->ifcondition;
+    ret->type = src->type;
+    ret->data = eina_stringshare_add(src->data);
+
+    return ret;
+}/*action_clone*/
+
 /*
  *
  */
@@ -352,6 +369,44 @@ widget_free(Widget *widget)
 
     FREE(widget);
 }/*widget_free*/
+
+
+Widget *
+widget_clone(Widget *src)
+{
+    Widget *ret = NULL;
+
+    ret->id = src->id;
+    ret->name = eina_stringshare_add(src->name);
+    ret->group =  eina_stringshare_add(src->group);
+    ret->class =  src->class;
+
+    if((src->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (src->class == WIDGET_CLASS_XPL_SENSOR_BASIC ))
+    {
+        ret->xpl_device = eina_stringshare_add(src->xpl_device);
+        ret->xpl_type = src->xpl_type;
+        ret->xpl_current = eina_stringshare_add(src->xpl_current);
+        ret->xpl_data1 = eina_stringshare_add(src->xpl_data1);
+    }
+
+    ret->cosm = src->cosm;
+
+    /*Free actions Eina_List*/
+    if (src->actions)
+    {
+        Action *action_elem;
+        Eina_List *l;
+     	EINA_LIST_FOREACH(src->actions, l, action_elem)
+   	    {
+            widget_action_add(ret, action_clone(action_elem));
+        }
+    }
+
+    return ret;
+}
+
+
 
 /*
  *
@@ -655,6 +710,36 @@ widget_actions_list_set(Widget *widget, Eina_List *list)
     widget->actions = list;
 }/*widget_actions_list_set*/
 
+
+
+
+/*
+ *
+ */
+ /*
+Eina_List *
+widget_class_list_get(Widget_Class class)
+{
+    Eina_List *ret = NULL, *locations = NULL, *l;
+    Location *location_elem;
+
+    locations = locations_list_get();
+ 	EINA_LIST_FOREACH(locations, l, location_elem)
+   	{
+   	    Eina_List *l2;
+   	    Widget *widget_elem;
+
+     	EINA_LIST_FOREACH(location_elem->widgets, l2, widget_elem)
+        {
+            if(widget_class_get(widget_elem) == class)
+                ret = eina_list_append(ret, widget_clone(widget_elem));
+        }
+   	}
+    locations = locations_list_free(locations);
+
+    return ret;
+}*/
+/*widget_class_list_get*/
 
 
 /*******************************************************************************

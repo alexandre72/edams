@@ -310,13 +310,13 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
         elm_object_text_set(frame, _("xpl device"));
         evas_object_show(check);
     }
-    else if(class== WIDGET_CLASS_XPL_CONTROL_BASIC)
+    else if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
     {
         elm_object_text_set(frame, _("xpl device"));
         elm_object_disabled_set(list, EINA_TRUE);
         evas_object_hide(check);
     }
-    else if(class== WIDGET_CLASS_VIRTUAL)
+    else if(class == WIDGET_CLASS_VIRTUAL)
     {
         elm_object_text_set(frame, _("Widget name"));
         elm_object_disabled_set(list, EINA_TRUE);
