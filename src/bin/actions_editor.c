@@ -219,7 +219,7 @@ _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 	widget_action_add(widget, action);
     App_Info *app = evas_object_data_get(win, "app");
 	location_save(app->location);
-
+    FREE(ifvalue);
 	FREE(arg);
 	arg = evas_object_data_del(win, "data arg");
 
