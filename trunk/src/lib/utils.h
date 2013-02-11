@@ -36,6 +36,14 @@
 
 #define FREE(ptr)  do { _free( #ptr, __FILE__, __LINE__, (ptr)); (ptr) = NULL; } while (0)
 
+#ifndef RANDOM
+#define RANDOM(num) (int)(rand()/(double)RAND_MAX * (num))
+#endif
+
+#ifndef RANDOMIZE
+#define RANDOMIZE() srand((unsigned)time(NULL))
+#endif
+
 void _free(const char * var, const char * filename, unsigned long line, void *ptr);
 void set_debug_mode(Eina_Bool debug);
 void debug(FILE *stream, const char *theFormat, ...);

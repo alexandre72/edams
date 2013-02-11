@@ -478,7 +478,9 @@ void xPL_disableAllServices() {
 
 
 /* Process a message and see if it applies to this service */
-static void handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage) {
+static void
+handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage)
+{
   int filterIndex, groupIndex, responseDelay;
   Eina_Bool foundGroup = EINA_FALSE, foundFilter = EINA_FALSE;
 
@@ -494,11 +496,13 @@ static void handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage) 
   }
 
   /* Is this a broadcast message? */
-  if (theMessage->isBroadcastMessage) {
+  if (theMessage->isBroadcastMessage)
+  {
     /* See if this is a request for a heartbeat */
     if ((theMessage->messageType == xPL_MESSAGE_COMMAND)
-	&& !strcasecmp(theMessage->schemaClass, "hbeat")
-	&& !strcasecmp(theMessage->schemaType, "request")) {
+	&& (!strcasecmp(theMessage->schemaClass, "hbeat"))
+	&& (!strcasecmp(theMessage->schemaType, "request")))
+	{
 
       /* Compute a response delay (.5 to 2.5 seconds) */
       responseDelay = (int) (((double) random() / (double) RAND_MAX) * 2000.0) + 500;

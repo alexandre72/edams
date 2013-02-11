@@ -1,5 +1,5 @@
 /*
- * widgets_picker.c
+ * actions_editor.c
  * This file is part of EDAMS
  *
  * Copyright (C) 2013 - Alexandre Dussart
@@ -19,6 +19,7 @@
  */
 
 #include <Elementary.h>
+
 #include <stdio.h>
 
 #include "action.h"
@@ -28,7 +29,6 @@
 #include "path.h"
 #include "utils.h"
 #include "xpl.h"
-
 
 /*Global objects*/
 static Evas_Object *win = NULL;
@@ -141,9 +141,6 @@ _button_arg_edit_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event
 	evas_object_smart_callback_add(button, "clicked", _button_edit_arg_apply_clicked_cb, (void *)type);
 }/*_button_arg_edit_mail_clicked_cb*/
 
-
-
-
 /*
  *Callback called in any hoversel objects when clicked signal is emitted.
  */
@@ -167,8 +164,6 @@ _hoversel_selected_cb(void *data, Evas_Object *obj, void *event_info)
         return;
     }
 }/*_hoversel_selected_cb*/
-
-
 
 /*
  *Callback called in button "remove" object when clicked signal is emitted.
@@ -265,7 +260,7 @@ _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 
 
 /*
- *
+ *Add actions to list object
  */
 static void
 _list_action_add(Evas_Object *list, Widget *widget, Action *action)

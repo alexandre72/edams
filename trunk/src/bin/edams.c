@@ -47,7 +47,6 @@
 /*Global objects*/
 App_Info *app = NULL;
 
-
 /*Evas_Object Callbacks*/
 static void _list_locations_selected_cb(void *data, Evas_Object * obj, void *event_info);
 static void _button_quit_clicked_cb(void *data __UNUSED__,  Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
@@ -57,7 +56,7 @@ static void _button_add_widget_clicked_cb(void *data __UNUSED__, Evas_Object * o
 static void _button_edit_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
 /*List sorts callbacks*/
-static int list_widgets_sort_cb(const void *pa, const void *pb);
+static int _list_widgets_sort_cb(const void *pa, const void *pb);
 
 /*Timers callbacks*/
 static Eina_Bool _statusbar_timer_cb(void *data);
@@ -65,7 +64,6 @@ static Eina_Bool _statusbar_timer_cb(void *data);
 /*Others funcs*/
 static Evas_Object *_item_provider(void *images __UNUSED__, Evas_Object *en, const char *item);
 EAPI_MAIN int elm_main(int argc, char *argv[]);
-
 
 
 /*
@@ -76,7 +74,6 @@ edams_locations_list_get()
 {
     return app->locations;
 }/*edams_locations_list_get*/
-
 
 
 /*
@@ -102,7 +99,6 @@ _list_locations_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 		}
 	}
 }/*_list_locations_selected_cb*/
-
 
 /*
  *
@@ -137,8 +133,6 @@ _statusbar_timer_cb(void *data __UNUSED__)
 	return EINA_FALSE;
 }/*_statusbar_timer_cb*/
 
-
-
 /*
  *Set elm label and elm icon of bottom status bar.
  */
@@ -157,7 +151,6 @@ statusbar_text_set(const char *msg, const char *ic)
 
 	ecore_timer_add(6.0, _statusbar_timer_cb, NULL);
 }/*statusbar_text_set*/
-
 
 /*
  * Remove currently selected location.
@@ -184,8 +177,11 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 		{
 			char *s;
 			cosm_location_feed_delete(location);
+			global_view_location_del(location);
 			location_remove(location);
 			asprintf(&s, _("Location '%s' have been removed"), location_name_get(location));
+			statusbar_text_set(s, "dialog-information");
+			FREE(s);
 			elm_object_item_del(it);
 
 			app->locations = locations_list_location_remove(app->locations, location);
@@ -193,15 +189,9 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 
 			Evas_Object *naviframe = (Evas_Object *) elm_object_name_find(app->win, "naviframe", -1);
 			elm_naviframe_item_pop(naviframe);
-
-			statusbar_text_set(s, "dialog-information");
-			FREE(s);
 		}
 	}
 }/*_button_remove_location_clicked_cb*/
-
-
-
 
 /*
  *Callback called in remove widget button object when "clicked" signal is emitted
@@ -242,7 +232,7 @@ static void
 _button_add_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	app->widget = NULL;
-    widget_wizzard_add(app, NULL, NULL);
+    widget_editor_add(app, NULL, NULL);
 }/*_button_add_widget_clicked_cb*/
 
 
@@ -259,7 +249,7 @@ _button_edit_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *e
 
 	app->widget = elm_object_item_data_get(selected_item);
 
-    widget_wizzard_add(app, NULL, NULL);
+    widget_editor_add(app, NULL, NULL);
 }/*_button_remove_widget_clicked_cb*/
 
 
@@ -639,8 +629,11 @@ elm_main(int argc, char **argv)
      //debug_action("{\"PRINT\":\"pwet\"}");
 
     Ecore_Pipe *pipe = xpl_start();
+
     elm_run();
-    ecore_pipe_del(pipe);
+
+    if(pipe)
+        ecore_pipe_del(pipe);
     global_view_quit();
     edams_shutdown(app);
 

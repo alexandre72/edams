@@ -33,6 +33,18 @@ images
 	image: "cursors/dotbox.png" COMP;
 	image: "cursors/grab.png" COMP;
 	image: "cursors/grabbing.png" COMP;
+
+    image: "updated.png" COMP;
+    image: "cosm_001.png" COMP;
+    image: "cosm_002.png" COMP;
+    image: "cosm_003.png" COMP;
+    image: "cosm_004.png" COMP;
+    image: "cosm_005.png" COMP;
+    image: "cosm_006.png" COMP;
+    image: "cosm_007.png" COMP;
+    image: "cosm_008.png" COMP;
+    image: "cosm_009.png" COMP;
+
 }
 
 externals

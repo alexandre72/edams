@@ -15,7 +15,6 @@ lib_LTLIBRARIES = libedams.la
 libedams_la_SOURCES = \
 action.c \
 cJSON.c \
-emulation.c \
 gnuplot.c \
 myfileselector.c \
 path.c \

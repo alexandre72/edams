@@ -32,7 +32,7 @@
 #include "path.h"
 #include "utils.h"
 
-#define LOCATION_FILE_VERSION 0x8
+#define LOCATION_FILE_VERSION 0x9
 
 
 
@@ -58,6 +58,9 @@ struct _Widget
     Xpl_Type xpl_type;			    	/*Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'*/
     const char *xpl_current;			/*Current data of xpl device*/
     const char *xpl_data1;				/*Additional data. Used for control.basic cmnd structure message*/
+
+    /*Cosm specific fields*/
+    Eina_Bool cosm;
 
     /*Actions to perfoms when widget reach certains condition*/
 	Eina_List *actions;
@@ -262,6 +265,8 @@ _widget_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_type", xpl_type, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_current", xpl_current, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_data1", xpl_data1, EET_T_STRING);
+
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "cosm", cosm, EET_T_UINT);
 
     EET_DATA_DESCRIPTOR_ADD_LIST(_widget_descriptor, Widget, "actions", actions, _action_descriptor);
 }/*_widget_init*/
@@ -590,32 +595,24 @@ widget_xpl_data1_get(const Widget *widget)
 
 
 /*
- *Return Eina_List of widgets that have 'device' egal to 'xpl_device'
+ *
  */
-Eina_List *
-widgets_with_xpl_device_get(const Location *location, const char *xpl_device)
+inline void
+widget_cosm_set(Widget *widget, Eina_Bool cosm)
 {
-    Eina_List *widgets  = NULL, *l, *ret = NULL;
-    Widget *widget;
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    widget->cosm = cosm;
+}/*widget_cosm_set*/
 
-	widgets = location_widgets_list_get(location);
+/*
+ *
+ */
+inline Eina_Bool
+widget_cosm_get(const Widget *widget)
+{
+    return widget->cosm;
+}/*widget_cosm_get*/
 
-	EINA_LIST_FOREACH(widgets, l, widget)
-	{
-	    /*Ift xPL widget class, then check xpl device*/
-        if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
-           (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
-           {
-                /*Compare xpl device with arg 'xpl_device', if found return widget*/
-	    	    if(strcmp(xpl_device, widget_xpl_device_get(widget)) == 0)
-	    	    {
-                    ret = eina_list_append(ret, widget);
-	            }
-            }
-    }
-
-    return ret;
-}/*widgets_with_xpl_device_get*/
 
 /*
  *

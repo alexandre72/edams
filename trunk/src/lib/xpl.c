@@ -42,6 +42,7 @@ static pid_t child_pid;
 
 static Eina_List *xpl_devices;
 
+static Eina_Bool XPL_STARTED;
 
 /*
  *Callback called in xPL Message 'cstatic void
@@ -121,8 +122,6 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
         /*If found sync with widget in global map and cosm if needed*/
         if(strcmp(device, device_elem) == 0)
         {
-            //debug(stdout, _("xPL sensor.basic updated{device=%s type=%s current=%s}"), device, type, current);
-
             /*Parse all locations and sync with global and cosm*/
             Eina_List *locations = NULL, *l;
             Location *location;
@@ -145,7 +144,9 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 	        	        if(strcmp(device, widget_xpl_device_get(widget)) == 0)
 	        	        {
 	        	            widget_xpl_current_set(widget, current);
-                            cosm_device_datastream_update(location, widget);
+
+                            if(widget_cosm_get(widget))
+                                cosm_device_datastream_update(location, widget);
                             global_view_widget_data_update(location, widget);
                         }
                     }
@@ -242,8 +243,11 @@ xpl_emulate_messages(Ecore_Pipe *pipe)
 Ecore_Pipe *
 xpl_start()
 {
-    Ecore_Pipe *pipe;
+    Ecore_Pipe *pipe = NULL;
 
+
+    if(XPL_STARTED == EINA_FALSE)
+        return pipe;
 
     pipe = ecore_pipe_add(_xpl_handler, NULL);
 
@@ -263,7 +267,9 @@ xpl_start()
     {
         ecore_pipe_read_close(pipe);
         xpl_process_messages();
-        //xpl_emulate_messages(pipe);
+
+        if(edams_settings_softemu_get() == EINA_TRUE)
+            xpl_emulate_messages(pipe);
     }
     else
     {
@@ -288,7 +294,8 @@ xpl_init()
 	if (!xPL_initialize(xPL_getParsedConnectionType()))
 	{
 	    debug(stderr, _("Can't init xPL service"));
-	    return EINA_TRUE;
+        XPL_STARTED	= EINA_FALSE;
+	    return EINA_FALSE;
 	}
 
 	/*Create an xpl service*/
@@ -299,6 +306,7 @@ xpl_init()
 	xPL_setServiceEnabled(xpl_edams_service, EINA_TRUE);
 
     xpl_devices = NULL;
+    XPL_STARTED	= EINA_TRUE;
 
 	return EINA_TRUE;
 }/*xpl_init*/
@@ -311,16 +319,20 @@ Eina_Bool
 xpl_shutdown()
 {
 	debug(stdout, _("Shutdown xPL..."));
-    kill(child_pid, SIGKILL);
-	xPL_setServiceEnabled(xpl_edams_service, EINA_FALSE);
-	xPL_releaseService(xpl_edams_service);
-	xPL_shutdown();
 
-    if (xpl_devices)
-    {
-        char *it;
-        EINA_LIST_FREE(xpl_devices, it)
-             eina_stringshare_del(it);
+	if(XPL_STARTED == EINA_TRUE)
+	{
+        kill(child_pid, SIGKILL);
+	    xPL_setServiceEnabled(xpl_edams_service, EINA_FALSE);
+	    xPL_releaseService(xpl_edams_service);
+	    xPL_shutdown();
+
+        if (xpl_devices)
+        {
+            char *it;
+            EINA_LIST_FREE(xpl_devices, it)
+                 eina_stringshare_del(it);
+        }
     }
 
 	return 0;
@@ -532,7 +544,7 @@ xpl_type_to_unit_symbol(Xpl_Type type)
 	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return _("%");
 	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return NULL;
 	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return _("A");
-	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return _("°");
+	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return _("o");
 	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return _("m");
 	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return _("kWh");
 	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return _("RPM");
@@ -542,9 +554,9 @@ xpl_type_to_unit_symbol(Xpl_Type type)
 	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return NULL;
 	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return _("kW");
 	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return _("N/m2");
-	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return _("°C") ;
+	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return _("C") ;
 	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return _("MpH");
-	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return _("°C");
+	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return _("C");
 	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return NULL;
 	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return _("V");
 	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return _("m3");

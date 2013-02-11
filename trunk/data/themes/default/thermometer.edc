@@ -53,8 +53,6 @@ group
 
 	data
 	{
-		item: "title" "title.text";
-		item: "value" "value.text";
 		item: "drag" "EDJE_MESSAGE_FLOAT 1";
 		item: "description" "Thermometer display value in a classic red gauge, with numerical value display on the top. Mostly useful with temperature sensor device.";
 		item: "tags" "temperature,humidity,rpm";
@@ -64,7 +62,6 @@ group
 	{
 		image: "thermometer_base.png" COMP;
 		image: "thermometer_filled.png" COMP;
-		image: "updated.png" COMP;
 	}/*images*/
 
 
@@ -256,6 +253,47 @@ group
 			color: 0 0 0 0;
 			}
 		}/*over*/
+/*
+        part
+        {
+            name: "cosm";
+            type: IMAGE;
+            mouse_events: 0;
+            description
+            {
+		       rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+               align: 0.0 0.0;
+               min: 50 25;
+               max: 50 25;
+               state: "default" 0.0;
+               visible: 1;
+               aspect: 1.0 1.0;
+               image
+               {
+                  tween: "cosm_001.png";
+                  tween: "cosm_002.png";
+                  tween: "cosm_003.png";
+                  tween: "cosm_004.png";
+                  tween: "cosm_005.png";
+                  tween: "cosm_006.png";
+                  tween: "cosm_007.png";
+                  tween: "cosm_008.png";
+                  tween: "cosm_009.png";
+                  tween: "cosm_001.png";
+                  normal: "cosm_001.png";
+               }
+            }
+            description
+            {
+               //the part is visible
+               state: "cosm" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+        */
 	}/*parts*/
 
 	programs

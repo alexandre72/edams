@@ -34,8 +34,6 @@ group
 	{
 			item: "description" "Slider widget used to set a value with a draggable knob";
 			item: "tags" "slider";
-		    item: "value" "value.text";
-		    item: "title" "title.text";
 	}
 
 

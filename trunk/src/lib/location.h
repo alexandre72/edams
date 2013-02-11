@@ -83,7 +83,9 @@ void widget_xpl_current_set(Widget *widget, const char *xpl_current);
 const char *widget_xpl_data1_get(const Widget *widget);
 void widget_xpl_data1_set(Widget *widget, const char *xpl_data1);
 
-Eina_List *widgets_with_xpl_device_get(const Location *location, const char *xpl_device);
+
+void widget_cosm_set(Widget *widget, Eina_Bool cosm);
+Eina_Bool widget_cosm_get(const Widget *widget);
 
 void widget_action_add(Widget *widget, Action *action);
 void widget_action_del(Widget *widget,Action *action);

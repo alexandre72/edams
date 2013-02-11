@@ -1,5 +1,5 @@
 /*
- * widgets_picker.h
+ * actions_editor.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2013 - Alexandre Dussart
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
-
 
 #ifndef __ACTIONSEDITOR_H
 #define __ACTIONSEDITOR_H
