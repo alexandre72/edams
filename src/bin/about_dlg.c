@@ -20,15 +20,13 @@
 
 #include <Elementary.h>
 
-
 #include "edams.h"
 #include "path.h"
 #include "utils.h"
 
-
-//
-//
-//
+/*
+ *
+ */
 void about_dialog_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 					  void *event_info __UNUSED__)
 {
@@ -71,4 +69,4 @@ void about_dialog_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 
 	evas_object_resize(win, 500, 300);
 	evas_object_show(win);
-}
+}/*about_dialog_new*/

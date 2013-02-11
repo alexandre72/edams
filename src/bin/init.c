@@ -18,9 +18,10 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
+
 #include <Ecore_Con.h>
 #include <Ecore_File.h>
-#include <Elementary.h>
 
 #include "edams.h"
 #include "path.h"
@@ -28,10 +29,9 @@
 #include "utils.h"
 
 
+/*Others funcs*/
 static int paths_init(App_Info * app);
 static int efl_init(App_Info * app);
-
-
 
 static int
 efl_init(App_Info * app)

@@ -54,8 +54,6 @@ group
 
 	data
 	{
-		item: "title" "title.text";
-		item: "value" "value.text";
 		item: "drag" "EDJE_MESSAGE_FLOAT 1";
 		item: "description" "Jauge display value in a bar with green/reds gradient. Mostly useful with temperature sensor device or any device with bounds limits.";
 		item: "tags" "temperature,humidity,rpm";

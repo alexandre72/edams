@@ -1,3 +1,25 @@
+/*
+ * global_view.c
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
 #include <Ecore_Evas.h>
 #include <Ecore.h>
 #include <Edje.h>
@@ -43,8 +65,6 @@ struct _Evas_Smart_Group_Data
     {                                                        \
        debug(stderr, _("No widget data for object %p (%s)"), \
                o, evas_object_type_get(o));                  \
-       fflush(stderr);                                       \
-       abort();                                              \
        return;                                               \
     }
 
@@ -54,8 +74,6 @@ struct _Evas_Smart_Group_Data
     {                                                          \
        debug(stderr, _("No widget data for object %p (%s)"),   \
                o, evas_object_type_get(o));                    \
-       fflush(stderr);                                         \
-       abort();                                                \
        return val;                                             \
     }
 
@@ -63,25 +81,24 @@ EVAS_SMART_SUBCLASS_NEW(_evas_smart_group_type, _evas_smart_group,
 						Evas_Smart_Class, Evas_Smart_Class,
 						evas_object_smart_clipped_class_get, _smart_callbacks);
 
-
-
-static Eina_Bool SCREEN_LOCK = EINA_FALSE;
-
-/*Global Evas objects*/
+/*Global objects*/
 static Ecore_Evas *ee = NULL;
 static Evas *evas = NULL;
 static Eina_Rectangle geometry;
-static App_Info *app;
-Eet_File *ef;
+static App_Info *app = NULL;
+static Eet_File *ef = NULL;
 
-Evas_Object *cursor;
+static Evas_Object *cursor = NULL;
+static Eina_Bool SCREEN_LOCK = EINA_FALSE;
 
+/*Evas_Object Callbacks*/
 static void _ecore_evas_resize_cb(Ecore_Evas * ee);
 static void _on_mouse_in(void *data __UNUSED__, Evas * evas, Evas_Object * o __UNUSED__, void *einfo);
 static void _on_mouse_out(void *data __UNUSED__, Evas * evas, Evas_Object * o __UNUSED__, void *einfo);
 static void _on_mouse_move(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo);
 static void _on_keydown(void *data, Evas * evas, Evas_Object * o, void *einfo);
 
+/*Others funcs*/
 static void global_view_edition_lock_set(Eina_Bool set);
 static void global_view_cursor_set(const char *cur);
 
@@ -391,15 +408,15 @@ _evas_smart_group_smart_calculate(Evas_Object * o)
 	EVAS_SMART_GROUP_DATA_GET_OR_RETURN(o, priv);
 	evas_object_geometry_get(o, &x, &y, &w, &h);
 
-	// Set border size/position.
+	/*Set border size/position*/
 	evas_object_move(priv->border, x, y);
 	evas_object_resize(priv->border, w, h);
 
-	// Set location title size/position.
+	/*Set location title size/position*/
 	evas_object_size_hint_min_set(priv->text, 100, 20);
 	evas_object_move(priv->text, x, y);
 
-	// Set child's sizes/positions.
+	/*Set child's sizes/positions*/
 	int n = 0;
 	for (n = 0; n != MAX_CHILD; n++)
 	{
@@ -429,25 +446,22 @@ _evas_smart_group_smart_calculate(Evas_Object * o)
 	}
 }/*_evas_smart_group_smart_calculate*/
 
-
 /*
  * Setup our smart interface
  */
 static void
 _evas_smart_group_smart_set_user(Evas_Smart_Class * sc)
 {
-	// Specializing these two
+	/*Specializing these two*/
 	sc->add = _evas_smart_group_smart_add;
 	sc->del = _evas_smart_group_smart_del;
 	sc->show = _evas_smart_group_smart_show;
 	sc->hide = _evas_smart_group_smart_hide;
 
-	// Clipped smart object has no hook on resizes or calculations
+	/*Clipped smart object has no hook on resizes or calculations*/
 	sc->resize = _evas_smart_group_smart_resize;
 	sc->calculate = _evas_smart_group_smart_calculate;
 }/*_evas_smart_group_smart_set_user*/
-
-
 
 
 /*
@@ -467,9 +481,6 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 	if(strstr(emission, "load")) return;
 	if(strstr(emission, "updated")) return;
 	if(strstr(emission, "drag,stop")) return;
-
-	//fprintf(stdout, "emission=%s\n", emission);
-	//fprintf(stdout, "source=%s\n", source);
 
     if((widget_class_get(widget) == WIDGET_CLASS_VIRTUAL))
     {
@@ -700,7 +711,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 
 	if(evas_object_smart_parent_get(o))
 	{
-			// Key 's' show data device in graphics generated from gnuplot(PNG format).
+			/*Key 's' show data device in graphics generated from gnuplot(PNG format)*/
 			if (strcmp(ev->keyname, "s") == 0)
 			{
 				Widget *widget = evas_object_data_get(o, "widget");
@@ -734,8 +745,8 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 		Eina_Rectangle o_geometry;
 		evas_object_geometry_get(o, &o_geometry.x, &o_geometry.y, &o_geometry.w, &o_geometry.h);
 
-		// Keys 'Right' or 'Left' keys are used to increase/decrease width.
-		// Keys 'Up' or 'Down' keys are used to increase/decrease height.
+		/*Keys 'Right' or 'Left' keys are used to increase/decrease width*/
+		/*Keys 'Up' or 'Down' keys are used to increase/decrease height*/
 		if (strcmp(ev->keyname, "Right") == 0 || strcmp(ev->keyname, "Left") == 0
 			|| strcmp(ev->keyname, "Up") == 0 || strcmp(ev->keyname, "Down") == 0)
 		{
@@ -764,7 +775,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			return;
 		}
 
-		// Key 'd' increase smart object's width and height size
+		/*Key 'i' increase smart object's width and height size*/
 		if (strcmp(ev->keyname, "i") == 0)
 		{
 			o_geometry.w *= 1.1;
@@ -774,7 +785,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			return;
 		}
 
-		// Key 'd' decrease smart object's width and height size
+		/*Key 'd' decrease smart object's width and height size*/
 		if (strcmp(ev->keyname, "d") == 0)
 		{
 			o_geometry.w *= 0.9;
@@ -783,14 +794,6 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 			evas_object_resize(o, o_geometry.w, o_geometry.h);
 			return;
 		}
-/*
-   		if (strcmp(ev->keyname, "w") == 0)
-		{
-			evas_smart_group_remove(o);
-			evas_object_del(o);
-			return;
-		}
-*/
 	}
 }/*_on_keydown*/
 
@@ -804,7 +807,7 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 {
 	app = (App_Info *) data;
 
-	// Set window geometry.
+	/*Set window geometry*/
 	geometry.w = 0;
 	geometry.h = 0;
 	geometry.x = 0;
@@ -816,7 +819,7 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 		geometry.h = DEFAULT_HEIGHT;
 	}
 
-	// Alloc new evas screen.
+	/*Alloc new Ecore_Evas*/
 	ee = ecore_evas_new(NULL, 0, 0, geometry.w, geometry.h, NULL);
 	if (!ee)
 	{
@@ -929,9 +932,7 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
         }
 	}
 
-
-    /*Install cursor*/
-	//Set edje module data.
+    /*Install normal cursor*/
     global_view_cursor_set("cursors/left_ptr");
 
 	/*
@@ -981,6 +982,28 @@ global_view_quit()
 }/*global_view_quit*/
 
 
+/*
+ *
+ */
+void
+global_view_location_del(Location *location)
+{
+	Evas_Object *smt;
+    const char *s;
+	if (!evas || !location) return;
+
+	asprintf(&s,  "%s_smart", location_name_get(location));
+   	smt = evas_object_name_find(evas, s);
+	FREE(s);
+
+	if(smt)
+	{
+    	evas_smart_group_remove(smt);
+    	evas_object_del(smt);
+    }
+}/*global_view_location_del*/
+
+
 
 /*
  *
@@ -991,7 +1014,7 @@ global_view_location_add(Location *location)
 	/*TODO:Ok it's great, but it should be better to have global_view_location_del too*/
 	/*to avoid segfault when a location has been removed*/
 	/*I know location associated to smart group no? maybe deleting group should works?*/
-	if (!evas || !ee || !ef || !location) return;
+	if (!evas || !ef || !location) return;
 
 	char s[64];
 	char key[64];
@@ -1036,7 +1059,7 @@ global_view_location_add(Location *location)
 void
 global_view_widget_data_update(Location *location, Widget *widget)
 {
-	if (!evas || !ee || !location || !widget) return;
+	if (!evas || !location || !widget) return;
 
 	/*Update Edje widget objects.*/
     widget_gnuplot_redraw(widget);

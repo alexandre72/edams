@@ -1,12 +1,30 @@
+/*
+ * cmnd_editor.c
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <Elementary.h>
+
 #include "cJSON.h"
 #include "edams.h"
 
-
-
-/*Global window elm object*/
+/*Global objects*/
 static Evas_Object *win = NULL;
-
 
 /*
  *
@@ -32,7 +50,6 @@ cmnd_editor_values_get()
 
 	return s;
 }/*cmnd_editor_values_get*/
-
 
 
 /*
@@ -64,9 +81,6 @@ _slider_control_basic_changed_cb(void *data, Evas_Object *obj, void *event_info 
 
 }/*_slider_control_basic_changed_cb*/
 
-
-
-
 /*
  *
  */
@@ -79,7 +93,6 @@ _radio_control_basic_changed_cb(void *data, Evas_Object *obj, void *event_info _
 
     widget_xpl_current_set(widget, elm_object_text_get(obj));
 }/*_radio_control_basic_changed_cb*/
-
 
 
 /*

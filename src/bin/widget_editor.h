@@ -1,5 +1,5 @@
 /*
- * widget_wizzard.h
+ * widget_editor.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2013 - Alexandre Dussart
@@ -19,12 +19,9 @@
  */
 
 
-#ifndef __WIDGETWIZZARD_H
-#define __WIDGETWIZZARD_H
+#ifndef __WIDGETEDITOR_H
+#define __WIDGETEDITOR_H
 
-#include <Evas.h>
-#include "utils.h"
-
-void widget_wizzard_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+void widget_editor_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 
 #endif /*WIDGETWIZZARD*/

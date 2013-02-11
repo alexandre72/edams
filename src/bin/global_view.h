@@ -1,5 +1,5 @@
 /*
- * map.h
+ * global_view.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -19,17 +19,14 @@
  */
 
 
-#ifndef __MAP_H
-#define __MAP_H
-
-#include <Evas.h>
-#include "edams.h"
+#ifndef __GLOBALVIEW_H
+#define __GLOBALVIEW_H
 
 void global_view_new(void *data, Evas_Object *obj, void *event_info);
 void global_view_quit();
 void global_view_widget_data_update(Location *location, Widget *widget);
 void global_view_location_add(Location *location);
-
+void global_view_location_del(Location *location);
 
 static const int TEMP_MIN = -30;
 static const int TEMP_MAX = 50;
