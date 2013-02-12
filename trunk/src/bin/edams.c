@@ -242,13 +242,6 @@ _button_add_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED_
 static void
 _button_edit_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *list = data;
-	Elm_Object_Item *selected_item = elm_list_selected_item_get(list);
-
-	if(!selected_item) return;
-
-	app->widget = elm_object_item_data_get(selected_item);
-
     widget_editor_add(app, NULL, NULL);
 }/*_button_remove_widget_clicked_cb*/
 
@@ -302,6 +295,17 @@ update_naviframe_content(Location *location)
 	Evas_Object *naviframe = elm_object_name_find(app->win, "naviframe", -1);
 	elm_object_item_part_content_set(elm_naviframe_top_item_get(naviframe), NULL, _location_naviframe_content_set(location));
 }/*update_naviframe_content*/
+
+
+/*
+ *
+ */
+static void
+_list_item_widget_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	app->widget = data;
+
+}/*_list_item_widget_selected_cb*/
 
 /*
  *
@@ -376,7 +380,7 @@ _location_naviframe_content_set(Location * location)
 		elm_image_aspect_fixed_set(icon, EINA_TRUE);
 		elm_image_resizable_set(icon, 1, 0);
 
-		elm_list_item_sorted_insert(list,  strdup(widget_name_get(widget)), icon, NULL, NULL, widget, _list_widgets_sort_cb);
+		elm_list_item_sorted_insert(list,  strdup(widget_name_get(widget)), icon, NULL, _list_item_widget_selected_cb, widget, _list_widgets_sort_cb);
 	}
 	elm_list_go(list);
 

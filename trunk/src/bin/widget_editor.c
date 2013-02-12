@@ -40,6 +40,7 @@ static void _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED_
 static void _list_item_xpl_device_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _entry_name_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _check_cosm_changed_cb(void *data, Evas_Object *obj, void *event_info);
+static void _check_gnuplot_changed_cb(void *data, Evas_Object *obj, void *event_info);
 
 static void _layout_samples_test(Evas_Object *layout, Widget *widget);
 static void _fill_widget_groups(App_Info *app);
@@ -396,7 +397,7 @@ _list_item_xpl_device_selected_cb(void *data, Evas_Object * obj __UNUSED__, void
 
     FREE(device);
     FREE(type);
-}
+}/*_list_item_xpl_device_selected_cb*/
 
 
 /*
@@ -406,7 +407,17 @@ static void
 _check_cosm_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
     widget_cosm_set(widget, elm_check_state_get(obj));
-}
+}/*_check_cosm_changed_cb*/
+
+
+/*
+ *
+ */
+static void
+_check_gnuplot_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+    widget_gnuplot_set(widget, elm_check_state_get(obj));
+}/*_check_gnuplot_changed_cb*/
 
 
 /*
@@ -525,9 +536,7 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	evas_object_smart_callback_add(entry, "changed", _entry_name_changed_cb, NULL);
 	evas_object_show(entry);
 
-    Eina_Bool cosm;
 	check = elm_check_add(win);
-    elm_check_state_pointer_set(check, &cosm);
 	evas_object_name_set(check, "cosm check");
 	icon = elm_icon_add(win);
 	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
@@ -535,7 +544,17 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	elm_object_part_content_set(check, "icon", icon);
 	elm_grid_pack(grid, check, 69, 32, 15, 5);
 	elm_check_state_set(check, edams_settings_softemu_get());
-	evas_object_smart_callback_add(check, "changed", _check_cosm_changed_cb, &cosm);
+	evas_object_smart_callback_add(check, "changed", _check_cosm_changed_cb, NULL);
+
+	check = elm_check_add(win);
+	evas_object_name_set(check, "gnuplot check");
+	icon = elm_icon_add(win);
+	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(icon, "gnuplot");
+	elm_object_part_content_set(check, "icon", icon);
+	elm_grid_pack(grid, check, 69, 37, 15, 5);
+	elm_check_state_set(check, edams_settings_softemu_get());
+	evas_object_smart_callback_add(check, "changed", _check_gnuplot_changed_cb, NULL);
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Preview"));
@@ -602,12 +621,21 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
     {
         elm_object_text_set(entry, widget_name_get(widget));
         _fill_widget_groups(app);
-	    evas_object_show(check);
+
+        check = elm_object_name_find(win, "cosm check", -1);
         elm_check_state_set(check, widget_cosm_get(widget));
+	    evas_object_show(check);
+
+        check = elm_object_name_find(win, "gnuplot check", -1);
+        elm_check_state_set(check, widget_gnuplot_get(widget));
+	    evas_object_show(check);
     }
     else
     {
-	    evas_object_hide(check);
+        check = elm_object_name_find(win, "cosm check", -1);
+	    evas_object_show(check);
+        check = elm_object_name_find(win, "gnuplot check", -1);
+	    evas_object_show(check);
         elm_object_disabled_set(list, EINA_TRUE);
     }
 

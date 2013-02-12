@@ -215,19 +215,21 @@ typedef enum _Xpl_Type
 
 
 /*xPL misc stuff*/
-Eina_Bool xpl_control_basic_cmnd_send(Widget *widget);
 Eina_Bool xpl_init();
 Eina_Bool xpl_shutdown();
 Ecore_Pipe *xpl_start();
-Eina_Bool xpl_stop();
 
+Eina_Bool xpl_control_basic_cmnd_send(Widget *widget);
 void xpl_services_install(Ecore_Pipe *pipe);
 void xpl_process_messages();
+
 const char *xpl_control_basic_cmnd_to_elm_str(Widget *widget);
 const char *xpl_type_to_str(Xpl_Type type);
 Xpl_Type xpl_str_to_type(const char *xpl_type);
 const char *xpl_type_to_units(Xpl_Type type);
 const char *xpl_type_to_unit_symbol(Xpl_Type type);
+int xpl_type_current_min_get(Xpl_Type type);
+int xpl_type_current_max_get(Xpl_Type type);
 
 Eina_List *xpl_sensor_basic_list_get();
 
