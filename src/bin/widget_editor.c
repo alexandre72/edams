@@ -117,16 +117,11 @@ _layout_samples_test(Evas_Object *layout, Widget *widget)
     else
     	elm_object_signal_emit(layout, "true", "over");
 
-    if ((t = elm_layout_data_get(layout, "title")))
-    {
-    	elm_object_part_text_set(layout, "title.text", widget_xpl_device_get(sample));
-    }
+    elm_object_part_text_set(layout, "title.text", widget_xpl_device_get(sample));
 
-	if ((t = elm_layout_data_get(layout, "value")))
-    {
-	   	snprintf(s, sizeof(s), "%s%s", widget_xpl_current_get(sample), xpl_type_to_unit_symbol(widget_xpl_type_get(sample)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(sample)) : "");
-	    elm_object_part_text_set(layout, "value.text", s);
-	}
+	snprintf(s, sizeof(s), "%s%s", widget_xpl_current_get(sample), xpl_type_to_unit_symbol(widget_xpl_type_get(sample)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(sample)) : "");
+    elm_object_part_text_set(layout, "value.text", s);
+
     elm_object_signal_emit(layout, "updated", "over");
 
    	Evas_Object *edje;
@@ -294,7 +289,7 @@ _entry_name_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 static void
 _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    Widget_Class class = (Widget_Class) data;
+    Widget_Class class = (Widget_Class)data;
     Evas_Object *list = elm_object_name_find(win, "sensors.basic list", -1);
     Evas_Object *frame = elm_object_name_find(win, "name frame", -1);
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
@@ -468,12 +463,12 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	evas_object_show(list);
 	elm_object_content_set(frame, list);
 
-    int x;
+    unsigned int x;
     for(x = 0; x != WIDGET_CLASS_LAST ; x++)
 	{
 	    if(x != WIDGET_CLASS_UNKNOWN)
 	    {
-    		Elm_Object_Item *it =  elm_list_item_append(list, widget_class_to_str(x), NULL, NULL, _list_item_class_selected_cb, (void*)x);
+    		Elm_Object_Item *it =  elm_list_item_append(list, widget_class_to_str(x), NULL, NULL, _list_item_class_selected_cb, x);
 
             if((app->widget)  && (x == widget_class_get(widget)))
                 elm_list_item_selected_set(it, EINA_TRUE);
