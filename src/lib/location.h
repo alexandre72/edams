@@ -87,6 +87,9 @@ void widget_xpl_data1_set(Widget *widget, const char *xpl_data1);
 void widget_cosm_set(Widget *widget, Eina_Bool cosm);
 Eina_Bool widget_cosm_get(const Widget *widget);
 
+void widget_gnuplot_set(Widget *widget, Eina_Bool gnuplot);
+Eina_Bool widget_gnuplot_get(const Widget *widget);
+
 void widget_action_add(Widget *widget, Action *action);
 void widget_action_del(Widget *widget,Action *action);
 Action *widget_action_get(const Widget *widget, unsigned int nth);

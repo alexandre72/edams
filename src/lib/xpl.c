@@ -147,6 +147,10 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
                             if(widget_cosm_get(widget))
                                 cosm_device_datastream_update(location, widget);
+
+                            if(widget_gnuplot_get(widget))
+                                gnuplot_device_data_write(widget);
+
                             global_view_widget_data_update(location, widget);
                         }
                     }
@@ -500,8 +504,69 @@ xpl_str_to_type(const char *xpl_type)
 	else if(strcmp(xpl_type, "slider") == 0)			return XPL_TYPE_SLIDER_CONTROL_BASIC;
 	else if(strcmp(xpl_type, "timer") == 0)			    return XPL_TYPE_TIMER_CONTROL_BASIC;
 	else										        return XPL_TYPE_UNKNOWN;
-}/*device_str_to_type*/
+}/*xpl_str_to_type*/
 
+
+/*
+ *
+ */
+int
+xpl_type_current_max_get(Xpl_Type type)
+{
+	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return 100;
+	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return 10000;
+	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return 100;
+	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return 360;
+	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return 100;
+	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return 1000;
+	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return 10000;
+	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return 10000;
+	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return 100;
+	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return 2;       /*3 states, LOW/HIGH/PULSE*/
+	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return 1;
+	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return 1000;
+	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return 1000;
+	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return 300;
+	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return 1000;
+	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return 100;
+	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return 15;
+	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return 1000;
+	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return 1000;
+	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return 1000;
+	else 											    return 0;
+
+}/*xpl_type_max_get*/
+
+
+/*
+ *
+ */
+int
+xpl_type_current_min_get(Xpl_Type type)
+{
+	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return -100;
+	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return 0;
+	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return 0;
+	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return -10000;
+	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return 0;       /*3 states, LOW/HIGH/PULSE*/
+	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return -100;
+	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return 1;
+	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return -1000;
+	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return 0;
+	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return 0;
+	else 											    return 0;
+
+}/*xpl_type_min_get
 
 
 /*
@@ -517,8 +582,8 @@ xpl_type_to_units(Xpl_Type type)
 	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return _("Meters");
 	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return _("Kilowatt hours");
 	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return _("Rotation/min");
-	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return _("Humidity ratio");
-	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return _("Generic");
+	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return _("Generic");
+	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return _("Humidity ratio");
 	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return _("Input");
 	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return _("Output");
 	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return _("Kilowatt");
@@ -533,11 +598,9 @@ xpl_type_to_units(Xpl_Type type)
 	else 											    return NULL;
 }/*xpl_type_to_units*/
 
-
 /*
  *
  */
-
 const char *
 xpl_type_to_unit_symbol(Xpl_Type type)
 {

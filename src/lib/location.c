@@ -60,7 +60,10 @@ struct _Widget
     const char *xpl_data1;				/*Additional data. Used for control.basic cmnd structure message*/
 
     /*Cosm specific fields*/
-    Eina_Bool cosm;
+    Eina_Bool cosm;                     /*Enable data sending to cosm*/
+
+    /*Gnuplot*/
+    Eina_Bool gnuplot;                  /*Enable gnuplot data generation*/
 
     /*Actions to perfoms when widget reach certains condition*/
 	Eina_List *actions;
@@ -284,6 +287,8 @@ _widget_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_data1", xpl_data1, EET_T_STRING);
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "cosm", cosm, EET_T_UINT);
+
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "gnuplot", gnuplot, EET_T_UINT);
 
     EET_DATA_DESCRIPTOR_ADD_LIST(_widget_descriptor, Widget, "actions", actions, _action_descriptor);
 }/*_widget_init*/
@@ -667,6 +672,27 @@ widget_cosm_get(const Widget *widget)
 {
     return widget->cosm;
 }/*widget_cosm_get*/
+
+
+/*
+ *
+ */
+inline void
+widget_gnuplot_set(Widget *widget, Eina_Bool gnuplot)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    widget->gnuplot = gnuplot;
+}/*widget_cosm_set*/
+
+/*
+ *
+ */
+inline Eina_Bool
+widget_gnuplot_get(const Widget *widget)
+{
+    return widget->gnuplot;
+}/*widget_cosm_get*/
+
 
 
 /*
