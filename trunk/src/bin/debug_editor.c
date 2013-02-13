@@ -12,17 +12,9 @@ static Evas_Object *win = NULL;
 const char*
 debug_editor_values_get()
 {
-	cJSON *root;
     const char *s;
-
-	root = cJSON_CreateObject();
-
 	Evas_Object *entry = elm_object_name_find(win, "debug entry", -1);
-
-	cJSON_AddItemToObject(root, "PRINT", cJSON_CreateString(elm_object_text_get(entry)));
-    s = cJSON_PrintUnformatted(root);
-
-	cJSON_Delete(root);
+	s = action_debug_data_format(elm_object_text_get(entry));
 
 	return s;
 }/*debug_editor_hbox_get*/

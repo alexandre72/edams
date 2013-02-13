@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #include "cJSON.h"
+#include "cosm.h"
 #include "edams.h"
 #include "xpl.h"
 
@@ -80,7 +81,6 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 static void
 _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
-    Widget *widget;
     const char *device;
     const char *type;
     const char  *current;

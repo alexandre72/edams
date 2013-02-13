@@ -44,9 +44,8 @@ cmnd_editor_values_get()
 	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(widget_xpl_current_get(widget)));
 	//cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(widget_xpl_data1_get(widget)));
 
-    s = cJSON_PrintUnformatted(root);
+    //s = action_exec_data_format(elm_object_text_get(entry), );
 
-	cJSON_Delete(root);
 
 	return s;
 }/*cmnd_editor_values_get*/

@@ -22,15 +22,39 @@
 
 #include "action.h"
 #include "cJSON.h"
+#include "location.h"
 #include "utils.h"
 #include "xpl.h"
+
+
 
 
 /*
  *
  */
-Eina_Bool
-exec_action(const char *data)
+const char *
+action_exec_data_format(const char *exec, const char *terminal)
+{
+    cJSON *root;
+    const char *s;
+
+	root = cJSON_CreateObject();
+
+	cJSON_AddItemToObject(root, "EXEC", cJSON_CreateString(exec));
+    cJSON_AddItemToObject(root, "TERMINAL", cJSON_CreateString(terminal));
+    s = cJSON_PrintUnformatted(root);
+
+	cJSON_Delete(root);
+
+    return s;
+}/*exec_action_format*/
+
+
+/*
+ *
+ */
+static Eina_Bool
+exec_action_parse(const char *data)
 {
    	pid_t child_pid;
    	Ecore_Exe *child_handle;
@@ -47,6 +71,8 @@ exec_action(const char *data)
 
     strdelstr(exec, "\"");
     strdelstr(terminal, "\"");
+
+    printf("********Exec:%s\n", exec);
 
 	child_handle = ecore_exe_pipe_run(exec,
                                     ECORE_EXE_PIPE_WRITE |
@@ -76,6 +102,7 @@ exec_action(const char *data)
 	{
 		const char *s;
 		asprintf(&s, _("Exec '%s' with PID '%d'"), exec, child_pid);
+        debug(stdout, s);
 		statusbar_text_set(s, "dialog-informations");
         FREE(s);
 		cJSON_Delete(root);
@@ -86,11 +113,35 @@ exec_action(const char *data)
 }/*exec_action*/
 
 
+
 /*
  *
  */
-Eina_Bool
-mail_action(const char *data)
+const char *
+action_mail_data_format(const char *from, const char *to, const char *subject, const char *body)
+{
+    cJSON *root;
+    const char *s;
+
+	root = cJSON_CreateObject();
+
+	cJSON_AddItemToObject(root, "FROM", cJSON_CreateString(from));
+    cJSON_AddItemToObject(root, "TO", cJSON_CreateString(to));
+ 	cJSON_AddItemToObject(root, "SUBJECT", cJSON_CreateString(subject));
+    cJSON_AddItemToObject(root, "BODY", cJSON_CreateString(body));
+    s = cJSON_PrintUnformatted(root);
+
+	cJSON_Delete(root);
+
+    return s;
+}/*mail_action_format*/
+
+
+/*
+ *
+ */
+static Eina_Bool
+mail_action_parse(const char *data)
 {
 	cJSON *root = cJSON_Parse(data);
 
@@ -138,8 +189,27 @@ mail_action(const char *data)
 /*
  *
  */
-Eina_Bool
-debug_action(const char *data)
+const char *
+action_debug_data_format(const char *print)
+{
+    cJSON *root;
+    const char *s;
+
+	root = cJSON_CreateObject();
+
+	cJSON_AddItemToObject(root, "PRINT", cJSON_CreateString(print));
+    s = cJSON_PrintUnformatted(root);
+
+	cJSON_Delete(root);
+
+    return s;
+}/*debug_action_format*/
+
+/*
+ *
+ */
+static Eina_Bool
+debug_action_parse(const char *data)
 {
 	cJSON *root = cJSON_Parse(data);
 
@@ -166,39 +236,99 @@ debug_action(const char *data)
 /*
  *
  */
-Eina_Bool
-cmnd_action(const char *data)
+const char *
+action_cmnd_data_format(const char *device, const char *type, const char *current, const char *data1)
 {
-    Widget *widget;
-	cJSON *root;
-    cJSON *device, *current, *data1;
+    cJSON *root;
+    const char *s;
+
+	root = cJSON_CreateObject();
+
+	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(device));
+    cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(type));
+ 	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(current));
+    cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(data1));
+    s = cJSON_PrintUnformatted(root);
+
+	cJSON_Delete(root);
+
+    return s;
+}/*exec_action_format*/
+
+
 /*
+ *
+ */
+static Eina_Bool
+cmnd_action_parse(const char *data)
+{
+    Widget *widget = NULL;
+	cJSON *root;
+    cJSON *jdevice, *jtype, *jcurrent, *jdata1;
+
 	root = cJSON_Parse(data);
 
 	if(!root) return EINA_FALSE;
+/*
+	jdevice = cJSON_GetObjectItem(root, "DEVICE");
+	jtype = cJSON_GetObjectItem(root, "TYPE");
+	jcurrent = cJSON_GetObjectItem(root, "CURRENT");
+	jdata1 = cJSON_GetObjectItem(root, "DATA1");
 
-	device = cJSON_GetObjectItem(root, "DEVICE");
-	current = cJSON_GetObjectItem(root, "CURRENT");
+    const char *device =cJSON_PrintUnformatted(jdevice);
+    const char *type =cJSON_PrintUnformatted(jtype);
+    const char *current =cJSON_PrintUnformatted(jcurrent);
+    const char *data1 =cJSON_PrintUnformatted(jdata1);
 
-	if(device && current)
-	{
-        device = device_load(device_filename);
+    strdelstr(device, "\"");
+    strdelstr(type, "\"");
+    strdelstr(current, "\"");
+    strdelstr(data, "\"");
 
-        if(!device) return EINA_FALSE;
-
-        widget_xpl_current_set(device, current);
-	}
-	else
-	    return EINA_FALSE;
-
-	data1 = cJSON_GetObjectItem(root, "DATA1");
-    if(data1)
-        widget_xpl_data1_set(widget, data1);
-
-	cJSON_Delete(root);
+    widget_xpl_device_set(widget, device);
+    widget_xpl_data1_set();
+    widget_xpl_current_set(device, current);
+    widget_xpl_data1_set(widget, data1);
 */
+	cJSON_Delete(root);
+
     return xpl_control_basic_cmnd_send(widget);
 }/*cmnd_action*/
+
+
+
+//{"TYPE":"EXEC","DATA":"/usr/bin/gedit"}
+
+
+/*
+ *
+ */
+Action *
+action_from_crond(const char *str)
+{
+    Action *action = NULL;
+	cJSON *root;
+	cJSON *jtype, *jdata;
+
+	root = cJSON_Parse(str);
+
+	if(!root) return action;
+
+	jtype = cJSON_GetObjectItem(root, "TYPE");
+	jdata = cJSON_GetObjectItem(root, "DATA");
+
+    const char *type =cJSON_PrintUnformatted(jtype);
+    const char *data =cJSON_Print(jdata);
+	cJSON_Delete(root);
+
+    strdelstr(type, "\"");
+
+    action = action_new(CONDITION_UNKNOWN, NULL, action_str_to_type(type), data);
+
+    FREE(type);
+    FREE(data);
+    return action;
+}
 
 
 
@@ -208,6 +338,9 @@ cmnd_action(const char *data)
 Eina_Bool
 action_parse(Action *action)
 {
+    if(!action) return EINA_FALSE;
+
+
 	if(!action_data_get(action))
 	{
 		debug(stderr, _("Can't execute action with no data passed in arg"));
@@ -217,16 +350,16 @@ action_parse(Action *action)
 	switch(action_type_get(action))
 	{
 		case ACTION_TYPE_CMND:
-				return cmnd_action(action_data_get(action));
+				return cmnd_action_parse(action_data_get(action));
 				break;
 		case ACTION_TYPE_MAIL:
-				return mail_action(action_data_get(action));
+				return mail_action_parse(action_data_get(action));
 				break;
 		case ACTION_TYPE_EXEC:
-				return exec_action(action_data_get(action));
+				return exec_action_parse(action_data_get(action));
 				break;
 		case ACTION_TYPE_DEBUG:
-				 return debug_action(action_data_get(action));
+				 return debug_action_parse(action_data_get(action));
 				 break;
 
 		case ACTION_TYPE_UNKNOWN:
@@ -236,6 +369,7 @@ action_parse(Action *action)
 				break;
 	}
 
+    return EINA_TRUE;
 }/*action_parse*/
 
 
@@ -269,6 +403,22 @@ action_str_to_condition(const char *s)
 	else if(strcmp(s, ">=") == 0)	return CONDITION_MORE_OR_EGAL_TO;
 	else if(strcmp(s, "<=") == 0)	return CONDITION_LESS_OR_EGAL_TO;
 	else							return CONDITION_UNKNOWN;
+}/*action_str_to_condition*/
+
+
+/*
+ *Return Condition representation of 's' arg.
+ */
+Action_Type
+action_str_to_type(const char *s)
+{
+	if(!s) return ACTION_TYPE_UNKNOWN;
+
+	if(strcmp(s, "EXEC") == 0) 		return ACTION_TYPE_EXEC;
+	else if(strcmp(s, "CMND") == 0)	return ACTION_TYPE_CMND;
+	else if(strcmp(s, "DEBUG") == 0)return ACTION_TYPE_DEBUG;
+	else if(strcmp(s, "MAIL") == 0)	return ACTION_TYPE_MAIL;
+	else							return ACTION_TYPE_UNKNOWN;
 }/*action_str_to_condition*/
 
 

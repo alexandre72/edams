@@ -208,6 +208,9 @@ _strdelchr( char *s, size_t i, size_t *a, size_t *b)
 size_t
 strdelstr(char *s, const char *search)
 {
+
+    if(!s || !search) return 0;
+
   size_t        l               = strlen(s);
   size_t        n               = strlen(search);
   size_t        i;

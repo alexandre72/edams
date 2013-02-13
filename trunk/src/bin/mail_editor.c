@@ -14,25 +14,17 @@ static Evas_Object *win = NULL;
 const char*
 mail_editor_values_get()
 {
-	cJSON *root;
     const char *s;
-
-	root=cJSON_CreateObject();
 
 	Evas_Object *from_entry = elm_object_name_find(win, "from entry", -1);
 	Evas_Object *to_entry = elm_object_name_find(win, "to entry", -1);
 	Evas_Object *subject_entry = elm_object_name_find(win, "subject entry", -1);
 	Evas_Object *body_entry = elm_object_name_find(win, "body entry", -1);
 
-	cJSON_AddItemToObject(root, "FROM", cJSON_CreateString(elm_object_text_get(from_entry)));
-	cJSON_AddItemToObject(root, "TO", cJSON_CreateString(elm_object_text_get(to_entry)));
-	cJSON_AddItemToObject(root, "SUBJECT", cJSON_CreateString(elm_object_text_get(subject_entry)));
-	cJSON_AddItemToObject(root, "BODY", cJSON_CreateString(elm_object_text_get(body_entry)));
-
-    s = cJSON_PrintUnformatted(root);
-
-	cJSON_Delete(root);
-
+    s = action_mail_data_format(    elm_object_text_get(from_entry),
+                                   	elm_object_text_get(to_entry),
+	                                elm_object_text_get(subject_entry),
+	                                elm_object_text_get(body_entry));
 	return s;
 }/*_button_edit_arg_apply_clicked_cb*/
 

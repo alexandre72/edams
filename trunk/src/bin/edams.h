@@ -33,7 +33,7 @@
 #include "settings.h"
 #include "xpl.h"
 
-#define XPL_VERSION "20091005"
+#define PID_FILE "/var/run/edams.pid"
 
 /*
  *Define App UI struct.
