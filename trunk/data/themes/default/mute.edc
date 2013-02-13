@@ -1,0 +1,147 @@
+/*
+ * mute.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+group
+{
+	name: "widget/control.basic/mute/icon";
+    min: 32 32;
+
+	images
+	{
+		image: "mute_icon.png" COMP;
+	}
+
+    parts
+    {
+        part
+      	{
+		    type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "mute_icon.png";
+            }
+         }
+      }
+}/*group widget/control.basic/mute/icon*/
+
+
+
+group
+{
+	name: "widget/control.basic/mute";
+	min: 70 70;
+	max: 70 70;
+
+	data
+	{
+		item: "description" "Mute control ...";
+		item: "tags" "mute";
+	}
+
+	images
+	{
+		image: "mute.png" COMP;
+		image: "unmute.png" COMP;
+	}
+
+	parts
+	{
+		part
+       	{
+			name: "base";
+            type: IMAGE;
+				description
+				{
+                    state: "unmute" 0.0;
+					aspect: 1 1;
+					aspect_preference: BOTH;
+                    image.normal: "unmute.png";
+                }
+		        description
+		        {
+		            state: "mute" 0.0;
+		            inherit: "default" 0.0;
+                    image.normal: "mute.png";
+		        }
+			}
+
+		part
+        {
+            name: "title.text";
+            type: TEXT;
+            scale: 1;
+            description
+            {
+
+               state: "default" 0.0;
+		       rel1.relative: 0.0 0.0;
+    		   rel2.relative: 1.0 1.10;
+               color: 0 0 255 255;
+               text
+               {
+                  text: "sensor";
+                  font: "Sans:style=Bold";
+                  size: 8;
+                  min: 1 1;
+                  align: 0.5 1.0;
+               }
+            }
+		}/*title.text*/
+	}/*parts*/
+
+	programs
+	{
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "unmute";
+			source: "base";
+			action: STATE_SET "mute" 0.0;
+			target: "base";
+		}
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "unmute";
+			source: "base";
+            action: SIGNAL_EMIT "yes" "";
+		}
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "mute";
+			source: "base";
+			action: STATE_SET "unmute" 0.0;
+			target: "base";
+		}
+		program
+		{
+			signal: "mouse,clicked,*";
+            filter: "base" "mute";
+			source: "base";
+            action: SIGNAL_EMIT "no" "";
+		}
+	}/*programs*/
+}/*group widget/control.basic/mute*/

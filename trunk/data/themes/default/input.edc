@@ -53,8 +53,8 @@ group
 
 	data
 	{
-			item: "description" "Input control can be used to set binary  enable/disable true/false...";
-			item: "tags" "input";
+		item: "description" "Input control can be used to set binary  enable/disable true/false...";
+		item: "tags" "input";
 	}
 
 	images
@@ -69,7 +69,6 @@ group
        	{
 			name: "base";
             type: IMAGE;
-
 				description
 				{
                     state: "disable" 0.0;
@@ -83,7 +82,7 @@ group
 		            inherit: "default" 0.0;
                     image.normal: "switch_on.png";
 		        }
-			}
+		}
 
 		part
         {
