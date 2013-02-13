@@ -393,25 +393,25 @@ xpl_control_basic_cmnd_to_dbg(Widget *widget)
 {
     if(!widget_xpl_data1_get(widget))
     {
-	    fprintf(stdout, "control.basic\n\
+	    fprintf(stdout, "\ncontrol.basic\n\
 					{\n\
 					\tdevice=%s\n\
  					\ttype=%s\n\
 					\tcurrent=%s\n\
-					}",
+					}\n",
 					widget_xpl_device_get(widget),
 					xpl_type_to_str(widget_xpl_type_get(widget)),
 					widget_xpl_current_get(widget));
     }
     else
     {
-	    fprintf(stdout, "control.basic\n\
+	    fprintf(stdout, "\ncontrol.basic\n\
 					{\n\
 					\tdevice=%s\n\
  					\ttype=%s\n\
 					\tcurrent=%s\n\
 					\tdata1=%s\n\
-					}",
+					}\n",
 					widget_xpl_device_get(widget),
 					xpl_type_to_str(widget_xpl_type_get(widget)),
 					widget_xpl_current_get(widget),

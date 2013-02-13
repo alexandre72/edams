@@ -59,13 +59,14 @@ collections
 #include "clock.edc"
 #include "counter.edc"
 #include "home.edc"
+#include "input.edc"
 #include "jauge.edc"
 #include "led.edc"
 #include "lightbulb.edc"
 #include "lock.edc"
 #include "monitor.edc"
+#include "mute.edc"
 #include "slider.edc"
-#include "switch.edc"
 #include "thermometer.edc"
 
 

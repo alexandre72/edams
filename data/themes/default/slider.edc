@@ -230,7 +230,9 @@ group
       part
       {
       name: "event"; type: RECT;
-         description { state: "default" 0.0;
+         description
+         {
+         state: "default" 0.0;
             color: 0 0 0 0;
             visible: 0;
          }
