@@ -19,7 +19,7 @@
  */
 group
 {
-	name: "widget/control.basic/switch/icon";
+	name: "widget/control.basic/input/icon";
     min: 32 32;
 
 	images
@@ -41,19 +41,19 @@ group
             }
          }
       }
-}/*group widget/control.basic/switch/icon*/
+}/*group widget/control.basic/input/icon*/
 
 
 
 group
 {
-	name: "widget/control.basic/switch";
+	name: "widget/control.basic/input";
 	min: 110 110;
 	max: 110 110;
 
 	data
 	{
-			item: "description" "Switch control can be used to set binary value like enable/disable true/false...";
+			item: "description" "Input control can be used to set binary  enable/disable true/false...";
 			item: "tags" "input";
 	}
 
@@ -142,4 +142,4 @@ group
             action: SIGNAL_EMIT "disable" "";
 		}
 	}/*programs*/
-}
+}/*group widget/control.basic/input*/

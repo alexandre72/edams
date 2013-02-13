@@ -206,7 +206,7 @@ typedef enum _Xpl_Type
     XPL_TYPE_PERIODIC_CONTROL_BASIC	    = (29), /*periodic - started, enable, disable.*/
 	XPL_TYPE_SCHEDULED_CONTROL_BASIC    = (30), /*scheduled - started, enable, disable.*/
 	XPL_TYPE_SLIDER_CONTROL_BASIC	    = (31), /*slider -	nn = set to value (0-255),*/
-									/* +nn = increment by nn, -nn = decrement by nn,*/
+									            /* +nn = increment by nn, -nn = decrement by nn,*/
 											    /*n% = set to nn (where nn is a percentage - 0-100%)*/
 	XPL_TYPE_TIMER_CONTROL_BASIC        = (32), /*timer - went off, start, stop, halt, resume.*/
 	XPL_TYPE_LAST

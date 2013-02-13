@@ -526,12 +526,9 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
         }
 
         /*Update widget value field*/
-	   if(edje_object_data_get(edje_obj, "value"))
-	    {
-		    asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type) ? xpl_type_to_unit_symbol(type) : "");
-			edje_object_part_text_set(edje_obj, "value.text", s);
-		    FREE(s);
-        }
+		asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type) ? xpl_type_to_unit_symbol(type) : "");
+		edje_object_part_text_set(edje_obj, "value.text", s);
+		  FREE(s);
 
 	    xpl_control_basic_cmnd_send(widget);
     }

@@ -29,6 +29,7 @@ images
 	image: "icons/xpl-logo.png" COMP;
 	image: "icons/cosm-logo.png" COMP;
 	image: "icons/debug.png" COMP;
+	image: "icons/gnuplot-logo.png" COMP;
 	image: "cursors/left_ptr.png" COMP;
 	image: "cursors/dotbox.png" COMP;
 	image: "cursors/grab.png" COMP;
@@ -107,6 +108,27 @@ collections
             }
         }
     }/*group elm/icon/cosm/default*/
+
+    group
+    {
+	    name: "elm/icon/gnuplot/default";
+        min: 32 32;
+        parts
+        {
+            part
+            {
+		    	type: IMAGE;
+                description
+                {
+                	aspect: 1 1;
+                	aspect_preference: BOTH;
+            	    state: "default" 0;
+		   		    image.normal: "icons/gnuplot-logo.png";
+                }
+            }
+        }
+    }/*group elm/icon/gnuplot/default*/
+
 
     group
     {
