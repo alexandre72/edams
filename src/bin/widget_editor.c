@@ -203,12 +203,9 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 	    widget_xpl_current_set(widget, emission);
     }
 
-	if(elm_layout_data_get(obj, "value"))
-	{
-		asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) : "");
-		elm_object_part_text_set(obj, "value.text", s);
-		FREE(s);
-	}
+	asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) : "");
+	elm_object_part_text_set(obj, "value.text", s);
+	FREE(s);
 
     //_update_cmnd_preview(widget);
 }/*_layout_signals_cb*/
