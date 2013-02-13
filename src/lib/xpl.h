@@ -18,6 +18,8 @@
 
 #include "widget.h"
 
+
+#define XPL_VERSION "20091005"
 #define XPLLIB_VERSION "V1.3a"
 
 #define BASE_XPL_PORT 3865

@@ -24,6 +24,7 @@
 
 #include <Eina.h>
 
+
 typedef struct _Action Action;
 
 typedef enum _Condition_
@@ -51,6 +52,14 @@ typedef enum _Action_Type
 
 Eina_Bool action_parse(Action *action);
 const char *action_type_to_desc(Action_Type type);
+Action_Type action_str_to_type(const char *s);
 Condition action_str_to_condition(const char *s);
 const char *action_condition_to_str(Condition condition);
+Action *action_from_crond(const char *str);
+
+const char *action_debug_data_format(const char *print);
+const char *action_exec_data_format(const char *exec, const char *terminal);
+const char *action_mail_data_format(const char *from, const char *to, const char *subject, const char *body);
+const char *action_cmnd_data_format(const char *device, const char *type, const char *current, const char *data1);
+
 #endif /*__ACTION_H*/

@@ -18,15 +18,15 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Elementary.h>
+#include <Ecore_File.h>
 
+#include <sys/file.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
 #include <stdio.h>
-
-#include <Elementary.h>
-#include <Ecore_File.h>
 
 #include "action.h"
 #include "actions_editor.h"
@@ -240,7 +240,7 @@ _button_add_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED_
  *Callback called in remove widget button object when "clicked" signal is emitted
  */
 static void
-_button_edit_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_edit_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
     widget_editor_add(app, NULL, NULL);
 }/*_button_remove_widget_clicked_cb*/
@@ -432,6 +432,28 @@ _location_naviframe_content_set(Location * location)
 	return grid;
 }/*_location_naviframe_content_set*/
 
+
+
+static const Ecore_Getopt options =
+{
+   PACKAGE_NAME,
+   "%prog [options]",
+   PACKAGE_VERSION,
+   "(C) 2012 Alexandre Dussart",
+   "Gpl",
+   "Enlightened Home-Automation System written with Enlightenment Foundation Libraries.",
+   EINA_TRUE,
+   {
+      ECORE_GETOPT_STORE_STR ('a', "action", "Action to parse in json format"),
+      ECORE_GETOPT_VERSION   ('V', "version"),
+      ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
+      ECORE_GETOPT_LICENSE   ('L', "license"),
+      ECORE_GETOPT_HELP      ('h', "help"),
+      ECORE_GETOPT_SENTINEL
+   }
+};
+
+
 /*
  * Edams main loop.
  */
@@ -441,7 +463,34 @@ elm_main(int argc, char **argv)
     Evas_Object *vbx, *vbx2, *bg, *frame;
     Evas_Object *sep;
     Evas_Object *tb, *bt, *icon, *label, *bx, *list, *naviframe;
+    Ecore_Pipe *pipe = NULL;
     Eina_List *l;
+    Eina_Bool quit_option = EINA_FALSE;
+    int args, retval = EXIT_SUCCESS;
+    char *opt_action = NULL;
+
+    Ecore_Getopt_Value values[] =
+    {
+        ECORE_GETOPT_VALUE_STR(opt_action),
+
+        ECORE_GETOPT_VALUE_BOOL(quit_option),
+        ECORE_GETOPT_VALUE_BOOL(quit_option),
+        ECORE_GETOPT_VALUE_BOOL(quit_option),
+        ECORE_GETOPT_VALUE_BOOL(quit_option),
+
+        ECORE_GETOPT_VALUE_NONE
+    };
+
+    args = ecore_getopt_parse(&options, values, argc, argv);
+    if (args < 0)
+    {
+        fprintf(stderr, _("\033[31mERROR:\033[0mCan't parse command line options!\n"));
+        retval = EXIT_FAILURE;
+        goto end;
+    }
+
+    if (quit_option) goto end;
+
 
     /*Alloc and initialize App_Info struct*/
     app = calloc(1, sizeof(App_Info));
@@ -449,7 +498,8 @@ elm_main(int argc, char **argv)
     if (!app)
     {
         fprintf(stderr, _("\033[31mERROR:\033[0mCan't calloc App_Info struct!\n"));
-        exit(-1);
+        retval = EXIT_FAILURE;
+        goto end;
     }
 
     app->argc = argc;
@@ -457,6 +507,14 @@ elm_main(int argc, char **argv)
 
     /*Initialize edams*/
     edams_init(app);
+
+    if(opt_action)
+    {
+        Action *action = action_from_crond(opt_action);
+        action_parse(action);
+        action_free(action);
+        goto end;
+    }
 
     /*Setup main window*/
     app->locations = locations_list_get();
@@ -628,19 +686,15 @@ elm_main(int argc, char **argv)
     evas_object_resize(app->win, 700, 500);
     evas_object_show(app->win);
 
-    //mail_action("{\"FROM\":\"alexandre.dussart@laposte.net\",\"TO\":\"alexandre.dussart@laposte.net\",\"SUBJECT\":\"Bot EDAMS\",\"BODY\":\"TEST\"}");
-    //exec_action("{\"EXEC\":\"/usr/bin/gedit\",\"TERMINAL\":\"false\"}");
-     //debug_action("{\"PRINT\":\"pwet\"}");
-
-    Ecore_Pipe *pipe = xpl_start();
-
+    pipe = xpl_start();
     elm_run();
 
-    if(pipe)
-        ecore_pipe_del(pipe);
+    if(pipe) ecore_pipe_del(pipe);
     global_view_quit();
     edams_shutdown(app);
 
-    return EXIT_SUCCESS;
+    end:
+
+    return retval;
 }/*elm_main*/
 ELM_MAIN()

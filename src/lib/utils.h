@@ -53,4 +53,5 @@ const char *user_home_get(void);
 void msgbox(const char *msg);
 const char *filename_create(const char *filename);
 size_t strdelstr(char *s, const char *search);
+
 #endif /* __UTILS_H__ */

@@ -72,19 +72,12 @@ _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__
 const char*
 exec_editor_values_get()
 {
-	cJSON *root;
     const char *s;
-
-	root=cJSON_CreateObject();
 
 	Evas_Object *entry = elm_object_name_find(win, "exec entry", -1);
 	Evas_Object *check = elm_object_name_find(win, "terminal check", -1);
 
-	cJSON_AddItemToObject(root, "EXEC", cJSON_CreateString(elm_object_text_get(entry)));
-	cJSON_AddItemToObject(root, "TERMINAL", cJSON_CreateString(elm_check_state_get(check) ? "true" : "false"));
-    s = cJSON_PrintUnformatted(root);
-
-	cJSON_Delete(root);
+    s = action_exec_data_format(elm_object_text_get(entry), elm_check_state_get(check) ? "true" : "false");
 
 	return s;
 }/*exec_editor_hbox_get*/
