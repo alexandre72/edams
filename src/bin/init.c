@@ -23,6 +23,7 @@
 #include <Ecore_Con.h>
 #include <Ecore_File.h>
 
+#include "crontab.h"
 #include "edams.h"
 #include "path.h"
 #include "settings.h"
@@ -136,6 +137,7 @@ edams_init(App_Info * app)
 	paths_init(app);
 	locations_init();
 	xpl_init();
+    crontab_init();
 
 	return 0;
 }

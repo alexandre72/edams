@@ -23,8 +23,9 @@
 #include <Edje.h>
 #include <Elementary.h>
 
-#include "shutdown.h"
+#include "crontab.h"
 #include "settings.h"
+#include "shutdown.h"
 #include "utils.h"
 
 static int efl_shutdown(App_Info * app);
@@ -54,6 +55,7 @@ int edams_shutdown(App_Info * app)
 	edams_settings_shutdown();
 	FREE(app);
 
+    crontab_shutdown();
 	efl_shutdown(app);
 
 	return EINA_TRUE;
