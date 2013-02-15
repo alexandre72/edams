@@ -40,6 +40,7 @@
 #include "global_view.h"
 #include "path.h"
 #include "preferences_dlg.h"
+#include "scheduler_editor.h"
 #include "shutdown.h"
 #include "utils.h"
 #include "widget_editor.h"
@@ -142,7 +143,8 @@ statusbar_text_set(const char *msg, const char *ic)
 	Evas_Object *label, *icon;
 
 	label = elm_object_name_find(app->win, "status text", -1);
-	elm_object_text_set(label, msg);
+	if(label)
+    	elm_object_text_set(label, msg);
 
 	icon = elm_object_name_find(app->win, "status icon", -1);
 
@@ -540,6 +542,7 @@ elm_main(int argc, char **argv)
     evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
     evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
     elm_toolbar_item_append(app->toolbar, "global-view", _("Global View"), global_view_new, app);
+    elm_toolbar_item_append(app->toolbar, "appointment-new", _("Scheduler Editor"), scheduler_editor_new, app);
     elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
     elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);
     elm_toolbar_item_append(app->toolbar, "application-exit", _("Quit"), _button_quit_clicked_cb, app);
@@ -694,7 +697,6 @@ elm_main(int argc, char **argv)
     edams_shutdown(app);
 
     end:
-
     return retval;
 }/*elm_main*/
 ELM_MAIN()

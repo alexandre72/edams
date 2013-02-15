@@ -72,8 +72,6 @@ exec_action_parse(const char *data)
     strdelstr(exec, "\"");
     strdelstr(terminal, "\"");
 
-    printf("********Exec:%s\n", exec);
-
 	child_handle = ecore_exe_pipe_run(exec,
                                     ECORE_EXE_PIPE_WRITE |
                                     ECORE_EXE_PIPE_READ_LINE_BUFFERED |

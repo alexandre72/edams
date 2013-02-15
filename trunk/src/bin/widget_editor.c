@@ -458,7 +458,6 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	list = elm_list_add(win);
 	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
 	evas_object_show(list);
-	elm_object_content_set(frame, list);
 
     unsigned int x;
     for(x = 0; x != WIDGET_CLASS_LAST ; x++)
