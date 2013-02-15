@@ -46,19 +46,19 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
 	edams_settings_cosm_apikey_set( elm_object_text_get(entry));
 
-	entry =elm_object_name_find(win, "global_view background entry", -1);
+	entry = elm_object_name_find(win, "global_view background entry", -1);
 	edams_settings_global_view_background_set(elm_object_text_get(entry));
 
-	entry =elm_object_name_find(win, "gnuplot path entry", -1);
+	entry = elm_object_name_find(win, "gnuplot path entry", -1);
 	edams_settings_gnuplot_path_set(elm_object_text_get(entry));
 
-	entry =elm_object_name_find(win, "smtp server entry", -1);
+	entry = elm_object_name_find(win, "smtp server entry", -1);
 	edams_settings_smtp_server_set(elm_object_text_get(entry));
 
-	entry =elm_object_name_find(win, "smtp username entry", -1);
+	entry = elm_object_name_find(win, "smtp username entry", -1);
 	edams_settings_smtp_username_set(elm_object_text_get(entry));
 
-	entry =elm_object_name_find(win, "smtp userpwd entry", -1);
+	entry = elm_object_name_find(win, "smtp userpwd entry", -1);
 	edams_settings_smtp_userpwd_set( elm_object_text_get(entry));
 
 	check = elm_object_name_find(win, "emulation check", -1);
