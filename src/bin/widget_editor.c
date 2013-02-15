@@ -71,12 +71,18 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
     const char *s;
 
     if(!app->widget)
+    {
+        asprintf(&s, _("Widget '%s' has been added to '%s'"), widget_name_get(widget), location_name_get(app->location));
         location_widgets_add(app->location, widget);
+    }
+    else
+    {
+        asprintf(&s, _("Widget '%s' from '%s' has been updated"), widget_name_get(widget), location_name_get(app->location));
+    }
 
     location_save(app->location);
     update_naviframe_content(app->location);
 
-    asprintf(&s, _("Widget '%s' has been added to '%s'"), widget_name_get(widget), location_name_get(app->location));
     statusbar_text_set(s, "dialog-information");
     FREE(s);
 
@@ -617,16 +623,24 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
         elm_check_state_set(check, widget_cosm_get(widget));
 	    evas_object_show(check);
 
-        check = elm_object_name_find(win, "gnuplot check", -1);
-        elm_check_state_set(check, widget_gnuplot_get(widget));
-	    evas_object_show(check);
+        if(edams_settings_gnuplot_path_get())
+        {
+            check = elm_object_name_find(win, "gnuplot check", -1);
+            elm_check_state_set(check, widget_gnuplot_get(widget));
+	        evas_object_show(check);
+	   }
     }
     else
     {
         check = elm_object_name_find(win, "cosm check", -1);
 	    evas_object_show(check);
-        check = elm_object_name_find(win, "gnuplot check", -1);
-	    evas_object_show(check);
+
+        if(edams_settings_gnuplot_path_get())
+        {
+            check = elm_object_name_find(win, "gnuplot check", -1);
+    	    evas_object_show(check);
+        }
+
         elm_object_disabled_set(list, EINA_TRUE);
     }
 

@@ -65,7 +65,6 @@ static Eet_File *ef = NULL;
    		FREE(ret);	\
    	} \
 
-
 #define EET_BOOL_SETTINGS_WRITE(_field, _var) 			\
 	if(_var == EINA_TRUE) 								\
 	   	eet_write(ef, _field, "1", strlen("1")+1, 0);	\
@@ -124,6 +123,7 @@ edams_settings_softemu_set(Eina_Bool softemu)
 const char*
 edams_settings_global_view_background_get()
 {
+    settings->global_view_background = NULL;
 	EET_STRING_SETTINGS_READ("global_view/background", settings->global_view_background);
 	return settings->global_view_background;
 }/*edams_settings_global_view_background_get*/
@@ -136,9 +136,16 @@ edams_settings_global_view_background_get()
 void
 edams_settings_global_view_background_set(const char *file)
 {
-    eet_write(ef, "global_view/background", file, strlen(file)+1, 0);
-    if(file && (strlen(file) > 0))
-    	debug(stdout, _("Global view background file set to '%s'"), file);
+    if((!file) || (strlen(file) == 0))
+    {
+        eet_delete(ef, "global_view/background");
+    }
+    else
+    {
+        eet_write(ef, "global_view/background", file, strlen(file)+1, 0);
+    }
+
+	debug(stdout, _("Global view background options is %s"), file ?_("enabled"):_("disabled"));
 }/*edams_settings_global_view_background_set*/
 
 
@@ -148,6 +155,7 @@ edams_settings_global_view_background_set(const char *file)
 const char*
 edams_settings_cosm_apikey_get()
 {
+    settings->cosm_apikey = NULL;
 	EET_STRING_SETTINGS_READ("edams/cosm_apikey",settings->cosm_apikey);
 	return settings->cosm_apikey;
 }/*edams_settings_cosm_apikey_get*/
@@ -159,7 +167,14 @@ edams_settings_cosm_apikey_get()
 void
 edams_settings_cosm_apikey_set(const char *cosm_apikey)
 {
-    eet_write(ef, "edams/cosm_apikey", cosm_apikey, strlen(cosm_apikey)+1, 0);;
+    if((!cosm_apikey) || (strlen(cosm_apikey) == 0))
+    {
+        eet_delete(ef, "edams/cosm_apikey");
+    }
+    else
+    {
+        eet_write(ef, "edams/cosm_apikey", cosm_apikey, strlen(cosm_apikey)+1, 0);
+    }
 	debug(stdout, _("Cosm data handling options is %s"), cosm_apikey?_("enabled"):_("disabled"));
 }/*edams_settings_cosm_apikey_set*/
 
@@ -169,6 +184,7 @@ edams_settings_cosm_apikey_set(const char *cosm_apikey)
 const char*
 edams_settings_gnuplot_path_get()
 {
+    settings->gnuplot_path = NULL;
 	EET_STRING_SETTINGS_READ("edams/gnuplot_path", settings->gnuplot_path);
 	return settings->gnuplot_path;
 }/*edams_settings_gnuplot_path_get*/
@@ -179,9 +195,15 @@ edams_settings_gnuplot_path_get()
 void
 edams_settings_gnuplot_path_set(const char *gnuplot_path)
 {
-    eet_write(ef, "edams/gnuplot_path", gnuplot_path, strlen(gnuplot_path)+1, 0);;
-    if((gnuplot_path) && (strlen(gnuplot_path) > 0))
-    	debug(stdout, _("Gnuplot path is '%s'"), gnuplot_path);
+    if((!gnuplot_path) || (strlen(gnuplot_path) == 0))
+    {
+        eet_delete(ef, "edams/gnuplot_path");
+    }
+    else
+    {
+        eet_write(ef, "edams/gnuplot_path", gnuplot_path, strlen(gnuplot_path)+1, 0);
+    }
+	debug(stdout, _("Gnuplot data handling options is %s"), gnuplot_path ? _("enabled"):_("disabled"));
 }/*edams_settings_gnuplot_path_set*/
 
 
@@ -191,6 +213,7 @@ edams_settings_gnuplot_path_set(const char *gnuplot_path)
 const char*
 edams_settings_smtp_server_get()
 {
+    settings->smtp_server = NULL;
 	EET_STRING_SETTINGS_READ("edams/smtp_server", settings->smtp_server);
 	return settings->smtp_server;
 }/*edams_settings_smtp_server_get*/
@@ -202,9 +225,16 @@ edams_settings_smtp_server_get()
 void
 edams_settings_smtp_server_set(const char *smtp_server)
 {
-    eet_write(ef, "edams/smtp_server", smtp_server, strlen(smtp_server)+1, 0);;
-    if(smtp_server && (strlen(smtp_server) > 0))
-	    debug(stdout, _("Smtp server set to '%s'"), smtp_server);
+    if((!smtp_server) || (strlen(smtp_server) == 0))
+    {
+        eet_delete(ef, "edams/smtp_server");
+    }
+    else
+    {
+        eet_write(ef, "edams/smtp_server", smtp_server, strlen(smtp_server)+1, 0);
+    }
+
+	debug(stdout, _("Smtp server options is %s"), smtp_server?_("enabled"):_("disabled"));
 }/*edams_settings_smtp_server_set*/
 
 
@@ -214,6 +244,7 @@ edams_settings_smtp_server_set(const char *smtp_server)
 const char*
 edams_settings_smtp_username_get()
 {
+    settings->smtp_username = NULL;
 	EET_STRING_SETTINGS_READ("edams/smtp_username", settings->smtp_username);
 	return settings->smtp_username;
 }/*edams_settings_smtp_username_get*/
@@ -225,9 +256,15 @@ edams_settings_smtp_username_get()
 void
 edams_settings_smtp_username_set(const char *smtp_username)
 {
-    eet_write(ef, "edams/smtp_username", smtp_username, strlen(smtp_username)+1, 0);;
-    if(smtp_username && (strlen(smtp_username) > 0))
-	    debug(stdout, _("Smtp server username set to '%s'"), smtp_username);
+    if((!smtp_username) || (strlen(smtp_username) == 0))
+    {
+        eet_delete(ef, "edams/smtp_username");
+    }
+    else
+    {
+        eet_write(ef, "edams/smtp_username", smtp_username, strlen(smtp_username)+1, 0);
+	    debug(stdout, _("Smtp username set to '%s'"), smtp_username);
+    }
 
 }/*edams_settings_smtp_username_set*/
 
@@ -238,6 +275,7 @@ edams_settings_smtp_username_set(const char *smtp_username)
 const char*
 edams_settings_smtp_userpwd_get()
 {
+    settings->smtp_userpwd = NULL;
 	EET_STRING_SETTINGS_READ("edams/smtp_userpwd", settings->smtp_userpwd);
 	return settings->smtp_userpwd;
 }/*edams_settings_smtp_userpwd_get*/
@@ -250,7 +288,14 @@ edams_settings_smtp_userpwd_get()
 void
 edams_settings_smtp_userpwd_set(const char *smtp_userpwd)
 {
-    eet_write(ef, "edams/smtp_userpwd", smtp_userpwd, strlen(smtp_userpwd)+1, 0);;
+    if((!smtp_userpwd) || (strlen(smtp_userpwd) == 0))
+    {
+        eet_delete(ef, "edams/smtp_userpwd");
+    }
+    else
+    {
+        eet_write(ef, "edams/smtp_userpwd", smtp_userpwd, strlen(smtp_userpwd)+1, 0);
+    }
 }/*edams_settings_smtp_username_set*/
 
 
@@ -261,7 +306,8 @@ edams_settings_smtp_userpwd_set(const char *smtp_userpwd)
 const char*
 edams_settings_user_mail_get()
 {
-	EET_STRING_SETTINGS_READ("edams/user_mail", settings->user_mail);
+    settings->user_mail = NULL;
+    EET_STRING_SETTINGS_READ("edams/user_mail", settings->user_mail);
 	return settings->user_mail;
 }/*edams_settings_user_mail_get*/
 
@@ -273,7 +319,15 @@ edams_settings_user_mail_get()
 void
 edams_settings_user_mail_set(const char *mail)
 {
+    if((!mail) || (strlen(mail) == 0))
+    {
+        eet_delete(ef, "edams/user_mail");
+    }
+    else
+    {
     eet_write(ef, "edams/user_mail", mail, strlen(mail)+1, 0);;
+    }
+
 }/*edams_settings_user_mail_set*/
 
 
