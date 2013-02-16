@@ -446,7 +446,8 @@ static const Ecore_Getopt options =
    "Enlightened Home-Automation System written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
    {
-      ECORE_GETOPT_STORE_STR ('a', "action", "Action to parse in json format"),
+      ECORE_GETOPT_STORE_STR ('at', "action-type", "Action type(EXEC,MAIL,DEBUG,CMND)"),
+      ECORE_GETOPT_STORE_STR ('ad', "action-data", "Action data to parse in json format"),
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
       ECORE_GETOPT_LICENSE   ('L', "license"),
@@ -469,11 +470,13 @@ elm_main(int argc, char **argv)
     Eina_List *l;
     Eina_Bool quit_option = EINA_FALSE;
     int args, retval = EXIT_SUCCESS;
-    char *opt_action = NULL;
+    char *opt_action_type = NULL;
+    char *opt_action_data = NULL;
 
     Ecore_Getopt_Value values[] =
     {
-        ECORE_GETOPT_VALUE_STR(opt_action),
+        ECORE_GETOPT_VALUE_STR(opt_action_type),
+        ECORE_GETOPT_VALUE_STR(opt_action_data),
 
         ECORE_GETOPT_VALUE_BOOL(quit_option),
         ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -510,11 +513,29 @@ elm_main(int argc, char **argv)
     /*Initialize edams*/
     edams_init(app);
 
-    if(opt_action)
+    if(opt_action_type)
     {
-        Action *action = action_from_crond(opt_action);
-        action_parse(action);
-        action_free(action);
+        if(!opt_action_data)
+        {
+             debug(stderr, _("Can't parse action data"));
+        }
+        else
+        {
+            Action_Type type = action_str_to_type(opt_action_type);
+
+            if(type == ACTION_TYPE_UNKNOWN)
+            {
+                debug(stderr, _("Can't parse action type"));
+            }
+            else
+            {
+                strdelstr(opt_action_data, "'");
+                Action *action = action_new(CONDITION_UNKNOWN, NULL, type, opt_action_data);
+                action_parse(action);
+                action_free(action);
+            }
+
+        }
         goto end;
     }
 

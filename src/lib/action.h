@@ -55,7 +55,6 @@ const char *action_type_to_desc(Action_Type type);
 Action_Type action_str_to_type(const char *s);
 Condition action_str_to_condition(const char *s);
 const char *action_condition_to_str(Condition condition);
-Action *action_from_crond(const char *str);
 
 const char *action_debug_data_format(const char *print);
 const char *action_exec_data_format(const char *exec, const char *terminal);
