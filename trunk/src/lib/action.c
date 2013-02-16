@@ -213,7 +213,7 @@ debug_action_parse(const char *data)
 
 	if(!root) return EINA_FALSE;
 
-	cJSON *jprint = cJSON_GetObjectItem(root,"PRINT");
+	cJSON *jprint = cJSON_GetObjectItem(root, "PRINT");
 
     const char *print =cJSON_PrintUnformatted(jprint);
 
@@ -260,6 +260,7 @@ action_cmnd_data_format(const char *device, const char *type, const char *curren
 static Eina_Bool
 cmnd_action_parse(const char *data)
 {
+/*
     Widget *widget = NULL;
 	cJSON *root;
     cJSON *jdevice, *jtype, *jcurrent, *jdata1;
@@ -267,7 +268,7 @@ cmnd_action_parse(const char *data)
 	root = cJSON_Parse(data);
 
 	if(!root) return EINA_FALSE;
-/*
+
 	jdevice = cJSON_GetObjectItem(root, "DEVICE");
 	jtype = cJSON_GetObjectItem(root, "TYPE");
 	jcurrent = cJSON_GetObjectItem(root, "CURRENT");
@@ -287,47 +288,16 @@ cmnd_action_parse(const char *data)
     widget_xpl_data1_set();
     widget_xpl_current_set(device, current);
     widget_xpl_data1_set(widget, data1);
-*/
+
 	cJSON_Delete(root);
 
     return xpl_control_basic_cmnd_send(widget);
+    */
 }/*cmnd_action*/
 
 
 
 //{"TYPE":"EXEC","DATA":"/usr/bin/gedit"}
-
-
-/*
- *
- */
-Action *
-action_from_crond(const char *str)
-{
-    Action *action = NULL;
-	cJSON *root;
-	cJSON *jtype, *jdata;
-
-	root = cJSON_Parse(str);
-
-	if(!root) return action;
-
-	jtype = cJSON_GetObjectItem(root, "TYPE");
-	jdata = cJSON_GetObjectItem(root, "DATA");
-
-    const char *type =cJSON_PrintUnformatted(jtype);
-    const char *data =cJSON_Print(jdata);
-	cJSON_Delete(root);
-
-    strdelstr(type, "\"");
-
-    action = action_new(CONDITION_UNKNOWN, NULL, action_str_to_type(type), data);
-
-    FREE(type);
-    FREE(data);
-    return action;
-}
-
 
 
 /*
