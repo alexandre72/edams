@@ -40,7 +40,7 @@ _free(const char * var, const char * filename, unsigned long line, void *ptr)
     //INF(_("Variable %s (%10p) at %s:%lu"), var, ptr, filename, line);
     if (ptr)
     {
-        free(ptr);
+        free((void *)ptr);
         ptr = NULL;
     }
     else

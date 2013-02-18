@@ -17,6 +17,7 @@ action.c \
 cJSON.c \
 crontab.c \
 gnuplot.c \
+mbox.c \
 myfileselector.c \
 path.c \
 location.c \

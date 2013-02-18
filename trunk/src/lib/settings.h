@@ -32,21 +32,16 @@ Eina_Bool edams_settings_softemu_get();
 const char *edams_settings_global_view_background_get();
 const char *edams_settings_cosm_apikey_get();
 const char *edams_settings_gnuplot_path_get();
-const char *edams_settings_smtp_server_get();
-const char *edams_settings_smtp_username_get();
-const char *edams_settings_smtp_userpwd_get();
+const char *edams_settings_mbox_path_get();
 const char *edams_settings_user_mail_get();
 const char *edams_settings_user_name_get();
 
 void edams_settings_debug_set(Eina_Bool debug);
-void edams_settings_debug_set(Eina_Bool debug);
+void edams_settings_softemu_set(Eina_Bool softemu);
+void edams_settings_global_view_background_set(const char *file);
+void edams_settings_cosm_apikey_set(const char *cosm_apikey);
+void edams_settings_gnuplot_path_set(const char *gnuplot_path);
+void edams_settings_mbox_path_set(const char *smtp_server);
 void edams_settings_user_mail_set(const char *mail);
 void edams_settings_user_name_set(const char *name);
-void edams_settings_softemu_set(Eina_Bool softemu);
-void edams_settings_cosm_apikey_set(const char *cosm_apikey);
-void edams_settings_global_view_background_set(const char *file);
-void edams_settings_gnuplot_path_set(const char *gnuplot_path);
-void edams_settings_smtp_server_set(const char *smtp_server);
-void edams_settings_smtp_username_set(const char *smtp_username);
-void edams_settings_smtp_userpwd_set(const char *smtp_userpwd);
 #endif /* __SETTINGS_H__ */

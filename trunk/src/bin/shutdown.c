@@ -55,6 +55,8 @@ int edams_shutdown(App_Info * app)
 	edams_settings_shutdown();
 	FREE(app);
 
+    mbox_monitoring_shutdown();
+
     crontab_shutdown();
 	efl_shutdown(app);
 

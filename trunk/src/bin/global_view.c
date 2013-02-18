@@ -491,7 +491,7 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
     else if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
     {
         Xpl_Type type = widget_xpl_type_get(widget);
-        const char *s;
+        char *s;
 
         if(strstr(emission, "drag"))
         {
@@ -795,6 +795,77 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 }/*_on_keydown*/
 
 
+/*
+ *
+ */
+static void
+_virtual_widgets_add(Location *location)
+{
+	Eina_List *l2, *widgets = NULL;
+    Widget *widget;
+    char *key;
+	char *ret;
+	int size;
+	Evas_Coord w, h;
+
+	widgets = location_widgets_list_get(location);
+    EINA_LIST_FOREACH(widgets, l2, widget)
+    {
+        if((widget_class_get(widget) != WIDGET_CLASS_VIRTUAL)) continue;
+		char *s;
+    	Evas_Object *virtual;
+
+        virtual = edje_object_add(evas);
+		asprintf(&s, "%d_%s_edje", widget_id_get(widget), location_name_get(location));
+		evas_object_name_set(virtual, s);
+        FREE(s);
+		evas_object_data_set(virtual, "widget", (void *)widget);
+
+		if (!virtual)
+		{
+			debug(stderr, _("Can't create Edje_Object!"));
+			continue;
+		}
+
+		if (!edje_object_file_set(virtual, edams_edje_theme_file_get(), widget_group_get(widget)))
+		{
+			debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
+		                                        				widget_group_get(widget),
+					  							  				edams_edje_theme_file_get());
+			 evas_object_del(virtual);
+			  continue;
+		  }
+
+		evas_object_propagate_events_set(virtual, EINA_FALSE);
+    	edje_object_signal_callback_add(virtual, "*", "*", _edje_object_signals_cb, widget);
+		evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, virtual);
+		evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out, virtual);
+		evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, virtual);
+
+		Eina_Rectangle edje_geometry;
+		asprintf(&key, "global_view/%s", evas_object_name_get(virtual));
+		ret = eet_read(ef, key, &size);
+		if (ret)
+		{
+		    sscanf(ret, "%d;%d", &edje_geometry.x, &edje_geometry.y);
+			free(ret);
+		}
+		else
+		{
+			edje_geometry.x = 100;
+			edje_geometry.y = 100;
+		}
+		evas_object_move(virtual, edje_geometry.x, edje_geometry.y);
+		FREE(key);
+
+		edje_object_size_min_get(virtual, &w, &h);
+		edje_object_size_max_get(virtual, &w, &h);
+		evas_object_resize(virtual, w, h);
+		evas_object_show(virtual);
+    }
+}/*_virtual_widgets_add*/
+
+
 
 /*
  *
@@ -865,68 +936,8 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 	{
 		global_view_location_add(location);
 
-		Eina_List *l2, *widgets = NULL;
-    	Widget *widget;
-    	char *key;
-	    char *ret;
-	    int size;
-	    Evas_Coord w, h;
-
-	    widgets = location_widgets_list_get(location);
-    	EINA_LIST_FOREACH(widgets, l2, widget)
-    	{
-            if((widget_class_get(widget) != WIDGET_CLASS_VIRTUAL)) continue;
-		    char *s;
-    		Evas_Object *virtual;
-
-            virtual = edje_object_add(evas);
-		    asprintf(&s, "%d_%s_edje", widget_id_get(widget), location_name_get(location));
-		    evas_object_name_set(virtual, s);
-            FREE(s);
-		    evas_object_data_set(virtual, "widget", (void *)widget);
-
-		    if (!virtual)
-		    {
-			    debug(stderr, _("Can't create Edje_Object!"));
-			    continue;
-		    }
-
-		    if (!edje_object_file_set(virtual, edams_edje_theme_file_get(), widget_group_get(widget)))
-		    {
-			    debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
-		                                        				  	widget_group_get(widget),
-					  							  					edams_edje_theme_file_get());
-			    evas_object_del(virtual);
-			    continue;
-		    }
-		    evas_object_propagate_events_set(virtual, EINA_FALSE);
-    	    edje_object_signal_callback_add(virtual, "*", "*", _edje_object_signals_cb, widget);
-		    evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, virtual);
-		    evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_OUT, _on_mouse_out, virtual);
-		    evas_object_event_callback_add(virtual, EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move, virtual);
-
-		    Eina_Rectangle edje_geometry;
-		    asprintf(&key, "global_view/%s", evas_object_name_get(virtual));
-		    ret = eet_read(ef, key, &size);
-		    if (ret)
-		    {
-				sscanf(ret, "%d;%d", &edje_geometry.x, &edje_geometry.y);
-				free(ret);
-			}
-			else
-			{
-				edje_geometry.x = 100;
-				edje_geometry.y = 100;
-			}
-			evas_object_move(virtual, edje_geometry.x, edje_geometry.y);
-			FREE(key);
-
-			edje_object_size_min_get(virtual, &w, &h);
-			edje_object_size_max_get(virtual, &w, &h);
-			evas_object_resize(virtual, w, h);
-
-		    evas_object_show(virtual);
-        }
+		/*Now add virtual widget's, they're not dependents to a smart_group*/
+        _virtual_widgets_add(location);
 	}
 
     /*Install normal cursor*/
@@ -986,7 +997,7 @@ void
 global_view_location_del(Location *location)
 {
 	Evas_Object *smt;
-    const char *s;
+    char *s;
 	if (!evas || !location) return;
 
 	asprintf(&s,  "%s_smart", location_name_get(location));
@@ -1122,7 +1133,53 @@ global_view_widget_data_update(Location *location, Widget *widget)
 }/*global_view_data_update*/
 
 
+/*
+ *
+ */
+void
+global_view_new_mail_emit(int num_new, int num_total)
+{
+	if (!evas) return;
 
+    Eina_List *l, *l2;
+	Location *location;
+	EINA_LIST_FOREACH(app->locations, l, location)
+	{
+        Widget *widget;
+        Eina_List *widgets = location_widgets_list_get(location);
+        EINA_LIST_FOREACH(widgets, l2, widget)
+        {
+        if((widget_class_get(widget) != WIDGET_CLASS_VIRTUAL)) continue;
+
+            if(strcmp(widget_group_get(widget), "widget/virtual/mail") == 0)
+            {
+                char *s;
+                asprintf(&s, "%d_%s_edje",
+								 	    widget_id_get(widget),
+						 			    location_name_get(location));
+
+                Evas_Object *mail_obj = evas_object_name_find(evas, s);
+                FREE(s);
+
+                if(!mail_obj) continue;
+
+                if (num_new > 0)
+                {
+                    asprintf(&s, "%d/%d", num_new, num_total);
+                    edje_object_signal_emit (mail_obj, "label_active", "");
+                    edje_object_part_text_set (mail_obj, "new_label", s);
+                    edje_object_signal_emit(mail_obj, "new_mail", "");
+                    FREE(s);
+                }
+                else
+                {
+                    edje_object_part_text_set(mail_obj, "new_label", "");
+                    edje_object_signal_emit(mail_obj, "no_mail", "");
+                }
+            }
+        }
+    }
+}
 
 /*
  *Callback called when resizing Ecore_Evas canvas.

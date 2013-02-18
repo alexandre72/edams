@@ -139,5 +139,8 @@ edams_init(App_Info * app)
 	xpl_init();
     crontab_init();
 
+    if(edams_settings_mbox_path_get())
+        mbox_monitoring_init();
+
 	return 0;
 }

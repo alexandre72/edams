@@ -64,6 +64,7 @@ collections
 #include "led.edc"
 #include "lightbulb.edc"
 #include "lock.edc"
+#include "mail.edc"
 #include "monitor.edc"
 #include "mute.edc"
 #include "slider.edc"
