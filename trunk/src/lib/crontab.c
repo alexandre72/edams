@@ -19,7 +19,9 @@
  */
 
 #include <Eina.h>
+#include <Ecore.h>
 #include <Ecore_File.h>
+#include <Ecore_Getopt.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -115,6 +117,7 @@ _c(const char value[50])
 }/*_c*/
 
 
+
 /*
  *
  */
@@ -143,11 +146,33 @@ crontab_init(void)
                 /*#min hour day Month Day_Of_Week Command*/
                 sscanf(s,"%s %s %s %s %s %[^\n]",f[0],f[1],f[2],f[3],f[4],f[5]);
 
-                printf("On:%s %s %s\n", day_to_str(atoi(f[2])), f[3], month_to_str(atoi(f[4])));
-                printf("At:%sh%smin\n", f[1], f[0]);
-                printf("Command=%s\n", f[5]);
+                //printf("On:%s %s %s\n", day_to_str(atoi(f[2])), f[3], month_to_str(atoi(f[4])));
+               // printf("At:%sh%smin\n", f[1], f[0]);
+                //printf("Command=%s\n", f[5]);
 
-                cron_entry = cron_entry_new(_c(f[2]), _c(f[3]), _c(f[4]), _c(f[1]), _c(f[0]), f[5]);
+                if(strstr(f[5], "edams -a"))
+                {
+                    Action_Type action_type;
+                    const char *buf = strdup(f[5]);
+                    const char *needle;
+
+                    needle = strstr(f[5], "edams -a ");
+
+                    if (!needle) goto error;
+                    needle+=9;
+                    action_type = action_str_to_type(strtok(needle, " "));
+
+                    strdelstr(buf, "'");
+                    needle = strstr(buf, "-d ");
+                    needle+=3;
+                    cron_entry = cron_entry_new(_c(f[2]), _c(f[3]), _c(f[4]), _c(f[1]), _c(f[0]), action_type, needle);
+                    FREE(buf);
+                }
+                else
+                {
+                    cron_entry = cron_entry_new(_c(f[2]), _c(f[3]), _c(f[4]), _c(f[1]), _c(f[0]), ACTION_TYPE_UNKNOWN, f[5]);
+                }
+
                 crons = eina_list_append(crons, cron_entry);
             }
         }
@@ -155,7 +180,8 @@ crontab_init(void)
     }
     else
     {
-        debug(stderr, _("Can't get crontab list, check your crontab install"));
+        error:
+        debug(stderr, _("Can't parse crontab list"));
     }
 }/*crons_init*/
 
@@ -184,9 +210,10 @@ crons_list_write()
     s = tempnam(NULL, "edams.");
     if((crontab = fopen(s, "w+")) == NULL)
     {
-        printf("ERROR!!!*\n");
+        debug(stderr, _("Can't create a valid temp name file"));
         return;
     }
+
     EINA_LIST_FOREACH(crons, l, cron_elem)
    	{
         if(cron_elem->minute == ANY)
@@ -214,17 +241,18 @@ crons_list_write()
         else
             fprintf(crontab, "%d\t", cron_elem->day);
 
-        fprintf(crontab, "%s\n", cron_elem->cmnd);
+        if(cron_elem->action_type != ACTION_TYPE_UNKNOWN)
+            fprintf(crontab, "edams -a %s -d '%s'\n", action_type_to_str(cron_elem->action_type), cron_elem->action_data);
+        else
+            fprintf(crontab, "%s\n", cron_elem->action_data);
     }
     fclose(crontab);
     fflush(crontab);
 
     asprintf(&exe, "crontab %s", s);
     ecore_exe_run(exe, NULL);
-
-    ecore_file_remove(s);
-    free(s);
-    free(exe);
+    FREE(exe);
+    FREE(s);
 }/*crons_list_write*/
 
 
@@ -234,16 +262,15 @@ crons_list_write()
 void
 crontab_shutdown()
 {
-    debug(stdout, _("Free cron allocated entries"));
-
     EINA_SAFETY_ON_NULL_RETURN(crons);
+    debug(stdout, _("Free cron allocated entries"));
 
 	Cron_Entry *cron_elem = NULL;
 
     /*Free all location node of Eina_List*/
 	EINA_LIST_FREE(crons, cron_elem)
 	{
-        eina_stringshare_del(cron_elem->cmnd);
+        eina_stringshare_del(cron_elem->action_data);
         free(cron_elem);
         cron_elem = NULL;
 	}
@@ -258,9 +285,7 @@ crontab_shutdown()
 Eina_Bool
 crons_list_entry_add(Cron_Entry *cron_elem)
 {
-    printf("NB of current crons entries read:%d\n", eina_list_count(crons));
     crons = eina_list_append(crons, cron_elem);
-    printf("NB of current crons entries read:%d\n", eina_list_count(crons));
     crons_list_write(crons);
     return EINA_TRUE;
 }/*crons_list_entry_add*/
@@ -285,7 +310,7 @@ crons_list_entry_remove(Cron_Entry *cron_elem)
 Cron_Entry *
 cron_entry_new(unsigned char day, unsigned char mday, unsigned char month,
                 unsigned char hour, unsigned char minute,
-                const char *cmnd)
+                Action_Type action_type,  const char *action_data)
 {
     Cron_Entry *cron_entry = NULL;
 
@@ -300,7 +325,8 @@ cron_entry_new(unsigned char day, unsigned char mday, unsigned char month,
     cron_entry->hour = hour;
     cron_entry->minute = minute;
 
-    cron_entry->cmnd = eina_stringshare_add(cmnd);
+    cron_entry->action_type = action_type;
+    cron_entry->action_data = eina_stringshare_add(action_data);
 
     return cron_entry;
 }/*cron_entry_new*/
@@ -309,6 +335,7 @@ cron_entry_new(unsigned char day, unsigned char mday, unsigned char month,
 /*
  *
  */
+ /*
 static void
 crontab_test()
 {
@@ -316,9 +343,9 @@ crontab_test()
 
     crons_init();
 
-    /*Add a cron entry to crontab*/
     cron_elem = cron_entry_new(MON, ANY, JAN, 12, 30,  "edams -a \"{\"TYPE\":\"EXEC\",\"DATA\":{\"EXEC\":\"/usr/bin/gedit\"}}\"");
     crons_list_entry_add(cron_elem);
 
     crons_shutdown();
-}/*crontab_test*/
+}*/
+/*crontab_test*/
