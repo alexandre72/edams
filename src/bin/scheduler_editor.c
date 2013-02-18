@@ -1,5 +1,5 @@
 /*
- * events_editor.c
+ * scheduler_editor.c
  * This file is part of EDAMS
  *
  * Copyright (C) 2013 - Alexandre Dussart
@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
+
+
 
 #include <Elementary.h>
 
