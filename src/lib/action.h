@@ -52,6 +52,7 @@ typedef enum _Action_Type
 
 Eina_Bool action_parse(Action *action);
 const char *action_type_to_desc(Action_Type type);
+const char *action_type_to_str(Action_Type type);
 Action_Type action_str_to_type(const char *s);
 Condition action_str_to_condition(const char *s);
 const char *action_condition_to_str(Condition condition);

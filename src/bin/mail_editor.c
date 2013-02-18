@@ -69,6 +69,7 @@ mail_editor_add()
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
+	elm_object_text_set(entry, edams_settings_user_name_get());
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
 
@@ -95,6 +96,7 @@ mail_editor_add()
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
+	elm_object_text_set(entry, _("[EDAMS]About..."));
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
 

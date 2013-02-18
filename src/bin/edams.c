@@ -446,7 +446,7 @@ static const Ecore_Getopt options =
    "Enlightened Home-Automation System written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
    {
-      ECORE_GETOPT_STORE_STR ('t', "action-type", "Action type(EXEC,MAIL,DEBUG,CMND)"),
+      ECORE_GETOPT_STORE_STR ('a', "action-type", "Action type(EXEC,MAIL,DEBUG,CMND)"),
       ECORE_GETOPT_STORE_STR ('d', "action-data", "Action data to parse in json format"),
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
@@ -487,6 +487,7 @@ elm_main(int argc, char **argv)
     };
 
     args = ecore_getopt_parse(&options, values, argc, argv);
+    printf("%d\n", argc);
     if (args < 0)
     {
         fprintf(stderr, _("\033[31mERROR:\033[0mCan't parse command line options!\n"));

@@ -402,3 +402,17 @@ action_type_to_desc(Action_Type type)
 	else if(type == ACTION_TYPE_DEBUG)		return _("Debug stuff for testing purpose");
 	else 									return NULL;
 }/*action_type_to_str*/
+
+
+/*
+ *Return string representation of Action_Type 'type' arg.
+ */
+const char *
+action_type_to_str(Action_Type type)
+{
+	if(type == ACTION_TYPE_CMND)			return "CMND";
+	else if(type == ACTION_TYPE_MAIL)		return "MAIL";
+	else if(type == ACTION_TYPE_EXEC)		return "EXEC";
+	else if(type == ACTION_TYPE_DEBUG)		return "DEBUG";
+	else 									return NULL;
+}/*action_type_to_str*/

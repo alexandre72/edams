@@ -23,6 +23,8 @@
 
 #include <Eina.h>
 
+#include "action.h"
+
 #define ANY 99
 #define PAIR 88
 #define UNPAIR 89
@@ -59,13 +61,14 @@ typedef enum Month
 
 typedef struct Cron_Entry
 {
-    unsigned char minute;   /*0 to 59*/
-    unsigned char hour;     /*1 à 23*/
-    unsigned char mday;     /*1 to 31*/
-    unsigned char month;    /*1 to 12*/
-    unsigned char day;      /*0 to 7*/
+    unsigned char minute;       /*0 to 59*/
+    unsigned char hour;         /*1 à 23*/
+    unsigned char mday;         /*1 to 31*/
+    unsigned char month;        /*1 to 12*/
+    unsigned char day;          /*0 to 7*/
 
-    const char *cmnd;        /*Command to exec*/
+    Action_Type action_type;    /*Action type. Eg 'EXEC'*/
+    const char *action_data;   /*Action data*/
 }Cron_Entry;
 
 
@@ -80,7 +83,7 @@ Eina_Bool crons_list_entry_add(Cron_Entry *cron_elem);
 Cron_Entry *
 cron_entry_new(unsigned char day, unsigned char mday, unsigned char month,
                 unsigned char hour, unsigned char minute,
-                const char *cmnd);
+                Action_Type action_type,  const char *action_data);
 
 const char *month_to_str(Month month);
 const char *day_to_str(Day_Of_Week day);

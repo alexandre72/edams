@@ -33,7 +33,7 @@
 /*Global objects*/
 static Evas_Object *win = NULL;
 
-/*Callbacks*/
+/*Evas_Object Callbacks*/
 static void _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _button_remove_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
@@ -51,7 +51,7 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 {
 	Action_Type type = (Action_Type)data;
 	Evas_Object *cwin;
-    const char *s;
+    const char *s = NULL;
 
     cwin = elm_object_top_widget_get(obj);
 
@@ -96,8 +96,8 @@ static void
 _button_arg_edit_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	App_Info *app = evas_object_data_get(win, "app");
-	Evas_Object *cwin;
-	Evas_Object *hbox;
+	Evas_Object *cwin = NULL;
+	Evas_Object *hbox = NULL;
 	Evas_Object *button, *icon;
 
 	Action_Type type = (Action_Type)data;
@@ -231,7 +231,7 @@ _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 static void
 _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
 {
-	Evas_Object *slider, *hoversel, *entry;
+	Evas_Object *slider, *hoversel;
 	Action *action = (Action *)elm_object_item_data_get(event_info);
 
 	slider = elm_object_name_find(win, "ifvalue slider", -1);
@@ -254,7 +254,7 @@ _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 static void
 _list_action_add(Evas_Object *list, Action *action)
 {
-	const char *s;
+	char *s;
 	asprintf(&s, _("If %s %s then %s"),
 										action_condition_to_str(action_ifcondition_get(action)),
 										action_ifvalue_get(action),
@@ -293,17 +293,15 @@ _list_action_add(Evas_Object *list, Action *action)
 void
 actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __UNUSED__)
 {
-	char *s;
+	App_Info *app = (App_Info *) data;
 	Evas_Object *hoversel, *slider;
 	Evas_Object *grid;
 	Evas_Object *icon, *bx, *frame;
 	Evas_Object *button;
 	Evas_Object *list;
+	char *s;
 
-	App_Info *app = (App_Info *) data;
-
-
-    if(widget_class_get(app->widget) != WIDGET_CLASS_XPL_SENSOR_BASIC) return;
+    if((!app->widget) || (widget_class_get(app->widget) != WIDGET_CLASS_XPL_SENSOR_BASIC)) return;
 
     Xpl_Type type = widget_xpl_type_get(app->widget);
 
@@ -342,7 +340,7 @@ actions_editor_add(void *data, Evas_Object * obj __UNUSED__,	void *event_info __
 
    	hoversel = elm_hoversel_add(grid);
    	evas_object_name_set(hoversel, "ifcondition hoversel");
-	int x = 0;
+	unsigned int x = 0;
 	for(x = 0;x != CONDITION_LAST;x++)
 	{
 		if(x == CONDITION_UNKNOWN) continue;
