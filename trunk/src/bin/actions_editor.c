@@ -269,7 +269,7 @@ _list_action_add(Evas_Object *list, Action *action)
     if(action_type_get(action) == ACTION_TYPE_CMND)
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "elm/icon/xpl/default");
     else if(action_type_get(action) == ACTION_TYPE_MAIL)
-        elm_icon_standard_set(icon, "mail-send");
+        elm_icon_standard_set(icon, "mail-message_new");
     else if(action_type_get(action) == ACTION_TYPE_EXEC)
         elm_icon_standard_set(icon, "system-run");
     else if(action_type_get(action) == ACTION_TYPE_DEBUG)
