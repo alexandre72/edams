@@ -22,11 +22,16 @@
 #ifndef __GLOBALVIEW_H
 #define __GLOBALVIEW_H
 
+#include "location.h"
+
 void global_view_new(void *data, Evas_Object *obj, void *event_info);
 void global_view_quit();
-void global_view_widget_data_update(Location *location, Widget *widget);
+
 void global_view_location_add(Location *location);
 void global_view_location_del(Location *location);
+
+void global_view_widget_data_update(Location *location, Widget *widget);
+void global_view_new_mail_emit(int num_new, int num_total);
 
 static const int TEMP_MIN = -30;
 static const int TEMP_MAX = 50;

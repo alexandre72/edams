@@ -31,9 +31,7 @@ typedef struct
 	char *cosm_apikey;			    /*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
 	char *gnuplot_path;			    /*Gnuplot path. Eg '/usr/bin/gnuplot'*/
 	char *global_view_background;   /*Global view background image filename.*/
-	char *smtp_server; 			    /*SMTP server. Eg 'smtp://smtp.gmail.com:587'*/
-	char *smtp_username;		    /*SMTP user password. Eg 'myemailaddress@gmail.com'*/
-	char *smtp_userpwd;			    /*SMTP user password. Eg 'PASSWORD123'*/
+	char *mbox_path; 			    /*mbox path file. Eg '/home/jdoe/mbox'*/
 	char *user_name;                /*User name. Eg 'John Doe'*/
 	char *user_mail;                /*User mail. Eg 'john.doe@imail.net'*/
 	Eina_Bool softemu;			    /*TODO:Sotfware emulation, mainly used to test EDAMS.*/
@@ -139,6 +137,7 @@ edams_settings_global_view_background_set(const char *file)
     if((!file) || (strlen(file) == 0))
     {
         eet_delete(ef, "global_view/background");
+        file = NULL;
     }
     else
     {
@@ -170,6 +169,7 @@ edams_settings_cosm_apikey_set(const char *cosm_apikey)
     if((!cosm_apikey) || (strlen(cosm_apikey) == 0))
     {
         eet_delete(ef, "edams/cosm_apikey");
+        cosm_apikey = NULL;
     }
     else
     {
@@ -198,6 +198,7 @@ edams_settings_gnuplot_path_set(const char *gnuplot_path)
     if((!gnuplot_path) || (strlen(gnuplot_path) == 0))
     {
         eet_delete(ef, "edams/gnuplot_path");
+        gnuplot_path = NULL;
     }
     else
     {
@@ -211,11 +212,11 @@ edams_settings_gnuplot_path_set(const char *gnuplot_path)
  *
  */
 const char*
-edams_settings_smtp_server_get()
+edams_settings_mbox_path_get()
 {
-    settings->smtp_server = NULL;
-	EET_STRING_SETTINGS_READ("edams/smtp_server", settings->smtp_server);
-	return settings->smtp_server;
+    settings->mbox_path = NULL;
+	EET_STRING_SETTINGS_READ("edams/mbox_path", settings->mbox_path);
+	return settings->mbox_path;
 }/*edams_settings_smtp_server_get*/
 
 
@@ -223,81 +224,22 @@ edams_settings_smtp_server_get()
  *
  */
 void
-edams_settings_smtp_server_set(const char *smtp_server)
+edams_settings_mbox_path_set(const char *mbox_path)
 {
-    if((!smtp_server) || (strlen(smtp_server) == 0))
+    if((!mbox_path) || (strlen(mbox_path) == 0))
     {
-        eet_delete(ef, "edams/smtp_server");
+        eet_delete(ef, "edams/mbox_path");
+        mbox_monitoring_shutdown();
+        mbox_path = NULL;
     }
     else
     {
-        eet_write(ef, "edams/smtp_server", smtp_server, strlen(smtp_server)+1, 0);
+        eet_write(ef, "edams/mbox_path", mbox_path, strlen(mbox_path)+1, 0);
+        mbox_monitoring_init();
     }
 
-	debug(stdout, _("Smtp server options is %s"), smtp_server?_("enabled"):_("disabled"));
+	debug(stdout, _("Mbox monitoring is %s"), mbox_path ? _("enabled"):_("disabled"));
 }/*edams_settings_smtp_server_set*/
-
-
-/*
- *
- */
-const char*
-edams_settings_smtp_username_get()
-{
-    settings->smtp_username = NULL;
-	EET_STRING_SETTINGS_READ("edams/smtp_username", settings->smtp_username);
-	return settings->smtp_username;
-}/*edams_settings_smtp_username_get*/
-
-
-/*
- *
- */
-void
-edams_settings_smtp_username_set(const char *smtp_username)
-{
-    if((!smtp_username) || (strlen(smtp_username) == 0))
-    {
-        eet_delete(ef, "edams/smtp_username");
-    }
-    else
-    {
-        eet_write(ef, "edams/smtp_username", smtp_username, strlen(smtp_username)+1, 0);
-	    debug(stdout, _("Smtp username set to '%s'"), smtp_username);
-    }
-
-}/*edams_settings_smtp_username_set*/
-
-
-/*
- *
- */
-const char*
-edams_settings_smtp_userpwd_get()
-{
-    settings->smtp_userpwd = NULL;
-	EET_STRING_SETTINGS_READ("edams/smtp_userpwd", settings->smtp_userpwd);
-	return settings->smtp_userpwd;
-}/*edams_settings_smtp_userpwd_get*/
-
-
-
-/*
- *
- */
-void
-edams_settings_smtp_userpwd_set(const char *smtp_userpwd)
-{
-    if((!smtp_userpwd) || (strlen(smtp_userpwd) == 0))
-    {
-        eet_delete(ef, "edams/smtp_userpwd");
-    }
-    else
-    {
-        eet_write(ef, "edams/smtp_userpwd", smtp_userpwd, strlen(smtp_userpwd)+1, 0);
-    }
-}/*edams_settings_smtp_username_set*/
-
 
 
 /*
@@ -312,7 +254,6 @@ edams_settings_user_mail_get()
 }/*edams_settings_user_mail_get*/
 
 
-
 /*
  *
  */
@@ -325,7 +266,7 @@ edams_settings_user_mail_set(const char *mail)
     }
     else
     {
-    eet_write(ef, "edams/user_mail", mail, strlen(mail)+1, 0);;
+        eet_write(ef, "edams/user_mail", mail, strlen(mail)+1, 0);;
     }
 
 }/*edams_settings_user_mail_set*/
@@ -374,12 +315,13 @@ edams_settings_init()
 	settings->gnuplot_path = NULL;
 	settings->cosm_apikey = NULL;
 	settings->global_view_background = NULL;
-	settings->smtp_server = NULL;
-	settings->smtp_username = NULL;
-	settings->smtp_userpwd = NULL;
-	settings->user_name = NULL;
-	settings->user_mail = NULL;
+	settings->user_name = eina_stringshare_add(getlogin());
+	const char *s;
+	asprintf(&s, "%s@localhost", getlogin());
+	settings->user_mail = eina_stringshare_add(s);
+    FREE(s);
 	settings->softemu = EINA_FALSE;
+	settings->mbox_path = NULL;
 	settings->debug = edams_settings_debug_get();
 
 	set_debug_mode(settings->debug);
@@ -397,9 +339,7 @@ edams_settings_shutdown()
 	eina_stringshare_del(settings->gnuplot_path);
 	eina_stringshare_del(settings->cosm_apikey);
 	eina_stringshare_del(settings->global_view_background);
-	eina_stringshare_del(settings->smtp_server);
-	eina_stringshare_del(settings->smtp_username);
-	eina_stringshare_del(settings->smtp_userpwd);
+	eina_stringshare_del(settings->mbox_path);
 	eina_stringshare_del(settings->user_name);
 	eina_stringshare_del(settings->user_mail);
 	FREE(settings);

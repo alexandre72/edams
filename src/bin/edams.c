@@ -446,8 +446,8 @@ static const Ecore_Getopt options =
    "Enlightened Home-Automation System written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
    {
-      ECORE_GETOPT_STORE_STR ('at', "action-type", "Action type(EXEC,MAIL,DEBUG,CMND)"),
-      ECORE_GETOPT_STORE_STR ('ad', "action-data", "Action data to parse in json format"),
+      ECORE_GETOPT_STORE_STR ('t', "action-type", "Action type(EXEC,MAIL,DEBUG,CMND)"),
+      ECORE_GETOPT_STORE_STR ('d', "action-data", "Action data to parse in json format"),
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
       ECORE_GETOPT_LICENSE   ('L', "license"),

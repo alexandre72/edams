@@ -52,14 +52,14 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	entry = elm_object_name_find(win, "gnuplot path entry", -1);
 	edams_settings_gnuplot_path_set(elm_object_text_get(entry));
 
-	entry = elm_object_name_find(win, "smtp server entry", -1);
-	edams_settings_smtp_server_set(elm_object_text_get(entry));
+	entry = elm_object_name_find(win, "mbox path entry", -1);
+	edams_settings_mbox_path_set(elm_object_text_get(entry));
 
-	entry = elm_object_name_find(win, "smtp username entry", -1);
-	edams_settings_smtp_username_set(elm_object_text_get(entry));
+	entry = elm_object_name_find(win, "user name entry", -1);
+	edams_settings_user_name_set(elm_object_text_get(entry));
 
-	entry = elm_object_name_find(win, "smtp userpwd entry", -1);
-	edams_settings_smtp_userpwd_set( elm_object_text_get(entry));
+	entry = elm_object_name_find(win, "user mail entry", -1);
+	edams_settings_user_mail_set( elm_object_text_get(entry));
 
 	check = elm_object_name_find(win, "emulation check", -1);
 	edams_settings_softemu_set(elm_check_state_get(check));
@@ -216,47 +216,46 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_object_content_set(frame, entry);
 
 	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("SMTP server adress:"));
+	elm_object_text_set(frame, _("Mbox file path:"));
 	elm_grid_pack(grid, frame, 1, 49, 99, 13);
 	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "smtp server entry");
+	evas_object_name_set(entry, "mbox path entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
-	elm_object_text_set(entry, edams_settings_smtp_server_get());
+	elm_object_text_set(entry, edams_settings_mbox_path_get());
 
 	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("SMTP username:"));
+	elm_object_text_set(frame, _("User name:"));
 	elm_grid_pack(grid, frame, 1, 63, 99, 13);
 	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "smtp username entry");
+	evas_object_name_set(entry, "user name entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
-	elm_object_text_set(entry, edams_settings_smtp_username_get());
+	elm_object_text_set(entry, edams_settings_user_name_get());
 
 	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("SMTP password:"));
+	elm_object_text_set(frame, _("User mail:"));
 	elm_grid_pack(grid, frame, 1, 77, 99, 13);
 	evas_object_show(frame);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "smtp userpwd entry");
-	elm_entry_password_set(entry, EINA_TRUE);
+	evas_object_name_set(entry, "user mail entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	evas_object_show(entry);
 	elm_object_content_set(frame, entry);
-	elm_object_text_set(entry, edams_settings_smtp_userpwd_get());
+	elm_object_text_set(entry, edams_settings_user_mail_get());
 
 	bx = elm_box_add(win);
 	elm_box_horizontal_set(bx, EINA_TRUE);
