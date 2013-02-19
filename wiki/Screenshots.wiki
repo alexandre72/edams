@@ -2,13 +2,16 @@
 
 
  ===Main application interface===
-http://edams.googlecode.com/files/shot-2013-01-26_18-27-38.jpg
+http://edams.googlecode.com/files/shot-2013-02-19_18-18-23.jpg
 
  ===Global view===
 http://edams.googlecode.com/files/shot-2013-02-19_18-21-48.jpg
 
  ===Widget editor===
 http://edams.googlecode.com/files/shot-2013-02-11_20-07-50.jpg
+
+ ===Scheduler editor===
+http://edams.googlecode.com/files/shot-2013-02-19_18-18-50.jpg
 
  ===Actions editor===
 http://edams.googlecode.com/files/shot-2013-02-12_17-51-58.jpg
