@@ -25,9 +25,6 @@
 
 #include "action.h"
 
-#define ANY 99
-#define PAIR 88
-#define UNPAIR 89
 
 
 typedef enum Day_Of_Week
@@ -62,10 +59,10 @@ typedef enum Month
 typedef struct Cron_Entry
 {
     unsigned char minute;       /*0 to 59*/
-    unsigned char hour;         /*1 à 23*/
-    unsigned char mday;         /*1 to 31*/
+    unsigned char hour;         /*0 à 23*/
+    unsigned char day_month;    /*1 to 31*/
     unsigned char month;        /*1 to 12*/
-    unsigned char day;          /*0 to 7*/
+    unsigned char day_week;     /*0 to 6*/
 
     Action_Type action_type;    /*Action type. Eg 'EXEC'*/
     const char *action_data;   /*Action data*/
@@ -85,7 +82,10 @@ cron_entry_new(unsigned char day, unsigned char mday, unsigned char month,
                 unsigned char hour, unsigned char minute,
                 Action_Type action_type,  const char *action_data);
 
+const char *minute_to_str(unsigned char minute);
+const char *hour_to_str(unsigned char hour);
+const char *day_month_to_str(unsigned char day_month);
 const char *month_to_str(Month month);
-const char *day_to_str(Day_Of_Week day);
+const char *day_week_to_str(Day_Of_Week day_week);
 
 #endif /*__#ifndef __CRONTAB_H_H*/
