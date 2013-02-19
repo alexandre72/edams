@@ -2,13 +2,16 @@
 
 
  ===Interface d'administration principale===
-http://edams.googlecode.com/files/shot-2013-01-26_18-27-38.jpg
+http://edams.googlecode.com/files/shot-2013-02-19_18-18-23.jpg
 
  ===Vue globale===
-http://edams.googlecode.com/files/shot-2013-02-12_17-52-12.jpg
+http://edams.googlecode.com/files/shot-2013-02-19_18-21-48.jpg
 
  ===Editeur de widget===
 http://edams.googlecode.com/files/shot-2013-02-11_20-07-50.jpg
+
+ ===Editeur d'événements===
+http://edams.googlecode.com/files/shot-2013-02-19_18-18-50.jpg
 
  ===Editeur d'actions===
 http://edams.googlecode.com/files/shot-2013-02-12_17-51-58.jpg

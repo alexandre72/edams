@@ -15,6 +15,7 @@ EDAMS supporte:
   * Une vue globale des widgets groupés par localité avec la possibilité d'agencer les widgets comme bon vous semble.
   * La génération de graphiques via gnuplot avec contrôle du rendu dans la vue globale.
   * La gestion d'actions prédéfinies lorsque les données issues des capteurs remplissent certaines conditions(envoyer un mail lorsque la température du capteur XY est inférieure à 12, executer un programme externe lorsque le taux d'humidité est supérieur ou égal à 70, régler l'intensité lumineuse d'une lampe lorsque la nuit arrive...).
+  * Editeur d'événements pour effectuer des actions à des temps bien prévis. L'éditeur d'événements utilise crontab(sans casser vos entrées actuelles).
 
 Pour utiliser EDAMS au mieux, il vous sera nécessaire d'installer les programmes et librairies suivants:
 
