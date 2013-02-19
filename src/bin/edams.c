@@ -382,7 +382,7 @@ _location_naviframe_content_set(Location * location)
 		elm_image_aspect_fixed_set(icon, EINA_TRUE);
 		elm_image_resizable_set(icon, 1, 0);
 
-		elm_list_item_sorted_insert(list,  strdup(widget_name_get(widget)), icon, NULL, _list_item_widget_selected_cb, widget, _list_widgets_sort_cb);
+		elm_list_item_sorted_insert(list,  widget_name_get(widget), icon, NULL, _list_item_widget_selected_cb, widget, _list_widgets_sort_cb);
 	}
 	elm_list_go(list);
 
