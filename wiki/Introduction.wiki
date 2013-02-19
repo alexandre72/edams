@@ -16,6 +16,7 @@ EDAMS support:
   * Global view to show all your widgets grouped by location, with the ability to move them!
   * Data graphics generated from gnuplot and showed in global view.
   * Actions(scenario-like) to perfoms some predefined actions on some condition(send a mail when temperature is >= 13, light on led bulb when night occurs...).
+ * Scheduler editor. You can performs standard EDAMS actions(CMND xPL, exec external programs...). Scheduler editor uses crontab(without breaking your current crons entries). 
 
 To use EDAMS, you'll needs:
 
