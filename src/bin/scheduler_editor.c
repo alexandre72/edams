@@ -433,7 +433,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
    	hoversel = elm_hoversel_add(grid);
    	evas_object_name_set(hoversel, "type hoversel");
    	elm_object_text_set(hoversel, _("Action"));
-	elm_grid_pack(grid, hoversel, 79, 70, 20, 8);
+	elm_grid_pack(grid, hoversel, 80, 70, 20, 8);
 	for(x = 0;x != ACTION_TYPE_LAST;x++)
 	{
 		if(x == ACTION_TYPE_UNKNOWN) continue;
@@ -494,6 +494,6 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
 	evas_object_show(separator);
 */
 
-	evas_object_resize(win, 920, 450);
+	evas_object_resize(win, 920, 500);
 	evas_object_show(win);
 }/*scheduler_editor_new*/
