@@ -328,10 +328,19 @@ _list_control_basic_item_add(Evas_Object *list, Widget *widget)
 {
 	const char *s;
 
+	Evas_Object *icon;
+	icon = elm_icon_add(win);
+	asprintf(&s, "%s/icon", widget_group_get(widget));
+   	elm_image_file_set(icon, edams_edje_theme_file_get(), s);
+   	FREE(s);
+	elm_image_aspect_fixed_set(icon, EINA_TRUE);
+	elm_image_resizable_set(icon, 1, 0);
+
 	asprintf(&s, "%s %s", widget_xpl_device_get(widget), xpl_type_to_str(widget_xpl_type_get(widget)));
 
-	elm_list_item_append(list, s, NULL, NULL, _list_control_basic_item_selected_cb, widget);
+	elm_list_item_append(list, s, icon, NULL, _list_control_basic_item_selected_cb, widget);
 	elm_list_go(list);
+	FREE(s);
 }/*_list_control_basic_item_selected_cb*/
 
 
