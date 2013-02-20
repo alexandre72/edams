@@ -77,6 +77,17 @@ edams_locations_list_get()
 }/*edams_locations_list_get*/
 
 
+
+/*
+ *Return locations already read
+ */
+App_Info *
+edams_app_info_get()
+{
+    return app;
+}/*edams_app_get*/
+
+
 /*
  *Callback
  */

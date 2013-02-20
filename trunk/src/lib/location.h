@@ -48,10 +48,10 @@ void action_free(Action *action);
 void action_ifcondition_set(Action *action, Condition ifcondition);
 Condition action_ifcondition_get(const Action *action);
 const char * action_ifvalue_get(const Action *action);
-void action_ifvalue_set(const Action *action, const char *ifvalue);
+void action_ifvalue_set(Action *action, const char *ifvalue);
 void action_type_set(Action *action, Action_Type type);
 Action_Type  action_type_get(const Action *action);
-void action_data_set(const Action *action, const char *data);
+void action_data_set(Action *action, const char *data);
 const char * action_data_get(const Action *action);
 
 void widget_action_add(Widget *widget, Action *action);
@@ -102,7 +102,7 @@ void widget_actions_list_clear(Widget *widget);
 void widget_actions_list_set(Widget *widget, Eina_List *list);
 
 /* Location */
-Location *location_new(unsigned int id, const char * name);
+Location *location_new(const char * name);
 void location_free(Location *location);
 Location *location_load(const char *filename);
 Eina_Bool location_save(Location *location);

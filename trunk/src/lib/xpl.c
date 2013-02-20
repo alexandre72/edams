@@ -241,23 +241,52 @@ xpl_process_messages()
 static void
 _xpl_emulate_messages(Ecore_Pipe *pipe)
 {
-   for(;;)
-     {
-        char *str ;
-        char s[255];
+    char *samples[100][100]={
+                                {"DHT11", "humidity"},
+                                {"DS18B20", "temp"},
+                                {"wc_count", "counter"},
+                                {"pir_sensor1", "input"},
+                                {"pir_sensor2", "input"},
+                                {"bulb", "input"},
+                                {"led", "input"},
+                                {"energy_counter", "energy"},
+                                {NULL, NULL}
+                            };
 
-        cJSON *root;
-    	root = cJSON_CreateObject();
-    	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString("DHT11"));
-    	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString("humidity"));
-	    RANDOMIZE();
-	    snprintf(s, sizeof(s), "%d", RANDOM(100));
-    	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(s));
-        str = cJSON_PrintUnformatted(root);
-        cJSON_Delete(root);
-        ecore_pipe_write(pipe, str, strlen(str));
-        sleep(2);
-        FREE(str);
+    for(;;)
+    {
+        unsigned int i;
+        for(i = 0; samples[i][0] != NULL; i++)
+        {
+            char *str ;
+            char s[255];
+
+            cJSON *root;
+        	root = cJSON_CreateObject();
+        	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(samples[i][0]));
+        	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(samples[i][1]));
+	        RANDOMIZE();
+
+	        if(xpl_str_to_type(samples[i][1]) == XPL_TYPE_INPUT_SENSOR_BASIC)
+	        {
+	           unsigned int a = RANDOM(100);
+	           printf("RANDOM=%d****\n",a);
+
+                if(a < 60)
+    	            snprintf(s, sizeof(s), "0");
+                else
+    	            snprintf(s, sizeof(s), "1");
+	        }
+	        {
+    	        snprintf(s, sizeof(s), "%d", RANDOM(100));
+            }
+        	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(s));
+            str = cJSON_PrintUnformatted(root);
+            cJSON_Delete(root);
+            ecore_pipe_write(pipe, str, strlen(str));
+            FREE(str);
+            sleep(1);
+        }
      }
 }/*_xpl_emulate_messages*/
 
