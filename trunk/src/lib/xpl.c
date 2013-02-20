@@ -259,7 +259,6 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
         for(i = 0; samples[i][0] != NULL; i++)
         {
             char *str ;
-            char s[255];
 
             cJSON *root;
         	root = cJSON_CreateObject();
@@ -267,18 +266,20 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
         	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(samples[i][1]));
 	        RANDOMIZE();
 
-	        if(xpl_str_to_type(samples[i][1]) == XPL_TYPE_INPUT_SENSOR_BASIC)
+	        if(((xpl_str_to_type(samples[i][1])) == XPL_TYPE_INPUT_SENSOR_BASIC))
 	        {
 	           unsigned int a = RANDOM(100);
                 if(a < 60)
-    	            snprintf(s, sizeof(s), "0");
+    	            asprintf(&str, "0");
                 else
-    	            snprintf(s, sizeof(s), "1");
+    	            asprintf(&str, "1");
 	        }
+	        else
 	        {
-    	        snprintf(s, sizeof(s), "%d", RANDOM(100));
+    	        asprintf(&str, "%d", RANDOM(100));
             }
-        	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(s));
+        	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(str));
+        	FREE(str);
             str = cJSON_PrintUnformatted(root);
             cJSON_Delete(root);
             ecore_pipe_write(pipe, str, strlen(str));
@@ -402,25 +403,25 @@ xpl_control_basic_cmnd_to_elm_str(Widget *widget)
 
     if(!widget_xpl_data1_get(widget))
     {
-	    asprintf(&s,"<ps><ps><em>control.basic<br>\
+	    asprintf(&s,"<em>control.basic<br>\
 					{<br>\
 					<tab>device=%s<br>\
  					<tab>type=%s<br>\
 					<tab>current=%s<br>\
-					}<br></em>",
+					}</em>",
 					widget_xpl_device_get(widget),
 					xpl_type_to_str(widget_xpl_type_get(widget)),
 					widget_xpl_current_get(widget));
     }
     else
     {
-	    asprintf(&s,"<ps><ps><em>control.basic<br>\
+	    asprintf(&s,"<em><em>control.basic<br>\
 					{<br>\
 					<tab>device=%s<br>\
  					<tab>type=%s<br>\
 					<tab>current=%s<br>\
 					<tab>data11=%s<br>\
-					}<br></em>",
+					}</em>",
 					widget_xpl_device_get(widget),
 					xpl_type_to_str(widget_xpl_type_get(widget)),
 					widget_xpl_current_get(widget),
