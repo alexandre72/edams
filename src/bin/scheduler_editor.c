@@ -93,7 +93,7 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 static void
 _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
-	App_Info *app = evas_object_data_get(win, "app");
+	App_Info *app = edams_app_info_get();
 	Evas_Object *cwin = NULL;
 	Evas_Object *hbox = NULL;
 	Evas_Object *button, *icon;
@@ -157,9 +157,7 @@ _button_remove_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, v
     Cron_Entry *cron_elem = elm_object_item_data_get(selected_item);
 
     crons_list_entry_remove(cron_elem);
-
     elm_object_item_del(selected_item);
-
 }/*_button_remove_clicked_cb*/
 
 
@@ -244,7 +242,7 @@ _list_crons_add(Evas_Object *list, Cron_Entry *cron_elem)
     if(type == ACTION_TYPE_UNKNOWN) return;
 
     char *s;
-    asprintf(&s, "On %s %s %s at %s:%s",
+    asprintf(&s, _("On %s %s %s at %s:%s"),
                     day_week_to_str(cron_elem->day_week), day_month_to_str(cron_elem->day_month),
                     month_to_str(cron_elem->month),
                     hour_to_str(cron_elem->hour), minute_to_str(cron_elem->minute));
@@ -258,7 +256,7 @@ _list_crons_add(Evas_Object *list, Cron_Entry *cron_elem)
     if(type == ACTION_TYPE_CMND)
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "elm/icon/xpl/default");
     else if(type == ACTION_TYPE_MAIL)
-        elm_icon_standard_set(icon, "mail-send");
+        elm_icon_standard_set(icon, "mail-message-new");
     else if(type == ACTION_TYPE_EXEC)
         elm_icon_standard_set(icon, "system-run");
     else if(type == ACTION_TYPE_DEBUG)
@@ -267,9 +265,8 @@ _list_crons_add(Evas_Object *list, Cron_Entry *cron_elem)
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "");
 
 	elm_list_item_append(list, s, icon, NULL, _list_item_selected_cb, cron_elem);
-    FREE(s);
-
 	elm_list_go(list);
+    FREE(s);
 }/*_list_action_add*/
 
 

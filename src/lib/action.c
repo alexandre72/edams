@@ -26,9 +26,6 @@
 #include "utils.h"
 #include "xpl.h"
 
-
-
-
 /*
  *
  */

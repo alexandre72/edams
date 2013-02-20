@@ -24,7 +24,6 @@
 
 #include <Eina.h>
 
-
 typedef struct _Action Action;
 
 typedef enum _Condition_
