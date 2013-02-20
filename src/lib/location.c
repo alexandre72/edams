@@ -919,7 +919,7 @@ location_new(unsigned int id, const char * name)
     location->name = eina_stringshare_add(name ? name : _("undefined"));
 
     /*Create an unique filename to avoid conflicts*/
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s", edams_locations_data_path_get(), location->name);
+	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet", edams_locations_data_path_get(), location->name);
     f = filename_create(s);
 	location->__eet_filename = eina_stringshare_add(f);
     FREE(f);
