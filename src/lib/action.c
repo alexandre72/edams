@@ -22,6 +22,7 @@
 
 #include "action.h"
 #include "cJSON.h"
+#include "edams.h"
 #include "location.h"
 #include "utils.h"
 #include "xpl.h"
@@ -63,8 +64,8 @@ exec_action_parse(const char *data)
 	cJSON *jexec = cJSON_GetObjectItem(root,"EXEC");
 	cJSON *jterminal = cJSON_GetObjectItem(root,"TERMINAL");
 
-    const char *exec = cJSON_Print(jexec);
-    const char *terminal = cJSON_Print(jterminal);
+    char *exec = cJSON_Print(jexec);
+    char *terminal = cJSON_Print(jterminal);
 
     strdelstr(exec, "\"");
     strdelstr(terminal, "\"");
@@ -95,7 +96,7 @@ exec_action_parse(const char *data)
 	}
 	else
 	{
-		const char *s;
+		char *s;
 		asprintf(&s, _("Exec '%s' with PID '%d'"), exec, child_pid);
         debug(stdout, s);
 		statusbar_text_set(s, "dialog-informations");
@@ -147,10 +148,10 @@ mail_action_parse(const char *data)
 	cJSON *jsubject = cJSON_GetObjectItem(root, "SUBJECT");
 	cJSON *jbody = cJSON_GetObjectItem(root, "BODY");
 
-    const char *from = cJSON_PrintUnformatted(jfrom);
-    const char *to = cJSON_PrintUnformatted(jto);
-    const char *subject = cJSON_PrintUnformatted(jsubject);
-    const char *body = cJSON_PrintUnformatted(jbody);
+    char *from = cJSON_PrintUnformatted(jfrom);
+    char *to = cJSON_PrintUnformatted(jto);
+    char *subject = cJSON_PrintUnformatted(jsubject);
+    char *body = cJSON_PrintUnformatted(jbody);
 
     strdelstr(from, "\"");
     strdelstr(to, "\"");
@@ -212,7 +213,7 @@ debug_action_parse(const char *data)
 
 	cJSON *jprint = cJSON_GetObjectItem(root, "PRINT");
 
-    const char *print =cJSON_PrintUnformatted(jprint);
+    char *print =cJSON_PrintUnformatted(jprint);
 
     strdelstr(print, "\"");
 
@@ -242,7 +243,10 @@ action_cmnd_data_format(const char *device, const char *type, const char *curren
 	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(device));
     cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(type));
  	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(current));
-    cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(data1));
+
+ 	if(data1)
+        cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(data1));
+
     s = cJSON_PrintUnformatted(root);
 
 	cJSON_Delete(root);
@@ -257,10 +261,10 @@ action_cmnd_data_format(const char *device, const char *type, const char *curren
 static Eina_Bool
 cmnd_action_parse(const char *data)
 {
-/*
     Widget *widget = NULL;
 	cJSON *root;
     cJSON *jdevice, *jtype, *jcurrent, *jdata1;
+    char *device, *current, *type, *data1;
 
 	root = cJSON_Parse(data);
 
@@ -271,25 +275,32 @@ cmnd_action_parse(const char *data)
 	jcurrent = cJSON_GetObjectItem(root, "CURRENT");
 	jdata1 = cJSON_GetObjectItem(root, "DATA1");
 
-    const char *device =cJSON_PrintUnformatted(jdevice);
-    const char *type =cJSON_PrintUnformatted(jtype);
-    const char *current =cJSON_PrintUnformatted(jcurrent);
-    const char *data1 =cJSON_PrintUnformatted(jdata1);
+    device =cJSON_PrintUnformatted(jdevice);
+    type =cJSON_PrintUnformatted(jtype);
+    current =cJSON_PrintUnformatted(jcurrent);
+    data1 =cJSON_PrintUnformatted(jdata1);
 
     strdelstr(device, "\"");
     strdelstr(type, "\"");
     strdelstr(current, "\"");
-    strdelstr(data, "\"");
 
     widget_xpl_device_set(widget, device);
-    widget_xpl_data1_set();
-    widget_xpl_current_set(device, current);
-    widget_xpl_data1_set(widget, data1);
+    widget_xpl_type_set(widget, xpl_str_to_type(type));
+    widget_xpl_current_set(widget, current);
+
+    if(data1)
+    {
+        strdelstr(data1, "\"");
+        widget_xpl_data1_set(widget, data1);
+    }
 
 	cJSON_Delete(root);
+    FREE(device);
+    FREE(type);
+    FREE(current);
+    FREE(data1);
 
     return xpl_control_basic_cmnd_send(widget);
-    */
 }/*cmnd_action*/
 
 

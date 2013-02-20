@@ -105,7 +105,7 @@ _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 	switch(type)
 	{
 		case ACTION_TYPE_CMND:
-	            cwin = cmnd_editor_add(app);
+	            cwin = cmnd_editor_add();
                 hbox = cmnd_editor_hbox_get();
                 break;
 

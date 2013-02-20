@@ -118,7 +118,7 @@ _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void 
 	switch(type)
 	{
 		case ACTION_TYPE_CMND:
-	            cwin = cmnd_editor_add(app);
+	            cwin = cmnd_editor_add();
                 hbox = cmnd_editor_hbox_get();
                 break;
 
@@ -248,7 +248,7 @@ _list_action_add(Evas_Object *list, Action *action)
 	Evas_Object *icon;
 	icon = elm_icon_add(win);
     elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-    evas_object_size_hint_min_set(icon, 48, 48);
+    evas_object_size_hint_min_set(icon, 40, 40);
     evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
 
     if(action_type_get(action) == ACTION_TYPE_CMND)
@@ -353,7 +353,7 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *ev
    	hoversel = elm_hoversel_add(grid);
    	evas_object_name_set(hoversel, "type hoversel");
    	elm_object_text_set(hoversel, _("Action"));
-	elm_grid_pack(grid, hoversel, 52, 70, 30, 8);
+	elm_grid_pack(grid, hoversel, 52, 70, 47, 8);
 	for(x = 0;x != ACTION_TYPE_LAST;x++)
 	{
 		if(x == ACTION_TYPE_UNKNOWN) continue;
