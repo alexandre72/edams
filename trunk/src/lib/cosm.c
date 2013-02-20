@@ -309,7 +309,7 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Ur
     if((event_info->status != 201) && (event_info->status != 200))
     {
     printf("cosm server returned code: '%d'\n", event_info->status);
-        const char *s;
+        char *s;
         asprintf(&s, _("A location feed hasn't been deleted, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
         statusbar_text_set(s, "elm/icon/cosm/default");
         FREE(s);

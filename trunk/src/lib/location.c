@@ -900,13 +900,15 @@ _location_shutdown(void)
 }/*_location_shutdown*/
 
 
+
 /*
  *Alloc and initialize new location struct
  */
 Location *
 location_new(unsigned int id, const char * name)
 {
-	char s[PATH_MAX];
+    unsigned int i = 0;
+    char *s;
     const char *f;
 
     Location *location = calloc(1, sizeof(Location));
@@ -919,10 +921,15 @@ location_new(unsigned int id, const char * name)
     location->name = eina_stringshare_add(name ? name : _("undefined"));
 
     /*Create an unique filename to avoid conflicts*/
-	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"%s.eet", edams_locations_data_path_get(), location->name);
-    f = filename_create(s);
+    asprintf(&s, "%s"DIR_SEPARATOR_S"%s.eet", edams_locations_data_path_get(), name);
+    while(ecore_file_exists(s) == EINA_TRUE)
+	{
+	    FREE(s);
+        asprintf(&s, "%s"DIR_SEPARATOR_S"%s-%03d.eet", edams_locations_data_path_get(), name, i);
+		i++;
+	}
 	location->__eet_filename = eina_stringshare_add(f);
-    FREE(f);
+    FREE(s);
     location->id = id;
 
     /*Initialize widgets Eina_List*/
