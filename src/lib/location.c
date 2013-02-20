@@ -39,33 +39,33 @@
 struct _Action
 {
 	Condition ifcondition;			/*Type of condition(=,>,<,<=,>=). e.g 'EGAL_TO'*/
-	const char *ifvalue;			/*Required condition value. e.g '5'*/
+	Eina_Stringshare *ifvalue;      /*Required condition value. e.g '5'*/
 	Action_Type type;				/*Type of action to peform. e.g 'CMND_ACTION'*/
-	const char *data;				/*Data passed to action separated in json style, depends on action type*/
+	Eina_Stringshare *data;	        /*Data passed to action separated in json style, depends on action type*/
 };
 
 
 /*TODO:Add in_cosm to enable/disable cosm datasteam feed*/
 struct _Widget
 {
-    unsigned int id;				    /*GID of widget e.g '12'*/
-    const char * name;				    /*Name e.g 'temperature'*/
-    const char * group;				    /*Name of edc widget group e.g. 'widget/sensor.basic/counter'*/
-    Widget_Class class;                 /*Widget class. Eg 'WIDGET_CLASS_CONTROL_BASIC'*/
+    unsigned int id;				/*GID of widget e.g '12'*/
+    Eina_Stringshare *name;			/*Name e.g 'temperature'*/
+    Eina_Stringshare * group;	    /*Name of edc widget group e.g. 'widget/sensor.basic/counter'*/
+    Widget_Class class;             /*Widget class. Eg 'WIDGET_CLASS_CONTROL_BASIC'*/
 
     /*Widget xPL specifics fields*/
-    const char *xpl_device;				/*Name of xpl device 'temperature1'. Should be unique*/
-    Xpl_Type xpl_type;			    	/*Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'*/
-    const char *xpl_current;			/*Current data of xpl device*/
-    const char *xpl_data1;				/*Additional data. Used for control.basic cmnd structure message*/
-    const char *xpl_highest;			/*Highest recorded value*/
-    const char *xpl_lowest;				/*Lowest recorded value*/
+    Eina_Stringshare *xpl_device;	/*Name of xpl device 'temperature1'. Should be unique*/
+    Xpl_Type xpl_type;			    /*Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'*/
+    Eina_Stringshare *xpl_current;	/*Current data of xpl device*/
+    Eina_Stringshare *xpl_data1;	/*Additional data. Used for control.basic cmnd structure message*/
+    Eina_Stringshare *xpl_highest;	/*Highest recorded value*/
+    Eina_Stringshare *xpl_lowest;	/*Lowest recorded value*/
 
     /*Cosm specific fields*/
-    Eina_Bool cosm;                     /*Enable data sending to cosm*/
+    Eina_Bool cosm;                 /*Enable data sending to cosm*/
 
     /*Gnuplot*/
-    Eina_Bool gnuplot;                  /*Enable gnuplot data generation*/
+    Eina_Bool gnuplot;              /*Enable gnuplot data generation*/
 
     /*Actions to perfoms when widget reach certains condition*/
 	Eina_List *actions;
@@ -203,7 +203,7 @@ action_ifcondition_get(const Action *action)
  *
  */
 void
-action_ifvalue_set(const Action *action, const char *ifvalue)
+action_ifvalue_set(Action *action, const char *ifvalue)
 {
     EINA_SAFETY_ON_NULL_RETURN(action);
     eina_stringshare_replace(&(action->ifvalue), ifvalue);
@@ -243,7 +243,7 @@ action_type_get(const Action *action)
  *
  */
 void
-action_data_set(const Action *action, const char *data)
+action_data_set(Action *action, const char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(action);
     eina_stringshare_replace(&(action->data), data);
@@ -905,11 +905,10 @@ _location_shutdown(void)
  *Alloc and initialize new location struct
  */
 Location *
-location_new(unsigned int id, const char * name)
+location_new(const char * name)
 {
     unsigned int i = 0;
     char *s;
-    const char *f;
 
     Location *location = calloc(1, sizeof(Location));
 
@@ -921,16 +920,17 @@ location_new(unsigned int id, const char * name)
     location->name = eina_stringshare_add(name ? name : _("undefined"));
 
     /*Create an unique filename to avoid conflicts*/
-    asprintf(&s, "%s"DIR_SEPARATOR_S"%s.eet", edams_locations_data_path_get(), name);
+    asprintf(&s, "%s"DIR_SEPARATOR_S"%s.eet", edams_locations_data_path_get(), location->name);
     while(ecore_file_exists(s) == EINA_TRUE)
 	{
 	    FREE(s);
-        asprintf(&s, "%s"DIR_SEPARATOR_S"%s-%03d.eet", edams_locations_data_path_get(), name, i);
+        asprintf(&s, "%s"DIR_SEPARATOR_S"%s-%03d.eet", edams_locations_data_path_get(), location->name, i);
 		i++;
 	}
-	location->__eet_filename = eina_stringshare_add(f);
+	location->__eet_filename = eina_stringshare_add(s);
     FREE(s);
-    location->id = id;
+
+    location->id = 0;
 
     /*Initialize widgets Eina_List*/
     location->widgets = NULL;
@@ -938,7 +938,7 @@ location_new(unsigned int id, const char * name)
     /*Add creation date informations*/
 	time_t timestamp = time(NULL);
 	struct tm *t = localtime(&timestamp);
-	snprintf(s, sizeof(s), "%02d-%02d-%d",
+	asprintf(&s, "%02d-%02d-%d",
 				(int)t->tm_mday,
   				(int)t->tm_mon,
   				1900+(int)t->tm_year);

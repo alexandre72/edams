@@ -43,16 +43,16 @@ static void _check_cosm_changed_cb(void *data, Evas_Object *obj, void *event_inf
 static void _check_gnuplot_changed_cb(void *data, Evas_Object *obj, void *event_info);
 
 static void _layout_samples_test(Evas_Object *layout, Widget *widget);
-static void _fill_widget_groups(App_Info *app);
+static void _fill_widget_groups();
 
 
 /*
  *
  */
 static void
-_button_close_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_close_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    App_Info *app = data;
+    App_Info *app = edams_app_info_get();
 
     if(!app->widget)
         widget_free(widget);
@@ -65,9 +65,9 @@ _button_close_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
  *
  */
 static void
-_button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    App_Info *app = data;
+    App_Info *app = edams_app_info_get();
     char *s;
 
     if(!app->widget)
@@ -297,7 +297,7 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     Evas_Object *frame = elm_object_name_find(win, "name frame", -1);
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
 	Evas_Object *check = elm_object_name_find(win, "cosm check", -1);
-    App_Info *app = evas_object_data_get(win, "app");
+    App_Info *app = edams_app_info_get();
 
 	elm_layout_file_set(layout, edams_edje_theme_file_get(), NULL);
 
@@ -327,8 +327,9 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
 
 
 static void
-_fill_widget_groups(App_Info *app)
+_fill_widget_groups()
 {
+    App_Info *app = edams_app_info_get();
     Evas_Object *list = elm_object_name_find(win, "groups list", -1);
 	Eina_List *groups = NULL, *l;
     Widget_Class class = widget_class_get(widget);
@@ -422,11 +423,11 @@ _check_gnuplot_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_i
  *Create widget editor to allow user to add a new widget in an easy way.
  */
 void
-widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *grid, *box;
 	Evas_Object *button, *icon, *separator, *frame, *list, *entry, *layout, *check;
-	App_Info *app = (App_Info *) data;
+	App_Info *app = (App_Info *) edams_app_info_get();
 
 	if (!app->location)	return;
 
@@ -445,7 +446,6 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
                         location_name_get(app->location));
     }
     win = elm_win_util_standard_add("widget_editor", s);
-    evas_object_data_set(win, "app", app);
 	FREE(s);
     elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
     elm_win_autodel_set(win, EINA_TRUE);
@@ -508,7 +508,7 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
         strdelstr(device, "\"");
         strdelstr(type, "\"");
 
-	    asprintf(&s, _("'%s' of type %s"), device, type);
+	    asprintf(&s, _("'%s' of type '%s'"), device, type);
         elm_list_item_append(list, s, NULL, NULL, _list_item_xpl_device_selected_cb, device_elem);
         FREE(s);
         FREE(device);

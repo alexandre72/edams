@@ -1019,17 +1019,14 @@ global_view_location_del(Location *location)
 void
 global_view_location_add(Location *location)
 {
-	/*TODO:Ok it's great, but it should be better to have global_view_location_del too*/
-	/*to avoid segfault when a location has been removed*/
-	/*I know location associated to smart group no? maybe deleting group should works?*/
-	if (!evas || !ef || !location) return;
-
+	Evas_Object *smt;
 	char s[64];
 	char key[64];
 	char *ret = NULL;
 	int size;
 	Eina_Rectangle smart_geometry;
-	Evas_Object *smt;
+
+	if (!evas || !ef || !location) return;
 
 	smt = evas_smart_group_add(evas);
 	snprintf(s, sizeof(s), "%s_smart", location_name_get(location));

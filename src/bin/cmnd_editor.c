@@ -22,6 +22,7 @@
 
 #include "cJSON.h"
 #include "edams.h"
+#include "path.h"
 
 /*Global objects*/
 static Evas_Object *win = NULL;
@@ -45,8 +46,6 @@ cmnd_editor_values_get()
 	//cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(widget_xpl_data1_get(widget)));
 
     //s = action_exec_data_format(elm_object_text_get(entry), );
-
-
 	return s;
 }/*cmnd_editor_values_get*/
 
@@ -326,7 +325,7 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
 static void
 _list_control_basic_item_add(Evas_Object *list, Widget *widget)
 {
-	const char *s;
+	char *s;
 
 	Evas_Object *icon;
 	icon = elm_icon_add(win);

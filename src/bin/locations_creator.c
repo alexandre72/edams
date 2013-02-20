@@ -22,6 +22,7 @@
 
 #include "cosm.h"
 #include "edams.h"
+#include "global_view.h"
 #include "location.h"
 #include "locations_creator.h"
 #include "myfileselector.h"
@@ -45,28 +46,33 @@ static void _button_goto_clicked_cb(void *data, Evas_Object * obj __UNUSED__, vo
 static void
 _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	char *s;
-	const char *f, *g;
-	double lon;
-	double lat;
 	Evas *evas;
-	Evas_Object *win;
+	Evas_Object *map = elm_object_name_find(win, "location map", -1);
+	Elm_Map_Name *name = evas_object_data_get(map, "name Elm_Map_Name");
+	Evas_Object *win = (Evas_Object *) data;
 	Evas_Object *img;
 	Evas_Object *eo;
 	Ecore_Evas *ee;
 	Evas_Object *entry;
+	App_Info *app = edams_app_info_get();
 	Location *location;
+	char *s;
+	const char *f, *g;
+	double lon;
+	double lat;
 
-	win = (Evas_Object *) data;
 
-	location = location_new(0, NULL);
 
 	entry = elm_object_name_find(win, "location name entry", -1);
 	if(!elm_entry_is_empty(entry))
-		location_name_set(location, elm_object_text_get(entry));
+	{
+		location = location_new(elm_object_text_get(entry));
+    }
+    else
+    {
+	    location = location_new(NULL);
+    }
 
-	Evas_Object *map = elm_object_name_find(win, "location map", -1);;
-	Elm_Map_Name *name = evas_object_data_get(map, "name Elm_Map_Name");
 	if(name)
 	{
 		elm_map_name_region_get(name, &lon, &lat);
@@ -91,7 +97,6 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 		location_image_set(location, eo);
 	}
 
-	App_Info *app= 	evas_object_data_get(win, "app");
 	cosm_location_feed_add(location);
 	global_view_location_add(location);
 	location_save(location);
@@ -109,9 +114,6 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	elm_naviframe_item_title_visible_set(it, EINA_FALSE);
 	elm_object_item_data_set(it, location);
 	elm_naviframe_item_promote(it);
-
-	//Add location to global view.
-	//map_location_add(location);
 
 	if (eo)
 	{
@@ -220,17 +222,14 @@ _button_goto_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *ev __UNU
  *
  */
 void
-locations_creator_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+locations_creator_add(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *grid, *frame, *box, *box2;
 	Evas_Object *icon, *img;
 	Evas_Object *button;
 	Evas_Object *entry;
 
-	App_Info *app = (App_Info *) data;
-
 	win = elm_win_util_standard_add("locations_description_dlg", _("Add a location"));
-	evas_object_data_set(win, "app", app);
 	elm_win_autodel_set(win, EINA_TRUE);
 	elm_win_center(win, EINA_TRUE, EINA_TRUE);
    	elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
