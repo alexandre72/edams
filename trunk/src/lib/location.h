@@ -82,7 +82,10 @@ const char *widget_xpl_current_get(const Widget *widget);
 void widget_xpl_current_set(Widget *widget, const char *xpl_current);
 const char *widget_xpl_data1_get(const Widget *widget);
 void widget_xpl_data1_set(Widget *widget, const char *xpl_data1);
-
+void widget_xpl_highest_set(Widget *widget, const char *xpl_highest);
+const char * widget_xpl_highest_get(const Widget *widget);
+void widget_xpl_lowest_set(Widget *widget, const char *xpl_lowest);
+const char * widget_xpl_lowest_get(const Widget *widget);
 
 void widget_cosm_set(Widget *widget, Eina_Bool cosm);
 Eina_Bool widget_cosm_get(const Widget *widget);
