@@ -32,7 +32,7 @@
 #include "path.h"
 #include "utils.h"
 
-#define LOCATION_FILE_VERSION 0x9
+#define LOCATION_FILE_VERSION 0x91
 
 
 
@@ -58,6 +58,8 @@ struct _Widget
     Xpl_Type xpl_type;			    	/*Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'*/
     const char *xpl_current;			/*Current data of xpl device*/
     const char *xpl_data1;				/*Additional data. Used for control.basic cmnd structure message*/
+    const char *xpl_highest;			/*Highest recorded value*/
+    const char *xpl_lowest;				/*Lowest recorded value*/
 
     /*Cosm specific fields*/
     Eina_Bool cosm;                     /*Enable data sending to cosm*/
@@ -285,6 +287,8 @@ _widget_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_type", xpl_type, EET_T_UINT);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_current", xpl_current, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_data1", xpl_data1, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_highest", xpl_highest, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_lowest", xpl_lowest, EET_T_STRING);
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "cosm", cosm, EET_T_UINT);
 
@@ -338,6 +342,8 @@ widget_new(const char * name, Widget_Class class)
     widget->xpl_type = XPL_TYPE_UNKNOWN;
     widget->xpl_current = NULL;
     widget->xpl_data1 = NULL;
+    widget->xpl_highest = NULL;
+    widget->xpl_lowest = NULL;
 
     /*Initialize actions Eina_List*/
     widget->actions = NULL;
@@ -362,6 +368,8 @@ widget_free(Widget *widget)
         eina_stringshare_del(widget->xpl_device);
         eina_stringshare_del(widget->xpl_current);
         eina_stringshare_del(widget->xpl_data1);
+        eina_stringshare_del(widget->xpl_highest);
+        eina_stringshare_del(widget->xpl_lowest);
     }
 
     /*Free actions Eina_List*/
@@ -393,6 +401,8 @@ widget_clone(Widget *src)
         ret->xpl_type = src->xpl_type;
         ret->xpl_current = eina_stringshare_add(src->xpl_current);
         ret->xpl_data1 = eina_stringshare_add(src->xpl_data1);
+        ret->xpl_highest = eina_stringshare_add(src->xpl_highest);
+        ret->xpl_lowest = eina_stringshare_add(src->xpl_lowest);
     }
 
     ret->cosm = src->cosm;
@@ -652,6 +662,84 @@ widget_xpl_data1_get(const Widget *widget)
         return NULL;
     }
 }/*widget_xpl_current_get*/
+
+
+/*
+ *
+ */
+inline void
+widget_xpl_highest_set(Widget *widget, const char *xpl_highest)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+    	eina_stringshare_replace(&(widget->xpl_highest), xpl_highest);
+    }
+    else
+    {
+        debug(stderr, ("Can't set xpl highest to a not xpl widget"));
+        return;
+    }
+}/*widget_xpl_highest_set*/
+
+
+/*
+ *
+ */
+inline const char *
+widget_xpl_highest_get(const Widget *widget)
+{
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+        return widget->xpl_highest;
+    }
+    else
+    {
+        debug(stderr, ("Can't get xpl highest from a not xpl widget"));
+        return NULL;
+    }
+}/*widget_xpl_highest_get*/
+
+
+/*
+ *
+ */
+inline void
+widget_xpl_lowest_set(Widget *widget, const char *xpl_lowest)
+{
+    EINA_SAFETY_ON_NULL_RETURN(widget);
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+    	eina_stringshare_replace(&(widget->xpl_lowest), xpl_lowest);
+    }
+    else
+    {
+        debug(stderr, ("Can't set xpl lowest to a not xpl widget"));
+        return;
+    }
+}/*widget_xpl_lowest_set*/
+
+
+/*
+ *
+ */
+inline const char *
+widget_xpl_lowest_get(const Widget *widget)
+{
+    if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
+       (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+        return widget->xpl_lowest;
+    }
+    else
+    {
+        debug(stderr, ("Can't get xpl lowest from a not xpl widget"));
+        return NULL;
+    }
+}/*widget_xpl_lowest_get*/
 
 
 /*

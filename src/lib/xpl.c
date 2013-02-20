@@ -27,23 +27,26 @@
 #include "cJSON.h"
 #include "cosm.h"
 #include "edams.h"
+#include "gnuplot.h"
+#include "global_view.h"
 #include "xpl.h"
 
 
-static xPL_ServicePtr 	xpl_edams_service;
-//static	xPL_MessagePtr 	xpl_edams_message_stat;
-//static	xPL_MessagePtr 	xpl_edams_message_trig;
-static	xPL_MessagePtr 	xpl_edams_message_cmnd;
-
+/*xPL callbacks*/
 static void _xpl_sensor_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data);
 static void _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len);
 
+/*Others funcs*/
+static void _xpl_emulate_messages(Ecore_Pipe *pipe);
 
-static pid_t child_pid;
-
-static Eina_List *xpl_devices;
-
-static Eina_Bool XPL_STARTED;
+/*Local vars*/
+//static	xPL_MessagePtr 	xpl_edams_message_stat;
+//static	xPL_MessagePtr 	xpl_edams_message_trig;
+static xPL_ServicePtr   xpl_edams_service;
+static xPL_MessagePtr   xpl_edams_message_cmnd;
+static pid_t            child_pid;
+static Eina_List*       xpl_devices;
+static Eina_Bool        XPL_STARTED;
 
 /*
  *Callback called in xPL Message 'cstatic void
@@ -52,7 +55,7 @@ handler(void *data __UNUSED__, void *buf, unsigned int len)ontrol.basic' is trig
 static void
 _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data)
 {
-    const char *str ;
+    char *str ;
     xPL_NameValueListPtr values_names;
 
 	Ecore_Pipe *pipe = (Ecore_Pipe *) data;
@@ -81,9 +84,9 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 static void
 _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
-    const char *device;
-    const char *type;
-    const char  *current;
+    char *device;
+    char *type;
+    char  *current;
 
     char *str = malloc(sizeof(char) * len + 1);
     memcpy(str, buf, len);
@@ -112,7 +115,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
     EINA_LIST_FOREACH(xpl_devices, l, elem)
     {
         cJSON *root = cJSON_Parse(elem);
-        const char *device_elem;
+        char *device_elem;
 	    if(!root) continue;
 
 	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
@@ -144,6 +147,29 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 	        	        if(strcmp(device, widget_xpl_device_get(widget)) == 0)
 	        	        {
 	        	            widget_xpl_current_set(widget, current);
+
+                            if(!widget_xpl_highest_get(widget))
+                                widget_xpl_highest_set(widget, current);
+                            else
+                            {
+                                if(strcmp(widget_xpl_highest_get(widget), current) < 0)
+                                {
+                                    debug(stdout, ("New highest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_highest_get(widget));
+                                widget_xpl_highest_set(widget, current);
+                                }
+                            }
+
+                            if(!widget_xpl_lowest_get(widget))
+                                widget_xpl_lowest_set(widget, current);
+                            {
+                                if(strcmp(widget_xpl_lowest_get(widget), current) > 0)
+                                {
+                                    debug(stdout, ("New lowest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_lowest_get(widget));
+                                    widget_xpl_lowest_set(widget, current);
+                                }
+                            }
+
+                            location_save(location);
 
                             if(widget_cosm_get(widget))
                                 cosm_device_datastream_update(location, widget);
@@ -184,22 +210,12 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 }/*_xpl_handler*/
 
 
-
 /*
  *
  */
 Eina_List *
 xpl_sensor_basic_list_get()
 {
-/*
-    Eina_List *l;
-    char *it;
-
-    EINA_LIST_FOREACH(xpl_devices, l, it)
-    {
-        printf("\tsensor.basic:%s\n", it);
-    }
-*/
     return xpl_devices;
 }/*xpl_process_messages*/
 
@@ -219,26 +235,31 @@ xpl_process_messages()
 }/*xpl_process_messages*/
 
 
-
+/*
+ *
+ */
 static void
-xpl_emulate_messages(Ecore_Pipe *pipe)
+_xpl_emulate_messages(Ecore_Pipe *pipe)
 {
    for(;;)
      {
-        sleep(1);
-        const char *str ;
-        /*Add to xpl_devices in json format to easing parsing*/
+        char *str ;
+        char s[255];
+
         cJSON *root;
     	root = cJSON_CreateObject();
     	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString("DHT11"));
     	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString("humidity"));
-    	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString("78"));
+	    RANDOMIZE();
+	    snprintf(s, sizeof(s), "%d", RANDOM(100));
+    	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(s));
         str = cJSON_PrintUnformatted(root);
         cJSON_Delete(root);
         ecore_pipe_write(pipe, str, strlen(str));
+        sleep(2);
         FREE(str);
      }
-}
+}/*_xpl_emulate_messages*/
 
 
 /*
@@ -259,7 +280,6 @@ xpl_start()
     xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
 
     /*Add xPL broadcast messaging*/
-
     if ((xpl_edams_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
     {
         debug(stderr, _("Can't create broadcast message"));
@@ -270,10 +290,11 @@ xpl_start()
     if (!child_pid)
     {
         ecore_pipe_read_close(pipe);
-        xpl_process_messages();
 
         if(edams_settings_softemu_get() == EINA_TRUE)
-            xpl_emulate_messages(pipe);
+            _xpl_emulate_messages(pipe);
+        else
+            xpl_process_messages();
     }
     else
     {
@@ -381,7 +402,6 @@ xpl_control_basic_cmnd_to_elm_str(Widget *widget)
 
     return s;
 }/*xpl_control_basic_cmnd_to_elm_str*/
-
 
 
 
@@ -566,7 +586,7 @@ xpl_type_current_min_get(Xpl_Type type)
 	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return 0;
 	else 											    return 0;
 
-}/*xpl_type_min_get
+}/*xpl_type_min_get*/
 
 
 /*
@@ -626,7 +646,6 @@ xpl_type_to_unit_symbol(Xpl_Type type)
 	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return _("kg");
 	else 											    return NULL;
 }/*xpl_type_to_unit_symbol*/
-
 
 
 /*

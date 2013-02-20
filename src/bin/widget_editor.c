@@ -501,8 +501,8 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	    if(!root) continue;
 	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
 	    cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
-        const char *device = cJSON_PrintUnformatted(jdevice);
-        const char *type = cJSON_PrintUnformatted(jtype);
+        char *device = cJSON_PrintUnformatted(jdevice);
+        char *type = cJSON_PrintUnformatted(jtype);
 	    cJSON_Delete(root);
 
         strdelstr(device, "\"");
