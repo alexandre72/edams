@@ -270,8 +270,6 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
 	        if(xpl_str_to_type(samples[i][1]) == XPL_TYPE_INPUT_SENSOR_BASIC)
 	        {
 	           unsigned int a = RANDOM(100);
-	           printf("RANDOM=%d****\n",a);
-
                 if(a < 60)
     	            snprintf(s, sizeof(s), "0");
                 else
