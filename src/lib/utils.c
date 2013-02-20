@@ -162,27 +162,6 @@ debug(FILE *stream, const char *theFormat, ...)
 }
 
 
-/*
- *
- */
-const char *
-filename_create(const char *filename)
-{
-    unsigned int i = 0;
-    char *s;
-
-    asprintf(&s, "%s", filename);
-    while(ecore_file_exists(s) == EINA_TRUE)
-	{
-	    FREE(s);
-	    asprintf(&s, "%s-%03d.eet", filename, i);
-		i++;
-	}
-
-	return s;
-}/*filename_create*/
-
-
 
 
 /*

@@ -68,7 +68,7 @@ static void
 _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
     App_Info *app = data;
-    const char *s;
+    char *s;
 
     if(!app->widget)
     {
@@ -161,7 +161,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 {
 	Widget *widget = data;
     Xpl_Type type = widget_xpl_type_get(widget);
-    const char *s;
+    char *s;
 
     /*Skip basic's edje signal emission*/
 	if(strstr(source, "edje")) return;
@@ -332,7 +332,7 @@ _fill_widget_groups(App_Info *app)
     Evas_Object *list = elm_object_name_find(win, "groups list", -1);
 	Eina_List *groups = NULL, *l;
     Widget_Class class = widget_class_get(widget);
-    const char *s;
+    char *s;
 
     elm_object_disabled_set(list, EINA_FALSE);
     elm_list_clear(list);
@@ -382,8 +382,8 @@ _list_item_xpl_device_selected_cb(void *data, Evas_Object * obj __UNUSED__, void
 	if(!root) return;
 	cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
 	cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
-    const char *device = cJSON_PrintUnformatted(jdevice);
-    const char *type = cJSON_PrintUnformatted(jtype);
+    char *device = cJSON_PrintUnformatted(jdevice);
+    char *type = cJSON_PrintUnformatted(jtype);
 	cJSON_Delete(root);
 
     strdelstr(device, "\"");
@@ -470,7 +470,7 @@ widget_editor_add(void *data, Evas_Object * obj __UNUSED__, void *event_info __U
 	{
 	    if(x != WIDGET_CLASS_UNKNOWN)
 	    {
-    		Elm_Object_Item *it =  elm_list_item_append(list, widget_class_to_str(x), NULL, NULL, _list_item_class_selected_cb, x);
+    		Elm_Object_Item *it =  elm_list_item_append(list, widget_class_to_str(x), NULL, NULL, _list_item_class_selected_cb, (void*)x);
 
             if((app->widget)  && (x == widget_class_get(widget)))
                 elm_list_item_selected_set(it, EINA_TRUE);
