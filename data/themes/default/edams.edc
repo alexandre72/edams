@@ -72,6 +72,7 @@ collections
 #include "monitor.edc"
 #include "mute.edc"
 #include "slider.edc"
+#include "switch2.edc"
 #include "thermometer.edc"
 
 

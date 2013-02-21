@@ -33,7 +33,7 @@ group
 	data
 	{
 			item: "description" "Slider widget used to set a value with a draggable knob";
-			item: "tags" "slider";
+			item: "tags" "balance";
 	}
 
 

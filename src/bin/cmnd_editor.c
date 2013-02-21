@@ -97,16 +97,16 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
         //else if(dir == EDJE_DRAG_DIR_XY)
         // edje_object_part_drag_value_get(o, source, &hval, &vval);
 
-        /*Scale to device type format*/
-        if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
+        /*Scale to control.basic type format*/
+        if(strcmp(type, XPL_TYPE_BALANCE_CONTROL_BASIC) == 0)
         {
-            val = (100 * val);
-            asprintf(&s, "%d%%", (int)val);
+            val = (100 * val) - 100;
+            asprintf(&s, "%d", (int)val);
         }
         else
         {
             val = (100 * val);
-            asprintf(&s, "%d%%", (int)val);
+            asprintf(&s, "%d", (int)val);
         }
 
         widget_xpl_current_set(widget, s);
