@@ -55,7 +55,7 @@ struct _Widget
 
     /*Widget xPL specifics fields*/
     Eina_Stringshare *xpl_device;	/*Name of xpl device 'temperature1'. Should be unique*/
-    Xpl_Type xpl_type;			    /*Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'*/
+    Eina_Stringshare *xpl_type;		/*Type of xpl device e.g. 'TEMP_SENSOR_BASIC_TYPE'*/
     Eina_Stringshare *xpl_current;	/*Current data of xpl device*/
     Eina_Stringshare *xpl_data1;	/*Additional data. Used for control.basic cmnd structure message*/
     Eina_Stringshare *xpl_highest;	/*Highest recorded value*/
@@ -284,7 +284,7 @@ _widget_init(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "class", class, EET_T_UINT);
 
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_device", xpl_device, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_type", xpl_type, EET_T_UINT);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_type", xpl_type, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_current", xpl_current, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_data1", xpl_data1, EET_T_STRING);
     EET_DATA_DESCRIPTOR_ADD_BASIC(_widget_descriptor, Widget, "xpl_highest", xpl_highest, EET_T_STRING);
@@ -339,7 +339,7 @@ widget_new(const char * name, Widget_Class class)
 
     /*Initialize xPL specifics field*/
     widget->xpl_device = NULL;
-    widget->xpl_type = XPL_TYPE_UNKNOWN;
+    widget->xpl_type = NULL;
     widget->xpl_current = NULL;
     widget->xpl_data1 = NULL;
     widget->xpl_highest = NULL;
@@ -398,7 +398,7 @@ widget_clone(Widget *src)
        (src->class == WIDGET_CLASS_XPL_SENSOR_BASIC ))
     {
         ret->xpl_device = eina_stringshare_add(src->xpl_device);
-        ret->xpl_type = src->xpl_type;
+        ret->xpl_type = eina_stringshare_add(src->xpl_type);;
         ret->xpl_current = eina_stringshare_add(src->xpl_current);
         ret->xpl_data1 = eina_stringshare_add(src->xpl_data1);
         ret->xpl_highest = eina_stringshare_add(src->xpl_highest);
@@ -549,26 +549,25 @@ widget_xpl_device_get(const Widget *widget)
  *
  */
 inline void
-widget_xpl_type_set(Widget *widget, const Xpl_Type xpl_type)
+widget_xpl_type_set(Widget *widget, const char *xpl_type)
 {
     EINA_SAFETY_ON_NULL_RETURN(widget);
 
     if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
        (widget->class == WIDGET_CLASS_XPL_SENSOR_BASIC))
     {
-        widget->xpl_type = xpl_type;
+    	eina_stringshare_replace(&(widget->xpl_type), xpl_type);
     }
     else
     {
         debug(stderr, ("Can't set xpl type to a not xpl widget class"));
-        widget->xpl_type = XPL_TYPE_UNKNOWN;
     }
 }/*widget_xpl_type_set*/
 
 /*
  *
  */
-inline Xpl_Type
+inline const char*
 widget_xpl_type_get(const Widget *widget)
 {
     if((widget->class == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
@@ -579,7 +578,7 @@ widget_xpl_type_get(const Widget *widget)
     else
     {
         debug(stderr, ("Can't get xpl type from a not xpl widget"));
-        return XPL_TYPE_UNKNOWN;
+        return NULL;
     }
 }/*widget_xpl_type_get*/
 
@@ -600,7 +599,6 @@ widget_xpl_current_set(Widget *widget, const char *xpl_current)
     else
     {
         debug(stderr, ("Can't set xpl current to a not xpl widget"));
-        return;
     }
 }/*widget_xpl_current_set*/
 
@@ -640,7 +638,6 @@ widget_xpl_data1_set(Widget *widget, const char *xpl_data1)
     else
     {
         debug(stderr, ("Can't set xpl data1 to a not xpl widget"));
-        return;
     }
 }/*widget_xpl_current_set*/
 
@@ -718,7 +715,6 @@ widget_xpl_lowest_set(Widget *widget, const char *xpl_lowest)
     else
     {
         debug(stderr, ("Can't set xpl lowest to a not xpl widget"));
-        return;
     }
 }/*widget_xpl_lowest_set*/
 

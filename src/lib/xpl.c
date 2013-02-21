@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "cJSON.h"
 #include "cosm.h"
@@ -148,24 +149,28 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 	        	        {
 	        	            widget_xpl_current_set(widget, current);
 
-                            if(!widget_xpl_highest_get(widget))
-                                widget_xpl_highest_set(widget, current);
-                            else
-                            {
-                                if(strcmp(widget_xpl_highest_get(widget), current) < 0)
-                                {
-                                    debug(stdout, ("New highest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_highest_get(widget));
-                                widget_xpl_highest_set(widget, current);
-                                }
-                            }
 
-                            if(!widget_xpl_lowest_get(widget))
-                                widget_xpl_lowest_set(widget, current);
-                            {
-                                if(strcmp(widget_xpl_lowest_get(widget), current) > 0)
+                           if((widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC))
+                           {
+                                if(!widget_xpl_highest_get(widget))
+                                    widget_xpl_highest_set(widget, current);
+                                else
                                 {
-                                    debug(stdout, ("New lowest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_lowest_get(widget));
+                                    if(atoi(current) > atoi(widget_xpl_highest_get(widget)))
+                                    {
+                                        debug(stdout, ("New highest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_highest_get(widget));
+                                        widget_xpl_highest_set(widget, current);
+                                    }
+                                }
+
+                                if(!widget_xpl_lowest_get(widget))
                                     widget_xpl_lowest_set(widget, current);
+                                {
+                                    if(atoi(current) < atoi(widget_xpl_lowest_get(widget)))
+                                    {
+                                        debug(stdout, ("New lowest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_lowest_get(widget));
+                                        widget_xpl_lowest_set(widget, current);
+                                    }
                                 }
                             }
 
@@ -266,18 +271,8 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
         	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(samples[i][1]));
 	        RANDOMIZE();
 
-	        if(((xpl_str_to_type(samples[i][1])) == XPL_TYPE_INPUT_SENSOR_BASIC))
-	        {
-	           unsigned int a = RANDOM(100);
-                if(a < 60)
-    	            asprintf(&str, "0");
-                else
-    	            asprintf(&str, "1");
-	        }
-	        else
-	        {
-    	        asprintf(&str, "%d", RANDOM(100));
-            }
+   	        asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(samples[i][1])));
+
         	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(str));
         	FREE(str);
             str = cJSON_PrintUnformatted(root);
@@ -410,7 +405,7 @@ xpl_control_basic_cmnd_to_elm_str(Widget *widget)
 					<tab>current=%s<br>\
 					}</em>",
 					widget_xpl_device_get(widget),
-					xpl_type_to_str(widget_xpl_type_get(widget)),
+					widget_xpl_type_get(widget),
 					widget_xpl_current_get(widget));
     }
     else
@@ -423,7 +418,7 @@ xpl_control_basic_cmnd_to_elm_str(Widget *widget)
 					<tab>data11=%s<br>\
 					}</em>",
 					widget_xpl_device_get(widget),
-					xpl_type_to_str(widget_xpl_type_get(widget)),
+					widget_xpl_type_get(widget),
 					widget_xpl_current_get(widget),
 					widget_xpl_data1_get(widget));
     }
@@ -448,7 +443,7 @@ xpl_control_basic_cmnd_to_dbg(Widget *widget)
 					\tcurrent=%s\n\
 					}\n",
 					widget_xpl_device_get(widget),
-					xpl_type_to_str(widget_xpl_type_get(widget)),
+					widget_xpl_type_get(widget),
 					widget_xpl_current_get(widget));
     }
     else
@@ -461,127 +456,87 @@ xpl_control_basic_cmnd_to_dbg(Widget *widget)
 					\tdata1=%s\n\
 					}\n",
 					widget_xpl_device_get(widget),
-					xpl_type_to_str(widget_xpl_type_get(widget)),
+					widget_xpl_type_get(widget),
 					widget_xpl_current_get(widget),
 					widget_xpl_data1_get(widget));
     }
 }/*xpl_control_basic_cmnd_debug*/
 
 
+
 /*
- *Return string representation of Device_Type 'type' arg.
+ *Return string description of 'xpl_type' arg.
  */
 const char *
-xpl_type_to_str(Xpl_Type type)
+xpl_type_to_desc(const char *xpl_type)
 {
-	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return "battery";
-	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return "count";
-	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return "current";
-	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return "direction";
-	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return "distance";
-	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return "energy";
-	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return "fan";
-	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return "generic";
-	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return "humidity";
-	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return "input";
-	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return "output";
-	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return "power";
-	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return "pressure";
-	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return "setpoint";
-	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return "speed";
-	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return "temp";
-	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return "uv";
-	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return "voltage";
-	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return "volume";
-	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return "weight";
-	else if(type == XPL_TYPE_BALANCE_CONTROL_BASIC)		return "balance";
-	else if(type == XPL_TYPE_FLAG_CONTROL_BASIC)		return "flag";
-	else if(type == XPL_TYPE_INFRARED_CONTROL_BASIC)	return "infrared";
-	else if(type == XPL_TYPE_INPUT_CONTROL_BASIC)		return "input";
-	else if(type == XPL_TYPE_MACRO_CONTROL_BASIC)		return "macro";
-	else if(type == XPL_TYPE_MUTE_CONTROL_BASIC)		return "mute";
-	else if(type == XPL_TYPE_OUTPUT_CONTROL_BASIC)		return "output";
-	else if(type == XPL_TYPE_VARIABLE_CONTROL_BASIC)	return "variable";
-	else if(type == XPL_TYPE_PERIODIC_CONTROL_BASIC)	return "periodic";
-	else if(type == XPL_TYPE_SCHEDULED_CONTROL_BASIC)	return "scheduled";
-	else if(type == XPL_TYPE_SLIDER_CONTROL_BASIC)		return "slider";
-	else if(type == XPL_TYPE_TIMER_CONTROL_BASIC)		return "timer";
-	else 											    return NULL;
-}/*xpl_type_to_str*/
+	if(!xpl_type) return NULL;
 
-
-
-/*
- *Return Xpl_Type representation of 'xpl_type' arg.
- */
-Xpl_Type
-xpl_str_to_type(const char *xpl_type)
-{
-	if(!xpl_type) return XPL_TYPE_UNKNOWN;
-
-	if(strcmp(xpl_type, "battery") == 0) 				return XPL_TYPE_BATTERY_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "count") == 0)			    return XPL_TYPE_COUNT_SENSOR_BASIC;
-	else if(strcmp(xpl_type ,"current") == 0)			return XPL_TYPE_CURRENT_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "direction") == 0)		    return XPL_TYPE_DIRECTION_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "distance") == 0)			return XPL_TYPE_DISTANCE_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "energy") == 0)			return XPL_TYPE_ENERGY_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "fan") == 0)				return XPL_TYPE_FAN_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "generic") == 0)			return XPL_TYPE_GENERIC_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "humidity") == 0)			return XPL_TYPE_HUMIDITY_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "input") == 0)			    return XPL_TYPE_INPUT_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "output") == 0)			return XPL_TYPE_OUTPUT_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "power") == 0)			    return XPL_TYPE_POWER_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "pressure") == 0)			return XPL_TYPE_PRESSURE_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "setpoint") == 0)			return XPL_TYPE_SETPOINT_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "speed") == 0)			    return XPL_TYPE_SPEED_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "temp") == 0)				return XPL_TYPE_TEMP_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "uv") == 0)				return XPL_TYPE_UV_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "voltage") == 0)			return XPL_TYPE_VOLTAGE_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "volume") == 0)			return XPL_TYPE_VOLUME_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "weight") == 0)			return XPL_TYPE_WEIGHT_SENSOR_BASIC;
-	else if(strcmp(xpl_type, "balance") == 0)			return XPL_TYPE_BALANCE_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "flag") == 0)				return XPL_TYPE_FLAG_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "infrared") == 0)			return XPL_TYPE_INFRARED_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "input") == 0)			    return XPL_TYPE_INPUT_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "macro") == 0)			    return XPL_TYPE_MACRO_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "mute") == 0)				return XPL_TYPE_MUTE_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "output") == 0)			return XPL_TYPE_OUTPUT_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "variable") == 0)			return XPL_TYPE_VARIABLE_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "periodic") == 0)			return XPL_TYPE_PERIODIC_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "scheduled") == 0)		    return XPL_TYPE_SCHEDULED_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "slider") == 0)			return XPL_TYPE_SLIDER_CONTROL_BASIC;
-	else if(strcmp(xpl_type, "timer") == 0)			    return XPL_TYPE_TIMER_CONTROL_BASIC;
-	else										        return XPL_TYPE_UNKNOWN;
-}/*xpl_str_to_type*/
+	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0)    return _("A battery level in percent");
+	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return _("A counter value (door openings, rain fall, etc)");
+	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return _("A current value in Amps");
+	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return _("Direction, represented as degrees from north (0-360, 0=north, 180=south, etc)");
+	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return _("Distance measurments. Default unit of measure is meters");
+	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return _("Consumption of energy over a preiod of time in kWh (kilowatt hours)");
+	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return _("A fan speed in RPM");
+	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return _("A generic analogue value who's units of measurement are application specific");
+	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return _("A relative humidity percentage (0 to 100, no percent sign)");
+	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return _("A switch that can either be current=HIGH (on), current=LOW (off) or current=PULSE (representing a button press)");
+	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return _("A change in an output state with values of LOW and HIGH");
+	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return _("Instantaneous energy consumption level in kW");
+	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return _("A pressure value in Pascals (N/m2)");
+	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return _("A thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius");
+	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return _("A generic speed. Default unit of measure is Miles per Hour");
+	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return _("A temperature value in degrees. Default unit of measure is centigrade celsius");
+	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return _("UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index");
+	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return _("A voltage value in Volts");
+	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return _("A volume in m3. Often used as a measure of gas and water consumption");
+	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return _("The default unit is kilograms (yes, kilograms are a unit of mass, not weight)");
+	if(strcmp(xpl_type, XPL_TYPE_BALANCE_CONTROL_BASIC) == 0)    return _("balance - -100 to +100");
+	if(strcmp(xpl_type, XPL_TYPE_FLAG_CONTROL_BASIC) == 0)    return _("flag - set, clear, neutral");
+	if(strcmp(xpl_type, XPL_TYPE_INFRARED_CONTROL_BASIC) == 0)    return _("infrared - send, enable_rx, disable_rx, enable_tx, disable_tx, sendx (send x times)");
+	if(strcmp(xpl_type, XPL_TYPE_INPUT_CONTROL_BASIC) == 0)    return _("input - enable, disable");
+	if(strcmp(xpl_type, XPL_TYPE_MACRO_CONTROL_BASIC) == 0)    return _("macro - enable, disable, do");
+	if(strcmp(xpl_type, XPL_TYPE_MUTE_CONTROL_BASIC) == 0)    return _("mute - yes, no");
+	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_CONTROL_BASIC) == 0)    return _("output - enable, disable, high, low, toggle, pulse");
+	if(strcmp(xpl_type, XPL_TYPE_VARIABLE_CONTROL_BASIC) == 0)    return _("variable - inc, dec, 0-255 (for set)");
+	if(strcmp(xpl_type, XPL_TYPE_PERIODIC_CONTROL_BASIC) == 0)    return _("periodic - started, enable, disable");
+	if(strcmp(xpl_type, XPL_TYPE_SCHEDULED_CONTROL_BASIC) == 0)    return _("scheduled - started, enable, disable");
+	if(strcmp(xpl_type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)    return _("slider - nn = set to value (0-255), +nn = increment by nn, -nn = decrement by nn, n% = set to nn (where nn is a percentage - 0-100%)");
+	if(strcmp(xpl_type, XPL_TYPE_TIMER_CONTROL_BASIC) == 0)    return _("timer - went off, start, stop, halt, resume");
+	else	return _("Unknown xPL type");
+}/*xpl_str_to_desc*/
 
 
 /*
  *
  */
 int
-xpl_type_current_max_get(Xpl_Type type)
+xpl_type_current_max_get(const char *xpl_type)
 {
-	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return 100;
-	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return 10000;
-	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return 100;
-	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return 360;
-	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return 100;
-	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return 1000;
-	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return 10000;
-	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return 10000;
-	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return 100;
-	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return 2;       /*3 states, LOW/HIGH/PULSE*/
-	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return 1;
-	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return 1000;
-	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return 1000;
-	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return 300;
-	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return 1000;
-	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return 100;
-	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return 15;
-	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return 1000;
-	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return 1000;
-	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return 1000;
-	else 											    return 0;
+	if(!xpl_type) return 32000;
+
+	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0) 	return 100;
+	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return 10000;
+	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return 100;
+	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return 360;
+	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return 100;
+	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return 1000;
+	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return 10000;
+	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return 10000;
+	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return 100;
+	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return 2; /*3 states, LOW/HIGH/PULSE*/
+	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return 1;
+	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return 1000;
+	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return 1000;
+	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return 300;
+	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return 1000;
+	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return 100;
+	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return 15;
+	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return 1000;
+	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return 1000;
+	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return 1000;
+	else return 32000;
 
 }/*xpl_type_max_get*/
 
@@ -590,30 +545,31 @@ xpl_type_current_max_get(Xpl_Type type)
  *
  */
 int
-xpl_type_current_min_get(Xpl_Type type)
+xpl_type_current_min_get(const char *xpl_type)
 {
-	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return -100;
-	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return 0;
-	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return 0;
-	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return -10000;
-	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return 0;       /*3 states, LOW/HIGH/PULSE*/
-	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return -100;
-	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return 1;
-	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return -1000;
-	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return 0;
-	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return 0;
-	else 											    return 0;
+	if(!xpl_type) return 0;
 
+	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0) 	return 0;
+	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return -100;
+	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return -10000;
+	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return -100;
+	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return 1;
+	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return -1000;
+	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return 0;
+	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return 0;
+	else return 0;
 }/*xpl_type_min_get*/
 
 
@@ -621,58 +577,62 @@ xpl_type_current_min_get(Xpl_Type type)
  *
  */
 const char *
-xpl_type_to_units(Xpl_Type type)
+xpl_type_to_units(const char *xpl_type)
 {
-	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return _("Percent");
-	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return _("Counter");
-	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return _("Amps");
-	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return _("Degrees");
-	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return _("Meters");
-	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return _("Kilowatt hours");
-	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return _("Rotation/min");
-	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return _("Generic");
-	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return _("Humidity ratio");
-	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return _("Input");
-	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return _("Output");
-	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return _("Kilowatt");
-	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return _("Pascals");
-	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return _("Degrees") ;
-	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return _("Miles per Hour");
-	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return _("Celsius");
-	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return _("UV");
-	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return _("Volts");
-	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return _("Cubic meter");
-	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return _("Kilograms");
-	else 											    return NULL;
+	if(!xpl_type) return NULL;
+
+	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0) return _("Percent");
+	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return _("Counter");
+	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return _("Amps");
+	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return _("Degrees");
+	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return _("Meters");
+	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return _("Kilowatt hours");
+	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return _("Rotation/min");
+	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return _("Generic");
+	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return _("Humidity ratio");
+	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return _("Input");
+	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return _("Output");
+	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return _("Kilowatt");
+	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return _("Pascals");
+	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return _("Degrees");
+	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return _("Miles per Hour");
+	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return _("Celsius");
+	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return _("UV");
+	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return _("Volts");
+	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return _("Cubic meter");
+	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return _("Kilograms");
+	else return "";
 }/*xpl_type_to_units*/
 
 /*
  *
  */
 const char *
-xpl_type_to_unit_symbol(Xpl_Type type)
+xpl_type_to_unit_symbol(const char *xpl_type)
 {
-	if     (type == XPL_TYPE_BATTERY_SENSOR_BASIC)		return _("%");
-	else if(type == XPL_TYPE_COUNT_SENSOR_BASIC)		return NULL;
-	else if(type == XPL_TYPE_CURRENT_SENSOR_BASIC)		return _("A");
-	else if(type == XPL_TYPE_DIRECTION_SENSOR_BASIC)	return _("o");
-	else if(type == XPL_TYPE_DISTANCE_SENSOR_BASIC)		return _("m");
-	else if(type == XPL_TYPE_ENERGY_SENSOR_BASIC)		return _("kWh");
-	else if(type == XPL_TYPE_FAN_SENSOR_BASIC)			return _("RPM");
-	else if(type == XPL_TYPE_GENERIC_SENSOR_BASIC)		return NULL;
-	else if(type == XPL_TYPE_HUMIDITY_SENSOR_BASIC)		return _("%");
-	else if(type == XPL_TYPE_INPUT_SENSOR_BASIC)		return NULL;
-	else if(type == XPL_TYPE_OUTPUT_SENSOR_BASIC)		return NULL;
-	else if(type == XPL_TYPE_POWER_SENSOR_BASIC)		return _("kW");
-	else if(type == XPL_TYPE_PRESSURE_SENSOR_BASIC)		return _("N/m2");
-	else if(type == XPL_TYPE_SETPOINT_SENSOR_BASIC)		return _("C") ;
-	else if(type == XPL_TYPE_SPEED_SENSOR_BASIC)		return _("MpH");
-	else if(type == XPL_TYPE_TEMP_SENSOR_BASIC)			return _("C");
-	else if(type == XPL_TYPE_UV_SENSOR_BASIC)			return NULL;
-	else if(type == XPL_TYPE_VOLTAGE_SENSOR_BASIC)		return _("V");
-	else if(type == XPL_TYPE_VOLUME_SENSOR_BASIC)		return _("m3");
-	else if(type == XPL_TYPE_WEIGHT_SENSOR_BASIC)		return _("kg");
-	else 											    return NULL;
+	if(!xpl_type) return NULL;
+
+	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0) return _("%");
+	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return _("A");
+	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return _("o");
+	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return _("m");
+	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return _("kWh");
+	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return _("RPM");
+	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return _("%");
+	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return _("kW");
+	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return _("N/m2");
+	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return _("C");
+	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return _("MpH");
+	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return _("C");
+	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return _("V");
+	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return _("m3");
+	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return _("kg");
+	else return "";
 }/*xpl_type_to_unit_symbol*/
 
 
@@ -689,7 +649,7 @@ xpl_control_basic_cmnd_send(Widget *widget)
 
     /*Install the value(s) and send the message*/
   	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "device", widget_xpl_device_get(widget));
-  	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "type", xpl_type_to_str(widget_xpl_type_get(widget)));
+  	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "type", widget_xpl_type_get(widget));
   	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "current", widget_xpl_current_get(widget));
 
 	if(widget_xpl_data1_get(widget))

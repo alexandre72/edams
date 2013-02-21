@@ -222,13 +222,13 @@ cosm_location_feed_delete(Location *location)
 static Eina_Bool
 _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Url_Complete *event_info)
 {
-    const Eina_List *headers = NULL, *it;
-    const char *header = NULL;
+    const Eina_List *headers = NULL;
+    //const char *header = NULL;
 
     if((event_info->status != 201) && (event_info->status != 200))
     {
     printf("cosm server returned code: '%d'\n", event_info->status);
-        const char *s;
+        char *s;
         asprintf(&s, _("A datastream feed hasn't been updated, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
         statusbar_text_set(s, "elm/icon/cosm/default");
         FREE(s);
@@ -238,10 +238,6 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, E
     {
     	headers = ecore_con_url_response_headers_get(event_info->url_con);
 
-        EINA_LIST_FOREACH(headers, it, header)
-        {
-            //debug(stdout, header);
-        }
     }
 
     ecore_con_url_free(event_info->url_con);
@@ -253,7 +249,7 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, E
  *
  */
 static Eina_Bool
-_url_feed_add_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Url_Complete *event_info)
+_url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Url_Complete *event_info)
 {
     const Eina_List *headers = NULL, *it;
     const char *header = NULL;

@@ -40,7 +40,7 @@ cmnd_editor_values_get()
         return NULL;
 
     s = action_cmnd_data_format(widget_xpl_device_get(widget),
-                            xpl_type_to_str(widget_xpl_type_get(widget)),
+                            widget_xpl_type_get(widget),
                             widget_xpl_current_get(widget),
                             widget_xpl_data1_get(widget));
 
@@ -68,7 +68,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 {
 	Evas_Object *entry = elm_object_name_find(win, "cmnd preview entry", -1);
 	Widget *widget = data;
-    Xpl_Type type = widget_xpl_type_get(widget);
+    const char *type = widget_xpl_type_get(widget);
     char *s;
 
     /*Skip basic's edje signal emission*/
@@ -98,7 +98,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
         // edje_object_part_drag_value_get(o, source, &hval, &vval);
 
         /*Scale to device type format*/
-        if(type == XPL_TYPE_SLIDER_CONTROL_BASIC)
+        if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
         {
             val = (100 * val);
             asprintf(&s, "%d%%", (int)val);
@@ -117,7 +117,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 	    widget_xpl_current_set(widget, emission);
     }
 
-	asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) : "");
+	asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type));
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
 
@@ -160,7 +160,7 @@ _list_control_basic_item_add(Evas_Object *list, Widget *widget)
 	elm_image_aspect_fixed_set(icon, EINA_TRUE);
 	elm_image_resizable_set(icon, 1, 0);
 
-	asprintf(&s, "%s %s", widget_xpl_device_get(widget), xpl_type_to_str(widget_xpl_type_get(widget)));
+	asprintf(&s, "%s %s", widget_xpl_device_get(widget), widget_xpl_type_get(widget));
 
 	elm_list_item_append(list, s, icon, NULL, _list_control_basic_item_selected_cb, widget);
 	elm_list_go(list);

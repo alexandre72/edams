@@ -490,7 +490,7 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
     }
     else if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
     {
-        Xpl_Type type = widget_xpl_type_get(widget);
+        const char *type = widget_xpl_type_get(widget);
         char *s;
 
         if(strstr(emission, "drag"))
@@ -506,7 +506,7 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
             // edje_object_part_drag_value_get(o, source, &hval, &vval);
 
             /*Scale to device type format*/
-            if(type == XPL_TYPE_SLIDER_CONTROL_BASIC)
+            if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
             {
                 val = (100 * val);
                 asprintf(&s, "%d%%", (int)val);
@@ -526,7 +526,7 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
         }
 
         /*Update widget value field*/
-		asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type) ? xpl_type_to_unit_symbol(type) : "");
+		asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type));
 		edje_object_part_text_set(edje_obj, "value.text", s);
 		FREE(s);
 
@@ -1087,7 +1087,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
     	double level;
     	Edje_Message_Float msg;
 
-	    if(widget_xpl_type_get(widget) == XPL_TYPE_TEMP_SENSOR_BASIC)
+	    if(strcmp(widget_xpl_type_get(widget), XPL_TYPE_TEMP_SENSOR_BASIC) == 0)
 	    {
 			int x, y;
 			sscanf(widget_xpl_current_get(widget), "%d.%02d", &x, &y);
@@ -1106,9 +1106,9 @@ global_view_widget_data_update(Location *location, Widget *widget)
 	}
 
 	if (atoi(widget_xpl_current_get(widget)) == 0)
-		edje_object_signal_emit(edje, "false", "over");
+		edje_object_signal_emit(edje, "false", "whole");
 	else
-		edje_object_signal_emit(edje, "true", "over");
+		edje_object_signal_emit(edje, "true", "whole");
 
 	if(edje_object_part_exists(edje, "title.text"))
 	{
@@ -1126,7 +1126,19 @@ global_view_widget_data_update(Location *location, Widget *widget)
         	   	xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) : "");
 		edje_object_part_text_set(edje, "value.text", s);
 	}
-	edje_object_signal_emit(edje, "updated", "over");
+
+    if(edje_object_part_exists(edje, "text.highest"))
+	{
+	    edje_object_part_text_set(edje, "text.highest", widget_xpl_highest_get(widget));
+	}
+
+    if(edje_object_part_exists(edje, "text.lowest"))
+	{
+	    edje_object_part_text_set(edje, "text.lowest", widget_xpl_lowest_get(widget));
+	}
+
+
+	edje_object_signal_emit(edje, "updated", "whole");
 }/*global_view_data_update*/
 
 

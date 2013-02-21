@@ -76,8 +76,8 @@ void widget_class_set(Widget *widget, const Widget_Class class);
 
 const char *widget_xpl_device_get(const Widget *widget);
 void widget_xpl_device_set(Widget *widget, const char *xpl_device);
-Xpl_Type widget_xpl_type_get(const Widget *widget);
-void widget_xpl_type_set(Widget *widget, const Xpl_Type xpl_type);
+const char * widget_xpl_type_get(const Widget *widget);
+void widget_xpl_type_set(Widget *widget, const char * xpl_type);
 const char *widget_xpl_current_get(const Widget *widget);
 void widget_xpl_current_set(Widget *widget, const char *xpl_current);
 const char *widget_xpl_data1_get(const Widget *widget);

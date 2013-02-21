@@ -28,12 +28,12 @@
 
 typedef struct
 {
-	char *cosm_apikey;			    /*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
-	char *gnuplot_path;			    /*Gnuplot path. Eg '/usr/bin/gnuplot'*/
-	char *global_view_background;   /*Global view background image filename.*/
-	char *mbox_path; 			    /*mbox path file. Eg '/home/jdoe/mbox'*/
-	char *user_name;                /*User name. Eg 'John Doe'*/
-	char *user_mail;                /*User mail. Eg 'john.doe@imail.net'*/
+	Eina_Stringshare *cosm_apikey;			    /*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
+	Eina_Stringshare *gnuplot_path;			    /*Gnuplot path. Eg '/usr/bin/gnuplot'*/
+	Eina_Stringshare *global_view_background;   /*Global view background image filename.*/
+	Eina_Stringshare *mbox_path; 			    /*mbox path file. Eg '/home/jdoe/mbox'*/
+	Eina_Stringshare *user_name;                /*User name. Eg 'John Doe'*/
+	Eina_Stringshare *user_mail;                /*User mail. Eg 'john.doe@imail.net'*/
 	Eina_Bool softemu;			    /*TODO:Sotfware emulation, mainly used to test EDAMS.*/
 	Eina_Bool debug;			    /*Use printf to help to debug EDAMS.*/
 } Settings;
