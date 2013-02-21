@@ -285,7 +285,7 @@ cmnd_action_parse(const char *data)
     strdelstr(current, "\"");
 
     widget_xpl_device_set(widget, device);
-    widget_xpl_type_set(widget, xpl_str_to_type(type));
+    widget_xpl_type_set(widget, type);
     widget_xpl_current_set(widget, current);
 
     if(data1)

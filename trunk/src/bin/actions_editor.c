@@ -106,7 +106,6 @@ _hoversel_action_condition_selected_cb(void *data __UNUSED__, Evas_Object *obj, 
 static void
 _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
-	App_Info *app = edams_app_info_get();
 	Evas_Object *cwin = NULL;
 	Evas_Object *hbox = NULL;
 	Evas_Object *button, *icon;
@@ -288,7 +287,7 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *ev
 
     if((!app->widget) || (widget_class_get(app->widget) != WIDGET_CLASS_XPL_SENSOR_BASIC)) return;
 
-    Xpl_Type type = widget_xpl_type_get(app->widget);
+    const char *type = widget_xpl_type_get(app->widget);
 
 	asprintf(&s, _("Edit actions for '%s' xPL sensor.basic"), widget_xpl_device_get(app->widget));
 	win = elm_win_util_standard_add("actions_editor", s);

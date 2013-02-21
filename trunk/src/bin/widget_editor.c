@@ -99,12 +99,14 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 static void
 _layout_samples_test(Evas_Object *layout, Widget *widget)
 {
-	char s[10];
+	char *str;
+    const char *type = widget_xpl_type_get(widget);
 
 	Widget *sample = widget_new("sample", widget_class_get(widget));
 	RANDOMIZE();
-	snprintf(s, sizeof(s), "%d", RANDOM(24));
-	widget_xpl_current_set(sample, s);
+	asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(type)));
+	widget_xpl_current_set(sample, str);
+    FREE(str);
 	widget_xpl_type_set(sample, XPL_TYPE_GENERIC_SENSOR_BASIC);
 
     const char *t;
@@ -119,16 +121,17 @@ _layout_samples_test(Evas_Object *layout, Widget *widget)
     }
 
     if (atoi(widget_xpl_current_get(sample)) == 0)
-    	elm_object_signal_emit(layout, "false", "over");
+    	elm_object_signal_emit(layout, "false", "whole");
     else
-    	elm_object_signal_emit(layout, "true", "over");
+    	elm_object_signal_emit(layout, "true", "whole");
 
     elm_object_part_text_set(layout, "title.text", widget_xpl_device_get(sample));
 
-	snprintf(s, sizeof(s), "%s%s", widget_xpl_current_get(sample), xpl_type_to_unit_symbol(widget_xpl_type_get(sample)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(sample)) : "");
-    elm_object_part_text_set(layout, "value.text", s);
+	asprintf(&str, "%s%s", widget_xpl_current_get(sample), xpl_type_to_unit_symbol(type));
+    elm_object_part_text_set(layout, "value.text", str);
+    FREE(str);
 
-    elm_object_signal_emit(layout, "updated", "over");
+    elm_object_signal_emit(layout, "updated", "whole");
 
    	Evas_Object *edje;
 	Evas_Coord w, h;
@@ -160,7 +163,7 @@ static void
 _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source)
 {
 	Widget *widget = data;
-    Xpl_Type type = widget_xpl_type_get(widget);
+    const char *type = widget_xpl_type_get(widget);
     char *s;
 
     /*Skip basic's edje signal emission*/
@@ -190,7 +193,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
         // edje_object_part_drag_value_get(o, source, &hval, &vval);
 
         /*Scale to device type format*/
-        if(type == XPL_TYPE_SLIDER_CONTROL_BASIC)
+        if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
         {
             val = (100 * val);
             asprintf(&s, "%d%%", (int)val);
@@ -209,7 +212,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 	    widget_xpl_current_set(widget, emission);
     }
 
-	asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) ? xpl_type_to_unit_symbol(widget_xpl_type_get(widget)) : "");
+	asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type));
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
 
@@ -248,7 +251,7 @@ _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
 			//FIXME:Hack to avoid setting input or ouput from sensor.basic class!
 			if(strcmp(t, "input") == 0)			widget_xpl_type_set(widget, XPL_TYPE_INPUT_CONTROL_BASIC);
 			else if(strcmp(t, "ouput") == 0)	widget_xpl_type_set(widget, XPL_TYPE_OUTPUT_CONTROL_BASIC);
-			else								widget_xpl_type_set(widget, xpl_str_to_type(t));
+			else								widget_xpl_type_set(widget, t);
 			elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, widget);
 		}
 	}
@@ -391,7 +394,7 @@ _list_item_xpl_device_selected_cb(void *data, Evas_Object * obj __UNUSED__, void
     strdelstr(type, "\"");
 
     widget_xpl_device_set(widget, device);
-    widget_xpl_type_set(widget, xpl_str_to_type(type));
+    widget_xpl_type_set(widget, type);
     elm_object_text_set(entry, device);
 
     FREE(device);

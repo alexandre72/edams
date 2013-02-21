@@ -23,6 +23,7 @@
 #include "widget.h"
 
 #include <stdio.h>
+#include <string.h>
 
 Widget_Class
 widget_str_to_class(const char *str)
@@ -32,7 +33,7 @@ widget_str_to_class(const char *str)
 	if(strcmp(str, "sensor.basic") == 0) 			return WIDGET_CLASS_XPL_SENSOR_BASIC;
 	else if(strcmp(str, "control.basic") == 0)		return WIDGET_CLASS_XPL_CONTROL_BASIC;
 	else if(strcmp(str, "virtual") == 0)			return WIDGET_CLASS_VIRTUAL;
-
+    else return WIDGET_CLASS_UNKNOWN;
 }/*widget_str_to_class*/
 
 

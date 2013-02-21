@@ -28,6 +28,40 @@
 #define CONFIG_HEARTBEAT_INTERVAL 60
 #define HUB_DISCOVERY_INTERVAL 3
 
+#define XPL_TYPE_BATTERY_SENSOR_BASIC "battery"
+#define XPL_TYPE_COUNT_SENSOR_BASIC "count"
+#define XPL_TYPE_CURRENT_SENSOR_BASIC "current"
+#define XPL_TYPE_DIRECTION_SENSOR_BASIC "direction"
+#define XPL_TYPE_DISTANCE_SENSOR_BASIC "distance"
+#define XPL_TYPE_ENERGY_SENSOR_BASIC "energy"
+#define XPL_TYPE_FAN_SENSOR_BASIC "fan"
+#define XPL_TYPE_GENERIC_SENSOR_BASIC "generic"
+#define XPL_TYPE_HUMIDITY_SENSOR_BASIC "humidity"
+#define XPL_TYPE_INPUT_SENSOR_BASIC "input"
+#define XPL_TYPE_OUTPUT_SENSOR_BASIC "output"
+#define XPL_TYPE_POWER_SENSOR_BASIC "power"
+#define XPL_TYPE_PRESSURE_SENSOR_BASIC "pressure"
+#define XPL_TYPE_SETPOINT_SENSOR_BASIC "setpoint"
+#define XPL_TYPE_SPEED_SENSOR_BASIC "speed"
+#define XPL_TYPE_TEMP_SENSOR_BASIC "temp"
+#define XPL_TYPE_UV_SENSOR_BASIC "uv"
+#define XPL_TYPE_VOLTAGE_SENSOR_BASIC "voltage"
+#define XPL_TYPE_VOLUME_SENSOR_BASIC "volume"
+#define XPL_TYPE_WEIGHT_SENSOR_BASIC "weight"
+#define XPL_TYPE_BALANCE_CONTROL_BASIC "balance"
+#define XPL_TYPE_FLAG_CONTROL_BASIC "flag"
+#define XPL_TYPE_INFRARED_CONTROL_BASIC "infrared"
+#define XPL_TYPE_INPUT_CONTROL_BASIC "input"
+#define XPL_TYPE_MACRO_CONTROL_BASIC "macro"
+#define XPL_TYPE_MUTE_CONTROL_BASIC "mute"
+#define XPL_TYPE_OUTPUT_CONTROL_BASIC "output"
+#define XPL_TYPE_VARIABLE_CONTROL_BASIC "variable"
+#define XPL_TYPE_PERIODIC_CONTROL_BASIC "periodic"
+#define XPL_TYPE_SCHEDULED_CONTROL_BASIC "scheduled"
+#define XPL_TYPE_SLIDER_CONTROL_BASIC "slider"
+#define XPL_TYPE_TIMER_CONTROL_BASIC "timer"
+
+
 typedef char * String;
 
 #ifndef INADDR_NONE
@@ -174,47 +208,6 @@ struct _xPL_Service {
   xPL_ServiceListenerDefPtr serviceListenerList;
 };
 
-typedef enum _Xpl_Type
-{
-	XPL_TYPE_UNKNOWN	    	        = (0),
-	XPL_TYPE_BATTERY_SENSOR_BASIC	    = (1),  /*battery - a battery level in percent.*/
-	XPL_TYPE_COUNT_SENSOR_BASIC		    = (2),  /*count - a counter value (door openings, rain fall, etc).*/
-	XPL_TYPE_CURRENT_SENSOR_BASIC	    = (3),	/*current - a current value in Amps.*/
-	XPL_TYPE_DIRECTION_SENSOR_BASIC	    = (4),  /*direction - direction, represented as degrees from north (0-360, 0=north, 180=south, etc)*/
-	XPL_TYPE_DISTANCE_SENSOR_BASIC	    = (5),  /*distance - distance measurments. Default unit of measure is meters.*/
-	XPL_TYPE_ENERGY_SENSOR_BASIC	    = (6),  /*energy - consumption of energy over a preiod of time in kWh (kilowatt hours).*/
-	XPL_TYPE_FAN_SENSOR_BASIC		    = (7),  /*fan - a fan speed in RPM.*/
-	XPL_TYPE_GENERIC_SENSOR_BASIC	    = (8),  /*generic - a generic analogue value who's units of measurement are application specific*/
-	XPL_TYPE_HUMIDITY_SENSOR_BASIC	    = (9),  /*humidity - a relative humidity percentage (0 to 100, no percent sign).*/
-	XPL_TYPE_INPUT_SENSOR_BASIC		    = (10), /*input - a switch that can either be current=HIGH (on), current=LOW (off) or current=PULSE (representing a button press)*/
-	XPL_TYPE_OUTPUT_SENSOR_BASIC	    = (11), /*output - a change in an output state with values of LOW and HIGH*/
-	XPL_TYPE_POWER_SENSOR_BASIC		    = (12), /*power - instantaneous energy consumption level in kW*/
-	XPL_TYPE_PRESSURE_SENSOR_BASIC	    = (13), /*pressure - a pressure value in Pascals (N/m2)*/
-	XPL_TYPE_SETPOINT_SENSOR_BASIC	    = (14), /*setpoint - a thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius.*/
-	XPL_TYPE_SPEED_SENSOR_BASIC		    = (15),	/*speed - a generic speed. Default unit of measure is Miles per Hour.*/
-	XPL_TYPE_TEMP_SENSOR_BASIC		    = (16),	/*temp - a temperature value in degrees. Default unit of measure is centigrade celsius.*/
-	XPL_TYPE_UV_SENSOR_BASIC            = (17), /*uv - UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index.*/
-	XPL_TYPE_VOLTAGE_SENSOR_BASIC	    = (18), /*voltage - a voltage value in Volts.*/
-	XPL_TYPE_VOLUME_SENSOR_BASIC	    = (19), /*volume - a volume in m3. Often used as a measure of gas and water consumption.*/
-	XPL_TYPE_WEIGHT_SENSOR_BASIC 	    = (20), /*weight - the default unit is kilograms (yes, kilograms are a unit of mass, not weight)*/
-	XPL_TYPE_BALANCE_CONTROL_BASIC      = (21), /*balance - -100 to +100.*/
-	XPL_TYPE_FLAG_CONTROL_BASIC		    = (22), /*flag - set, clear, neutral.*/
-	XPL_TYPE_INFRARED_CONTROL_BASIC	    = (23), /*infrared - send, enable_rx, disable_rx, enable_tx, disable_tx, sendx (send x times).*/
-	XPL_TYPE_INPUT_CONTROL_BASIC	    = (24), /*input - enable, disable.*/
-	XPL_TYPE_MACRO_CONTROL_BASIC	    = (25), /*macro - enable, disable, do.*/
-	XPL_TYPE_MUTE_CONTROL_BASIC		    = (26), /*mute - yes, no.*/
-	XPL_TYPE_OUTPUT_CONTROL_BASIC	    = (27), /*output - enable, disable, high, low, toggle, pulse.*/
-	XPL_TYPE_VARIABLE_CONTROL_BASIC	    = (28), /*variable - inc, dec, 0-255 (for set).*/
-    XPL_TYPE_PERIODIC_CONTROL_BASIC	    = (29), /*periodic - started, enable, disable.*/
-	XPL_TYPE_SCHEDULED_CONTROL_BASIC    = (30), /*scheduled - started, enable, disable.*/
-	XPL_TYPE_SLIDER_CONTROL_BASIC	    = (31), /*slider -	nn = set to value (0-255),*/
-									            /* +nn = increment by nn, -nn = decrement by nn,*/
-											    /*n% = set to nn (where nn is a percentage - 0-100%)*/
-	XPL_TYPE_TIMER_CONTROL_BASIC        = (32), /*timer - went off, start, stop, halt, resume.*/
-	XPL_TYPE_LAST
-}Xpl_Type;
-
-
 
 /*xPL misc stuff*/
 Eina_Bool xpl_init();
@@ -226,13 +219,11 @@ void xpl_services_install(Ecore_Pipe *pipe);
 void xpl_process_messages();
 
 const char *xpl_control_basic_cmnd_to_elm_str(Widget *widget);
-const char *xpl_type_to_str(Xpl_Type type);
-Xpl_Type xpl_str_to_type(const char *xpl_type);
-const char *xpl_type_to_units(Xpl_Type type);
-const char *xpl_type_to_unit_symbol(Xpl_Type type);
-int xpl_type_current_min_get(Xpl_Type type);
-int xpl_type_current_max_get(Xpl_Type type);
-
+const char *xpl_type_to_desc(const char *xpl_type);
+const char *xpl_type_to_units(const char *xpl_type);
+const char *xpl_type_to_unit_symbol(const char *xpl_type);
+int xpl_type_current_min_get(const char *xpl_type);
+int xpl_type_current_max_get(const char *xpl_type);
 Eina_List *xpl_sensor_basic_list_get();
 
 

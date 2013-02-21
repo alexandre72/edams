@@ -93,7 +93,6 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 static void
 _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
-	App_Info *app = edams_app_info_get();
 	Evas_Object *cwin = NULL;
 	Evas_Object *hbox = NULL;
 	Evas_Object *button, *icon;
