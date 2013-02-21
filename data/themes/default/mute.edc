@@ -51,8 +51,8 @@ group
 group
 {
 	name: "widget/control.basic/mute";
-	min: 70 70;
-	max: 70 70;
+	min: 110 70;
+	max: 110 70;
 
 	data
 	{
@@ -69,46 +69,74 @@ group
 	parts
 	{
 		part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }/*whole*/
+
+		part
        	{
 			name: "base";
             type: IMAGE;
-				description
-				{
-                    state: "unmute" 0.0;
-					aspect: 1 1;
-					aspect_preference: BOTH;
-                    image.normal: "unmute.png";
-                }
-		        description
-		        {
-		            state: "mute" 0.0;
-		            inherit: "default" 0.0;
-                    image.normal: "mute.png";
-		        }
-			}
+			clip_to: "whole";
+			description
+			{
+                state: "unmute" 0.0;
+                image.normal: "unmute.png";
+				aspect: 1 1;
+				aspect_preference: BOTH;
+                rel1.relative: 0.0 0.00;
+                rel2.relative: 1.0 0.75;
+            }
+		    description
+            {
+                state: "mute" 0.0;
+		        inherit: "default" 0.0;
+                image.normal: "mute.png";
+		  }
+		}
+        part
+        {
+            name: "separator";
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.80;
+                rel2.relative: 0.8 0.80;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
 
-		part
+        part
         {
             name: "title.text";
             type: TEXT;
-            scale: 1;
+            effect: SOFT_SHADOW;
+            mouse_events: 0;
+            clip_to: "whole";
             description
             {
-
-               state: "default" 0.0;
-		       rel1.relative: 0.0 0.0;
-    		   rel2.relative: 1.0 1.10;
-               color: 0 0 255 255;
-               text
-               {
-                  text: "sensor";
-                  font: "Sans:style=Bold";
-                  size: 8;
-                  min: 1 1;
-                  align: 0.5 1.0;
-               }
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.90;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "sensor";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
             }
-		}/*title.text*/
+        }/*title.text*/
 	}/*parts*/
 
 	programs

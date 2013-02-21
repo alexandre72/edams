@@ -27,8 +27,8 @@ group
 group
 {
     name: "widget/control.basic/slider";
-	min: 200 20;
- 	max: 200 20;
+	min: 200 70;
+ 	max: 200 70;
 
 	data
 	{
@@ -49,6 +49,17 @@ group
 
     parts
     {
+    	part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }/*whole*/
+
         part
         {
             name: "bg"; type: RECT;
@@ -87,30 +98,6 @@ group
                 fixed: 0 1;
             }
         }
-
-		part
-        {
-            name: "title.text";
-            type: TEXT;
-            scale: 1;
-            description
-            {
-
-               state: "default" 0.0;
-		       rel1.relative: 0.0 0.0;
-    		   rel2.relative: 1.0 1.2;
-               color: 0 0 255 255;
-               text
-               {
-                  text: "sensor";
-                  font: "Sans:style=Bold";
-                  size: 8;
-                  min: 1 1;
-                  align: 0.5 1.0;
-               }
-            }
-		}/*title.text*/
-
         part
         {
             name: "glow"; mouse_events: 0;
@@ -237,6 +224,43 @@ group
             visible: 0;
          }
       }
+        part
+        {
+            name: "separator";
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.70;
+                rel2.relative: 0.8 0.70;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
+
+        part
+        {
+            name: "title.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.80;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "sensor";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+            }
+        }/*title.text*/
    }
    programs
     {

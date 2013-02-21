@@ -49,8 +49,8 @@ group
 group
 {
    	name: "widget/sensor.basic/jauge";
-	min: 10 170;
-	max: 10 170;
+	min: 110 170;
+	max: 110 170;
 
 	data
 	{
@@ -82,95 +82,62 @@ group
 
 	parts
 	{
-		part
-		{
-			name: "bg";
-			type: RECT;
-
-			mouse_events: 0;
-
-			description
-			{
-				state: "default" 0.0;
-			}
-		}/*bg*/
-
-         part
-         {
-			name: "title.text";
-            type: TEXT;
-            scale: 1;
+	   part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 1;
             description
             {
-               state: "default" 0.0;
-		       rel1.relative: 0.0 0.0;
-    		   rel2.relative: 1.0 1.10;
-               color: 0 0 255 255;
-               text
-               {
-                  text: "sensor";
-                  font: "Sans:style=Bold";
-                  size: 8;
-                  min: 1 1;
-                  align: 0.5 1.0;
-               }
+                state: "default" 0.0;
             }
-         }/*title.text*/
+        }/*whole*/
 
          part
-         {
+        {
             name: "drag_area";
             type: IMAGE;
-
-            mouse_events: 0;
-
+            mouse_events: 1;
+			clip_to: "whole";
             description
             {
-            	min: 10 170;
-				max: 10 170;
-               	image.normal: "jauge_bg.png";
-               	state: "default" 0.0;
-               	rel1
-               	{
-					relative: 0.0 0.0;
-                  	offset: -5 0;
-               	}
+                state: "default" 0.0;
+               	aspect_preference: BOTH;
+               	align: 0.5 0.5;
+               	rel1.relative: 0.45 0.00;
+               	rel2.relative: 0.55 0.70;
+                image.normal: "jauge_bg.png";
 
-               rel2
-               {
-                  	relative: 1.0 1.0;
-                  	offset: 4 0;
-               }
             }
-         }/*drag_area*/
+        }/*drag_area*/
 
-         part
-         {
+        part
+        {
             name: "slider";
-			type: IMAGE;
-            mouse_events: 0;
+            type: IMAGE;
+            mouse_events: 1;
             dragable
             {
-               confine: "drag_area";
-               x: 0 0 0;
-               y: -1 1 0;
+                confine: "drag_area";
+                x: -1 0 0;
+                y: -1 1 0;
             }
 
             description
             {
-              	min: 10 20;
-               	state: "default" 0.0;
-               	image.normal: "jauge_slider.png";
-               	visible: 1;
-            }/*slider*/
-         }
+                min: 20 9;
+                state: "default" 0.0;
+                image.normal: "jauge_slider.png";
+                visible: 1;
+            }
+        }/*slider*/
 
-         part
-         {
+        part
+        {
             name: "value.text";
             type: TEXT;
-            scale: 1;
             effect: OUTLINE_SOFT_SHADOW;
+            clip_to: "whole";
             description
             {
 				state: "default" 0.0;
@@ -183,34 +150,160 @@ group
                	text
                	{
                   	text: "N/A";
-					font: "Sans:style=Bold";
+                    font: "Sans,Edje-Vera";
                   	size: 10;
                   	min: 1 1;
-                  	align: 0.0 0.5;
+                  	align: 0.5 0.5;
 				}
-			}
-		}/*value.text*/
-
-         part
-         {
-            name: "update";
+		    }
+        }/*value.text*/
+       part
+        {
+            name: "separator";
+            mouse_events: 0;
+            clip_to: "whole";
             description
             {
-               state: "default" 0.0;
-            	max: 44 11;
-               aspect_preference: BOTH;
-	           image.normal: "updated.png";
-               visible: 0;
-           }
-           description
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.72;
+                rel2.relative: 0.8 0.72;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
+
+        part
+        {
+            name: "title.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.77;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "sensor";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+            }
+        }/*title.text*/
+		part
+		{
+            name: "update";
+            type: IMAGE;
+            clip_to: "whole";
+			description
+            {
+               	state: "default" 0.0;
+				max: 44 11;
+               	aspect_preference: BOTH;
+	           	image.normal: "updated.png";
+               	visible: 0;
+			}
+           	description
             {
             	max: 44 11;
-               state: "show" 0.0;
-				align: 0.5 0.5;
-               visible: 1;
-               color: 0 0 0 0;
+               	state: "show" 0.0;
+				align: 0.5 0.7;
+               	visible: 1;
+               	color: 0 0 0 0;
             }
-         }/*update*/
+		}/*update*/
+
+            part
+            {
+                name: "icon_min";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.lowest";
+                    rel1.relative: 0.2 0.0;
+                    rel2.to_y: "text.lowest";
+                    rel2.relative: 0.2 1.0;
+                    image.normal: "icon_min.png";
+                }
+            }
+            part
+            {
+                name: "text.lowest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 0.0 0.0;
+                    rel1.to_x: "icon_min";
+                    rel1.relative: 1.0 0.70;
+                    rel1.offset: 3 5;
+                    rel2.relative: 1.0 0.70;
+                    rel2.offset: 3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 0.0 0.5;
+                    }
+                }
+            }/*text.lowest*/
+            part
+            {
+                name: "icon_max";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    align: 0.5 0.0;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.highest";
+                    rel1.relative: 0.8 0.0;
+                    rel2.to_y: "text.highest";
+                    rel2.relative: 0.8 1.0;
+                    image.normal: "icon_max.png";
+                }
+            }
+            part
+            {
+                name: "text.highest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 1.0 0.0;
+                    rel1.relative: 0.0 0.70;
+                    rel1.offset: -3 5;
+                    rel2.to_x: "icon_max";
+                    rel2.relative: 0.0 0.70;
+                    rel2.offset: -3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 1.0 0.5;
+                    }
+                }
+            }/*text.highest*/
       }/*parts*/
 
 	programs
@@ -219,7 +312,7 @@ group
         {
             name: "updated,start";
             signal: "updated";
-            source: "over";
+            source: "whole";
             action: STATE_SET "show" 0.0;
 			transition: SINUSOIDAL 3.0;
             target: "update";
@@ -228,7 +321,7 @@ group
          program
          {
             name: "hover2";
-            source: "over";
+            source: "whole";
             action: STATE_SET "default" 0.0;
             target: "update";
          }
