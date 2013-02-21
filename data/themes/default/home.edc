@@ -61,9 +61,8 @@ group
 
     images
     {
-        image: "button_normal.png" COMP;
-        image: "button_clicked.png" COMP;
-        image: "home.png" COMP;
+        image: "home_normal.png" COMP;
+        image: "home_clicked.png" COMP;
     }
 
     parts
@@ -74,9 +73,8 @@ group
             description
             {
                 state: "default" 0.0;
-                image.normal: "button_normal.png";
-                image.border: 4 4 3 5;
-                image.middle: SOLID;
+                image.normal: "home_normal.png";
+                image.border: 5 5 5 5;
                 rel1.offset: -1 0;
                 rel2.offset: 0 1;
                 fill.smooth: 0;
@@ -85,44 +83,10 @@ group
             {
                 state: "clicked" 0.0;
                 inherit: "default" 0.0;
-                image.normal: "button_clicked.png";
-                image.border: 5 5 4 6;
+                image.normal: "home_clicked.png";
+                image.border: 0 0 0 0;
             }
         }
-
-        part
-        {
-            name: "icon_clip";
-            type: RECT;
-            description
-            {
-                state: "default" 0.0;
-            }
-        }
-
-        part
-        {
-            name: "e.swallow.icon";
-            type: IMAGE;
-            mouse_events: 0;
-            clip_to: "icon_clip";
-            description
-            {
-                state: "default" 0.0;
-                min: 32 32;
-                max: 32 32;
-                rel1.offset: 5 4;
-                rel1.to: "base";
-                rel2.relative: 1.0 1.0;
-                rel2.offset: -5 -6;
-                rel2.to: "base";
-                aspect: 1.0 1.0;
-                aspect_preference: BOTH;
-                align: 0.5 0.5;
-                image.normal: "home.png";
-             }
-        }
-
         part
         {
             name: "event"; type: RECT;
