@@ -38,17 +38,19 @@ Eina_List *crons = NULL;
  *
  */
 const char *
-minute_to_str(unsigned char minute)
+minute_to_str(const char *minute)
 {
-    char ret[10];
-
-    if(minute == 60) return _("Every Minute");
-    else
+    if(strcmp(minute, "*" ) == 0) return _("Every Minute");
+    else if(strstr(minute, "*/"))
     {
-        snprintf(ret, sizeof(ret), "%d", minute);
+        char *ret;
+        char *s = strdup(minute);
+        strdelstr(s, "*/");
+        asprintf(&ret, "Every %s minutes", s);
+        FREE(s);
+        return ret;
     }
-
-    return strdup(ret);
+    else return minute;
 }/*hour_to_str*/
 
 
@@ -56,23 +58,21 @@ minute_to_str(unsigned char minute)
  *
  */
 const char *
-hour_to_str(unsigned char hour)
+hour_to_str(const char *hour)
 {
-    char ret[10];
-
-    if(hour == 24) return _("Every Hour");
-    else if(hour == 0) return _("12 Midnight");
-    else if(hour == 12) return _("12 Noon");
-    else if((hour > 1 ) && (hour < 12))
+    if(strcmp(hour, "0" ) == 0) return _("12 Midnight");
+    else if(strcmp(hour, "12" ) == 0) return _("12 Noon");
+    else if(strcmp(hour, "*" ) == 0) return _("Every Hour");
+    else if(strncmp(hour, "*/", 2) == 0)
     {
-        snprintf(ret, sizeof(ret), "%d AM", hour);
+        char *ret;
+        char *s = strdup(hour);
+        strdelstr(s, "*/");
+        asprintf(&ret, "Every %s hours", s);
+        FREE(s);
+        return ret;
     }
-    else
-    {
-        snprintf(ret, sizeof(ret), "%d PM", hour);
-    }
-
-    return strdup(ret);
+    else return hour;
 }/*hour_to_str*/
 
 
@@ -80,17 +80,19 @@ hour_to_str(unsigned char hour)
  *
  */
 const char *
-day_month_to_str(unsigned char day_month)
+day_month_to_str(const char *day_month)
 {
-    char ret[10];
-
-    if(day_month == 0) return _("Every Month");
-    else
+    if(strcmp(day_month, "*" ) == 0) return _("Every Day");
+    else if(strstr(day_month, "*/" ))
     {
-        snprintf(ret, sizeof(ret), "%d", day_month);
+        char *ret;
+        char *s = strdup(day_month);
+        strdelstr(s, "*/");
+        asprintf(&ret, "Every %s days", s);
+        FREE(s);
+        return ret;
     }
-
-    return ret;
+    else return day_month;
 }/*hour_to_str*/
 
 
@@ -98,21 +100,31 @@ day_month_to_str(unsigned char day_month)
  *
  */
 const char *
-month_to_str(Month month)
+month_to_str(const char *month)
 {
-    if(month == JAN) return _("January");
-    if(month == FEB) return _("February");
-    if(month == MAR) return _("March");
-    if(month == APR) return _("April");
-    if(month == MAY) return _("May");
-    if(month == JUN) return _("June");
-    if(month == JUL) return _("July");
-    if(month == AUG) return _("August");
-    if(month == SEP) return _("September");
-    if(month == OCT) return _("October");
-    if(month == NOV) return _("November");
-    if(month == DEC) return _("December");
-    else             return _("Every Day");
+    if(strcmp(month, "1" ) == 0) return _("January");
+    else if(strcmp(month, "2" ) == 0) return _("February");
+    else if(strcmp(month, "3" ) == 0) return _("March");
+    else if(strcmp(month, "4" ) == 0) return _("April");
+    else if(strcmp(month, "5" ) == 0) return _("May");
+    else if(strcmp(month, "6" ) == 0) return _("June");
+    else if(strcmp(month, "7" ) == 0) return _("July");
+    else if(strcmp(month, "2" ) == 0) return _("August");
+    else if(strcmp(month, "3" ) == 0) return _("September");
+    else if(strcmp(month, "4" ) == 0) return _("October");
+    else if(strcmp(month, "5" ) == 0) return _("November");
+    else if(strcmp(month, "6" ) == 0) return _("December");
+    else if(strcmp(month, "*" ) == 0) return _("Every Month");
+    else if(strstr(month, "*/" ))
+    {
+        char *ret;
+        char *s = strdup(month);
+        strdelstr(s, "*/");
+        asprintf(&ret, "Every %s months", s);
+        FREE(s);
+        return ret;
+    }
+    else return month;
 }/*month_to_str*/
 
 
@@ -120,16 +132,26 @@ month_to_str(Month month)
  *
  */
 const char *
-day_week_to_str(Day_Of_Week day)
+day_week_to_str(const char *day_week)
 {
-    if(day == SUN) return _("Sunday");
-    if(day == MON) return _("Monday");
-    if(day == TUE) return _("Tuesday");
-    if(day == WED) return _("Wednesday");
-    if(day == THU) return _("Thursday)");
-    if(day == FRI) return _("Friday");
-    if(day == SAT) return _("Saturday");
-    else           return _("Every Weekday");
+    if(strcmp(day_week, "0" ) == 0) return _("Sunday");
+    else if(strcmp(day_week, "1" ) == 0) return _("Monday");
+    else if(strcmp(day_week, "2" ) == 0) return _("Tuesday");
+    else if(strcmp(day_week, "3" ) == 0) return _("Wednesday");
+    else if(strcmp(day_week, "4" ) == 0) return _("Thursday");
+    else if(strcmp(day_week, "5" ) == 0) return _("Friday");
+    else if(strcmp(day_week, "6" ) == 0) return _("Saturday");
+    else if(strcmp(day_week, "*" ) == 0) return _("Every Weekday");
+    else if(strstr(day_week, "*/" ))
+    {
+        char *ret;
+        char *s = strdup(day_week);
+        strdelstr(s, "*/");
+        asprintf(&ret, "Every %s weeks", s);
+        FREE(s);
+        return ret;
+    }
+    else return day_week;
 }/*day_week_to_str*/
 
 /*
@@ -169,71 +191,6 @@ _crontab_line_is_comment(char *line)
 /*
  *
  */
-static unsigned char
-_get(const char value[50])
-{
-    if(strcmp(value, "*") == 0)
-        return 0;
-        /*
-    else if(strcmp(value, "/2") == 0)
-        return PAIR;
-    else*/
-        return atoi(value);
-}/*_get*/
-
-
-/*
- *
- */
-static unsigned char
-_minute_get(const char value[50])
-{
-    if(strcmp(value, "*") == 0)
-        return 60;
-        /*
-    else if(strcmp(value, "/2") == 0)
-        return PAIR;
-    else*/
-        return atoi(value);
-}/*_minute_get*/
-
-
-/*
- *
- */
-static unsigned char
-_hour_get(const char value[50])
-{
-    if(strcmp(value, "*") == 0)
-        return 24;
-        /*
-    else if(strcmp(value, "/2") == 0)
-        return PAIR;
-    else*/
-        return atoi(value);
-}/*_hour_get*/
-
-/*
- *
- */
-static unsigned char
-_day_week_get(const char value[50])
-{
-    if(strcmp(value, "*") == 0)
-        return 7;
-        /*
-    else if(strcmp(value, "/2") == 0)
-        return PAIR;
-    else*/
-        return atoi(value);
-}/*_day_week_get*/
-
-
-
-
-/*
- *
- */
 void
 crontab_init(void)
 {
@@ -259,9 +216,8 @@ crontab_init(void)
                 /*#min hour day Month Day_Of_Week Command*/
                 sscanf(s,"%s %s %s %s %s %[^\n]",f[0],f[1],f[2],f[3],f[4],f[5]);
 
-                //printf("On:%s %s %s\n", day_to_str(atoi(f[2])), f[3], month_to_str(atoi(f[4])));
-               // printf("At:%sh%smin\n", f[1], f[0]);
-                //printf("Command=%s\n", f[5]);
+                //printf("Run '%s' %s %s ", f[5], minute_to_str(f[0]), hour_to_str(f[1]));
+                //printf("%s %s %s\n", day_month_to_str(f[2]), month_to_str(f[3]), day_week_to_str(f[4]));
 
                 if(strstr(f[5], "edams -a"))
                 {
@@ -278,15 +234,13 @@ crontab_init(void)
                     strdelstr(buf, "'");
                     needle = strstr(buf, "-d ");
                     needle+=3;
-                    cron_entry = cron_entry_new(_minute_get(f[0]), _hour_get(f[1]),
-                                                _get(f[2]), _get(f[3]), _day_week_get(f[4]),
+                    cron_entry = cron_entry_new(f[0], f[1], f[2], f[3], f[4],
                                                 action_type, needle);
                     FREE(buf);
                 }
                 else
                 {
-                    cron_entry = cron_entry_new(_minute_get(f[0]), _hour_get(f[1]),
-                                                _get(f[2]), _get(f[3]), _day_week_get(f[4]),
+                    cron_entry = cron_entry_new(f[0], f[1], f[2], f[3], f[4],
                                                 ACTION_TYPE_UNKNOWN, f[5]);
                 }
 
@@ -333,30 +287,11 @@ crons_list_write()
 
     EINA_LIST_FOREACH(crons, l, cron_elem)
    	{
-        if(cron_elem->minute == 60)
-            fprintf(crontab, "*\t");
-        else
-            fprintf(crontab, "%d\t", cron_elem->minute);
-
-        if(cron_elem->hour == 24)
-            fprintf(crontab, "*\t");
-        else
-            fprintf(crontab, "%d\t", cron_elem->hour);
-
-        if(cron_elem->day_month == 0)
-            fprintf(crontab, "*\t");
-        else
-            fprintf(crontab, "%d\t", cron_elem->day_month);
-
-        if(cron_elem->month == 0)
-            fprintf(crontab, "*\t");
-        else
-            fprintf(crontab, "%d\t", cron_elem->month);
-
-        if(cron_elem->day_week == 7)
-            fprintf(crontab, "*\t");
-        else
-            fprintf(crontab, "%d\t", cron_elem->day_week);
+        fprintf(crontab, "%s\t", cron_elem->minute);
+        fprintf(crontab, "%s\t", cron_elem->hour);
+        fprintf(crontab, "%s\t", cron_elem->day_month);
+        fprintf(crontab, "%s\t", cron_elem->month);
+        fprintf(crontab, "%s\t", cron_elem->day_week);
 
         if(cron_elem->action_type != ACTION_TYPE_UNKNOWN)
             fprintf(crontab, "edams -a %s -d '%s'\n", action_type_to_str(cron_elem->action_type), cron_elem->action_data);
@@ -387,6 +322,11 @@ crontab_shutdown()
     /*Free all location node of Eina_List*/
 	EINA_LIST_FREE(crons, cron_elem)
 	{
+        eina_stringshare_del(cron_elem->minute);
+        eina_stringshare_del(cron_elem->hour);
+        eina_stringshare_del(cron_elem->day_month);
+        eina_stringshare_del(cron_elem->month);
+        eina_stringshare_del(cron_elem->day_week);
         eina_stringshare_del(cron_elem->action_data);
         free(cron_elem);
         cron_elem = NULL;
@@ -425,9 +365,9 @@ crons_list_entry_remove(Cron_Entry *cron_elem)
  *
  */
 Cron_Entry *
-cron_entry_new(unsigned char minute, unsigned char hour,
-              unsigned char day_month, unsigned char month, unsigned char day_week,
-                Action_Type action_type,  const char *action_data)
+cron_entry_new(char *minute, char *hour,
+              char * day_month, char * month,  char * day_week,
+                Action_Type action_type,   char *action_data)
 {
     Cron_Entry *cron_entry = NULL;
 
@@ -436,34 +376,14 @@ cron_entry_new(unsigned char minute, unsigned char hour,
     if(!cron_entry)
         return NULL;
 
-    cron_entry->minute = minute;
-    cron_entry->hour = hour;
-    cron_entry->day_month = day_month;
-    cron_entry->month = month;
-    cron_entry->day_week  = day_week ;
-
+    cron_entry->minute = eina_stringshare_add(minute);
+    cron_entry->hour = eina_stringshare_add(hour);
+    cron_entry->day_month = eina_stringshare_add(day_month);
+    cron_entry->month = eina_stringshare_add(month);
+    cron_entry->day_week = eina_stringshare_add(day_week);
 
     cron_entry->action_type = action_type;
     cron_entry->action_data = eina_stringshare_add(action_data);
 
     return cron_entry;
 }/*cron_entry_new*/
-
-
-/*
- *
- */
- /*
-static void
-crontab_test()
-{
-    Cron_Entry *cron_elem = NULL;
-
-    crons_init();
-
-    cron_elem = cron_entry_new(MON, ANY, JAN, 12, 30,  "edams -a \"{\"TYPE\":\"EXEC\",\"DATA\":{\"EXEC\":\"/usr/bin/gedit\"}}\"");
-    crons_list_entry_add(cron_elem);
-
-    crons_shutdown();
-}*/
-/*crontab_test*/

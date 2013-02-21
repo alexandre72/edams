@@ -26,43 +26,13 @@
 #include "action.h"
 
 
-
-typedef enum Day_Of_Week
-{
-    SUN = (0),
-    MON = (1),
-    TUE = (2),
-    WED = (3),
-    THU = (4),
-    FRI = (5),
-    SAT = (6),
-} Day_Of_Week;
-
-
-typedef enum Month
-{
-    JAN = (1),
-    FEB = (2),
-    MAR = (3),
-    APR = (4),
-    MAY = (5),
-    JUN = (6),
-    JUL = (7),
-    AUG = (8),
-    SEP = (9),
-    OCT = (10),
-    NOV = (11),
-    DEC = (12)
-} Month;
-
-
 typedef struct Cron_Entry
 {
-    unsigned char minute;       /*0 to 59*/
-    unsigned char hour;         /*0 à 23*/
-    unsigned char day_month;    /*1 to 31*/
-    unsigned char month;        /*1 to 12*/
-    unsigned char day_week;     /*0 to 6*/
+    Eina_Stringshare *minute;       /*0 to 59*/
+    Eina_Stringshare *hour;         /*0 à 23*/
+    Eina_Stringshare *day_month;    /*1 to 31*/
+    Eina_Stringshare *month;        /*1 to 12*/
+    Eina_Stringshare *day_week;     /*0 to 6*/
 
     Action_Type action_type;    /*Action type. Eg 'EXEC'*/
     const char *action_data;   /*Action data*/
@@ -78,14 +48,14 @@ Eina_Bool crons_list_entry_remove(Cron_Entry *cron_elem);
 Eina_Bool crons_list_entry_add(Cron_Entry *cron_elem);
 
 Cron_Entry *
-cron_entry_new(unsigned char day, unsigned char mday, unsigned char month,
-                unsigned char hour, unsigned char minute,
-                Action_Type action_type,  const char *action_data);
+cron_entry_new(char *minute, char *hour,
+              char * day_month, char * month,  char * day_week,
+                Action_Type action_type,   char *action_data);
 
-const char *minute_to_str(unsigned char minute);
-const char *hour_to_str(unsigned char hour);
-const char *day_month_to_str(unsigned char day_month);
-const char *month_to_str(Month month);
-const char *day_week_to_str(Day_Of_Week day_week);
+const char *minute_to_str(const char *minute);
+const char *hour_to_str(const char * hour);
+const char *day_month_to_str(const char * day_month);
+const char *month_to_str(const char *month);
+const char *day_week_to_str(const char *day_week);
 
 #endif /*__#ifndef __CRONTAB_H_H*/

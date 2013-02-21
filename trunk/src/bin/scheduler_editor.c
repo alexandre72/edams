@@ -172,28 +172,54 @@ _button_add_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
     Cron_Entry *cron_elem = NULL;
 	Action_Type action_type = (Action_Type) evas_object_data_get(win, "action type");
 	char *action_data = evas_object_data_get(win, "action data");
-    unsigned char minute, hour;
-    unsigned char day_month, month, day_week;
+    double val;
+    char *minute, *hour;
+    char *day_month, *month, *day_week;
 
 	if(!action_data) return;
 
 	spinner = elm_object_name_find(win, "minute spinner", -1);
-    minute = (unsigned char)elm_spinner_value_get(spinner);
+    val = elm_spinner_value_get(spinner);
+        if(val == 60)
+            asprintf(&minute, "*");
+        else
+            asprintf(&minute, "%d", (int)val);
 
 	spinner = elm_object_name_find(win, "hour spinner", -1);
-    hour = (unsigned char)elm_spinner_value_get(spinner);
+    val = elm_spinner_value_get(spinner);
+        if(val == 24)
+            asprintf(&hour, "*");
+        else
+            asprintf(&hour, "%d", (int)val);
 
 	spinner = elm_object_name_find(win, "day month spinner", -1);
-    day_month = (unsigned char)elm_spinner_value_get(spinner);
+    val = elm_spinner_value_get(spinner);
+        if(val == 32)
+            asprintf(&day_month, "*");
+        else
+            asprintf(&day_month, "%d", (int)val);
 
 	spinner = elm_object_name_find(win, "month spinner", -1);
-    month = (unsigned char)elm_spinner_value_get(spinner);
+    val = elm_spinner_value_get(spinner);
+        if(val == 13)
+            asprintf(&month, "*");
+        else
+            asprintf(&month, "%d", (int)val);
 
 	spinner = elm_object_name_find(win, "day week spinner", -1);
-    day_week = (unsigned char)elm_spinner_value_get(spinner);
+    val = elm_spinner_value_get(spinner);
+        if(val == 7)
+            asprintf(&day_week, "*");
+        else
+            asprintf(&day_week, "%d", (int)val);
 
     cron_elem = cron_entry_new(minute, hour, day_month, month, day_week, action_type, action_data);
     crons_list_entry_add(cron_elem);
+    FREE(minute);
+    FREE(hour);
+    FREE(day_month);
+    FREE(month);
+    FREE(day_week);
 
 	_list_crons_add(list, cron_elem);
 }/*_button_add_clicked_cb*/
@@ -209,19 +235,34 @@ _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 	Cron_Entry *cron_elem = (Cron_Entry *)elm_object_item_data_get(event_info);
 
 	spinner = elm_object_name_find(win, "minute spinner", -1);
-    elm_spinner_value_set(spinner, (double)cron_elem->minute);
+    if(strcmp(cron_elem->minute, "*" ) == 0)
+        elm_spinner_value_set(spinner , (double)60);
+    else
+        elm_spinner_value_set(spinner, (double)atoi(cron_elem->minute));
 
 	spinner = elm_object_name_find(win, "hour spinner", -1);
-    elm_spinner_value_set(spinner, (double)cron_elem->hour);
+    if(strcmp(cron_elem->hour, "*" ) == 0)
+        elm_spinner_value_set(spinner , (double)24);
+    else
+        elm_spinner_value_set(spinner, (double)atoi(cron_elem->hour));
 
 	spinner = elm_object_name_find(win, "day month spinner", -1);
-    elm_spinner_value_set(spinner, (double)cron_elem->day_month);
+    if(strcmp(cron_elem->day_month, "*" ) == 0)
+        elm_spinner_value_set(spinner , (double)32);
+    else
+        elm_spinner_value_set(spinner, (double)atoi(cron_elem->day_month));
 
-	spinner = elm_object_name_find(win, "month spinner", -1);
-    elm_spinner_value_set(spinner, (double)cron_elem->month);
+   	spinner = elm_object_name_find(win, "month spinner", -1);
+    if(strcmp(cron_elem->month, "*" ) == 0)
+        elm_spinner_value_set(spinner , (double)13);
+    else
+        elm_spinner_value_set(spinner, (double)atoi(cron_elem->month));
 
 	spinner = elm_object_name_find(win, "day week spinner", -1);
-    elm_spinner_value_set(spinner, (double)cron_elem->day_week);
+    if(strcmp(cron_elem->day_week, "*" ) == 0)
+        elm_spinner_value_set(spinner , (double)7);
+    else
+        elm_spinner_value_set(spinner, (double)atoi(cron_elem->day_week));
 
     evas_object_data_set(win, "action type", (void*)cron_elem->action_type);
     evas_object_data_set(win, "action data", (void*)cron_elem->action_data);
@@ -241,7 +282,7 @@ _list_crons_add(Evas_Object *list, Cron_Entry *cron_elem)
     if(type == ACTION_TYPE_UNKNOWN) return;
 
     char *s;
-    asprintf(&s, _("On %s %s %s at %s:%s"),
+    asprintf(&s, _("On %s %s %s %s %s"),
                     day_week_to_str(cron_elem->day_week), day_month_to_str(cron_elem->day_month),
                     month_to_str(cron_elem->month),
                     hour_to_str(cron_elem->hour), minute_to_str(cron_elem->minute));
@@ -263,7 +304,7 @@ _list_crons_add(Evas_Object *list, Cron_Entry *cron_elem)
     else
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "");
 
-	elm_list_item_append(list, s, icon, NULL, _list_item_selected_cb, cron_elem);
+    elm_list_item_append(list, s, icon, NULL, _list_item_selected_cb, cron_elem);
 	elm_list_go(list);
     FREE(s);
 }/*_list_action_add*/
@@ -316,7 +357,6 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
     spinner = elm_spinner_add(win);
    	evas_object_name_set(spinner, "day week spinner");
     elm_spinner_min_max_set(spinner, 0, 7);
-    elm_spinner_special_value_add(spinner, 7, _("Every Weekday"));
     elm_spinner_special_value_add(spinner, 0, _("Sunday"));
     elm_spinner_special_value_add(spinner, 1, _("Monday"));
     elm_spinner_special_value_add(spinner, 2, _("Tuesday"));
@@ -324,6 +364,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
     elm_spinner_special_value_add(spinner, 4, _("Thursday"));
     elm_spinner_special_value_add(spinner, 5, _("Friday"));
     elm_spinner_special_value_add(spinner, 6, _("Saturday"));
+    elm_spinner_special_value_add(spinner, 7, _("Every Weekday"));
     evas_object_show(spinner);
 	elm_object_content_set(frame, spinner);
 
@@ -334,8 +375,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
 
     spinner = elm_spinner_add(win);
    	evas_object_name_set(spinner, "day month spinner");
-    elm_spinner_min_max_set(spinner, 0, 31);
-    elm_spinner_special_value_add(spinner, 0, _("Every Day"));
+    elm_spinner_min_max_set(spinner, 1, 32);
     evas_object_show(spinner);
 	elm_object_content_set(frame, spinner);
 
@@ -345,6 +385,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
         elm_spinner_special_value_add(spinner, x, buf);
         FREE(buf);
 	}
+    elm_spinner_special_value_add(spinner, 32, _("Every Day"));
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Month"));
@@ -353,8 +394,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
 
     spinner = elm_spinner_add(win);
    	evas_object_name_set(spinner, "month spinner");
-    elm_spinner_min_max_set(spinner, 0, 12);
-    elm_spinner_special_value_add(spinner, 0, _("Every Month"));
+    elm_spinner_min_max_set(spinner, 1, 13);
     elm_spinner_special_value_add(spinner, 1, _("January"));
     elm_spinner_special_value_add(spinner, 2, _("February"));
     elm_spinner_special_value_add(spinner, 3, _("March"));
@@ -367,6 +407,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
     elm_spinner_special_value_add(spinner, 10, _("October"));
     elm_spinner_special_value_add(spinner, 11, _("November"));
     elm_spinner_special_value_add(spinner, 12, _("December"));
+    elm_spinner_special_value_add(spinner, 13, _("Every Month"));
     evas_object_show(spinner);
 	elm_object_content_set(frame, spinner);
 
@@ -379,7 +420,6 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
     spinner = elm_spinner_add(win);
    	evas_object_name_set(spinner, "hour spinner");
     elm_spinner_min_max_set(spinner, 0, 24);
-    elm_spinner_special_value_add(spinner, 24, _("Every Hour"));
     elm_spinner_special_value_add(spinner, 0, _("12 Midnight"));
     elm_spinner_special_value_add(spinner, 1, _("1 AM"));
     elm_spinner_special_value_add(spinner, 2, _("2 AM"));
@@ -404,6 +444,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
     elm_spinner_special_value_add(spinner, 21, _("9 PM"));
     elm_spinner_special_value_add(spinner, 22, _("10 PM"));
     elm_spinner_special_value_add(spinner, 23, _("11 PM"));
+    elm_spinner_special_value_add(spinner, 24, _("Every Hour"));
     evas_object_show(spinner);
 	elm_object_content_set(frame, spinner);
 
@@ -415,7 +456,6 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
     spinner = elm_spinner_add(win);
    	evas_object_name_set(spinner, "minute spinner");
     elm_spinner_min_max_set(spinner, 0, 60);
-    elm_spinner_special_value_add(spinner, 60, _("Every Minute"));
     evas_object_show(spinner);
 	elm_object_content_set(frame, spinner);
 
@@ -425,6 +465,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
         elm_spinner_special_value_add(spinner, x, buf);
         FREE(buf);
 	}
+    elm_spinner_special_value_add(spinner, 60, _("Every Minute"));
 
    	hoversel = elm_hoversel_add(grid);
    	evas_object_name_set(hoversel, "type hoversel");
