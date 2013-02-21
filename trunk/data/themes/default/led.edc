@@ -48,8 +48,8 @@ group
 group
 {
 	name: "widget/sensor.basic/led";
-	min: 32 32;
- 	max: 32 32;
+	min: 110 70;
+ 	max: 110 70;
 
 	data
 	{
@@ -65,14 +65,29 @@ group
 
 	parts
 	{
+	   part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }/*whole*/
+
 		part
       	{
-			name: "base"; mouse_events: 0;
+			name: "base";
+			clip_to: "whole";
 			description
 			{
          		state: "default" 0.0;
             	image.normal: "led_dark.png";
-            	aspect: 1.0 1.0; aspect_preference: BOTH;
+            	aspect: 1.0 1.0;
+            	aspect_preference: BOTH;
+                rel1.relative: 0.20 0.00;
+                rel2.relative: 0.80 0.65;
          	}
 
 			description
@@ -81,48 +96,162 @@ group
             	inherit: "default" 0.0;
             	image.normal: "led_light.png";
          	}
-      	}
+      	}/*base*/
 
-	part
-	{
-		name: "title.text";
-		type: TEXT;
-		scale: 1;
-		description
+        part
+        {
+            name: "separator";
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.60;
+                rel2.relative: 0.8 0.60;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
+
+        part
+        {
+            name: "title.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.85;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "sensor";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+            }
+        }/*title.text*/
+		part
 		{
-			state: "default" 0.0;
-			rel1.relative: 0.0 0.0;
-			rel2.relative: 1.0 1.2;
-			color: 0 0 255 255;
-
-			text
-			{
-				text: "sensor";
-				font: "Sans:style=Bold";
-				size: 8;
-				min: 1 1;
-				align: 0.5 1.0;
+            name: "update";
+            type: IMAGE;
+            clip_to: "whole";
+			description
+            {
+               	state: "default" 0.0;
+				max: 44 11;
+               	aspect_preference: BOTH;
+	           	image.normal: "updated.png";
+               	visible: 0;
 			}
-		}
-	}
-
-	part
-	{
-		name: "over";
-		type: RECT;
-		description
-		{
-				state: "default" 0.0;
+           	description
+            {
+            	max: 44 11;
+               	state: "show" 0.0;
+				align: 0.5 0.7;
+               	visible: 1;
                	color: 0 0 0 0;
-		}
-	}
-   }
+            }
+		}/*update*/
+
+            part
+            {
+                name: "icon_min";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.lowest";
+                    rel1.relative: 0.2 0.0;
+                    rel2.to_y: "text.lowest";
+                    rel2.relative: 0.2 1.0;
+                    image.normal: "icon_min.png";
+                }
+            }
+            part
+            {
+                name: "text.lowest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 0.0 0.0;
+                    rel1.to_x: "icon_min";
+                    rel1.relative: 1.0 0.55;
+                    rel1.offset: 3 5;
+                    rel2.relative: 1.0 0.55;
+                    rel2.offset: 3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 0.0 0.5;
+                    }
+                }
+            }/*text.lowest*/
+            part
+            {
+                name: "icon_max";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    align: 0.5 0.0;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.highest";
+                    rel1.relative: 0.8 0.0;
+                    rel2.to_y: "text.highest";
+                    rel2.relative: 0.8 1.0;
+                    image.normal: "icon_max.png";
+                }
+            }
+            part
+            {
+                name: "text.highest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 1.0 0.0;
+                    rel1.relative: 0.0 0.55;
+                    rel1.offset: -3 5;
+                    rel2.to_x: "icon_max";
+                    rel2.relative: 0.0 0.55;
+                    rel2.offset: -3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 1.0 0.5;
+                    }
+                }
+            }/*text.highest*/
+   }/*parts*/
    programs
    {
       program
       {
          signal: "true";
-         source: "over";
+         source: "whole";
          action: STATE_SET "visible" 0.0;
          transition: BOUNCE 0.4 0.5 4;
          target: "base";
@@ -130,7 +259,7 @@ group
       program
       {
          signal: "false";
-         source: "over";
+         source: "whole";
          action: STATE_SET "default" 0.0;
          target: "base";
       }

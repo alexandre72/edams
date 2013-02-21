@@ -36,6 +36,10 @@ images
 	image: "cursors/grabbing.png" COMP;
 
     image: "updated.png" COMP;
+    image: "division_line.png" COMP;
+    image: "icon_max.png" COMP;
+    image: "icon_min.png" COMP;
+    image: "title_bar.png" COMP;
     image: "cosm_001.png" COMP;
     image: "cosm_002.png" COMP;
     image: "cosm_003.png" COMP;
