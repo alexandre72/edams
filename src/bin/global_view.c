@@ -655,14 +655,14 @@ evas_smart_group_remove(Evas_Object * o )
 
 
 /*
- *Timer called when adding a new stat_img, must be deleted after some delay to make screen space.
+ *Timer called when adding a new obj that must be deleted after some delay to make screen space(OSD and stuff like that).
  */
 static Eina_Bool
 _timer_cb(void *data)
 {
-	Evas_Object *img = data;
+	Evas_Object *obj = data;
 
-	evas_object_del(img);
+	evas_object_del(obj);
 
 	return EINA_FALSE;
 }/*_timer_cb*/
@@ -943,19 +943,18 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
     /*Install normal cursor*/
     global_view_cursor_set("cursors/left_ptr");
 
-	/*
-	cursor = edje_object_add(evas);
-	if (!cursor)
-	{
-		debug(stderr, _("Can't create Edje object!"));
-		return;
-	}
-    global_view_cursor_set("cursors/left_ptr");
-	evas_object_resize(cursor, 24, 24);
-    evas_object_show(cursor);
-*/
+
+	Evas_Object *osd_text = evas_object_text_add(evas);
+	evas_object_name_set(osd_text, "osd text");
+	evas_object_text_style_set(osd_text, EVAS_TEXT_STYLE_PLAIN);
+	evas_object_text_font_set(osd_text, "DejaVu", 20);
+	evas_object_color_set(osd_text, 0, 0, 255, 255);
+	evas_object_resize(osd_text, 100, 20);
+    evas_object_move(osd_text, 0, geometry.h / 2);
+
+
+/*
 	//FIXME:Should be a widget, can use of swallow type?
-	/*
 	Evas_Object *stat_img  = evas_object_image_filled_add(evas);
 	evas_object_name_set(stat_img, "stat_img");
 	evas_object_image_alpha_set(stat_img, EINA_TRUE);
@@ -1140,6 +1139,42 @@ global_view_widget_data_update(Location *location, Widget *widget)
 
 	edje_object_signal_emit(edje, "updated", "whole");
 }/*global_view_data_update*/
+
+
+/*
+ *Timer called when changing OSD and must be hidden after some delay.
+ */
+static Eina_Bool
+_osd_timer_cb(void *data)
+{
+	Evas_Object *obj = data;
+
+	evas_object_hide(obj);
+
+	return EINA_FALSE;
+}/*_timer_cb*/
+
+
+/*
+ *
+ */
+void global_view_osd_write(const char *text, int delay)
+{
+	if (!evas) return;
+
+    Evas_Object *osd_text = evas_object_name_find(evas, "osd text");
+
+    if(text)
+        evas_object_text_text_set(osd_text, text);
+    else
+        evas_object_text_text_set(osd_text, NULL);
+
+    evas_object_show(osd_text);
+
+    if(delay != -1)
+        ecore_timer_add((double)delay, _osd_timer_cb, osd_text);
+}
+
 
 
 /*

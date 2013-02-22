@@ -168,7 +168,8 @@ typedef struct {
 } xPL_ServiceChangedListenerDef, *xPL_ServiceChangedListenerDefPtr;
 
 /* Describe a xPL service */
-struct _xPL_Service {
+struct _xPL_Service
+{
   Eina_Bool serviceEnabled;
 
   char * serviceVendor;

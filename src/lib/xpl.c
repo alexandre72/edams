@@ -35,6 +35,7 @@
 
 /*xPL callbacks*/
 static void _xpl_sensor_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data);
+static void _xpl_osd_basic_handler(xPL_ServicePtr service, xPL_MessagePtr msg, xPL_ObjectPtr data);
 static void _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len);
 
 /*Others funcs*/
@@ -50,8 +51,7 @@ static Eina_List*       xpl_devices;
 static Eina_Bool        XPL_STARTED;
 
 /*
- *Callback called in xPL Message 'cstatic void
-handler(void *data __UNUSED__, void *buf, unsigned int len)ontrol.basic' is triggered.
+ *Callback called in xPL Message when 'sensor.basic' is triggered.
  */
 static void
 _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data)
@@ -66,6 +66,7 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
     /*Add to xpl_devices in json format to easing parsing*/
     cJSON *root;
     root = cJSON_CreateObject();
+    cJSON_AddItemToObject(root, "SCHEMA", cJSON_CreateString("sensor.basic"));
     cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(xPL_getNamedValue(values_names, "device")));
     cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(xPL_getNamedValue(values_names, "type")));
     cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(xPL_getNamedValue(values_names, "current")));
@@ -78,6 +79,38 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 
 
 
+/*
+ *Callback called in xPL Message when 'osd.basic' is triggered.
+ */
+static void
+_xpl_osd_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg, xPL_ObjectPtr data)
+{
+    char *str ;
+    xPL_NameValueListPtr values_names;
+
+	Ecore_Pipe *pipe = (Ecore_Pipe *) data;
+
+	values_names = xPL_getMessageBody(msg);
+
+    /*Add to xpl_devices in json format to easing parsing*/
+    cJSON *root;
+    root = cJSON_CreateObject();
+    cJSON_AddItemToObject(root, "SCHEMA", cJSON_CreateString("osd.basic"));
+    cJSON_AddItemToObject(root, "COMMAND", cJSON_CreateString(xPL_getNamedValue(values_names, "command")));
+
+        if(xPL_getNamedValue(values_names, "text"))
+            cJSON_AddItemToObject(root, "TEXT", cJSON_CreateString(xPL_getNamedValue(values_names, "text")));
+
+        if(xPL_getNamedValue(values_names, "delay"))
+            cJSON_AddItemToObject(root, "DELAY", cJSON_CreateString(xPL_getNamedValue(values_names, "delay")));
+    str = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+
+	ecore_pipe_write(pipe, str, strlen(str));
+    FREE(str);
+}/*_xpl_osd_basic_handler*/
+
+
 
 /*
  *
@@ -85,10 +118,6 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 static void
 _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
-    char *device;
-    char *type;
-    char  *current;
-
     char *str = malloc(sizeof(char) * len + 1);
     memcpy(str, buf, len);
     str[len] = '\0';
@@ -96,43 +125,90 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
     cJSON *root = cJSON_Parse(str);
 	if(!root) return;
     FREE(str);
-	cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
-	cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
-	cJSON *jcurrent = cJSON_GetObjectItem(root, "CURRENT");
-    device = cJSON_PrintUnformatted(jdevice);
-    type = cJSON_PrintUnformatted(jtype);
-    current = cJSON_PrintUnformatted(jcurrent);
-    str = cJSON_PrintUnformatted(root);
-	cJSON_Delete(root);
+	cJSON *jschema = cJSON_GetObjectItem(root, "SCHEMA");
 
-    strdelstr(device, "\"");
-    strdelstr(current, "\"");
-    strdelstr(type, "\"");
+    if(!jschema) return;
 
-    /*Check if xPL device is already registered in devices Eina_List*/
-    Eina_List *l;
-    char *elem;
+    char *schema = cJSON_PrintUnformatted(jschema);
+    strdelstr(schema, "\"");
 
-    EINA_LIST_FOREACH(xpl_devices, l, elem)
+    if(strcmp(schema, "osd.basic") == 0)
     {
-        cJSON *root = cJSON_Parse(elem);
-        char *device_elem;
-	    if(!root) continue;
+    	cJSON *jcommand = cJSON_GetObjectItem(root, "COMMAND");
+    	cJSON *jtext = cJSON_GetObjectItem(root, "TEXT");
+    	cJSON *jdelay = cJSON_GetObjectItem(root, "DELAY");
 
-	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
-        device_elem = cJSON_PrintUnformatted(jdevice);
-        strdelstr(device_elem, "\"");
-
-        /*If found sync with widget in global map and cosm if needed*/
-        if(strcmp(device, device_elem) == 0)
-        {
-            /*Parse all locations and sync with global and cosm*/
-            Eina_List *locations = NULL, *l;
-            Location *location;
-            locations = edams_locations_list_get();
-
-            EINA_LIST_FOREACH(locations, l, location)
+            if(jcommand)
             {
+                char *command = cJSON_PrintUnformatted(jcommand);
+                strdelstr(command, "\"");
+                if((strcmp(command, "clear") == 0) ||
+                    (strcmp(command, "write") == 0))
+                {
+                    if(jtext)
+                    {
+                        char *text = cJSON_PrintUnformatted(jtext);
+                        strdelstr(text, "\"");
+
+                            if(jdelay)
+                            {
+                                char *delay = cJSON_PrintUnformatted(jdelay);
+                                strdelstr(delay, "\"");
+                                global_view_osd_write(text, atoi(delay));
+                                FREE(delay);
+                            }
+                            else
+                            {
+                                global_view_osd_write(text, -1);
+                            }
+                        FREE(text);
+                    }
+                }
+                FREE(command);
+            }
+	        cJSON_Delete(root);
+
+        FREE(schema);
+    }/*If schema to parse is sensor.basic*/
+    else if(strcmp(schema, "sensor.basic") == 0)
+    {
+	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
+	    cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
+	    cJSON *jcurrent = cJSON_GetObjectItem(root, "CURRENT");
+        char *device = cJSON_PrintUnformatted(jdevice);
+        char *type = cJSON_PrintUnformatted(jtype);
+        char * current = cJSON_PrintUnformatted(jcurrent);
+        str = cJSON_PrintUnformatted(root);
+	    cJSON_Delete(root);
+
+        strdelstr(device, "\"");
+        strdelstr(current, "\"");
+        strdelstr(type, "\"");
+
+        /*Check if xPL device is already registered in devices Eina_List*/
+        Eina_List *l;
+        char *elem;
+
+        EINA_LIST_FOREACH(xpl_devices, l, elem)
+        {
+            cJSON *root = cJSON_Parse(elem);
+            char *device_elem;
+	        if(!root) continue;
+
+	        cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
+            device_elem = cJSON_PrintUnformatted(jdevice);
+            strdelstr(device_elem, "\"");
+
+            /*If found sync with widget in global map and cosm if needed*/
+            if(strcmp(device, device_elem) == 0)
+            {
+                /*Parse all locations and sync with global and cosm*/
+                Eina_List *locations = NULL, *l;
+                Location *location;
+                locations = edams_locations_list_get();
+
+                EINA_LIST_FOREACH(locations, l, location)
+                {
                 Eina_List *widgets = NULL, *l2;
                 Widget *widget;
 
@@ -212,6 +288,9 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
     FREE(device);
     FREE(type);
     FREE(current);
+    FREE(schema);
+    }/*If schema to parse is sensor.basic*/
+
 }/*_xpl_handler*/
 
 
@@ -235,7 +314,6 @@ xpl_process_messages()
 	for (;;)
 	{
 		xPL_processMessages(-1);
-		sleep(1);
 	}
 }/*xpl_process_messages*/
 
@@ -267,6 +345,7 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
 
             cJSON *root;
         	root = cJSON_CreateObject();
+            cJSON_AddItemToObject(root, "SCHEMA", cJSON_CreateString("sensor.basic"));
         	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(samples[i][0]));
         	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(samples[i][1]));
 	        RANDOMIZE();
@@ -285,6 +364,59 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
 }/*_xpl_emulate_messages*/
 
 
+
+/* Print info on incoming messages */
+void
+printXPLMessage(xPL_MessagePtr theMessage, xPL_ObjectPtr userValue __UNUSED__)
+{
+
+  fprintf(stdout, "[xPL_MSG] TYPE=");
+  switch(xPL_getMessageType(theMessage)) {
+  case xPL_MESSAGE_COMMAND:
+    fprintf(stdout, "xpl-cmnd");
+    break;
+  case xPL_MESSAGE_STATUS:
+    fprintf(stdout, "xpl-stat");
+    break;
+  case xPL_MESSAGE_TRIGGER:
+    fprintf(stdout, "xpl-trig");
+    break;
+  default:
+    fprintf(stdout, "!UNKNOWN!");
+    break;
+  }
+
+
+  /* Print hop count, if interesting */
+  if (xPL_getHopCount(theMessage) != 1) fprintf(stdout, ", HOPS=%d", xPL_getHopCount(theMessage));
+
+  /* Source Info */
+  fprintf(stdout, ", SOURCE=%s-%s.%s, TARGET=",
+	  xPL_getSourceVendor(theMessage),
+	  xPL_getSourceDeviceID(theMessage),
+	  xPL_getSourceInstanceID(theMessage));
+
+  /* Handle various target types */
+  if (xPL_isBroadcastMessage(theMessage)) {
+    fprintf(stdout, "*");
+  } else {
+    if (xPL_isGroupMessage(theMessage)) {
+      fprintf(stdout, "XPL-GROUP.%s", xPL_getTargetGroup(theMessage));
+    } else {
+      fprintf(stdout, "%s-%s.%s",
+	      xPL_getTargetVendor(theMessage),
+	      xPL_getTargetDeviceID(theMessage),
+	      xPL_getTargetInstanceID(theMessage));
+    }
+  }
+
+  /* Echo Schema Info */
+  fprintf(stdout, ", CLASS=%s, TYPE=%s", xPL_getSchemaClass(theMessage), xPL_getSchemaType(theMessage));
+  fprintf(stdout, "\n");
+}
+
+
+
 /*
  *
  */
@@ -299,8 +431,14 @@ xpl_start()
 
     pipe = ecore_pipe_add(_xpl_handler, NULL);
 
+    /* And a listener for all xPL messages */
+    xPL_addMessageListener(printXPLMessage, NULL);
+
     /*Add xPL sensor.basic listener*/
     xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
+
+    /*Add xPL osd.basic listener*/
+    xPL_addServiceListener(xpl_edams_service, _xpl_osd_basic_handler, xPL_MESSAGE_ANY, "osd", "basic",(xPL_ObjectPtr)pipe);
 
     /*Add xPL broadcast messaging*/
     if ((xpl_edams_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
@@ -317,6 +455,7 @@ xpl_start()
         if(edams_settings_softemu_get() == EINA_TRUE)
             _xpl_emulate_messages(pipe);
         else
+
             xpl_process_messages();
     }
     else
