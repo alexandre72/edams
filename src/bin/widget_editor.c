@@ -42,7 +42,7 @@ static void _entry_name_changed_cb(void *data __UNUSED__, Evas_Object * obj __UN
 static void _check_cosm_changed_cb(void *data, Evas_Object *obj, void *event_info);
 static void _check_gnuplot_changed_cb(void *data, Evas_Object *obj, void *event_info);
 
-static void _layout_samples_test(Evas_Object *layout, Widget *widget);
+static void _layout_samples_test(Evas_Object *layout);
 static void _fill_widget_groups();
 
 
@@ -97,14 +97,14 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
  * Send random value to current selected widget to let user see effects on it.
  */
 static void
-_layout_samples_test(Evas_Object *layout, Widget *widget)
+_layout_samples_test(Evas_Object *layout)
 {
     App_Info *app = edams_app_info_get();
     Widget *sample;
 	char *str;
     const char *type = widget_xpl_type_get(widget);
 
-    if(!app->widget)
+    if(!widget_xpl_current_get(widget))
     {
     	sample = widget_new("sample", widget_class_get(widget));
 	    RANDOMIZE();
@@ -144,11 +144,9 @@ _layout_samples_test(Evas_Object *layout, Widget *widget)
 
    	Evas_Object *edje;
 	Evas_Coord w, h;
-	elm_layout_sizing_eval(layout);
    	edje = elm_layout_edje_get(layout);
-	edje_object_size_max_get(edje, &w, &h);
+	edje_object_size_min_get(edje, &w, &h);
 	evas_object_resize(elm_layout_edje_get(layout), w, h);
-	elm_layout_sizing_eval(layout);
 
 	if(!app->widget)
         widget_free(sample);
@@ -173,7 +171,6 @@ _update_cmnd_preview(Widget *widget)
 static void
 _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source)
 {
-	Widget *widget = data;
     const char *type = widget_xpl_type_get(widget);
     char *s;
 
@@ -251,7 +248,7 @@ _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     /*If widget is xPL sensor.basic then load random sample data*/
     if(widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC)
     {
-	    _layout_samples_test(layout, widget);
+	    _layout_samples_test(layout);
     }
 	else if(widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC)
 	{
@@ -263,7 +260,7 @@ _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
 			if(strcmp(t, "input") == 0)			widget_xpl_type_set(widget, XPL_TYPE_INPUT_CONTROL_BASIC);
 			else if(strcmp(t, "ouput") == 0)	widget_xpl_type_set(widget, XPL_TYPE_OUTPUT_CONTROL_BASIC);
 			else								widget_xpl_type_set(widget, t);
-			elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, widget);
+			elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, NULL);
 		}
 	}
 
@@ -522,14 +519,20 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
         strdelstr(type, "\"");
 
 	    asprintf(&s, _("'%s' of type '%s'"), device, type);
-        elm_list_item_append(list, s, NULL, NULL, _list_item_xpl_device_selected_cb, device_elem);
+            Elm_Object_Item *it = elm_list_item_append(list, s, NULL, NULL, _list_item_xpl_device_selected_cb, device_elem);
+
+            if((app->widget)  &&
+                (strcmp(device, widget_xpl_device_get(widget)) == 0) &&
+                (strcmp(type, widget_xpl_type_get(widget)) == 0))
+            {
+                elm_list_item_selected_set(it, EINA_TRUE);
+            }
         FREE(s);
         FREE(device);
         FREE(type);
     }
     elm_list_go(list);
 	elm_object_content_set(frame, list);
-    elm_object_disabled_set(list, EINA_TRUE);
 
 	frame = elm_frame_add(win);
 	evas_object_name_set(frame, "name frame");
