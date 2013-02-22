@@ -387,7 +387,6 @@ static void
 _list_item_xpl_device_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
     const char *str = data;
-    Evas_Object *entry = elm_object_name_find(win, "name entry", -1);
 
     cJSON *root = cJSON_Parse(str);
 	if(!root) return;
@@ -402,7 +401,6 @@ _list_item_xpl_device_selected_cb(void *data, Evas_Object * obj __UNUSED__, void
 
     widget_xpl_device_set(widget, device);
     widget_xpl_type_set(widget, type);
-    elm_object_text_set(entry, device);
 
     FREE(device);
     FREE(type);
@@ -531,6 +529,7 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
         FREE(device);
         FREE(type);
     }
+    elm_object_disabled_set(list, EINA_TRUE);
     elm_list_go(list);
 	elm_object_content_set(frame, list);
 
@@ -643,10 +642,7 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
         elm_check_state_set(check, widget_gnuplot_get(widget));
 	    evas_object_show(check);
     }
-    else
-    {
-        elm_object_disabled_set(list, EINA_TRUE);
-    }
+
 
 	/*Resize window*/
 	evas_object_resize(win, 650, 500);
