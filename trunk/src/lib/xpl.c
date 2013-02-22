@@ -436,6 +436,7 @@ xpl_start()
 
     /*Add xPL sensor.basic listener*/
     xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
+    xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_STATUS, "sensor", "basic",(xPL_ObjectPtr)pipe);
 
     /*Add xPL osd.basic listener*/
     xPL_addServiceListener(xpl_edams_service, _xpl_osd_basic_handler, xPL_MESSAGE_ANY, "osd", "basic",(xPL_ObjectPtr)pipe);

@@ -99,15 +99,24 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 static void
 _layout_samples_test(Evas_Object *layout, Widget *widget)
 {
+    App_Info *app = edams_app_info_get();
+    Widget *sample;
 	char *str;
     const char *type = widget_xpl_type_get(widget);
 
-	Widget *sample = widget_new("sample", widget_class_get(widget));
-	RANDOMIZE();
-	asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(type)));
-	widget_xpl_current_set(sample, str);
-    FREE(str);
-	widget_xpl_type_set(sample, XPL_TYPE_GENERIC_SENSOR_BASIC);
+    if(!app->widget)
+    {
+    	sample = widget_new("sample", widget_class_get(widget));
+	    RANDOMIZE();
+	    asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(type)));
+	    widget_xpl_current_set(sample, str);
+        FREE(str);
+	    widget_xpl_type_set(sample, XPL_TYPE_GENERIC_SENSOR_BASIC);
+    }
+    else
+    {
+        sample = app->widget;
+    }
 
     const char *t;
     /*Special widget with drag part, so need to convert device current value to float.*/
@@ -140,7 +149,9 @@ _layout_samples_test(Evas_Object *layout, Widget *widget)
 	edje_object_size_max_get(edje, &w, &h);
 	evas_object_resize(elm_layout_edje_get(layout), w, h);
 	elm_layout_sizing_eval(layout);
-    widget_free(sample);
+
+	if(!app->widget)
+        widget_free(sample);
 }/*_layout_samples_test*/
 
 
@@ -281,8 +292,7 @@ _entry_name_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 {
     widget_name_set(widget, elm_object_text_get(obj));
 
-    if( (widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC) ||
-        (widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
+    if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
     {
         widget_xpl_device_set(widget, elm_object_text_get(obj));
     }
@@ -306,23 +316,23 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
 
     widget_class_set(widget, class);
 
+    elm_object_text_set(frame, _("Widget name"));
+    elm_object_disabled_set(list, EINA_TRUE);
+    evas_object_hide(check);
+
     if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)
     {
-        elm_object_disabled_set(list, EINA_FALSE);
-        elm_object_text_set(frame, _("xpl device"));
-        evas_object_show(check);
+        if(!elm_list_items_get(list))
+            elm_object_disabled_set(list, EINA_TRUE);
+        else
+        {
+            elm_object_disabled_set(list, EINA_FALSE);
+            evas_object_show(check);
+        }
     }
-    else if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
+    if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
     {
         elm_object_text_set(frame, _("xpl device"));
-        elm_object_disabled_set(list, EINA_TRUE);
-        evas_object_hide(check);
-    }
-    else if(class == WIDGET_CLASS_VIRTUAL)
-    {
-        elm_object_text_set(frame, _("Widget name"));
-        elm_object_disabled_set(list, EINA_TRUE);
-        evas_object_hide(check);
     }
 
     _fill_widget_groups(app);
@@ -626,24 +636,12 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
         elm_check_state_set(check, widget_cosm_get(widget));
 	    evas_object_show(check);
 
-        if(edams_settings_gnuplot_path_get())
-        {
-            check = elm_object_name_find(win, "gnuplot check", -1);
-            elm_check_state_set(check, widget_gnuplot_get(widget));
-	        evas_object_show(check);
-	   }
+        check = elm_object_name_find(win, "gnuplot check", -1);
+        elm_check_state_set(check, widget_gnuplot_get(widget));
+	    evas_object_show(check);
     }
     else
     {
-        check = elm_object_name_find(win, "cosm check", -1);
-	    evas_object_show(check);
-
-        if(edams_settings_gnuplot_path_get())
-        {
-            check = elm_object_name_find(win, "gnuplot check", -1);
-    	    evas_object_show(check);
-        }
-
         elm_object_disabled_set(list, EINA_TRUE);
     }
 
