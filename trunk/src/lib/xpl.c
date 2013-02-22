@@ -753,22 +753,22 @@ xpl_type_to_unit_symbol(const char *xpl_type)
 	if(!xpl_type) return NULL;
 
 	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0) return _("%");
-	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return " ";
 	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return _("A");
 	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return _("o");
 	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return _("m");
 	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return _("kWh");
 	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return _("RPM");
-	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return " ";
 	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return _("%");
-	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return "";
-	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return " ";
+	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return " ";
 	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return _("kW");
 	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return _("N/m2");
 	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return _("C");
 	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return _("MpH");
 	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return _("C");
-	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return "";
+	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return " ";
 	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return _("V");
 	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return _("m3");
 	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return _("kg");
