@@ -160,10 +160,23 @@ mail_action_parse(const char *data)
 
 	if(from && to && subject && body)
 	{
-		fprintf(stdout, "From:%s\n", from);
-		fprintf(stdout, "To:%s\n", to);
-		fprintf(stdout, "Subject:%s\n", subject);
-		fprintf(stdout, "Body:%s\n", body);
+	    FILE *sendmail_pipe;
+        char *str;
+        asprintf(&str, "sendmail -a default %s", from);
+	    sendmail_pipe = popen(str, "w");
+	    if (sendmail_pipe)
+	    {
+    	    fprintf(sendmail_pipe, "To: %s\n", to);
+	        fprintf(sendmail_pipe, "From: %s\n", from);
+	        fprintf(sendmail_pipe, "Subject: %s\n", subject);
+	        fprintf(sendmail_pipe, "%s\n", body);
+	    	pclose(sendmail_pipe);
+	    }
+	    else
+	    {
+	    	debug(stderr, _("Can't found sendmail"));
+	    }
+	    FREE(str);
 
 		//ecore_con_url_url_set(url_con, "smtp://smtp.gmail.com:587");
 		//ecore_con_url_httpauth_set(url_con, "username", "userpwd", EINA_TRUE);
