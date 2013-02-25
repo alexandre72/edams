@@ -23,6 +23,7 @@
 #include "action.h"
 #include "cJSON.h"
 #include "edams.h"
+#include "global_view.h"
 #include "location.h"
 #include "utils.h"
 #include "xpl.h"
@@ -45,7 +46,7 @@ action_exec_data_format(const char *exec, const char *terminal)
 	cJSON_Delete(root);
 
     return s;
-}/*exec_action_format*/
+}/*exec_action_data_format*/
 
 
 /*
@@ -130,7 +131,7 @@ action_mail_data_format(const char *from, const char *to, const char *subject, c
 	cJSON_Delete(root);
 
     return s;
-}/*mail_action_format*/
+}/*mail_action_data_format*/
 
 
 /*
@@ -212,7 +213,7 @@ action_debug_data_format(const char *print)
 	cJSON_Delete(root);
 
     return s;
-}/*debug_action_format*/
+}/*debug_action_data_format*/
 
 /*
  *
@@ -237,6 +238,82 @@ debug_action_parse(const char *data)
 
 	cJSON_Delete(root);
 	FREE(print);
+	return EINA_TRUE;
+}/*debug_action*/
+
+
+/*
+ *
+ */
+const char *
+action_osd_data_format(const char *command, const char *text, double delay)
+{
+    cJSON *root;
+    const char *s;
+
+	root = cJSON_CreateObject();
+
+	cJSON_AddItemToObject(root, "COMMAND", cJSON_CreateString(command));
+
+	if(text)
+    	cJSON_AddItemToObject(root, "TEXT", cJSON_CreateString(text));
+
+    if(delay != 0)
+    	cJSON_AddItemToObject(root, "DELAY", cJSON_CreateNumber(delay));
+
+    s = cJSON_PrintUnformatted(root);
+	cJSON_Delete(root);
+
+    return s;
+}/*osd_action_data_format*/
+
+
+/*
+ *
+ */
+Eina_Bool
+osd_action_parse(const char *data)
+{
+	cJSON *root = cJSON_Parse(data);
+
+	if(!root) return EINA_FALSE;
+
+    cJSON *jcommand = cJSON_GetObjectItem(root, "COMMAND");
+    cJSON *jtext = cJSON_GetObjectItem(root, "TEXT");
+    cJSON *jdelay = cJSON_GetObjectItem(root, "DELAY");
+
+    if(jcommand)
+    {
+        char *command = cJSON_PrintUnformatted(jcommand);
+        strdelstr(command, "\"");
+
+        if((strcmp(command, "clear") == 0) ||
+            (strcmp(command, "write") == 0))
+         {
+            if(jtext)
+            {
+                char *text = cJSON_PrintUnformatted(jtext);
+                strdelstr(text, "\"");
+
+                if(jdelay)
+                {
+                    char *delay = cJSON_PrintUnformatted(jdelay);
+                    global_view_osd_write(text, atoi(delay));
+                    xpl_osd_basic_cmnd_send(command, text, delay);
+                    FREE(delay);
+                }
+                else
+                {
+                    global_view_osd_write(text, -1);
+                    xpl_osd_basic_cmnd_send(command, text, NULL);
+                    FREE(text);
+                }
+            }
+            FREE(command);
+        }
+    }
+	cJSON_Delete(root);
+
 	return EINA_TRUE;
 }/*debug_action*/
 
@@ -350,7 +427,9 @@ action_parse(Action *action)
 		case ACTION_TYPE_DEBUG:
 				 return debug_action_parse(action_data_get(action));
 				 break;
-
+		case ACTION_TYPE_OSD:
+				 return osd_action_parse(action_data_get(action));
+				 break;
 		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
 				debug(stderr, _("Can't execute an unknown action"));
@@ -374,6 +453,7 @@ action_condition_to_str(Condition condition)
 	else if(condition == CONDITION_MORE_THAN)		return ">";
 	else if(condition == CONDITION_MORE_OR_EGAL_TO)	return ">=";
 	else if(condition == CONDITION_LESS_OR_EGAL_TO)	return "<=";
+	else if(condition == CONDITION_DIFFERENT_TO)	return "!=";
 	else 							           		return NULL;
 }/*action_condition_to_str*/
 
@@ -391,6 +471,7 @@ action_str_to_condition(const char *s)
 	else if(strcmp(s, ">") == 0)	return CONDITION_MORE_THAN;
 	else if(strcmp(s, ">=") == 0)	return CONDITION_MORE_OR_EGAL_TO;
 	else if(strcmp(s, "<=") == 0)	return CONDITION_LESS_OR_EGAL_TO;
+	else if(strcmp(s, "!=") == 0)	return CONDITION_DIFFERENT_TO;
 	else							return CONDITION_UNKNOWN;
 }/*action_str_to_condition*/
 
@@ -407,6 +488,7 @@ action_str_to_type(const char *s)
 	else if(strcmp(s, "CMND") == 0)	return ACTION_TYPE_CMND;
 	else if(strcmp(s, "DEBUG") == 0)return ACTION_TYPE_DEBUG;
 	else if(strcmp(s, "MAIL") == 0)	return ACTION_TYPE_MAIL;
+	else if(strcmp(s, "OSD") == 0)	return ACTION_TYPE_OSD;
 	else							return ACTION_TYPE_UNKNOWN;
 }/*action_str_to_condition*/
 
@@ -417,10 +499,11 @@ action_str_to_type(const char *s)
 const char *
 action_type_to_desc(Action_Type type)
 {
-	if(type == ACTION_TYPE_CMND)			return _("Send xPL CMND to control.basic");
+	if(     type == ACTION_TYPE_CMND)		return _("Send xPL CMND to control.basic");
 	else if(type == ACTION_TYPE_MAIL)		return _("Send a mail");
 	else if(type == ACTION_TYPE_EXEC)		return _("Execute an external program");
 	else if(type == ACTION_TYPE_DEBUG)		return _("Debug stuff for testing purpose");
+	else if(type == ACTION_TYPE_OSD)		return _("Send xPL CMND to osd.basic");
 	else 									return NULL;
 }/*action_type_to_str*/
 
@@ -431,9 +514,10 @@ action_type_to_desc(Action_Type type)
 const char *
 action_type_to_str(Action_Type type)
 {
-	if(type == ACTION_TYPE_CMND)			return "CMND";
+	if(     type == ACTION_TYPE_CMND)		return "CMND";
 	else if(type == ACTION_TYPE_MAIL)		return "MAIL";
 	else if(type == ACTION_TYPE_EXEC)		return "EXEC";
 	else if(type == ACTION_TYPE_DEBUG)		return "DEBUG";
+	else if(type == ACTION_TYPE_OSD)		return "OSD";
 	else 									return NULL;
 }/*action_type_to_str*/

@@ -1,3 +1,24 @@
+/*
+ * debug_editor.c
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include <Elementary.h>
 #include "cJSON.h"
 #include "edams.h"
@@ -54,7 +75,7 @@ debug_editor_add()
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Printf message:"));
-	elm_grid_pack(grid, frame, 1, 1, 99, 15);
+	elm_grid_pack(grid, frame, 1, 1, 99, 50);
 	evas_object_show(frame);
 
     entry = elm_entry_add(win);
@@ -69,10 +90,10 @@ debug_editor_add()
 	evas_object_name_set(hbox, "hbox");
 	elm_box_horizontal_set(hbox, EINA_TRUE);
 	elm_box_homogeneous_set(hbox, EINA_TRUE);
-	elm_grid_pack(grid, hbox, 1, 89, 99, 10);
+	elm_grid_pack(grid, hbox, 1, 51, 99, 48);
 	evas_object_show(hbox);
 
-	evas_object_resize(win, 400, 400);
+	evas_object_resize(win, 400, 115);
 	evas_object_show(win);
 
 	return win;

@@ -34,6 +34,7 @@ typedef enum _Condition_
 	CONDITION_MORE_THAN			= (3),
 	CONDITION_LESS_OR_EGAL_TO	= (4),
 	CONDITION_MORE_OR_EGAL_TO	= (5),
+	CONDITION_DIFFERENT_TO	    = (6),
 	CONDITION_LAST
 }Condition;
 
@@ -45,11 +46,13 @@ typedef enum _Action_Type
 	ACTION_TYPE_MAIL		= (2),
 	ACTION_TYPE_EXEC		= (3),
 	ACTION_TYPE_DEBUG		= (4),
+	ACTION_TYPE_OSD		    = (5),
 	ACTION_TYPE_LAST
 }Action_Type;
 
 
 Eina_Bool action_parse(Action *action);
+Eina_Bool osd_action_parse(const char *data);
 const char *action_type_to_desc(Action_Type type);
 const char *action_type_to_str(Action_Type type);
 Action_Type action_str_to_type(const char *s);
@@ -60,5 +63,6 @@ const char *action_debug_data_format(const char *print);
 const char *action_exec_data_format(const char *exec, const char *terminal);
 const char *action_mail_data_format(const char *from, const char *to, const char *subject, const char *body);
 const char *action_cmnd_data_format(const char *device, const char *type, const char *current, const char *data1);
+const char *action_osd_data_format(const char *command, const char *text, double delay);
 
 #endif /*__ACTION_H*/

@@ -96,7 +96,7 @@ gnuplot_device_data_write(Widget *widget)
 	time_t timestamp;
 	struct tm *t;
 	FILE *dat;
-    const char *f;
+    char *f;
 
 	if(!widget) return EINA_FALSE;
 

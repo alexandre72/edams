@@ -28,6 +28,7 @@ global_view.c \
 init.c \
 locations_creator.c \
 mail_editor.c \
+osd_editor.c \
 preferences_dlg.c \
 scheduler_editor.c \
 shutdown.c \

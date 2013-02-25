@@ -71,9 +71,12 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
                 s = debug_editor_values_get();
                 break;
 
+   		case ACTION_TYPE_OSD:
+                s = osd_editor_values_get();
+                break;
+
 		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
-            	evas_object_del(cwin);
                 return;
     }
 
@@ -123,8 +126,14 @@ _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
                 hbox = debug_editor_hbox_get();
 			    break;
 
+		case ACTION_TYPE_OSD:
+	            cwin = osd_editor_add();
+                hbox = osd_editor_hbox_get();
+			    break;
+
 		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
+    		    return;
 				break;
 	}
 
@@ -471,7 +480,7 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
    	evas_object_name_set(hoversel, "type hoversel");
    	elm_object_text_set(hoversel, _("Action"));
 	elm_grid_pack(grid, hoversel, 80, 70, 20, 8);
-	for(x = 0;x != ACTION_TYPE_LAST;x++)
+	for(x = 0;x < ACTION_TYPE_LAST;x++)
 	{
 		if(x == ACTION_TYPE_UNKNOWN) continue;
 		if((x == ACTION_TYPE_DEBUG) && (!edams_settings_debug_get())) continue;
