@@ -19,27 +19,19 @@
  */
 
 
-#ifndef __MYFILESELECTOR_H
-#define __MYFILESELECTOR_H
+#ifndef __MAILEDITOR_H
+#define __MAILEDITOR_H
 
 #include <Evas.h>
 
-typedef struct _MyFileSelector
+typedef struct _MailEditor
 {
 	Evas_Object *win;
-	Evas_Object *fs;
-    Evas_Object *preview_img;
-    Evas_Object *preview_frame;
-	Evas_Object *filename_entry;
-	Evas_Object *permissions_entry;
-	Evas_Object *owner_entry;
-	Evas_Object *size_entry;
-	Evas_Object *mimetype_entry;
-	Evas_Object *cancel_button;
-	Evas_Object *ok_button;
-	Evas_Object *label, *icon;
-} MyFileSelector;
+	Evas_Object *grid, *hbox, *frame;
+	Evas_Object *from_entry, *to_entry, *subject_entry, *body_entry;
+	Evas_Object *icon, *cancel_button, *ok_button;
+} MailEditor;
 
-MyFileSelector *myfileselector_add();
-void myfileselector_close(MyFileSelector *myfs);
+MailEditor *maileditor_add();
+void maileditor_close(MailEditor *mailedit);
 #endif

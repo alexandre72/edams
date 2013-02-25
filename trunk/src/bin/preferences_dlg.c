@@ -29,19 +29,22 @@
 /*Callbacks*/
 static void _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
-static void _myfileselector_button_action_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _myfileselector_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+
+
+Evas_Object *win = NULL;
+
+
 
 /*
  *
  */
 static void
-_button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *win;
+
 	Evas_Object *entry;
 	Evas_Object *check;
-
-	win = (Evas_Object *) data;
 
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
 	edams_settings_cosm_apikey_set( elm_object_text_get(entry));
@@ -74,24 +77,24 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
  *
  */
 static void
-_myfileselector_button_action_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_myfileselector_button_ok_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	const char *sel;
-	MyFileSelector *myfs = (MyFileSelector *) data;
+	MyFileSelector *myfs = data;
+	const char *selected;
 
-	sel = elm_fileselector_selected_get(myfs->fs);
+	selected = elm_fileselector_selected_get(myfs->fs);
 
-	if (sel)
+	if (selected)
 	{
-		if ((eina_str_has_extension(sel, ".png") == EINA_TRUE) ||
-			(eina_str_has_extension(sel, "jpg") == EINA_TRUE) ||
-			(eina_str_has_extension(sel, ".jpeg") == EINA_TRUE) ||
-			(eina_str_has_extension(sel, ".gif") == EINA_TRUE) ||
-			(eina_str_has_extension(sel, ".bmp") == EINA_TRUE))
+		if ((eina_str_has_extension(selected, ".png") == EINA_TRUE) ||
+			(eina_str_has_extension(selected, "jpg") == EINA_TRUE) ||
+			(eina_str_has_extension(selected, ".jpeg") == EINA_TRUE) ||
+			(eina_str_has_extension(selected, ".gif") == EINA_TRUE) ||
+			(eina_str_has_extension(selected, ".bmp") == EINA_TRUE))
 		{
 			Evas_Object *entry;
-			entry = evas_object_data_get(myfs->win, "entry");
-			elm_object_text_set(entry, sel);
+	        entry = elm_object_name_find(win, "global_view background entry", -1);
+			elm_object_text_set(entry, selected);
 		}
 	}
 	myfileselector_close(myfs);
@@ -104,13 +107,11 @@ _myfileselector_button_action_clicked_cb(void *data, Evas_Object * obj __UNUSED_
 static void
 _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *entry = data;
 	MyFileSelector *myfs;
 
 	myfs = myfileselector_add();
-	myfileselector_set_title(myfs, _("Select a picture file"));
-	evas_object_data_set(myfs->win, "entry", entry);
-	evas_object_smart_callback_add(myfs->action_bt, "clicked", _myfileselector_button_action_clicked_cb, myfs);
+	elm_win_title_set(myfs->win,  _("Select a picture file"));
+	evas_object_smart_callback_add(myfs->ok_button, "clicked", _myfileselector_button_ok_clicked_cb, myfs);
 }/*_button_open_file_clicked_cb*/
 
 
@@ -120,7 +121,7 @@ _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__
 void
 preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *win, *grid;
+	Evas_Object  *grid;
 	Evas_Object *icon, *bx, *frame, *separator;
 	Evas_Object *button, *check, *entry;
 

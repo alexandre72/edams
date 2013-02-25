@@ -14,7 +14,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a cop    if(type == ACTION_TYPE_MAIL)
+    {
+        MailEditor *maileditor;
+        maileditor = maileditor_add();
+        evas_object_smart_callback_add(maileditor->ok_button, "clicked", _maileditor_button_ok_clicked_cb, maileditor);
+	    elm_object_text_set(maileditor->from_entry, edams_settings_user_mail_get());
+        //elm_object_text_set(maileditor->to_entry, to);
+    	elm_object_text_set(maileditor->subject_entry, _("[EDAMS]About..."));
+        //elm_object_text_set(maileditor->body_entry, body);
+        return;
+    }y of the GNU General Public License
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -25,6 +35,7 @@
 #include "action.h"
 #include "cJSON.h"
 #include "edams.h"
+#include "mail_editor.h"
 #include "myfileselector.h"
 #include "path.h"
 #include "utils.h"
@@ -59,10 +70,6 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 	{
 	    case ACTION_TYPE_CMND:
                 s = cmnd_editor_values_get();
-                break;
-
-		case ACTION_TYPE_MAIL:
-                s = mail_editor_values_get();
                 break;
 
    		case ACTION_TYPE_EXEC:
@@ -104,6 +111,25 @@ _hoversel_action_condition_selected_cb(void *data __UNUSED__, Evas_Object *obj, 
 
 
 /*
+ *
+ */
+static void
+_maileditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	MailEditor *maileditor = data;
+    const char *s;
+
+    s = action_mail_data_format(elm_object_text_get(maileditor->from_entry),
+                                elm_object_text_get(maileditor->to_entry),
+                                elm_object_text_get(maileditor->subject_entry),
+                                elm_object_text_get(maileditor->body_entry));
+    evas_object_data_set(win, "action data", s);
+	maileditor_close(maileditor);
+}/*_maileditor_button_action_clicked_cb*/
+
+
+
+/*
  *Callback called in hoversel 'action type' objects when clicked signal is emitted.
  */
 static void
@@ -117,6 +143,18 @@ _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void 
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
     evas_object_data_set(win, "action type", (void*)type);
 
+    if(type == ACTION_TYPE_MAIL)
+    {
+        MailEditor *maileditor;
+        maileditor = maileditor_add();
+        evas_object_smart_callback_add(maileditor->ok_button, "clicked", _maileditor_button_ok_clicked_cb, maileditor);
+	    elm_object_text_set(maileditor->from_entry, edams_settings_user_mail_get());
+        //elm_object_text_set(maileditor->to_entry, to);
+    	elm_object_text_set(maileditor->subject_entry, _("[EDAMS]About..."));
+        //elm_object_text_set(maileditor->body_entry, body);
+        return;
+    }
+
 	switch(type)
 	{
 		case ACTION_TYPE_CMND:
@@ -125,9 +163,7 @@ _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void 
                 break;
 
 		case ACTION_TYPE_MAIL:
-	            cwin = mail_editor_add();
-                hbox = mail_editor_hbox_get();
-                break;
+
 
 		case ACTION_TYPE_EXEC:
 	            cwin = exec_editor_add();
@@ -236,7 +272,6 @@ _list_item_selected_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void
 	hoversel = elm_object_name_find(win, "type hoversel", -1);
 	elm_object_text_set(hoversel, action_type_to_desc(action_type_get(action)));
     evas_object_data_set(win, "action type", (void*)(unsigned int)action_type_get(action));
-
     evas_object_data_set(win, "action data", (void*)action_data_get(action));
 }/*_list_item_selected_cb*/
 

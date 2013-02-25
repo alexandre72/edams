@@ -22,125 +22,128 @@
 #include <Elementary.h>
 #include "cJSON.h"
 #include "edams.h"
-
-
-
-/*Global window elm object*/
-static Evas_Object *win = NULL;
-
-/*
- *
- */
-const char*
-mail_editor_values_get()
-{
-    const char *s;
-
-	Evas_Object *from_entry = elm_object_name_find(win, "from entry", -1);
-	Evas_Object *to_entry = elm_object_name_find(win, "to entry", -1);
-	Evas_Object *subject_entry = elm_object_name_find(win, "subject entry", -1);
-	Evas_Object *body_entry = elm_object_name_find(win, "body entry", -1);
-
-    s = action_mail_data_format(    elm_object_text_get(from_entry),
-                                   	elm_object_text_get(to_entry),
-	                                elm_object_text_get(subject_entry),
-	                                elm_object_text_get(body_entry));
-	return s;
-}/*_button_edit_arg_apply_clicked_cb*/
-
-
-Evas_Object *
-mail_editor_hbox_get()
-{
-	Evas_Object *hbox = elm_object_name_find(win, "hbox", -1);
-	return hbox;
-}
+#include "mail_editor.h"
 
 
 /*
  *
  */
-Evas_Object *
-mail_editor_add()
+static void
+_button_cancel_clicked_cb(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *grid, *hbox, *frame;
-	Evas_Object *entry;
+    MailEditor *mailedit = data;
+    maileditor_close(mailedit);
+}/*_cancel_button_clicked_cb*/
 
-	win = elm_win_util_standard_add("mail_editor", NULL);
-	elm_win_title_set(win, _("Edit mail"));
-	elm_win_autodel_set(win, EINA_TRUE);
-	elm_win_center(win, EINA_TRUE, EINA_TRUE);
 
-	grid = elm_grid_add(win);
-	elm_grid_size_set(grid, 100, 100);
-	elm_win_resize_object_add(win, grid);
-	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_show(grid);
+/*
+ *
+ */
+void
+maileditor_close(MailEditor *mailedit)
+{
+    evas_object_del(mailedit->win);
+    FREE(mailedit);
+}/*myfileselector_close*/
 
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("From:"));
-	elm_grid_pack(grid, frame, 1, 1, 99, 15);
-	evas_object_show(frame);
+/*
+ *
+ */
+MailEditor *
+maileditor_add()
+{
+    MailEditor *mailedit = calloc(1, sizeof(MailEditor));
 
-	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "from entry");
-	elm_entry_scrollable_set(entry, EINA_TRUE);
-	elm_entry_editable_set(entry, EINA_TRUE);
-	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_object_text_set(entry, edams_settings_user_mail_get());
-	evas_object_show(entry);
-	elm_object_content_set(frame, entry);
+	mailedit->win = elm_win_util_standard_add("mail_editor", NULL);
+	elm_win_title_set(mailedit->win, _("Edit mail"));
+	elm_win_autodel_set(mailedit->win, EINA_TRUE);
+	elm_win_center(mailedit->win, EINA_TRUE, EINA_TRUE);
 
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("To:"));
-	elm_grid_pack(grid, frame, 1, 17, 99, 15);
-	evas_object_show(frame);
+	mailedit->grid = elm_grid_add(mailedit->win);
+	elm_grid_size_set(mailedit->grid, 100, 100);
+	elm_win_resize_object_add(mailedit->win, mailedit->grid);
+	evas_object_size_hint_weight_set(mailedit->grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(mailedit->grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_show(mailedit->grid);
 
-	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "to entry");
-	elm_entry_scrollable_set(entry, EINA_TRUE);
-	elm_entry_editable_set(entry, EINA_TRUE);
-	elm_entry_single_line_set(entry, EINA_TRUE);
-	evas_object_show(entry);
-	elm_object_content_set(frame, entry);
+	mailedit->frame = elm_frame_add(mailedit->win);
+	elm_object_text_set(mailedit->frame, _("From:"));
+	elm_grid_pack(mailedit->grid, mailedit->frame, 1, 1, 99, 15);
+	evas_object_show(mailedit->frame);
 
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("Subject:"));
-	elm_grid_pack(grid, frame, 1, 32, 99, 15);
-	evas_object_show(frame);
+	mailedit->from_entry = elm_entry_add(mailedit->win);
+	elm_entry_scrollable_set(mailedit->from_entry, EINA_TRUE);
+	elm_entry_editable_set(mailedit->from_entry, EINA_TRUE);
+	elm_entry_single_line_set(mailedit->from_entry, EINA_TRUE);
+	elm_object_text_set(mailedit->from_entry, edams_settings_user_mail_get());
+	evas_object_show(mailedit->from_entry);
+	elm_object_content_set(mailedit->frame, mailedit->from_entry);
 
-	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "subject entry");
-	elm_entry_scrollable_set(entry, EINA_TRUE);
-	elm_entry_editable_set(entry, EINA_TRUE);
-	elm_entry_single_line_set(entry, EINA_TRUE);
-	elm_object_text_set(entry, _("[EDAMS]About..."));
-	evas_object_show(entry);
-	elm_object_content_set(frame, entry);
+	mailedit->frame = elm_frame_add(mailedit->win);
+	elm_object_text_set(mailedit->frame, _("To:"));
+	elm_grid_pack(mailedit->grid, mailedit->frame, 1, 17, 99, 15);
+	evas_object_show(mailedit->frame);
 
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("Body:"));
-	elm_grid_pack(grid, frame, 1, 47, 99, 40);
-	evas_object_show(frame);
+	mailedit->to_entry = elm_entry_add(mailedit->win);
+	elm_entry_scrollable_set(mailedit->to_entry, EINA_TRUE);
+	elm_entry_editable_set(mailedit->to_entry, EINA_TRUE);
+	elm_entry_single_line_set(mailedit->to_entry, EINA_TRUE);
+	evas_object_show(mailedit->to_entry);
+	elm_object_content_set(mailedit->frame, mailedit->to_entry);
 
-	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "body entry");
-	elm_entry_scrollable_set(entry, EINA_TRUE);
-	elm_entry_editable_set(entry, EINA_TRUE);
-	elm_entry_single_line_set(entry, EINA_FALSE);
-	evas_object_show(entry);
-	elm_object_content_set(frame, entry);
+	mailedit->frame = elm_frame_add(mailedit->win);
+	elm_object_text_set(mailedit->frame, _("Subject:"));
+	elm_grid_pack(mailedit->grid, mailedit->frame, 1, 32, 99, 15);
+	evas_object_show(mailedit->frame);
 
-	hbox = elm_box_add(win);
-	evas_object_name_set(hbox, "hbox");
-	elm_box_horizontal_set(hbox, EINA_TRUE);
-	elm_box_homogeneous_set(hbox, EINA_TRUE);
-	elm_grid_pack(grid, hbox, 1, 89, 99, 10);
-	evas_object_show(hbox);
+	mailedit->subject_entry = elm_entry_add(mailedit->win);
+	elm_entry_scrollable_set(mailedit->subject_entry, EINA_TRUE);
+	elm_entry_editable_set(mailedit->subject_entry, EINA_TRUE);
+	elm_entry_single_line_set(mailedit->subject_entry, EINA_TRUE);
+	evas_object_show(mailedit->subject_entry);
+	elm_object_content_set(mailedit->frame, mailedit->subject_entry);
 
-	evas_object_resize(win, 400, 400);
-	evas_object_show(win);
+	mailedit->frame = elm_frame_add(mailedit->win);
+	elm_object_text_set(mailedit->frame, _("Body:"));
+	elm_grid_pack(mailedit->grid, mailedit->frame, 1, 47, 99, 40);
+	evas_object_show(mailedit->frame);
 
-	return win;
+	mailedit->body_entry = elm_entry_add(mailedit->win);
+	elm_entry_scrollable_set(mailedit->body_entry, EINA_TRUE);
+	elm_entry_editable_set(mailedit->body_entry, EINA_TRUE);
+	elm_entry_single_line_set(mailedit->body_entry, EINA_FALSE);
+	evas_object_show(mailedit->body_entry);
+	elm_object_content_set(mailedit->frame, mailedit->body_entry);
+
+	mailedit->hbox = elm_box_add(mailedit->win);
+	elm_box_horizontal_set(mailedit->hbox, EINA_TRUE);
+	elm_box_homogeneous_set(mailedit->hbox, EINA_TRUE);
+	elm_grid_pack(mailedit->grid, mailedit->hbox, 1, 90, 99, 10);
+	evas_object_show(mailedit->hbox);
+
+	mailedit->ok_button = elm_button_add(mailedit->win);
+	mailedit->icon = elm_icon_add(mailedit->win);
+	elm_icon_order_lookup_set(mailedit->icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(mailedit->icon, "apply-window");
+	elm_object_part_content_set(mailedit->ok_button, "icon", mailedit->icon);
+	elm_object_text_set(mailedit->ok_button, _("Ok"));
+	elm_box_pack_end(mailedit->hbox, mailedit->ok_button);
+	evas_object_show(mailedit->ok_button);
+	evas_object_size_hint_align_set(mailedit->ok_button, EVAS_HINT_FILL, 0);
+
+	mailedit->cancel_button = elm_button_add(mailedit->win);
+	mailedit->icon = elm_icon_add(mailedit->win);
+	elm_icon_order_lookup_set(mailedit->icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(mailedit->icon, "window-close");
+	elm_object_part_content_set(mailedit->cancel_button, "icon", mailedit->icon);
+	elm_object_text_set(mailedit->cancel_button, _("Close"));
+	elm_box_pack_end(mailedit->hbox, mailedit->cancel_button);
+	evas_object_show(mailedit->cancel_button);
+	evas_object_size_hint_align_set(mailedit->cancel_button, EVAS_HINT_FILL, 0);
+	evas_object_smart_callback_add(mailedit->cancel_button, "clicked", _button_cancel_clicked_cb , mailedit);
+
+	evas_object_resize(mailedit->win, 400, 400);
+	evas_object_show(mailedit->win);
+
+	return mailedit;
 }/*mail_editor_add*/
