@@ -33,18 +33,17 @@ static Evas_Object *win = NULL;
  *
  */
 static void
-_myfileselector_button_action_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_myfileselector_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	const char *sel;
-	MyFileSelector *myfs = (MyFileSelector *) data;
+	MyFileSelector *myfs = data;
+	const char *selected;
 
-	sel = elm_fileselector_selected_get(myfs->fs);
+	selected = elm_fileselector_selected_get(myfs->fs);
 
-	if (sel)
+	if (selected)
 	{
-		Evas_Object *entry;
-		entry = evas_object_data_get(myfs->win, "entry");
-		elm_object_text_set(entry, sel);
+	    Evas_Object *entry = elm_object_name_find(win, "exec entry", -1);
+		elm_object_text_set(entry, selected);
 	}
 	myfileselector_close(myfs);
 }/*_myfileselector_button_action_clicked_cb*/
@@ -56,13 +55,11 @@ _myfileselector_button_action_clicked_cb(void *data, Evas_Object * obj __UNUSED_
 static void
 _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *entry = data;
 	MyFileSelector *myfs;
 
-	myfs = myfileselector_add();
-	myfileselector_set_title(myfs, _("Select a program"));
-	evas_object_data_set(myfs->win, "entry", entry);
-	evas_object_smart_callback_add(myfs->action_bt, "clicked", _myfileselector_button_action_clicked_cb, myfs);
+    myfs = myfileselector_add();
+	elm_win_title_set(myfs->win,  _("Select a program"));
+	evas_object_smart_callback_add(myfs->ok_button, "clicked", _myfileselector_button_ok_clicked_cb, myfs);
 }/*_button_open_file_clicked_cb*/
 
 

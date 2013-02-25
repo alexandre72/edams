@@ -24,10 +24,12 @@
 
 #include "crontab.h"
 #include "edams.h"
+#include "mail_editor.h"
+#include "myfileselector.h"
 #include "path.h"
 #include "settings.h"
 #include "utils.h"
-#include "myfileselector.h"
+
 
 /*Global objects*/
 static Evas_Object *win = NULL;
@@ -59,10 +61,6 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
                 s = cmnd_editor_values_get();
                 break;
 
-		case ACTION_TYPE_MAIL:
-                s = mail_editor_values_get();
-                break;
-
    		case ACTION_TYPE_EXEC:
                 s = exec_editor_values_get();
                 break;
@@ -91,6 +89,24 @@ _button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info
 
 
 /*
+ *
+ */
+static void
+_maileditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	MailEditor *maileditor = data;
+    const char *s;
+
+    s = action_mail_data_format(elm_object_text_get(maileditor->from_entry),
+                                elm_object_text_get(maileditor->to_entry),
+                                elm_object_text_get(maileditor->subject_entry),
+                                elm_object_text_get(maileditor->body_entry));
+    evas_object_data_set(win, "action data", s);
+	maileditor_close(maileditor);
+}/*_maileditor_button_action_clicked_cb*/
+
+
+/*
  *Callback called in any hoversel objects when clicked signal is emitted.
  */
 static void
@@ -104,16 +120,23 @@ _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
     evas_object_data_set(win, "action type", (void*)type);
 
+    if(type == ACTION_TYPE_MAIL)
+    {
+        MailEditor *maileditor;
+        maileditor = maileditor_add();
+        evas_object_smart_callback_add(maileditor->ok_button, "clicked", _maileditor_button_ok_clicked_cb, maileditor);
+	    elm_object_text_set(maileditor->from_entry, edams_settings_user_mail_get());
+        //elm_object_text_set(maileditor->to_entry, to);
+    	elm_object_text_set(maileditor->subject_entry, _("[EDAMS]About..."));
+        //elm_object_text_set(maileditor->body_entry, body);
+        return;
+    }
+
 	switch(type)
 	{
 		case ACTION_TYPE_CMND:
 	            cwin = cmnd_editor_add();
                 hbox = cmnd_editor_hbox_get();
-                break;
-
-		case ACTION_TYPE_MAIL:
-	            cwin = mail_editor_add();
-                hbox = mail_editor_hbox_get();
                 break;
 
 		case ACTION_TYPE_EXEC:
