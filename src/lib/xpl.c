@@ -41,14 +41,11 @@ static void _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len);
 /*Others funcs*/
 static void _xpl_emulate_messages(Ecore_Pipe *pipe);
 
-/*Local vars*/
-//static	xPL_MessagePtr 	xpl_edams_message_stat;
-//static	xPL_MessagePtr 	xpl_edams_message_trig;
-static xPL_ServicePtr   xpl_edams_service;
-static xPL_MessagePtr   xpl_edams_message_cmnd;
-static pid_t            child_pid;
+/*Globals vars*/
 static Eina_List*       xpl_devices;
 static Eina_Bool        XPL_STARTED;
+static xPL_ServicePtr   xpl_edams_service;
+static pid_t            child_pid;
 
 /*
  *Callback called in xPL Message when 'sensor.basic' is triggered.
@@ -124,7 +121,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
     cJSON *root = cJSON_Parse(str);
 	if(!root) return;
-    FREE(str);
+
 	cJSON *jschema = cJSON_GetObjectItem(root, "SCHEMA");
 
     if(!jschema) return;
@@ -134,43 +131,16 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
     if(strcmp(schema, "osd.basic") == 0)
     {
-    	cJSON *jcommand = cJSON_GetObjectItem(root, "COMMAND");
-    	cJSON *jtext = cJSON_GetObjectItem(root, "TEXT");
-    	cJSON *jdelay = cJSON_GetObjectItem(root, "DELAY");
-
-            if(jcommand)
-            {
-                char *command = cJSON_PrintUnformatted(jcommand);
-                strdelstr(command, "\"");
-                if((strcmp(command, "clear") == 0) ||
-                    (strcmp(command, "write") == 0))
-                {
-                    if(jtext)
-                    {
-                        char *text = cJSON_PrintUnformatted(jtext);
-                        strdelstr(text, "\"");
-
-                            if(jdelay)
-                            {
-                                char *delay = cJSON_PrintUnformatted(jdelay);
-                                strdelstr(delay, "\"");
-                                global_view_osd_write(text, atoi(delay));
-                                FREE(delay);
-                            }
-                            else
-                            {
-                                global_view_osd_write(text, -1);
-                            }
-                        FREE(text);
-                    }
-                }
-                FREE(command);
-            }
-	        cJSON_Delete(root);
-
+	    cJSON_Delete(root);
+        osd_action_parse(str);
+        FREE(str);
         FREE(schema);
-    }/*If schema to parse is sensor.basic*/
-    else if(strcmp(schema, "sensor.basic") == 0)
+        return;
+    }
+    FREE(str);
+
+    /*If schema to parse is sensor.basic*/
+    if(strcmp(schema, "sensor.basic") == 0)
     {
 	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
 	    cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
@@ -276,7 +246,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
           	FREE(device_elem);
             cJSON_Delete(root);
         }
-    }
+    }/*End if schema to parse is sensor.basic*/
 
     xpl_devices = eina_list_append(xpl_devices, eina_stringshare_add(str));
     FREE(str);
@@ -431,8 +401,9 @@ xpl_start()
 
     pipe = ecore_pipe_add(_xpl_handler, NULL);
 
-    /* And a listener for all xPL messages */
-    xPL_addMessageListener(printXPLMessage, NULL);
+    /*Add all xPL messages listener*/
+    if(edams_settings_debug_get() == EINA_TRUE)
+        xPL_addMessageListener(printXPLMessage, NULL);
 
     /*Add xPL sensor.basic listener*/
     xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
@@ -440,12 +411,6 @@ xpl_start()
 
     /*Add xPL osd.basic listener*/
     xPL_addServiceListener(xpl_edams_service, _xpl_osd_basic_handler, xPL_MESSAGE_ANY, "osd", "basic",(xPL_ObjectPtr)pipe);
-
-    /*Add xPL broadcast messaging*/
-    if ((xpl_edams_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
-    {
-        debug(stderr, _("Can't create broadcast message"));
-    }
 
     child_pid = fork();
 
@@ -565,42 +530,6 @@ xpl_control_basic_cmnd_to_elm_str(Widget *widget)
 
     return s;
 }/*xpl_control_basic_cmnd_to_elm_str*/
-
-
-
-/*
- *
- */
-void
-xpl_control_basic_cmnd_to_dbg(Widget *widget)
-{
-    if(!widget_xpl_data1_get(widget))
-    {
-	    fprintf(stdout, "\ncontrol.basic\n\
-					{\n\
-					\tdevice=%s\n\
- 					\ttype=%s\n\
-					\tcurrent=%s\n\
-					}\n",
-					widget_xpl_device_get(widget),
-					widget_xpl_type_get(widget),
-					widget_xpl_current_get(widget));
-    }
-    else
-    {
-	    fprintf(stdout, "\ncontrol.basic\n\
-					{\n\
-					\tdevice=%s\n\
- 					\ttype=%s\n\
-					\tcurrent=%s\n\
-					\tdata1=%s\n\
-					}\n",
-					widget_xpl_device_get(widget),
-					widget_xpl_type_get(widget),
-					widget_xpl_current_get(widget),
-					widget_xpl_data1_get(widget));
-    }
-}/*xpl_control_basic_cmnd_debug*/
 
 
 
@@ -775,6 +704,46 @@ xpl_type_to_unit_symbol(const char *xpl_type)
 	else return "";
 }/*xpl_type_to_unit_symbol*/
 
+/*
+ *
+ */
+Eina_Bool
+xpl_osd_basic_cmnd_send(const char *command, const char *text, const char *delay)
+{
+    xPL_MessagePtr xpl_message_cmnd = NULL;
+
+    /* Create an appropriate message */
+    if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
+    {
+        debug(stderr, _("Can't create broadcast message"));
+        return EINA_FALSE;
+    }
+
+  	xPL_setSchema(xpl_message_cmnd, "osd", "basic");
+
+    /*Install the value(s) and send the message*/
+  	xPL_setMessageNamedValue(xpl_message_cmnd, "command", command);
+
+
+  	if(text)
+      	xPL_setMessageNamedValue(xpl_message_cmnd, "text", text);
+
+  	if(delay)
+        xPL_setMessageNamedValue(xpl_message_cmnd, "delay", delay);
+
+
+	/*Broadcast the message*/
+	if (!xPL_sendMessage(xpl_message_cmnd))
+	{
+		debug(stderr, _("Can't send xPL message"));
+        xPL_releaseMessage(xpl_message_cmnd);
+		return EINA_FALSE;
+	}
+
+    xPL_releaseMessage(xpl_message_cmnd);
+    return EINA_TRUE;
+}/*xpl_osd_basic_cmnd_send*/
+
 
 /*
  *
@@ -782,25 +751,33 @@ xpl_type_to_unit_symbol(const char *xpl_type)
 Eina_Bool
 xpl_control_basic_cmnd_send(Widget *widget)
 {
+    xPL_MessagePtr xpl_message_cmnd = NULL;
 
-    xpl_control_basic_cmnd_to_dbg(widget);
+    /* Create an appropriate message */
+    if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
+    {
+        debug(stderr, _("Can't create broadcast message"));
+        return EINA_FALSE;
+    }
 
-  	xPL_setSchema(xpl_edams_message_cmnd, "control", "basic");
+  	xPL_setSchema(xpl_message_cmnd, "control", "basic");
 
     /*Install the value(s) and send the message*/
-  	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "device", widget_xpl_device_get(widget));
-  	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "type", widget_xpl_type_get(widget));
-  	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "current", widget_xpl_current_get(widget));
+  	xPL_setMessageNamedValue(xpl_message_cmnd, "device", widget_xpl_device_get(widget));
+  	xPL_setMessageNamedValue(xpl_message_cmnd, "type", widget_xpl_type_get(widget));
+  	xPL_setMessageNamedValue(xpl_message_cmnd, "current", widget_xpl_current_get(widget));
 
 	if(widget_xpl_data1_get(widget))
-	  	xPL_setMessageNamedValue(xpl_edams_message_cmnd, "data1", widget_xpl_data1_get(widget));
+	  	xPL_setMessageNamedValue(xpl_message_cmnd, "data1", widget_xpl_data1_get(widget));
 
 	/*Broadcast the message*/
-	if (!xPL_sendMessage(xpl_edams_message_cmnd))
+	if (!xPL_sendMessage(xpl_message_cmnd))
 	{
 		debug(stderr, _("Can't send xPL message"));
+		xPL_releaseMessage(xpl_message_cmnd);
 		return EINA_FALSE;
 	}
 
+    xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;
 }/*xpl_control_basic_cmnd_send*/

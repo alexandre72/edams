@@ -498,7 +498,7 @@ elm_main(int argc, char **argv)
     };
 
     args = ecore_getopt_parse(&options, values, argc, argv);
-    printf("%d\n", argc);
+
     if (args < 0)
     {
         fprintf(stderr, _("\033[31mERROR:\033[0mCan't parse command line options!\n"));

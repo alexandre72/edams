@@ -1158,7 +1158,7 @@ _osd_timer_cb(void *data)
 /*
  *
  */
-void global_view_osd_write(const char *text, int delay)
+void global_view_osd_write(const char *text, double delay)
 {
 	if (!evas) return;
 
@@ -1172,7 +1172,7 @@ void global_view_osd_write(const char *text, int delay)
     evas_object_show(osd_text);
 
     if(delay != -1)
-        ecore_timer_add((double)delay, _osd_timer_cb, osd_text);
+        ecore_timer_add(delay, _osd_timer_cb, osd_text);
 }
 
 

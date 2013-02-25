@@ -169,7 +169,7 @@ _update_cmnd_preview(Widget *widget)
  *
  */
 static void
-_layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source)
+_layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emission, const char  *source)
 {
     const char *type = widget_xpl_type_get(widget);
     char *s;
