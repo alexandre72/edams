@@ -18,16 +18,36 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 #include <Elementary.h>
 #include "cJSON.h"
 #include "edams.h"
+#include "exec_editor.h"
 #include "myfileselector.h"
 
-/*Global objects*/
-static Evas_Object *win = NULL;
 
+static void _myfileselector_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _button_open_file_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _button_cancel_clicked_cb(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+
+/*
+ *
+ */
+static void
+_button_cancel_clicked_cb(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+    ExecEditor *execeditor = data;
+    execeditor_close(execeditor);
+}/*_cancel_button_clicked_cb*/
+
+/*
+ *
+ */
+void
+execeditor_close(ExecEditor *execeditor)
+{
+    evas_object_del(execeditor->win);
+    FREE(execeditor);
+}/*execeditor_close*/
 
 /*
  *
@@ -42,7 +62,7 @@ _myfileselector_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, v
 
 	if (selected)
 	{
-	    Evas_Object *entry = elm_object_name_find(win, "exec entry", -1);
+	    Evas_Object *entry = evas_object_data_get(myfs->win, "exec entry");
 		elm_object_text_set(entry, selected);
 	}
 	myfileselector_close(myfs);
@@ -53,12 +73,14 @@ _myfileselector_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, v
  *
  */
 static void
-_button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_button_open_file_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	MyFileSelector *myfs;
+    Evas_Object *entry = data;
 
     myfs = myfileselector_add();
 	elm_win_title_set(myfs->win,  _("Select a program"));
+	evas_object_data_set(myfs->win, "exec entry", entry);
 	evas_object_smart_callback_add(myfs->ok_button, "clicked", _myfileselector_button_ok_clicked_cb, myfs);
 }/*_button_open_file_clicked_cb*/
 
@@ -66,100 +88,88 @@ _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__
 /*
  *
  */
-const char*
-exec_editor_values_get()
+ExecEditor *
+execeditor_add()
 {
-    const char *s;
+    ExecEditor *execeditor = calloc(1, sizeof(ExecEditor));
 
-	Evas_Object *entry = elm_object_name_find(win, "exec entry", -1);
-	Evas_Object *check = elm_object_name_find(win, "terminal check", -1);
+	execeditor->win = elm_win_util_standard_add("mail_editor", NULL);
+	elm_win_title_set(execeditor->win, _("Edit mail"));
+	elm_win_autodel_set(execeditor->win, EINA_TRUE);
+	elm_win_center(execeditor->win, EINA_TRUE, EINA_TRUE);
 
-    s = action_exec_data_format(elm_object_text_get(entry), elm_check_state_get(check) ? "true" : "false");
+	execeditor->grid = elm_grid_add(execeditor->win);
+	elm_grid_size_set(execeditor->grid, 100, 100);
+	elm_win_resize_object_add(execeditor->win, execeditor->grid);
+	evas_object_size_hint_weight_set(execeditor->grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(execeditor->grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_show(execeditor->grid);
 
-	return s;
-}/*exec_editor_hbox_get*/
+	execeditor->frame = elm_frame_add(execeditor->win);
+	elm_object_text_set(execeditor->frame, _("Exec:"));
+	elm_grid_pack(execeditor->grid, execeditor->frame, 1, 1, 99, 15);
+	evas_object_show(execeditor->frame);
 
+	execeditor->hbox = elm_box_add(execeditor->win);
+    elm_box_horizontal_set(execeditor->hbox, EINA_TRUE);
+	evas_object_show(execeditor->hbox);
 
-/*
- *
- */
-Evas_Object *
-exec_editor_hbox_get()
-{
-	Evas_Object *hbox = elm_object_name_find(win, "hbox", -1);
-	return hbox;
-}/*exec_editor_hbox_get*/
+	execeditor->exec_entry = elm_entry_add(execeditor->win);
+	elm_entry_scrollable_set(execeditor->exec_entry, EINA_TRUE);
+	elm_entry_editable_set(execeditor->exec_entry, EINA_TRUE);
+	elm_entry_single_line_set(execeditor->exec_entry, EINA_TRUE);
+	evas_object_size_hint_weight_set(execeditor->exec_entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(execeditor->exec_entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_pack_end(execeditor->hbox, execeditor->exec_entry);
+	evas_object_show(execeditor->exec_entry);
 
-
-/*
- *
- */
-Evas_Object *
-exec_editor_add()
-{
-	Evas_Object *grid, *hbox, *frame;
-	Evas_Object *entry, *check, *icon, *button;
-
-	win = elm_win_util_standard_add("exec_editor", NULL);
-	elm_win_title_set(win, _("Edit program exec"));
-	elm_win_autodel_set(win, EINA_TRUE);
-	elm_win_center(win, EINA_TRUE, EINA_TRUE);
-
-	grid = elm_grid_add(win);
-	elm_grid_size_set(grid, 100, 100);
-	elm_win_resize_object_add(win, grid);
-	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_show(grid);
-
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("Path of program:"));
-	elm_grid_pack(grid, frame, 1, 1, 99, 15);
-	evas_object_show(frame);
-
-	hbox = elm_box_add(win);
-    elm_box_horizontal_set(hbox, EINA_TRUE);
-	evas_object_show(hbox);
-
-	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "exec entry");
-	elm_entry_scrollable_set(entry, EINA_TRUE);
-	elm_entry_editable_set(entry, EINA_TRUE);
-	elm_entry_single_line_set(entry, EINA_TRUE);
-	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(hbox, entry);
-	evas_object_show(entry);
-
-	button = elm_button_add(win);
+	Evas_Object *button = elm_button_add(execeditor->win);
 	elm_object_text_set(button, _("Open..."));
-	icon = elm_icon_add(win);
-	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(icon, "document-open");
-	elm_object_part_content_set(button, "icon", icon);
-	evas_object_smart_callback_add(button, "clicked", _button_open_file_clicked_cb, entry);
-	elm_box_pack_end(hbox, button);
+	execeditor->icon = elm_icon_add(execeditor->win);
+	elm_icon_order_lookup_set(execeditor->icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(execeditor->icon, "document-open");
+	elm_object_part_content_set(button, "icon", execeditor->icon);
+	evas_object_smart_callback_add(button, "clicked", _button_open_file_clicked_cb, execeditor->exec_entry);
+	elm_box_pack_end(execeditor->hbox, button);
 	evas_object_show(button);
 
-	elm_object_content_set(frame, hbox);
+	elm_object_content_set(execeditor->frame, execeditor->hbox);
 
-	check = elm_check_add(win);
-	evas_object_name_set(check, "terminal check");
-	elm_object_text_set(check, _("Exec in terminal"));
-	elm_grid_pack(grid, check, 0, 20, 30, 10);
-	evas_object_name_set(grid, "grid");
-	elm_check_state_set(check, EINA_FALSE);
-	evas_object_show(check);
+	execeditor->terminal_check = elm_check_add(execeditor->win);
+	evas_object_name_set(execeditor->terminal_check , "terminal check");
+	elm_object_text_set(execeditor->terminal_check , _("Exec in terminal"));
+	elm_grid_pack(execeditor->grid, execeditor->terminal_check , 0, 20, 30, 10);
+	evas_object_show(execeditor->terminal_check );
 
-	hbox = elm_box_add(win);
-	evas_object_name_set(hbox, "hbox");
-	elm_box_horizontal_set(hbox, EINA_TRUE);
-	elm_box_homogeneous_set(hbox, EINA_TRUE);
-	elm_grid_pack(grid, hbox, 1, 89, 99, 10);
-	evas_object_show(hbox);
+	execeditor->hbox = elm_box_add(execeditor->win);
+	elm_box_horizontal_set(execeditor->hbox, EINA_TRUE);
+	elm_box_homogeneous_set(execeditor->hbox, EINA_TRUE);
+	elm_grid_pack(execeditor->grid, execeditor->hbox, 1, 90, 99, 10);
+	evas_object_show(execeditor->hbox);
 
-	evas_object_resize(win, 400, 400);
-	evas_object_show(win);
+	execeditor->ok_button = elm_button_add(execeditor->win);
+	execeditor->icon = elm_icon_add(execeditor->win);
+	elm_icon_order_lookup_set(execeditor->icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(execeditor->icon, "apply-window");
+	elm_object_part_content_set(execeditor->ok_button, "icon", execeditor->icon);
+	elm_object_text_set(execeditor->ok_button, _("Ok"));
+	elm_box_pack_end(execeditor->hbox, execeditor->ok_button);
+	evas_object_show(execeditor->ok_button);
+	evas_object_size_hint_align_set(execeditor->ok_button, EVAS_HINT_FILL, 0);
 
-	return win;
-}/*exec_editor_add*/
+	execeditor->cancel_button = elm_button_add(execeditor->win);
+	execeditor->icon = elm_icon_add(execeditor->win);
+	elm_icon_order_lookup_set(execeditor->icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(execeditor->icon, "window-close");
+	elm_object_part_content_set(execeditor->cancel_button, "icon", execeditor->icon);
+	elm_object_text_set(execeditor->cancel_button, _("Close"));
+	elm_box_pack_end(execeditor->hbox, execeditor->cancel_button);
+	evas_object_show(execeditor->cancel_button);
+	evas_object_size_hint_align_set(execeditor->cancel_button, EVAS_HINT_FILL, 0);
+	evas_object_smart_callback_add(execeditor->cancel_button, "clicked", _button_cancel_clicked_cb , execeditor);
+
+	evas_object_resize(execeditor->win, 400, 400);
+	evas_object_show(execeditor->win);
+
+	return execeditor;
+}/*execeditor_add*/

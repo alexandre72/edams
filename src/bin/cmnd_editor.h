@@ -1,5 +1,5 @@
 /*
- * mail_editor.h
+ * debug_editor.h
  *
  * Copyright (C) 2012 - Alexandre Dussart
  *
@@ -18,19 +18,19 @@
  */
 
 
-#ifndef __MAILEDITOR_H
-#define __MAILEDITOR_H
+#ifndef __CMNDEDITOR_H
+#define __CMNDEDITOR_H
 
 #include <Evas.h>
 
-typedef struct _MailEditor
+typedef struct _CmndEditor
 {
 	Evas_Object *win;
 	Evas_Object *grid, *hbox, *frame;
-	Evas_Object *from_entry, *to_entry, *subject_entry, *body_entry;
+	Evas_Object *list, *layout, *entry;
 	Evas_Object *icon, *cancel_button, *ok_button;
-} MailEditor;
+} CmndEditor;
 
-MailEditor *maileditor_add();
-void maileditor_close(MailEditor *mailedit);
+CmndEditor *cmndeditor_add();
+void cmndeditor_close(CmndEditor *cmndeditor);
 #endif
