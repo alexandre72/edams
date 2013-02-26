@@ -21,43 +21,14 @@
 #include <Elementary.h>
 
 #include "cJSON.h"
+#include "cmnd_editor.h"
 #include "edams.h"
 #include "path.h"
 
-/*Global objects*/
-static Evas_Object *win = NULL;
 
-/*
- *
- */
-const char*
-cmnd_editor_values_get()
-{
-    const char *s;
-
-	Widget *widget = evas_object_data_get(win, "widget");
-    if((!widget) || (!widget_xpl_current_get(widget)))
-        return NULL;
-
-    s = action_cmnd_data_format(widget_xpl_device_get(widget),
-                            widget_xpl_type_get(widget),
-                            widget_xpl_current_get(widget),
-                            widget_xpl_data1_get(widget));
-
-    //s = action_exec_data_format(elm_object_text_get(entry), );
-	return s;
-}/*cmnd_editor_values_get*/
-
-
-/*
- *
- */
-Evas_Object *
-cmnd_editor_hbox_get()
-{
-	Evas_Object *hbox = elm_object_name_find(win, "hbox", -1);
-	return hbox;
-}/*cmnd_editor_hbox_get*/
+static void _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source);
+static void _list_control_basic_item_add(CmndEditor *cmndeditor, Widget *widget);
+static void _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
 
 /*
@@ -66,10 +37,16 @@ cmnd_editor_hbox_get()
 static void
 _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source)
 {
-	Evas_Object *entry = elm_object_name_find(win, "cmnd preview entry", -1);
-	Widget *widget = data;
-    const char *type = widget_xpl_type_get(widget);
+    CmndEditor *cmndeditor = data;
+    const char *type;
     char *s;
+
+	Elm_Object_Item *selected_item = elm_list_selected_item_get(cmndeditor->list);
+
+	if(!selected_item) return;
+
+    Widget *widget = elm_object_item_data_get(selected_item);
+    type = widget_xpl_type_get(widget);
 
     /*Skip basic's edje signal emission*/
 	if(strstr(source, "edje")) return;
@@ -121,12 +98,8 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
 
-   	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
-
-    evas_object_data_set(win, "widget", widget);
+   	elm_object_text_set(cmndeditor->entry, xpl_control_basic_cmnd_to_elm_str(widget));
 }/*_layout_signals_cb*/
-
-
 
 
 /*
@@ -135,12 +108,14 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 static void
 _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    Widget *widget = (Widget*) data;
+    Widget *widget = data;
+    Evas_Object *list = elm_object_item_widget_get(event_info);
 
-	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
-    elm_layout_file_set(layout, edams_edje_theme_file_get(), widget_group_get(widget));
+	CmndEditor *cmndeditor = evas_object_data_get(list, "cmndeditor");
 
-	elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, widget);
+    elm_layout_file_set(cmndeditor->layout, edams_edje_theme_file_get(), widget_group_get(widget));
+
+	elm_layout_signal_callback_add(cmndeditor->layout, "*", "*", _layout_signals_cb, cmndeditor);
 }/*_list_control_basic_item_selected_cb*/
 
 
@@ -148,22 +123,21 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
  *
  */
 static void
-_list_control_basic_item_add(Evas_Object *list, Widget *widget)
+_list_control_basic_item_add(CmndEditor *cmndeditor, Widget *widget)
 {
 	char *s;
 
-	Evas_Object *icon;
-	icon = elm_icon_add(win);
+	cmndeditor->icon = elm_icon_add(cmndeditor->win);
 	asprintf(&s, "%s/icon", widget_group_get(widget));
-   	elm_image_file_set(icon, edams_edje_theme_file_get(), s);
+   	elm_image_file_set(cmndeditor->icon, edams_edje_theme_file_get(), s);
    	FREE(s);
-	elm_image_aspect_fixed_set(icon, EINA_TRUE);
-	elm_image_resizable_set(icon, 1, 0);
+	elm_image_aspect_fixed_set(cmndeditor->icon, EINA_TRUE);
+	elm_image_resizable_set(cmndeditor->icon, 1, 0);
 
 	asprintf(&s, "%s %s", widget_xpl_device_get(widget), widget_xpl_type_get(widget));
 
-	elm_list_item_append(list, s, icon, NULL, _list_control_basic_item_selected_cb, widget);
-	elm_list_go(list);
+	elm_list_item_append(cmndeditor->list, s, cmndeditor->icon, NULL, _list_control_basic_item_selected_cb, widget);
+	elm_list_go(cmndeditor->list);
 	FREE(s);
 }/*_list_control_basic_item_selected_cb*/
 
@@ -171,36 +145,54 @@ _list_control_basic_item_add(Evas_Object *list, Widget *widget)
 /*
  *
  */
-Evas_Object *
-cmnd_editor_add()
+static void
+_button_cancel_clicked_cb(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *grid, *hbox, *frame, *layout, *entry;
-	Evas_Object *list;
+    CmndEditor *cmndeditor = data;
+    cmndeditor_close(cmndeditor);
+}/*_cancel_button_clicked_cb*/
 
-	win = elm_win_util_standard_add("cmnd_editor", NULL);
-	elm_win_title_set(win, _("Edit cmnd control.basic"));
-	elm_win_autodel_set(win, EINA_TRUE);
-	elm_win_center(win, EINA_TRUE, EINA_TRUE);
+/*
+ *
+ */
+void
+cmndeditor_close(CmndEditor *cmndeditor)
+{
+    evas_object_del(cmndeditor->win);
+    FREE(cmndeditor);
+}/*cmndeditor_close*/
 
-	grid = elm_grid_add(win);
-	evas_object_name_set(grid, "grid");
-	elm_grid_size_set(grid, 100, 100);
-	elm_win_resize_object_add(win, grid);
-	evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_show(grid);
 
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("Select control.basic"));
-	elm_grid_pack(grid, frame, 1, 1, 99, 40);
-	evas_object_show(frame);
+/*
+ *
+ */
+CmndEditor *
+cmndeditor_add()
+{
+    CmndEditor *cmndeditor = calloc(1, sizeof(CmndEditor));
 
-	list = elm_list_add(win);
-	elm_scroller_policy_set(list, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_ON);
-	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS);
-	evas_object_name_set(list, "control.basic list");
-	evas_object_show(list);
-	elm_object_content_set(frame, list);
+	cmndeditor->win = elm_win_util_standard_add("osd_editor", NULL);
+	elm_win_title_set(cmndeditor->win, _("Edit xPL control.basic CMND"));
+	elm_win_autodel_set(cmndeditor->win, EINA_TRUE);
+	elm_win_center(cmndeditor->win, EINA_TRUE, EINA_TRUE);
+
+	cmndeditor->grid = elm_grid_add(cmndeditor->win);
+	elm_grid_size_set(cmndeditor->grid, 100, 100);
+	elm_win_resize_object_add(cmndeditor->win, cmndeditor->grid);
+	evas_object_size_hint_weight_set(cmndeditor->grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(cmndeditor->grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_show(cmndeditor->grid);
+
+	cmndeditor->frame = elm_frame_add(cmndeditor->win);
+	elm_object_text_set(cmndeditor->frame, _("Select control.basic:"));
+	elm_grid_pack(cmndeditor->grid, cmndeditor->frame, 1, 1, 99, 40);
+	evas_object_show(cmndeditor->frame);
+
+	cmndeditor->list = elm_list_add(cmndeditor->win);
+	elm_scroller_policy_set(cmndeditor->list, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_ON);
+	elm_list_select_mode_set(cmndeditor->list ,ELM_OBJECT_SELECT_MODE_ALWAYS);
+	evas_object_show(cmndeditor->list);
+	elm_object_content_set(cmndeditor->frame, cmndeditor->list);
 
     Eina_List *l = NULL;
     Location *location_elem;
@@ -212,45 +204,64 @@ cmnd_editor_add()
         EINA_LIST_FOREACH(widgets, l2, widget_elem)
         {
             if(widget_class_get(widget_elem) == WIDGET_CLASS_XPL_CONTROL_BASIC)
-                _list_control_basic_item_add(list, widget_elem);
+                _list_control_basic_item_add(cmndeditor, widget_elem);
         }
     }
 
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("Widget set to"));
-	elm_grid_pack(grid, frame, 1, 46, 49, 40);
-	evas_object_show(frame);
+	cmndeditor->frame = elm_frame_add(cmndeditor->win);
+	elm_object_text_set(cmndeditor->frame, _("Widget set to"));
+	elm_grid_pack(cmndeditor->grid, cmndeditor->frame, 1, 46, 49, 40);
+	evas_object_show(cmndeditor->frame);
 
-	layout = elm_layout_add(win);
-	evas_object_name_set(layout, "widget layout");
-   	evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_object_content_set(frame, layout);
-	evas_object_show(layout);
+	cmndeditor->layout = elm_layout_add(cmndeditor->win);
+	evas_object_data_set(cmndeditor->list, "cmndeditor", cmndeditor);
+   	evas_object_size_hint_weight_set(cmndeditor->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(cmndeditor->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_object_content_set(cmndeditor->frame, cmndeditor->layout);
+	evas_object_show(cmndeditor->layout);
 
-	frame = elm_frame_add(win);
-	elm_object_text_set(frame, _("xPL CMND Preview"));
-	elm_grid_pack(grid, frame, 50, 46, 49, 40);
-	evas_object_show(frame);
+	cmndeditor->frame = elm_frame_add(cmndeditor->win);
+	elm_object_text_set(cmndeditor->frame, _("xPL CMND Preview"));
+	elm_grid_pack(cmndeditor->grid, cmndeditor->frame, 50, 46, 49, 40);
+	evas_object_show(cmndeditor->frame);
 
-   	entry = elm_entry_add(win);
-    evas_object_name_set(entry, "cmnd preview entry");
-   	elm_entry_scrollable_set(entry, EINA_FALSE);
-    elm_entry_editable_set(entry, EINA_FALSE);
-   	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_object_content_set(frame, entry);
-	evas_object_show(entry);
+    cmndeditor->entry = elm_entry_add(cmndeditor->win);
+   	elm_entry_scrollable_set( cmndeditor->entry, EINA_FALSE);
+    elm_entry_editable_set( cmndeditor->entry, EINA_FALSE);
+   	evas_object_size_hint_weight_set( cmndeditor->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set( cmndeditor->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_object_content_set(cmndeditor->frame,  cmndeditor->entry);
+	evas_object_show( cmndeditor->entry);
 
-	hbox = elm_box_add(win);
-	evas_object_name_set(hbox, "hbox");
-	elm_box_horizontal_set(hbox, EINA_TRUE);
-	elm_box_homogeneous_set(hbox, EINA_TRUE);
-	elm_grid_pack(grid, hbox, 1, 89, 99, 10);
-	evas_object_show(hbox);
+	cmndeditor->hbox = elm_box_add(cmndeditor->win);
+	elm_box_horizontal_set(cmndeditor->hbox, EINA_TRUE);
+	elm_box_homogeneous_set(cmndeditor->hbox, EINA_TRUE);
+	elm_grid_pack(cmndeditor->grid, cmndeditor->hbox, 1, 90, 99, 10);
+	evas_object_show(cmndeditor->hbox);
 
-	evas_object_resize(win, 400, 400);
-	evas_object_show(win);
+	cmndeditor->ok_button = elm_button_add(cmndeditor->win);
+	cmndeditor->icon = elm_icon_add(cmndeditor->win);
+	elm_icon_order_lookup_set(cmndeditor->icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(cmndeditor->icon, "apply-window");
+	elm_object_part_content_set(cmndeditor->ok_button, "icon", cmndeditor->icon);
+	elm_object_text_set(cmndeditor->ok_button, _("Ok"));
+	elm_box_pack_end(cmndeditor->hbox, cmndeditor->ok_button);
+	evas_object_show(cmndeditor->ok_button);
+	evas_object_size_hint_align_set(cmndeditor->ok_button, EVAS_HINT_FILL, 0);
 
-	return win;
+	cmndeditor->cancel_button = elm_button_add(cmndeditor->win);
+	cmndeditor->icon = elm_icon_add(cmndeditor->win);
+	elm_icon_order_lookup_set(cmndeditor->icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(cmndeditor->icon, "window-close");
+	elm_object_part_content_set(cmndeditor->cancel_button, "icon", cmndeditor->icon);
+	elm_object_text_set(cmndeditor->cancel_button, _("Close"));
+	elm_box_pack_end(cmndeditor->hbox, cmndeditor->cancel_button);
+	evas_object_show(cmndeditor->cancel_button);
+	evas_object_size_hint_align_set(cmndeditor->cancel_button, EVAS_HINT_FILL, 0);
+	evas_object_smart_callback_add(cmndeditor->cancel_button, "clicked", _button_cancel_clicked_cb , cmndeditor);
+
+	evas_object_resize(cmndeditor->win, 400, 400);
+	evas_object_show(cmndeditor->win);
+
+	return cmndeditor;
 }/*cmnd_editor_add*/

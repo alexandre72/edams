@@ -34,9 +34,13 @@
 
 #include "action.h"
 #include "cJSON.h"
+#include "cmnd_editor.h"
+#include "debug_editor.h"
 #include "edams.h"
+#include "exec_editor.h"
 #include "mail_editor.h"
 #include "myfileselector.h"
+#include "osd_editor.h"
 #include "path.h"
 #include "utils.h"
 #include "xpl.h"
@@ -54,48 +58,6 @@ static void _hoversel_action_condition_selected_cb(void *data __UNUSED__, Evas_O
 /*Others funcs*/
 static void _list_action_add(Evas_Object *list, Action *action);
 
-/*
- *
- */
-static void
-_button_edit_arg_apply_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
-{
-	Action_Type type = (Action_Type)data;
-	Evas_Object *cwin;
-    const char *s = NULL;
-
-    cwin = elm_object_top_widget_get(obj);
-
-    switch(type)
-	{
-	    case ACTION_TYPE_CMND:
-                s = cmnd_editor_values_get();
-                break;
-
-   		case ACTION_TYPE_EXEC:
-                s = exec_editor_values_get();
-                break;
-
-   		case ACTION_TYPE_DEBUG:
-                s = debug_editor_values_get();
-                break;
-
-   		case ACTION_TYPE_OSD:
-                s = osd_editor_values_get();
-                break;
-
-		case ACTION_TYPE_UNKNOWN:
-		case ACTION_TYPE_LAST:
-                return;
-    }
-
-    if(s)
-    {
-        evas_object_data_set(win, "action data", s);
-    }
-
-	evas_object_del(cwin);
-}/*_button_edit_arg_apply_clicked_cb*/
 
 /*
  *Callback called in hoversel 'action type' objects when clicked signal is emitted.
@@ -108,6 +70,81 @@ _hoversel_action_condition_selected_cb(void *data __UNUSED__, Evas_Object *obj, 
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
     evas_object_data_set(win, "action ifcondition", (void*)ifcondition);
 }/*_hoversel_action_condition_selected_cb*/
+
+
+/*
+ *
+ */
+static void
+_cmndeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	CmndEditor *cmndeditor = data;
+    const char *s;
+
+	Elm_Object_Item *selected_item = elm_list_selected_item_get(cmndeditor->list);
+
+	if(!selected_item) return;
+
+    Widget *widget = elm_object_item_data_get(selected_item);
+
+    s = action_cmnd_data_format(widget_xpl_device_get(widget),
+                            widget_xpl_type_get(widget),
+                            widget_xpl_current_get(widget),
+                            widget_xpl_data1_get(widget));
+
+
+    evas_object_data_set(win, "action data", s);
+	cmndeditor_close(cmndeditor);
+}/*_execeditor_button_action_clicked_cb*/
+
+
+
+/*
+ *
+ */
+static void
+_execeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	ExecEditor *execeditor = data;
+    const char *s;
+
+    s = action_exec_data_format(elm_object_text_get(execeditor->exec_entry),
+                                elm_check_state_get(execeditor->terminal_check) ? "true" : "false");
+
+    evas_object_data_set(win, "action data", s);
+	execeditor_close(execeditor);
+}/*_execeditor_button_action_clicked_cb*/
+
+/*
+ *
+ */
+static void
+_osdeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	OsdEditor *osdeditor = data;
+    const char *s;
+
+    s = action_osd_data_format(elm_object_text_get(osdeditor->command_entry),
+                                elm_object_text_get(osdeditor->text_entry),
+                                round(elm_slider_value_get(osdeditor->delay_slider)));
+
+    evas_object_data_set(win, "action data", s);
+	osdeditor_close(osdeditor);
+}/*_osdeditor_button_action_clicked_cb*/
+
+/*
+ *
+ */
+static void
+_debugeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	DebugEditor *debugeditor = data;
+    const char *s;
+
+    s = action_debug_data_format(elm_object_text_get(debugeditor->message_entry));
+    evas_object_data_set(win, "action data", s);
+	debugeditor_close(debugeditor);
+}/*_debugeditor_button_action_clicked_cb*/
 
 
 /*
@@ -135,9 +172,6 @@ _maileditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 static void
 _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
-	Evas_Object *cwin = NULL;
-	Evas_Object *hbox = NULL;
-	Evas_Object *button, *icon;
     Action_Type type = (Action_Type)elm_object_item_data_get(event_info);
 
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
@@ -152,50 +186,36 @@ _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void 
         //elm_object_text_set(maileditor->to_entry, to);
     	elm_object_text_set(maileditor->subject_entry, _("[EDAMS]About..."));
         //elm_object_text_set(maileditor->body_entry, body);
-        return;
+    }
+    else if(type == ACTION_TYPE_DEBUG)
+    {
+        DebugEditor *debugeditor;
+        debugeditor = debugeditor_add();
+        evas_object_smart_callback_add(debugeditor->ok_button, "clicked", _debugeditor_button_ok_clicked_cb, debugeditor);
+        //elm_object_text_set(debugeditor->message, );
+    }
+    else if(type == ACTION_TYPE_OSD)
+    {
+        OsdEditor *osdeditor;
+        osdeditor = osdeditor_add();
+        evas_object_smart_callback_add(osdeditor->ok_button, "clicked", _osdeditor_button_ok_clicked_cb, osdeditor);
+        //elm_object_text_set(osdeditor->message, );
+    }
+    else if(type == ACTION_TYPE_EXEC)
+    {
+        ExecEditor *execeditor;
+        execeditor = execeditor_add();
+        evas_object_smart_callback_add(execeditor->ok_button, "clicked", _execeditor_button_ok_clicked_cb, execeditor);
+        //elm_object_text_set(execeditor->message, );
+    }
+    else if(type == ACTION_TYPE_CMND)
+    {
+        CmndEditor *cmndeditor;
+        cmndeditor = cmndeditor_add();
+        evas_object_smart_callback_add(cmndeditor->ok_button, "clicked", _cmndeditor_button_ok_clicked_cb, cmndeditor);
+        //elm_object_text_set(cmndeditor->message, );
     }
 
-	switch(type)
-	{
-		case ACTION_TYPE_CMND:
-	            cwin = cmnd_editor_add();
-                hbox = cmnd_editor_hbox_get();
-                break;
-
-		case ACTION_TYPE_MAIL:
-
-
-		case ACTION_TYPE_EXEC:
-	            cwin = exec_editor_add();
-                hbox = exec_editor_hbox_get();
-                break;
-
-		case ACTION_TYPE_DEBUG:
-	            cwin = debug_editor_add();
-                hbox = debug_editor_hbox_get();
-			    break;
-
-		case ACTION_TYPE_OSD:
-	            cwin = osd_editor_add();
-                hbox = osd_editor_hbox_get();
-			    break;
-
-		case ACTION_TYPE_UNKNOWN:
-		case ACTION_TYPE_LAST:
-        		return;
-				break;
-	}
-
-    button = elm_button_add(cwin);
-	icon = elm_icon_add(cwin);
-    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(icon, "apply-window");
-	elm_object_part_content_set(button, "icon", icon);
-	elm_object_text_set(button, _("Ok"));
-	elm_box_pack_end(hbox, button);
-	evas_object_show(button);
-	evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
-	evas_object_smart_callback_add(button, "clicked", _button_edit_arg_apply_clicked_cb, (void *)type);
 }/*_hoversel_action_type_selected_cb*/
 
 
