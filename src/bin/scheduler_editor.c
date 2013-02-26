@@ -22,6 +22,7 @@
 
 #include <Elementary.h>
 
+#include "cJSON.h"
 #include "crontab.h"
 #include "cmnd_editor.h"
 #include "debug_editor.h"
@@ -143,6 +144,19 @@ static void
 _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
     Action_Type type = (Action_Type)elm_object_item_data_get(event_info);
+    cJSON *root = NULL;
+
+	Evas_Object *list = elm_object_name_find(win, "crons list", -1);
+	Elm_Object_Item *selected_item = elm_list_selected_item_get(list);
+
+
+
+
+	if(selected_item)
+	{
+    Cron_Entry *cron_elem = elm_object_item_data_get(selected_item);
+        root = cJSON_Parse(cron_elem->action_data);
+    }
 
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
     evas_object_data_set(win, "action type", (void*)type);
@@ -152,10 +166,34 @@ _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
         MailEditor *maileditor;
         maileditor = maileditor_add();
         evas_object_smart_callback_add(maileditor->ok_button, "clicked", _maileditor_button_ok_clicked_cb, maileditor);
-	    elm_object_text_set(maileditor->from_entry, edams_settings_user_mail_get());
-        //elm_object_text_set(maileditor->to_entry, to);
-    	elm_object_text_set(maileditor->subject_entry, _("[EDAMS]About..."));
-        //elm_object_text_set(maileditor->body_entry, body);
+
+        if(!root)
+        {
+    	    elm_object_text_set(maileditor->from_entry, edams_settings_user_mail_get());
+        	elm_object_text_set(maileditor->subject_entry, _("[EDAMS]About..."));
+        }
+        else
+        {
+            cJSON *jfrom = cJSON_GetObjectItem(root, "FROM");
+            cJSON *jto = cJSON_GetObjectItem(root, "TO");
+            cJSON *jsubject = cJSON_GetObjectItem(root, "SUBJECT");
+            cJSON *jbody = cJSON_GetObjectItem(root, "BODY");
+
+            char *from = cJSON_PrintUnformatted(jfrom);
+            char *to = cJSON_PrintUnformatted(jto);
+            char *subject = cJSON_PrintUnformatted(jsubject);
+            char *body = cJSON_PrintUnformatted(jbody);
+
+            strdelstr(from, "\"");
+            strdelstr(to, "\"");
+            strdelstr(subject, "\"");
+            strdelstr(body, "\"");
+
+    	    elm_object_text_set(maileditor->from_entry, from);
+            elm_object_text_set(maileditor->to_entry, to);
+        	elm_object_text_set(maileditor->subject_entry, subject);
+            elm_object_text_set(maileditor->body_entry, body);
+        }
         return;
     }
     else if(type == ACTION_TYPE_DEBUG)
