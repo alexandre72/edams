@@ -230,7 +230,7 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, E
     printf("cosm server returned code: '%d'\n", event_info->status);
         char *s;
         asprintf(&s, _("A datastream feed hasn't been updated, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
-        statusbar_text_set(s, "elm/icon/cosm/default");
+        statusbar_text_set(s, "cosm-logo");
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
@@ -260,7 +260,7 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_
         debug(stderr, _("Cosm server returned code: '%d'"), event_info->status);
         char *s;
         asprintf(&s, _("A location feed hasn't been added, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
-        statusbar_text_set(s, "elm/icon/cosm/default");
+        statusbar_text_set(s, "cosm-logo");
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
@@ -280,7 +280,7 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_
 				    location_save(location);
 				    char *s;
 				    asprintf(&s, _("Location has been added to cosm with feedid '%d'"), feedid);
-				    statusbar_text_set(s, "elm/icon/cosm/default");
+                    statusbar_text_set(s, "cosm-logo");
 				    FREE(s);
 				    update_naviframe_content(location);
                     ecore_con_url_free(event_info->url_con);
@@ -307,7 +307,7 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Ur
         debug(stderr, _("Cosm server returned code: '%d'"), event_info->status);
         char *s;
         asprintf(&s, _("A location feed hasn't been deleted, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
-        statusbar_text_set(s, "elm/icon/cosm/default");
+        statusbar_text_set(s, "cosm-logo");
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
@@ -321,7 +321,7 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Ur
 	    	{
 	    		char *s;
 				asprintf(&s, _("Location with feedid '%d' has been removed from cosm"), (int)data);
-				statusbar_text_set(s, "elm/icon/cosm/default");
+                statusbar_text_set(s, "cosm-logo");
 				FREE(s);
                 ecore_con_url_free(event_info->url_con);
 				break;

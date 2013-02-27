@@ -214,7 +214,7 @@ _button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 {
 	if (!app->location)
 	{
-		statusbar_text_set(_("Couldn't remove widget:no location selected!"), "dialog-error");
+		statusbar_text_set(_("Can't remove widget:no location selected!"), "dialog-error");
 		return;
 	}
 
@@ -229,11 +229,11 @@ _button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 	location_save(app->location);
 
 	char *s;
-	asprintf(&s,  _("Widget '%s' have been removed from location '%s'"),
+	asprintf(&s,  _("Widget '%s' have been removed from '%s' location's"),
 																widget_name_get(widget),
 																location_name_get(app->location));
 
-	statusbar_text_set(s, "elm/icon/device/default");
+	statusbar_text_set(s, "widget");
 	FREE(s);
 }/*_button_remove_widget_clicked_cb*/
 
@@ -286,13 +286,13 @@ _item_provider(void *images __UNUSED__, Evas_Object *en, const char *item)
   {
    		o = elm_icon_add(en);
    		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
-		elm_image_file_set(o, edams_edje_theme_file_get(), "elm/icon/cosm/default");
+   		elm_icon_standard_set(o, "cosm-logo");
   }
    else if (!strcmp(item, "xpl-logo"))
    {
    		o = elm_icon_add(en);
    		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
-		elm_image_file_set(o, edams_edje_theme_file_get(), "elm/icon/xpl/default");
+   		elm_icon_standard_set(o, "xpl-logo");
    }
 
    return o;
@@ -357,10 +357,10 @@ _location_naviframe_content_set(Location * location)
 
 	if(location_cosm_feedid_get(location) != 0)
 		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=cosm-logo></item>");
-/*
-	if((location_latitude_get(location) != -1) && (location_longitude_get(location) != -1))
-		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=cosm-logo></item>");
-*/
+
+//	if((location_latitude_get(location) != -1) && (location_longitude_get(location) != -1))
+//		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=geolocation-logo></item>");
+
 	frame = elm_frame_add(app->win);
 	elm_object_text_set(frame, _("Widgets"));
 	elm_grid_pack(grid, frame, 1, 21, 99, 59);
@@ -426,7 +426,7 @@ _location_naviframe_content_set(Location * location)
     elm_object_text_set(bt, _("Add"));
 	icon = elm_icon_add(app->win);
 	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(icon, "device-add");
+	elm_icon_standard_set(icon, "list-add");
 	elm_object_part_content_set(bt, "icon", icon);
 	elm_box_pack_end(bx, bt);
 	evas_object_smart_callback_add(bt, "clicked", _button_add_widget_clicked_cb, app);
@@ -436,7 +436,7 @@ _location_naviframe_content_set(Location * location)
 	elm_object_text_set(bt, _("Remove"));
     icon = elm_icon_add(app->win);
     elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(icon, "device-remove");
+    elm_icon_standard_set(icon, "list-remove");
     elm_object_part_content_set(bt, "icon", icon);
 	elm_box_pack_end(bx, bt);
     evas_object_smart_callback_add(bt, "clicked", _button_remove_widget_clicked_cb, list);

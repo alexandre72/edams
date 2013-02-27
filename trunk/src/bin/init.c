@@ -37,11 +37,11 @@ static int efl_init(App_Info * app);
 static int
 efl_init(App_Info * app)
 {
-	debug(stdout, _("Initialize Enlightenment Foundation Libraries..."));
+	debug(stdout, _("Initialize EFL..."));
 
 	if (!eina_init())
 	{
-		debug(stderr, _("Couldn't init Eina"));
+		debug(stderr, _("Can't init Eina"));
 		return EXIT_FAILURE;
 	}
 
@@ -50,7 +50,7 @@ efl_init(App_Info * app)
 
 	if (!ecore_con_init() || !ecore_con_url_init())
 	{
-		debug(stderr, _("Couldn't init Ecore_Con or Ecore_Con_Url"));
+		debug(stderr, _("Can't init Ecore_Con or Ecore_Con_Url"));
 		return EXIT_FAILURE;
 	}
 
@@ -65,7 +65,7 @@ efl_init(App_Info * app)
 
 	if (!elm_init(app->argc, app->argv))
 	{
-		debug(stderr, _("Couldn't init Elementary"));
+		debug(stderr, _("Can't init Elementary"));
 		return EXIT_FAILURE;
 	}
 	// Setting elementary options.
@@ -95,7 +95,6 @@ paths_init(App_Info * app __UNUSED__)
 	strcpy(s, edams_data_path_get());
 	if (ecore_file_is_dir(s) == EINA_FALSE)
 	{
-			debug(stdout, _("It appears that it's the first time you run EDAMS. To be used, EDAMS needs some database files containing items. I'll copy some default items files, but you can easily remove them and create new ones(highly recommended)!"));
 		ecore_file_mkpath(edams_data_path_get());
 	}
 

@@ -20,16 +20,13 @@
 
 images
 {
-    image: "icons/device-add.png" COMP;
-    image: "icons/device-remove.png" COMP;
-    image: "icons/device.png" COMP;
     image: "icons/global-view.png" COMP;
-    image: "images/header-bg.png" COMP;
-    image: "images/header.png" COMP;
 	image: "icons/xpl-logo.png" COMP;
 	image: "icons/cosm-logo.png" COMP;
-	image: "icons/debug.png" COMP;
+	image: "icons/geolocated-logo.png" COMP;
 	image: "icons/gnuplot-logo.png" COMP;
+	image: "icons/debug-action.png" COMP;
+    image: "icons/osd-action.png" COMP;
 	image: "cursors/left_ptr.png" COMP;
 	image: "cursors/dotbox.png" COMP;
 	image: "cursors/grab.png" COMP;
@@ -75,257 +72,56 @@ collections
 #include "switch2.edc"
 #include "thermometer.edc"
 
+#define ICON(_name, _file)	\
+    group \
+    {  \
+	    name: _name; \
+        min: 32 32;  \
+        parts  \
+        {  \
+            part  \
+            {  \
+			    type: IMAGE;  \
+                description  \
+                {  \
+                  	aspect: 1 1;  \
+                 	aspect_preference: BOTH; \
+            	    state: "default" 0;  \
+		   		    image.normal: _file;  \
+                } \
+            }  \
+        } \
+    }  \
 
-    group
-    {
-	    name: "elm/icon/xpl/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-			    type: IMAGE;
-                description
-                {
-                  	aspect: 1 1;
-                 	aspect_preference: BOTH;
-            	    state: "default" 0;
-		   		    image.normal: "icons/xpl-logo.png";
-                }
-            }
-        }
-}   /*group elm/icon/xpl/default*/
-
-    group
-    {
-	    name: "elm/icon/cosm/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-		    	type: IMAGE;
-                description
-                {
-                	aspect: 1 1;
-                	aspect_preference: BOTH;
-            	    state: "default" 0;
-		   		    image.normal: "icons/cosm-logo.png";
-                }
-            }
-        }
-    }/*group elm/icon/cosm/default*/
-
-    group
-    {
-	    name: "elm/icon/gnuplot/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-		    	type: IMAGE;
-                description
-                {
-                	aspect: 1 1;
-                	aspect_preference: BOTH;
-            	    state: "default" 0;
-		   		    image.normal: "icons/gnuplot-logo.png";
-                }
-            }
-        }
-    }/*group elm/icon/gnuplot/default*/
+#define CURSOR(_name, _file)	\
+    group \
+    { \
+        name: _name; \
+        parts \
+        { \
+            part \
+            { \
+                type: IMAGE; \
+                mouse_events: 0; \
+                description \
+                { \
+                    state: "default" 0; \
+                    image.normal: _file; \
+                } \
+         } \
+      } \
+    } \
 
 
-    group
-    {
-	    name: "elm/icon/debug/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-		    	type: IMAGE;
-                description
-                {
-                	aspect: 1 1;
-                	aspect_preference: BOTH;
-            	    state: "default" 0;
-		   		    image.normal: "icons/debug.png";
-                }
-            }
-        }
-    }/*group elm/icon/cosm/default*/
+ICON("elm/icon/xpl-logo/default", "icons/xpl-logo.png")
+ICON("elm/icon/cosm-logo/default", "icons/cosm-logo.png")
+ICON("elm/icon/gnuplot-logo/default", "icons/gnuplot-logo.png")
+ICON("elm/icon/debug-action/default", "icons/debug-action.png")
+ICON("elm/icon/osd-action/default", "icons/osd-action.png")
+ICON("elm/icon/global-view/default", "icons/global-view.png")
 
-
-    group
-    {
-        name: "bg/header";
-        parts
-        {
-            part
-            {
-                type: IMAGE;
-                description
-                {
-                    state: "default" 0;
-                    image.normal: "images/header.png";
-                }
-            }
-        }
-    }/*group bg/header*/
-
-    group
-    {
-        name: "elm/icon/device-remove/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-			    type: IMAGE;
-                description
-                {
-                	aspect: 1 1;
-                	aspect_preference: BOTH;
-            	    state: "default" 0;
-		   		    image.normal: "icons/device-remove.png";
-                }
-            }
-        }
-    }/*group elm/icon/device-remove/default*/
-
-    group
-    {
-        name: "elm/icon/device-add/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-			    type: IMAGE;
-                description
-                {
-                 	aspect: 1 1;
-                	aspect_preference: BOTH;
-            	    state: "default" 0;
-		   	    	image.normal: "icons/device-add.png";
-                }
-            }
-        }
-    }/*group elm/icon/device-add/default*/
-
-    group
-    {
-        name: "elm/icon/device/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-			    type: IMAGE;
-                description
-                {
-               	    aspect: 1 1;
-               	    aspect_preference: BOTH;
-            	    state: "default" 0;
-		   		    image.normal: "icons/device-add.png";
-                }
-            }
-        }
-    }/*group elm/icon/device/default*/
-
-    group
-    {
-        name: "elm/icon/global-view/default";
-        min: 32 32;
-        parts
-        {
-            part
-            {
-			    type: IMAGE;
-                description
-                {
-                	aspect: 1 1;
-               	    aspect_preference: BOTH;
-            	    state: "default" 0;
-		   		    image.normal: "icons/global-view.png";
-                }
-            }
-        }
-    }/*group elm/icon/global-view/default*/
-
-    group
-    {
-        name: "cursors/left_ptr";
-        parts
-        {
-            part
-            {
-                type: IMAGE;
-                mouse_events: 0;
-                description
-                {
-                    state: "default" 0;
-                    image.normal: "cursors/left_ptr.png";
-                }
-         }
-      }
-    }/*group cursors/left_ptr*/
-
-    group
-    {
-        name: "cursors/grab";
-        parts
-        {
-            part
-            {
-                type: IMAGE;
-                mouse_events: 0;
-                description
-                {
-                    state: "default" 0;
-                    image.normal: "cursors/grab.png";
-                }
-            }
-        }
-    }/*group cursors/grab*/
-
-
-    group
-    {
-        name: "cursors/grabbing";
-        parts
-        {
-            part
-            {
-                type: IMAGE;
-                mouse_events: 0;
-                description
-                {
-                    state: "default" 0;
-                    image.normal: "cursors/grabbing.png";
-                }
-            }
-        }
-    }/*group cursors/grabbing*/
-
-    group
-    {
-        name: "cursors/dotbox";
-        parts
-        {
-            part
-            {
-                type: IMAGE;
-                mouse_events: 0;
-                description
-                {
-                    state: "default" 0;
-                    image.normal: "cursors/dotbox.png";
-                }
-            }
-        }
-    }/*group cursors/dotbox*/
-
+CURSOR("cursors/left_ptr",  "cursors/left_ptr.png")
+CURSOR("cursors/grab",  "cursors/grab.png")
+CURSOR("cursors/grabbing",  "cursors/grabbing.png")
+CURSOR("cursors/dotbox",  "cursors/dotbox.png")
 }/*collections*/

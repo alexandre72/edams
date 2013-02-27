@@ -568,7 +568,7 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 
 		if (!priv->children[x])
 		{
-			debug(stderr, _("Can't create Edje_Object!"));
+			debug(stderr, _("Can't create Edje_Object object"));
 			continue;
 		}
 
@@ -722,7 +722,7 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
     				if (err != EVAS_LOAD_ERROR_NONE)
 					{
-						debug(stdout, _("Can't load Edje image!"));
+						debug(stdout, _("Can't load Evas_Object image"));
 						return;
 					}
 
@@ -823,7 +823,7 @@ _virtual_widgets_add(Location *location)
 
 		if (!virtual)
 		{
-			debug(stderr, _("Can't create Edje_Object!"));
+			debug(stderr, _("Can't create Edje_Object object"));
 			continue;
 		}
 
@@ -891,7 +891,7 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 	ee = ecore_evas_new(NULL, 0, 0, geometry.w, geometry.h, NULL);
 	if (!ee)
 	{
-		debug(stderr, _("Can't construct Ecore_Evas"));
+		debug(stderr, _("Can't construct Ecore_Evas object"));
 		return;
 	}
 
