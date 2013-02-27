@@ -1,3 +1,8 @@
+#define ICON_REL() \
+	rel1 {relative, 0.0 0.0; offset, 2 2;} \
+	rel2 {relative, 0.0 0.0; offset, 50 50;}
+
+
 /*
  * mail.edc
  * This file is part of EDAMS
@@ -42,30 +47,31 @@ group
             }
          }
       }
-}/*widget/virtual/mail/icon*/
+}/*widget/virtual/mailbox/icon*/
+
 
 
 
 group
 {
-	name: "widget/virtual/mail";
-	min: 80 100;
-	max: 80 100;
+	name: "widget/virtual/mailbox";
+	min: 50 80;
+	max: 50 80;
 
-	data
+   	data
 	{
 			item: "description" "Mail checker(maildir/mbox).";
 			item: "tags" "mail,checking,checker";
 	}
 
+
     images
     {
-       image: "mail_icon.png" COMP;
-       image: "newmail.png" COMP;
-       image: "checking.png" COMP;
+    	image, "mailbox_empty.png" RAW;
+    	image, "mailbox_new.png" RAW;
     }
 
-    parts
+	parts
 	{
 	   part
         {
@@ -80,38 +86,25 @@ group
 
         part
         {
-            name: "icon";
-            type: IMAGE;
-            mouse_events: 1;
+	        name, "icon";
+	        type, IMAGE;
+	        repeat_events, true;
+	        mouse_events, true;
 
-            description
-            {
-                state:    "default" 0.0;
-		        aspect: 1.0 1.0;
-		        aspect_preference: BOTH;
-		        visible: 1;
-		        rel1.relative: 0.0 0.0;
-                rel1.offset: 0 0;
-		        rel2.relative: 1.0 1.0;
-                rel2.offset: -1 -1;
-                image.normal: "mail_icon.png";
-                color: 255 255 255 255;
-		    }
+	        description
+	        {
+		        state: "default" 0.0;
+		        ICON_REL();
+                image.normal: "mailbox_empty.png";
+	        }
 
-		    description
-		    {
-                state: "new" 0.0;
-		        inherit: "default" 0.0;
-		        image.normal: "newmail.png";
-            }
-
-            description
-		    {
-		        state: "checking" 0.0;
-		        inherit: "default" 0.0;
-                image.normal: "checking.png";
-            }
-        }/*icon*/
+	        description
+	        {
+		        state: "new" 0.0;
+		        ICON_REL();
+		        image.normal: "mailbox_new.png";
+	        }
+        }
 
         part
         {
@@ -121,20 +114,20 @@ group
             effect: SOFT_SHADOW;
 	        description
 	        {
-		        color: 255 0 0 220;
+		        color: 255 0 0 255;
 		        rel1.relative: 0.0 0.0;
-			    rel1.offset: 5 20;
+			    rel1.offset: 0 17;
 			    rel1.to: "icon";
 
                 text
 		        {
                     font: "Sans,Edje-Vera";
-                  	size: 10;
+                  	size: 13;
                   	min: 1 1;
-			        align, 0.5 0.1;
+			        align, 0.5 0.0;
 		        }
 	        }
-        }/*mail.count.unseen.text*/
+        }
 
         part
         {
@@ -144,20 +137,20 @@ group
             effect: SOFT_SHADOW;
 	        description
 	        {
-    		    color: 0 100 255 220;
-	    	    rel1.relative: 0.0 0.0;
-	    	    rel1.offset: 5 30;
+    		    color: 0 0 255 255;
+	    	    rel1.relative: 0.5 0.0;
+	    	    rel1.offset: 1 30;
 	    	    rel1.to: "icon";
 
     		    text
     		    {
                     font: "Sans,Edje-Vera";
-                  	size: 10;
+                  	size: 11;
                   	min: 1 1;
-    		    	align: 0.5 0.2;
+    		    	align: 0.0 0.4;
     		    }
     	    }
-        }/*mail.count.total.text*/
+        }
 
        part
         {
@@ -197,8 +190,9 @@ group
             }
         }/*title.text*/
     }/*parts*/
-    programs
-    {
+
+	programs
+	{
         program
         {
 	        signal: "mail,new";
@@ -207,39 +201,22 @@ group
 	        action: STATE_SET "new" 0.0;
 	        target: "icon";
         }
+
         program
         {
 	        signal: "mail,empty";
 	        source: "whole";
+		    transition: SINUSOIDAL 0.5;
 	        action: STATE_SET "default" 0.0;
 	        target: "icon";
-        }
-        program
-        {
-            name: "mail,icon,default";
-	        signal: "mail,default";
-	        source: "whole";
-			transition: LINEAR 5.0;
-	        action: STATE_SET "default" 0.0;
-	        target: "icon";
-        }
-        program
-        {
-            name: "mail,icon,checking";
-	        signal: "mail,checking";
-	        source: "whole";
-	        action: STATE_SET "checking" 0.0;
-	        target: "icon";
-	        after: "mail,icon,default";
         }
 
         program
         {
+	        name: "mailbox_clicked";
 	        signal: "mouse,clicked,1";
 	        source: "icon";
 	        action: SIGNAL_EMIT "mail,force_check" "icon";
-	        after: "mail,icon,checking";
         }
-
-    }/*programs*/
-}/*widget/virtual/mail*/
+	}/*programs*/
+}/*widget/virtual/mail2*/

@@ -19,14 +19,15 @@
  */
 
 
-
-#include <Ecore_Evas.h>
 #include <Ecore.h>
+#include <Ecore_Evas.h>
+#include <Ecore_File.h>
 #include <Edje.h>
 
+
+#include "global_view.h"
 #include "gnuplot.h"
 #include "location.h"
-#include "global_view.h"
 #include "path.h"
 #include "utils.h"
 #include "widget.h"
@@ -1193,9 +1194,9 @@ global_view_new_mail_emit(int num_new, int num_total)
         Eina_List *widgets = location_widgets_list_get(location);
         EINA_LIST_FOREACH(widgets, l2, widget)
         {
-        if((widget_class_get(widget) != WIDGET_CLASS_VIRTUAL)) continue;
+            if((widget_class_get(widget) != WIDGET_CLASS_VIRTUAL)) continue;
 
-            if(strcmp(widget_group_get(widget), "widget/virtual/mail") == 0)
+            if(strstr(widget_group_get(widget), "widget/virtual/mail"))
             {
                 char *s;
                 asprintf(&s, "%d_%s_edje",
@@ -1205,20 +1206,25 @@ global_view_new_mail_emit(int num_new, int num_total)
                 Evas_Object *mail_obj = evas_object_name_find(evas, s);
                 FREE(s);
 
+                edje_object_part_text_set(mail_obj, "title.text", ecore_file_file_get(edams_settings_mbox_path_get()));
+
                 if(!mail_obj) continue;
 
                 if (num_new > 0)
                 {
-                    asprintf(&s, "%d/%d", num_new, num_total);
-                    edje_object_signal_emit (mail_obj, "label_active", "");
-                    edje_object_part_text_set (mail_obj, "new_label", s);
-                    edje_object_signal_emit(mail_obj, "new_mail", "");
+                    asprintf(&s, "%d", num_total);
+                    edje_object_part_text_set(mail_obj, "mail.count.total.text", s);
                     FREE(s);
+                    asprintf(&s, "%d", num_new);
+                    edje_object_part_text_set(mail_obj, "mail.count.unseen.text", s);
+                    FREE(s);
+                    edje_object_signal_emit(mail_obj, "mail,new", "whole");
                 }
                 else
                 {
-                    edje_object_part_text_set(mail_obj, "new_label", "");
-                    edje_object_signal_emit(mail_obj, "no_mail", "");
+                    edje_object_part_text_set(mail_obj, "mail.count.unseen.text", "");
+                    edje_object_part_text_set(mail_obj, "mail.count.total.text", "");
+                    edje_object_signal_emit(mail_obj, "mail,empty", "whole");
                 }
             }
         }
