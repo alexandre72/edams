@@ -381,13 +381,15 @@ _list_crons_add(Evas_Object *list, Cron_Entry *cron_elem)
     evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
 
     if(type == ACTION_TYPE_CMND)
-       	elm_image_file_set(icon, edams_edje_theme_file_get(), "elm/icon/xpl/default");
+        elm_icon_standard_set(icon, "xpl-logo");
     else if(type == ACTION_TYPE_MAIL)
         elm_icon_standard_set(icon, "mail-message-new");
     else if(type == ACTION_TYPE_EXEC)
         elm_icon_standard_set(icon, "system-run");
     else if(type == ACTION_TYPE_DEBUG)
-        elm_icon_standard_set(icon, "debug");
+        elm_icon_standard_set(icon, "debug-action");
+    else if(type == ACTION_TYPE_DEBUG)
+        elm_icon_standard_set(icon, "osd-action");
     else
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "");
 
@@ -562,7 +564,21 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
 	{
 		if(x == ACTION_TYPE_UNKNOWN) continue;
 		if((x == ACTION_TYPE_DEBUG) && (!edams_settings_debug_get())) continue;
-		elm_hoversel_item_add(hoversel, action_type_to_desc(x), ELM_ICON_NONE, ELM_ICON_NONE, NULL, (void*)(unsigned int)x);
+
+		Elm_Object_Item *it = elm_hoversel_item_add(hoversel, action_type_to_desc(x), ELM_ICON_NONE, ELM_ICON_NONE, NULL, (void*)(unsigned int)x);
+
+        if(x == ACTION_TYPE_CMND)
+            elm_hoversel_item_icon_set(it, "xpl-logo", NULL, ELM_ICON_STANDARD);
+        else if(x == ACTION_TYPE_MAIL)
+        elm_hoversel_item_icon_set(it, "mail-message-new", NULL, ELM_ICON_STANDARD);
+        else if(x == ACTION_TYPE_EXEC)
+    		elm_hoversel_item_icon_set(it, "system-run", NULL, ELM_ICON_STANDARD);
+        else if(x == ACTION_TYPE_DEBUG)
+    		elm_hoversel_item_icon_set(it, "debug-action", NULL, ELM_ICON_STANDARD);
+        else if(x == ACTION_TYPE_OSD)
+    		elm_hoversel_item_icon_set(it, "osd-action", NULL, ELM_ICON_STANDARD);
+        else
+    		elm_hoversel_item_icon_set(it, NULL, NULL, ELM_ICON_NONE);
 	}
 	evas_object_show(hoversel);
 	evas_object_smart_callback_add(hoversel, "selected", _hoversel_selected_cb, NULL);

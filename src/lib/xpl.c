@@ -252,7 +252,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
     FREE(str);
 
     asprintf(&str, _("New xPL sensor.basic '%s 'of type '%s' has been discovered"), device, type);
-    statusbar_text_set(str, "elm/icon/xpl/default");
+    statusbar_text_set(str, "xpl-logo");
     FREE(str);
 
     FREE(device);
@@ -708,7 +708,7 @@ xpl_type_to_unit_symbol(const char *xpl_type)
  *
  */
 Eina_Bool
-xpl_osd_basic_cmnd_send(const char *command, const char *text, const char *delay)
+xpl_osd_basic_cmnd_send(char *command, char *text, char *delay)
 {
     xPL_MessagePtr xpl_message_cmnd = NULL;
 
@@ -724,13 +724,11 @@ xpl_osd_basic_cmnd_send(const char *command, const char *text, const char *delay
     /*Install the value(s) and send the message*/
   	xPL_setMessageNamedValue(xpl_message_cmnd, "command", command);
 
-
   	if(text)
       	xPL_setMessageNamedValue(xpl_message_cmnd, "text", text);
 
   	if(delay)
         xPL_setMessageNamedValue(xpl_message_cmnd, "delay", delay);
-
 
 	/*Broadcast the message*/
 	if (!xPL_sendMessage(xpl_message_cmnd))
