@@ -58,6 +58,7 @@ collections
 {
 #include "about.edc"
 #include "clock.edc"
+#include "clockbling.edc"
 #include "counter.edc"
 #include "home.edc"
 #include "input.edc"

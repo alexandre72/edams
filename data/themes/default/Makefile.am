@@ -10,7 +10,7 @@ theme_DATA = $(EDJS)
 
 all: $(EDJS)
 
-edams.edj: edams.edc 
+edams.edj: edams.edc
 SUFFIXES = .edc .edj
 .edc.edj:
-	$(edje_cc) -v -id $(top_srcdir)/data/themes/default/images -fd $(top_srcdir)/data/themes/default/fonts $< $(top_builddir)/data/themes/default/$(@F)
+	$(edje_cc) -v -id $(top_srcdir)/data/themes/default/images -id $(top_srcdir)/data/themes/default/images/clockbling -fd $(top_srcdir)/data/themes/default/fonts $< $(top_builddir)/data/themes/default/$(@F)
