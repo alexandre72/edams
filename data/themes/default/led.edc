@@ -118,7 +118,7 @@ group
             name: "title.text";
             type: TEXT;
             effect: SOFT_SHADOW;
-            mouse_events: 0;
+            mouse_events: 1;
             clip_to: "whole";
             description
             {
@@ -263,5 +263,11 @@ group
          action: STATE_SET "default" 0.0;
          target: "base";
       }
+        program
+        {
+	        signal: "mouse,clicked,1";
+	        source: "title.text";
+	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
+        }
    }
 }/*group widget/sensor.basic/led*/

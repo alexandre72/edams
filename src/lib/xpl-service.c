@@ -73,7 +73,6 @@ Eina_Bool xPL_sendHeartbeat(xPL_ServicePtr theService) {
 
     /* Install a new heartbeat message */
     theService->heartbeatMessage = theHeartbeat;
-    debug(stdout,"SERVICE:: Just allocated a new Heartbeat message for the service");
   } else
     theHeartbeat = theService->heartbeatMessage;
 
@@ -82,7 +81,7 @@ Eina_Bool xPL_sendHeartbeat(xPL_ServicePtr theService) {
 
   /* Update last heartbeat time */
   theService->lastHeartbeatAt = time(NULL);
-  debug(stdout,"Sent Heatbeat message");
+
   return EINA_TRUE;
 }
 
@@ -102,7 +101,6 @@ Eina_Bool xPL_sendGoodbyeHeartbeat(xPL_ServicePtr theService) {
   /* Release message */
   xPL_releaseMessage(theHeartbeat);
 
-  debug(stdout,"Sent Goodbye Heatbeat");
   return EINA_TRUE;
 }
 
@@ -490,7 +488,7 @@ handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage)
     if (!strcmp(theService->serviceVendor, theMessage->sourceVendor)
 	&& !strcmp(theService->serviceDeviceID, theMessage->sourceDeviceID)
 	&& !strcmp(theService->serviceInstanceID, theMessage->sourceInstanceID)) {
-      debug(stdout,"Skipping message from self");
+      debug(stdout, _("Skipping xPL message from self"));
       return;
     }
   }
@@ -506,7 +504,7 @@ handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage)
 
       /* Compute a response delay (.5 to 2.5 seconds) */
       responseDelay = (int) (((double) random() / (double) RAND_MAX) * 2000.0) + 500;
-      debug(stdout,"Sending heartbeat in response to discovery request after a %d millisecond delay", responseDelay);
+      debug(stdout, _("Sending heartbeat in response to discovery request after a %d millisecond delay"), responseDelay);
       usleep(responseDelay);
       xPL_sendHeartbeat(theService);
     }

@@ -245,7 +245,6 @@ xPL_StrDup(String theOrigString)
   /* Allocate a string and copy */
   theString = xPL_StrAlloc(strlen(theOrigString));
   strcpy(theString, theOrigString);
-  //debug(stdout,"STORE:: Duped string [%s] (%d bytes)", theOrigString, strlen(theOrigString));
   return theString;
 }
 

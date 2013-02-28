@@ -525,7 +525,7 @@ xPL_formatMessage(xPL_MessagePtr theMessage)
     WRITE_TEXT("xpl-trig");
     break;
   default:
-    debug(stderr, _("Coulnd't format xPL message -- invalid/unknown message type '%d'"), theMessage->messageType);
+    debug(stderr, _("Can't format xPL message -- invalid/unknown message type '%d'"), theMessage->messageType);
     return NULL;
   }
 
@@ -767,7 +767,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
   if (!blockStarted) return 0;
 
   /* If we got here, we ran out of characters - this is an error too */
-  debug(stdout,"Ran out of characters parsing block");
+  debug(stderr, _("Ran out of characters parsing block"));
   return -theLength;
 }
 
@@ -1018,7 +1018,7 @@ xPL_receiveMessage(int theFD __UNUSED__, int thePollInfo __UNUSED__, int userVal
     /* See if we need to check the message for hub detection */
     if (!hubConfirmed && isHubEcho(theMessage))
     {
-      debug(stdout,"xPL Hub detected and confirmed existing");
+      debug(stdout, _("xPL Hub detected and confirmed existing"));
       hubConfirmed = EINA_TRUE;
     }
 

@@ -483,7 +483,11 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 	if(strstr(emission, "updated")) return;
 	if(strstr(emission, "drag,stop")) return;
 
-    if((widget_class_get(widget) == WIDGET_CLASS_VIRTUAL))
+    if((widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC))
+    {
+	    if(strstr(emission, "sensor.basic,cmnd"))  xpl_sensor_basic_cmnd_send(widget);
+    }
+    else if((widget_class_get(widget) == WIDGET_CLASS_VIRTUAL))
     {
 	    if(strstr(emission, "lock,on")) global_view_edition_lock_set(EINA_TRUE);
     	if(strstr(emission, "lock,off")) global_view_edition_lock_set(EINA_FALSE);
@@ -590,9 +594,13 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 				edje_object_part_text_set(priv->children[x], "title.text", s);
                 FREE(s);
 			}
-
-	    	edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
+    	   edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
         }
+		else if((widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC))
+        {
+    	   edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
+        }
+
 
 		evas_object_propagate_events_set(priv->children[x], EINA_FALSE);
 		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
