@@ -135,30 +135,30 @@ set_debug_mode(Eina_Bool debug)
 
 /*Write a debug message out (if we are in debugging mode)*/
 void
-debug(FILE *stream, const char *theFormat, ...)
+debug(FILE *stream, const char *format, ...)
 {
 	if(!_debug)
 		return;
 
 	char logMessageBuffer[LOG_BUFF_MAX] = "0";
 
-  	va_list theParms;
+  	va_list params;
   	/* Get access to the variable parms */
-  	va_start(theParms, theFormat);
+  	va_start(params, format);
 
   	/* Convert formatted message */
-  	vsprintf(&logMessageBuffer[strlen(logMessageBuffer)], theFormat, theParms);
+  	vsprintf(&logMessageBuffer[strlen(logMessageBuffer)], format, params);
 
   	/* Write to the console or system log file */
   	if(stream == stdout)
-		fprintf(stdout, "\033[32mDBG:\033[0m");
+		fprintf(stdout, "\033[32m[DBG]\033[0m");
 	else if(stream == stderr)
-		fprintf(stderr, "\033[31mERROR:\033[0m");
+		fprintf(stderr, "\033[31m[ERROR]\033[0m");
 
 	fprintf(stream, "%s\n", logMessageBuffer);
 
   	/* Release parms */
-  	va_end(theParms);
+  	va_end(params);
 }
 
 

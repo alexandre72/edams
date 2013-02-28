@@ -337,51 +337,57 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
 
 /* Print info on incoming messages */
 void
-printXPLMessage(xPL_MessagePtr theMessage, xPL_ObjectPtr userValue __UNUSED__)
+xpl_message_print(xPL_MessagePtr message, xPL_ObjectPtr data __UNUSED__)
 {
+    fprintf(stdout, "\033[34m[XPL]:\033[0m");
 
-  fprintf(stdout, "[xPL_MSG] TYPE=");
-  switch(xPL_getMessageType(theMessage)) {
-  case xPL_MESSAGE_COMMAND:
-    fprintf(stdout, "xpl-cmnd");
-    break;
-  case xPL_MESSAGE_STATUS:
-    fprintf(stdout, "xpl-stat");
-    break;
-  case xPL_MESSAGE_TRIGGER:
-    fprintf(stdout, "xpl-trig");
-    break;
-  default:
-    fprintf(stdout, "!UNKNOWN!");
-    break;
+    fprintf(stdout, "TYPE=");
+    switch(xPL_getMessageType(message))
+    {
+        case xPL_MESSAGE_COMMAND:
+            fprintf(stdout, "xpl-cmnd");
+            break;
+
+        case xPL_MESSAGE_STATUS:
+            fprintf(stdout, "xpl-stat");
+            break;
+
+        case xPL_MESSAGE_TRIGGER:
+            fprintf(stdout, "xpl-trig");
+            break;
+        default:
+            fprintf(stdout, "!UNKNOWN!");
+            break;
   }
 
 
   /* Print hop count, if interesting */
-  if (xPL_getHopCount(theMessage) != 1) fprintf(stdout, ", HOPS=%d", xPL_getHopCount(theMessage));
+  if (xPL_getHopCount(message) != 1) fprintf(stdout, ", HOPS=%d", xPL_getHopCount(message));
 
   /* Source Info */
-  fprintf(stdout, ", SOURCE=%s-%s.%s, TARGET=",
-	  xPL_getSourceVendor(theMessage),
-	  xPL_getSourceDeviceID(theMessage),
-	  xPL_getSourceInstanceID(theMessage));
+  fprintf(stdout, ", SOURCE=%s-%s.%s\tTARGET=",
+	  xPL_getSourceVendor(message),
+	  xPL_getSourceDeviceID(message),
+	  xPL_getSourceInstanceID(message));
 
   /* Handle various target types */
-  if (xPL_isBroadcastMessage(theMessage)) {
+  if (xPL_isBroadcastMessage(message))
+  {
     fprintf(stdout, "*");
   } else {
-    if (xPL_isGroupMessage(theMessage)) {
-      fprintf(stdout, "XPL-GROUP.%s", xPL_getTargetGroup(theMessage));
+    if (xPL_isGroupMessage(message))
+    {
+      fprintf(stdout, "XPL-GROUP.%s", xPL_getTargetGroup(message));
     } else {
       fprintf(stdout, "%s-%s.%s",
-	      xPL_getTargetVendor(theMessage),
-	      xPL_getTargetDeviceID(theMessage),
-	      xPL_getTargetInstanceID(theMessage));
+	      xPL_getTargetVendor(message),
+	      xPL_getTargetDeviceID(message),
+	      xPL_getTargetInstanceID(message));
     }
   }
 
   /* Echo Schema Info */
-  fprintf(stdout, ", CLASS=%s, TYPE=%s", xPL_getSchemaClass(theMessage), xPL_getSchemaType(theMessage));
+  fprintf(stdout, "\tCLASS=%s\tTYPE=%s", xPL_getSchemaClass(message), xPL_getSchemaType(message));
   fprintf(stdout, "\n");
 }
 
@@ -403,7 +409,7 @@ xpl_start()
 
     /*Add all xPL messages listener*/
     if(edams_settings_debug_get() == EINA_TRUE)
-        xPL_addMessageListener(printXPLMessage, NULL);
+        xPL_addMessageListener(xpl_message_print, NULL);
 
     /*Add xPL sensor.basic listener*/
     xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
