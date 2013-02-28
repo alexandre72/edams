@@ -13,14 +13,16 @@ static xPL_ServicePtr *serviceList = NULL;
 
 typedef enum { HBEAT_NORMAL, HBEAT_CONFIG, HBEAT_NORMAL_END, HBEAT_CONFIG_END } HeartbeatType;
 
-static xPL_MessagePtr createHeartbeatMessage(xPL_ServicePtr theService, HeartbeatType heartbeatType) {
+static xPL_MessagePtr
+createHeartbeatMessage(xPL_ServicePtr theService, HeartbeatType heartbeatType) {
   xPL_MessagePtr theHeartbeat;
 
   /* Create the Heartbeat message */
   theHeartbeat = xPL_createBroadcastMessage(theService, xPL_MESSAGE_STATUS);
 
   /* Configure the heartbeat */
-  switch (heartbeatType) {
+  switch (heartbeatType)
+  {
   case HBEAT_NORMAL:
     xPL_setSchemaClass(theHeartbeat, "hbeat");
     xPL_setSchemaType(theHeartbeat, "app");
@@ -52,22 +54,28 @@ static xPL_MessagePtr createHeartbeatMessage(xPL_ServicePtr theService, Heartbea
   /* Add standard heartbeat data */
   xPL_addMessageNamedValue(theHeartbeat, "port", xPL_intToStr(xPL_getPort()));
   xPL_addMessageNamedValue(theHeartbeat, "remote-ip", xPL_getListenerIPAddr());
-  if (theService->serviceVersion) {
+
+  if (theService->serviceVersion)
+  {
     xPL_addMessageNamedValue(theHeartbeat, "version", theService->serviceVersion);
   }
   return theHeartbeat;
 }
 
 /* Send an XPL Heartbeat immediatly */
-Eina_Bool xPL_sendHeartbeat(xPL_ServicePtr theService) {
+Eina_Bool xPL_sendHeartbeat(xPL_ServicePtr theService)
+{
   xPL_MessagePtr theHeartbeat;
 
   /* Create the Heartbeat message, if needed */
   if (theService->heartbeatMessage == NULL) {
     /* Configure the heartbeat */
-    if (theService->configurableService && !theService->serviceConfigured) {
+    if (theService->configurableService && !theService->serviceConfigured)
+    {
       theHeartbeat = createHeartbeatMessage(theService, HBEAT_CONFIG);
-    } else {
+    }
+    else
+    {
       theHeartbeat = createHeartbeatMessage(theService, HBEAT_NORMAL);
     }
 
@@ -106,7 +114,8 @@ Eina_Bool xPL_sendGoodbyeHeartbeat(xPL_ServicePtr theService) {
 
 /* Check each known service for when it last sent a heart */
 /* beat and if it's time to send another, do it.          */
-void xPL_sendTimelyHeartbeats() {
+void xPL_sendTimelyHeartbeats()
+{
   xPL_ServicePtr theService;
   int serviceIndex;
   time_t rightNow = time(NULL);
@@ -142,18 +151,23 @@ void xPL_sendTimelyHeartbeats() {
 }
 
 /* Return number of services */
-int xPL_getServiceCount() {
+int xPL_getServiceCount()
+{
   return serviceCount;
 }
 
 /* Return a service at a given index.  If the index is out of */
 /* range, return NULL                                         */
-xPL_ServicePtr xPL_getServiceAt(int serviceIndex) {
+xPL_ServicePtr
+xPL_getServiceAt(int serviceIndex)
+{
   if ((serviceIndex < 0) || (serviceIndex >= serviceCount)) return NULL;
   return serviceList[serviceIndex];
 }
 
-static xPL_ServicePtr newService(String theVendor, String theDeviceID, String theInstanceID) {
+static xPL_ServicePtr
+newService(String theVendor, String theDeviceID, String theInstanceID)
+{
   Eina_Bool tempInstanceID = EINA_FALSE;
   xPL_ServicePtr theService;
 
@@ -186,7 +200,9 @@ static xPL_ServicePtr newService(String theVendor, String theDeviceID, String th
 }
 
 /* Create a new xPL service */
-xPL_ServicePtr xPL_createService(String theVendor, String theDeviceID, String theInstanceID) {
+xPL_ServicePtr
+xPL_createService(String theVendor, String theDeviceID, String theInstanceID)
+{
   xPL_ServicePtr theService;
 
   /* Create the service */
@@ -197,7 +213,9 @@ xPL_ServicePtr xPL_createService(String theVendor, String theDeviceID, String th
 }
 
 /* Release an xPL service */
-void xPL_releaseService(xPL_ServicePtr theService) {
+void
+xPL_releaseService(xPL_ServicePtr theService)
+{
   int ctxIndex;
 
   for (ctxIndex = 0; ctxIndex < serviceCount; ctxIndex++) {
@@ -246,7 +264,10 @@ void xPL_releaseService(xPL_ServicePtr theService) {
   }
 }
 
-void xPL_setServiceEnabled(xPL_ServicePtr theService, Eina_Bool isEnabled) {
+
+void
+xPL_setServiceEnabled(xPL_ServicePtr theService, Eina_Bool isEnabled)
+{
   /* Skip if already enabled */
   if (theService->serviceEnabled == isEnabled) return;
 
@@ -269,11 +290,14 @@ void xPL_setServiceEnabled(xPL_ServicePtr theService, Eina_Bool isEnabled) {
   }
 }
 
-Eina_Bool xPL_isServiceEnabled(xPL_ServicePtr theService) {
+Eina_Bool
+xPL_isServiceEnabled(xPL_ServicePtr theService)
+{
   return theService->serviceEnabled;
 }
 
-void xPL_setServiceVendor(xPL_ServicePtr theService, String newVendor) {
+void xPL_setServiceVendor(xPL_ServicePtr theService, String newVendor)
+{
   /* Skip if name is already this name */
   if ((theService->serviceVendor != NULL) && !strcasecmp(theService->serviceVendor, newVendor)) return;
 
@@ -288,7 +312,8 @@ void xPL_setServiceVendor(xPL_ServicePtr theService, String newVendor) {
   if (theService->serviceEnabled) xPL_sendHeartbeat(theService);
 }
 
-String xPL_getServiceVendor(xPL_ServicePtr theService) {
+String xPL_getServiceVendor(xPL_ServicePtr theService)
+{
   return theService->serviceVendor;
 }
 
@@ -488,7 +513,6 @@ handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage)
     if (!strcmp(theService->serviceVendor, theMessage->sourceVendor)
 	&& !strcmp(theService->serviceDeviceID, theMessage->sourceDeviceID)
 	&& !strcmp(theService->serviceInstanceID, theMessage->sourceInstanceID)) {
-      debug(stdout, _("Skipping xPL message from self"));
       return;
     }
   }
@@ -501,10 +525,8 @@ handleMessage(xPL_ServicePtr theService, xPL_MessagePtr theMessage)
 	&& (!strcasecmp(theMessage->schemaClass, "hbeat"))
 	&& (!strcasecmp(theMessage->schemaType, "request")))
 	{
-
       /* Compute a response delay (.5 to 2.5 seconds) */
       responseDelay = (int) (((double) random() / (double) RAND_MAX) * 2000.0) + 500;
-      debug(stdout, _("Sending heartbeat in response to discovery request after a %d millisecond delay"), responseDelay);
       usleep(responseDelay);
       xPL_sendHeartbeat(theService);
     }

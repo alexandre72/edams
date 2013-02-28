@@ -722,9 +722,11 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
 	theNameValue->isBinary = isBinaryValue;
 	if (!isBinaryValue)
 	  theNameValue->itemValue = xPL_StrDup(blockValueBuff);
-	else {
-	  if ((theNameValue->itemValue = textToBinary(blockValueBuff, &theNameValue->binaryLength)) == NULL) {
-	    debug(stderr, _("Unable to xlate binary value for name %s"), blockValueBuff);
+	else
+	{
+	  if ((theNameValue->itemValue = textToBinary(blockValueBuff, &theNameValue->binaryLength)) == NULL)
+	  {
+	    debug(stderr, _("Can't xlate binary value for name %s"), blockValueBuff);
 	    return -curIndex;
 	  }
 	}
@@ -914,7 +916,7 @@ xPL_MessagePtr
   /* Parse the name/values into the message */
   if (!parseMessageHeader(theMessage, theMessage->messageBody))
   {
-    debug(stderr, _("Unable to parse message header"));
+    debug(stderr, _("Can't parse message header"));
     xPL_releaseMessage(theMessage);
     return NULL;
   }
@@ -927,7 +929,7 @@ xPL_MessagePtr
 
     /* Parse the next block */
     if ((parsedThisTime = parseBlock(&(theText[parsedChars]), &blockHeaderKeyword, theMessage->messageBody, EINA_FALSE)) < 0) {
-      debug(stderr, _("Error parsing message block"));
+      debug(stderr, _("Can't parse message block"));
       xPL_releaseMessage(theMessage);
       STR_FREE(blockHeaderKeyword);
       return NULL;
@@ -999,7 +1001,7 @@ xPL_receiveMessage(int theFD __UNUSED__, int thePollInfo __UNUSED__, int userVal
       if (errno == EAGAIN) return;
 
       /* Note the error and bail */
-      debug(stderr, _("Error reading xPL message from network - %s (%d)"), strerror(errno), errno);
+      debug(stderr, _("Can't read xPL message from network - %s (%d)"), strerror(errno), errno);
       return;
     }
 
@@ -1011,14 +1013,13 @@ xPL_receiveMessage(int theFD __UNUSED__, int thePollInfo __UNUSED__, int userVal
 
     /* Parse the message */
     if ((theMessage = parseMessage(messageBuff)) == NULL) {
-      debug(stderr, _("Error parsing network message - ignored"));
+      debug(stderr, _("Can't parse network message - ignored"));
       continue;
     }
 
     /* See if we need to check the message for hub detection */
     if (!hubConfirmed && isHubEcho(theMessage))
     {
-      debug(stdout, _("xPL Hub detected and confirmed existing"));
       hubConfirmed = EINA_TRUE;
     }
 
