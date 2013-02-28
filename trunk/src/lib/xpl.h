@@ -216,6 +216,7 @@ Eina_Bool xpl_shutdown();
 Ecore_Pipe *xpl_start();
 
 Eina_Bool xpl_control_basic_cmnd_send(Widget *widget);
+Eina_Bool xpl_sensor_basic_cmnd_send(Widget *widget);
 Eina_Bool xpl_osd_basic_cmnd_send(char *command, char *text, char *delay);
 void xpl_services_install(Ecore_Pipe *pipe);
 void xpl_process_messages();

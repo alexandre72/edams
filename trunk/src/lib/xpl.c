@@ -779,3 +779,37 @@ xpl_control_basic_cmnd_send(Widget *widget)
     xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;
 }/*xpl_control_basic_cmnd_send*/
+
+
+/*
+ *
+ */
+Eina_Bool
+xpl_sensor_basic_cmnd_send(Widget *widget)
+{
+    xPL_MessagePtr xpl_message_cmnd = NULL;
+
+    /* Create an appropriate message */
+    if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
+    {
+        debug(stderr, _("Can't create broadcast message"));
+        return EINA_FALSE;
+    }
+
+  	xPL_setSchema(xpl_message_cmnd, "sensor", "request");
+
+    /*Install the value(s) and send the message*/
+  	xPL_setMessageNamedValue(xpl_message_cmnd, "request", "current");
+  	xPL_setMessageNamedValue(xpl_message_cmnd, "device", widget_xpl_device_get(widget));
+
+	/*Broadcast the message*/
+	if (!xPL_sendMessage(xpl_message_cmnd))
+	{
+		debug(stderr, _("Can't send xPL message"));
+		xPL_releaseMessage(xpl_message_cmnd);
+		return EINA_FALSE;
+	}
+
+    xPL_releaseMessage(xpl_message_cmnd);
+    return EINA_TRUE;
+}/*xpl_sensor_basic_stat_send*/
