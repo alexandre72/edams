@@ -1,5 +1,5 @@
 /*
- * counter.edc
+ * text.edc
  * This file is part of EDAMS
  *
  * Copyright (C) 2013 - Alexandre Dussart
@@ -21,12 +21,12 @@
 
 group
 {
-	name: "widget/sensor.basic/counter/icon";
+	name: "widget/sensor.basic/text/icon";
     min: 32 32;
 
 	images
 	{
-		image: "counter_icon.png" COMP;
+		image: "text_icon.png" COMP;
 	}
 
       parts
@@ -39,29 +39,25 @@ group
                	aspect: 1 1;
                	aspect_preference: BOTH;
             	state: "default" 0;
-		   		image.normal: "counter_icon.png";
+		   		image.normal: "text_icon.png";
             }
          }
       }
-}/*widget/sensor.basic/counter/icon*/
+}/*widget/sensor.basic/text/icon*/
 
 
 group
 {
-    name: "widget/sensor.basic/counter";
-	min: 150 60;
- 	max: 150 60;
+    name: "widget/sensor.basic/text";
+	min: 250 110;
+	max: 250 110;
 
 	data
 	{
-		item: "description" "Counter display numerical data in a standard numerical way in green LCD like screen. Sensor name is displayed at the bottom.";
+		item: "description" "Text widget display numerical data in a standard text label's way.";
 		item: "tags" "sensor.basic,temperature,humidity,rpm";
 	}/*data*/
 
-	images
-	{
-		image: "counter.png" COMP;
-	}/*images*/
 
 	parts
 	{
@@ -72,42 +68,31 @@ group
             description
             {
                 state: "default" 0.0;
+                visible: 1;
+				color: 255 255 255 255;
             }
-        }
-		part
-		{
-			name: "entry";
-			type: IMAGE;
-            clip_to: "whole";
-		    mouse_events: 1;
-			description
-			{
-				state: "default" 0.0;
-				rel1.relative: 0.2 0.0;
-				rel2.relative: 0.8 0.7;
-				aspect_preference: BOTH;
-				image.normal: "counter.png";
-			}
-		}/*entry*/
+        }/*whole*/
 		part
 		{
 			name: "value.text";
 			type: TEXT;
+            effect: SOFT_OUTLINE;
             clip_to: "whole";
 		    mouse_events: 1;
 			description
 			{
 				state: "default" 0.0;
-				color: 20 20 20 220;
-				rel1.relative: 0.25 0.05;
-				rel2.relative: 0.75 0.65;
+    			visible: 1;
+				color: 0 0 0 255;
+                color2: 255 255 255 255;
+				rel1.relative: 0.05 0.05;
+				rel2.relative: 0.95 0.75;
 				text
 				{
-					text: "8888888";
-					font: "digital";
-					size: 18;
-					min: 1 1;
-					align: 0.5 0.25;
+                    font: "Sans,Edje-Vera";
+                    text: "N/A";
+					size: 44;
+					align: 0.5 0.5;
 				}
 			}
 		}/*value.text*/
@@ -120,8 +105,8 @@ group
             description
             {
                 state: "default" 0.0;
-                rel1.relative: 0.2 0.50;
-                rel2.relative: 0.8 0.50;
+                rel1.relative: 0.2 0.65;
+                rel2.relative: 0.8 0.65;
                 rel2.offset: 0 3;
                 image.normal: "division_line.png";
             }
@@ -198,9 +183,9 @@ group
                     state: "default" 0.0;
                     align: 0.0 0.0;
                     rel1.to_x: "icon_min";
-                    rel1.relative: 1.0 0.45;
+                    rel1.relative: 1.0 0.62;
                     rel1.offset: 3 5;
-                    rel2.relative: 1.0 0.45;
+                    rel2.relative: 1.0 0.62;
                     rel2.offset: 3 0;
                     text
                     {
@@ -239,10 +224,10 @@ group
                 {
                     state: "default" 0.0;
                     align: 1.0 0.0;
-                    rel1.relative: 0.0 0.45;
+                    rel1.relative: 0.0 0.62;
                     rel1.offset: -3 5;
                     rel2.to_x: "icon_max";
-                    rel2.relative: 0.0 0.45;
+                    rel2.relative: 0.0 0.62;
                     rel2.offset: -3 0;
                     text
                     {
@@ -284,6 +269,5 @@ group
 	        source: "title.text";
 	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
         }
-
 	}/*programs*/
-}/*group widget/sensor.basic/counter*/
+}/*group widget/sensor.basic/text*/

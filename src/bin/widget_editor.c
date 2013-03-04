@@ -136,7 +136,7 @@ _layout_samples_test(Evas_Object *layout)
 
     elm_object_part_text_set(layout, "title.text", widget_xpl_device_get(sample));
 
-	asprintf(&str, "%s%s", widget_xpl_current_get(sample), xpl_type_to_unit_symbol(type));
+	asprintf(&str, "%s%s", widget_xpl_current_get(sample), xpl_type_to_unit_symbol(type) ? xpl_type_to_unit_symbol(type) : "");
     elm_object_part_text_set(layout, "value.text", str);
     FREE(str);
 
@@ -552,20 +552,20 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	evas_object_name_set(check, "cosm check");
 	icon = elm_icon_add(win);
 	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(icon, "cosm");
+	elm_icon_standard_set(icon, "cosm-logo");
 	elm_object_part_content_set(check, "icon", icon);
 	elm_grid_pack(grid, check, 69, 32, 15, 5);
-	elm_check_state_set(check, edams_settings_softemu_get());
+	evas_object_hide(check);
 	evas_object_smart_callback_add(check, "changed", _check_cosm_changed_cb, NULL);
 
 	check = elm_check_add(win);
 	evas_object_name_set(check, "gnuplot check");
 	icon = elm_icon_add(win);
 	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-	elm_icon_standard_set(icon, "gnuplot");
+	elm_icon_standard_set(icon, "gnuplot-logo");
 	elm_object_part_content_set(check, "icon", icon);
 	elm_grid_pack(grid, check, 69, 37, 15, 5);
-	elm_check_state_set(check, edams_settings_softemu_get());
+	evas_object_hide(check);
 	evas_object_smart_callback_add(check, "changed", _check_gnuplot_changed_cb, NULL);
 
 	frame = elm_frame_add(win);
@@ -642,7 +642,6 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
         elm_check_state_set(check, widget_gnuplot_get(widget));
 	    evas_object_show(check);
     }
-
 
 	/*Resize window*/
 	evas_object_resize(win, 650, 500);

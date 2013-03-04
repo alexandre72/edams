@@ -85,7 +85,6 @@ EVAS_SMART_SUBCLASS_NEW(_evas_smart_group_type, _evas_smart_group,
 /*Global objects*/
 static Ecore_Evas *ee = NULL;
 static Evas *evas = NULL;
-static Eina_Rectangle geometry;
 static App_Info *app = NULL;
 static Eet_File *ef = NULL;
 
@@ -433,8 +432,8 @@ _evas_smart_group_smart_calculate(Evas_Object * o)
 			}
 			else
 			{
-				edje_geometry.x = x;
-				edje_geometry.y = y;
+				edje_geometry.x = x+50;
+				edje_geometry.y = y+50;
 			}
 			evas_object_move(priv->children[n], edje_geometry.x, edje_geometry.y);
 			FREE(key);
@@ -600,7 +599,6 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
         {
     	   edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
         }
-
 
 		evas_object_propagate_events_set(priv->children[x], EINA_FALSE);
 		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
@@ -883,6 +881,8 @@ void
 global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	app = (App_Info *) data;
+    Eina_Rectangle geometry;
+
 
 	/*Set window geometry*/
 	geometry.w = 0;
@@ -904,16 +904,18 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 		return;
 	}
 
-	debug(stdout, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
-	ecore_evas_shaped_set(ee, 0);
-	ecore_evas_borderless_set(ee, 0);
+	ecore_evas_callback_resize_set(ee, _ecore_evas_resize_cb);
+	ecore_evas_shaped_set(ee, EINA_FALSE);
+	ecore_evas_borderless_set(ee, EINA_FALSE);
 	ecore_evas_fullscreen_set(ee, EINA_TRUE);
 	ecore_evas_title_set(ee, _("Global view"));
-	ecore_evas_callback_resize_set(ee, _ecore_evas_resize_cb);
+
 	evas = ecore_evas_get(ee);
+	ecore_evas_geometry_get(ee, NULL, NULL, &geometry.w, &geometry.h);
+
 
 	if (ecore_evas_ecore_evas_get(evas) == ee)
-		debug(stdout, _("Ecore_Evas has been correctly initalized"));
+	    debug(stdout, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
 
 	Evas_Object *bg;
 
@@ -951,7 +953,6 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 
     /*Install normal cursor*/
     global_view_cursor_set("cursors/left_ptr");
-
 
 	Evas_Object *osd_text = evas_object_text_add(evas);
 	evas_object_name_set(osd_text, "osd text");
@@ -1032,7 +1033,7 @@ global_view_location_add(Location *location)
 	char key[64];
 	char *ret = NULL;
 	int size;
-	Eina_Rectangle smart_geometry;
+	Eina_Rectangle geometry, smart_geometry;
 
 	if (!evas || !ef || !location) return;
 
@@ -1053,6 +1054,7 @@ global_view_location_add(Location *location)
 	}
 	else
 	{
+        ecore_evas_geometry_get(ee, NULL, NULL, &geometry.w, &geometry.h);
 		smart_geometry.x = geometry.w / 4;
 		smart_geometry.y = geometry.h / 4;
 		smart_geometry.w = geometry.w / 2;
@@ -1245,7 +1247,11 @@ global_view_new_mail_emit(int num_new, int num_total)
 static void
 _ecore_evas_resize_cb(Ecore_Evas * ee)
 {
+    Eina_Rectangle geometry;
+    Evas_Object *bg;
+
 	/*Resize background image to fit in new canvas size*/
 	ecore_evas_geometry_get(ee, NULL, NULL, &geometry.w, &geometry.h);
-	evas_object_resize(evas_object_name_find(evas, "background image"), geometry.w, geometry.h);
+    bg = evas_object_name_find(evas, "background image");
+	evas_object_resize(bg, geometry.w, geometry.h);
 }/*_ecore_evas_resize_cb*/
