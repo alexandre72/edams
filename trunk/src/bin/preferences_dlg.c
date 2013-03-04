@@ -118,6 +118,36 @@ _button_open_file_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__
 /*
  *
  */
+static void
+_button_gv_reset_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+    Eet_File *ef = NULL;
+    char **list;
+    int num, i;
+
+    if(!(ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE)))
+    {
+        debug(stderr, _("Can't open Eet file '%s' in rw mode"));
+        return;
+    }
+
+    list = eet_list(ef, "*", &num);
+    if (list)
+    {
+        for (i = 0; i < num; i++)
+        {
+            if(strncmp(list[i], "global_view/", strlen("global_view/")) == 0)
+                eet_delete(ef, list[i]);
+        }
+        free(list);
+    }
+    eet_close(ef);
+}
+
+
+/*
+ *
+ */
 void
 preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -258,6 +288,7 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_object_content_set(frame, entry);
 	elm_object_text_set(entry, edams_settings_user_mail_get());
 
+
 	bx = elm_box_add(win);
 	elm_box_horizontal_set(bx, EINA_TRUE);
 	elm_box_homogeneous_set(bx, EINA_TRUE);
@@ -268,6 +299,17 @@ preferences_dlg_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *e
 	elm_separator_horizontal_set(separator, EINA_TRUE);
 	elm_box_pack_end(bx, separator);
 	evas_object_show(separator);
+
+	button = elm_button_add(win);
+	icon = elm_icon_add(win);
+	elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+	elm_icon_standard_set(icon, "apply-window");
+	elm_object_part_content_set(button, "icon", icon);
+	elm_object_text_set(button, _("Global view reset"));
+	elm_box_pack_end(bx, button);
+	evas_object_show(button);
+	evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
+	evas_object_smart_callback_add(button, "clicked", _button_gv_reset_clicked_cb, win);
 
 	button = elm_button_add(win);
 	icon = elm_icon_add(win);

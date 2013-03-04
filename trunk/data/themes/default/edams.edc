@@ -46,16 +46,20 @@ images
     image: "cosm_007.png" COMP;
     image: "cosm_008.png" COMP;
     image: "cosm_009.png" COMP;
+}/*images*/
 
-}
-
-externals
+fonts
 {
-   external: "elm";
-}
+    font: "DS-Digital_Bold_Italic.ttf" "digital";
+}/*font*/
+
 
 collections
 {
+#define ICON_REL() \
+	rel1 {relative, 0.0 0.0; offset, 2 2;} \
+	rel2 {relative, 0.0 0.0; offset, 50 50;}
+
 #include "about.edc"
 #include "clock.edc"
 #include "clockbling.edc"
@@ -72,6 +76,7 @@ collections
 #include "mute.edc"
 #include "slider.edc"
 #include "switch2.edc"
+#include "text.edc"
 #include "thermometer.edc"
 
 #define ICON(_name, _file)	\

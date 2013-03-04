@@ -2,10 +2,10 @@ group
 {
 	images
 	{
-		image: "clockdigital_icon.png" COMP;
+		image: "clockbling_icon.png" COMP;
 	}
 
-	name: "widget/virtual/clock/digital/icon";
+	name: "widget/virtual/clockbling/icon";
     min: 32 32;
       parts
       {
@@ -17,7 +17,7 @@ group
                	aspect: 1 1;
                	aspect_preference: BOTH;
             	state: "default" 0;
-		   		image.normal: "clockdigital_icon.png";
+		   		image.normal: "clockbling_icon.png";
             }
          }
       }
@@ -43,57 +43,57 @@ group
         image: "e17_clock_seconds_07.png" COMP;
         image: "e17_clock_seconds_08.png" COMP;
         image: "e17_clock_seconds_09.png" COMP;
-   image: "e17_clock_seconds_10.png" COMP;
-   image: "e17_clock_seconds_11.png" COMP;
-   image: "e17_clock_seconds_12.png" COMP;
-   image: "e17_clock_seconds_13.png" COMP;
-   image: "e17_clock_seconds_14.png" COMP;
-   image: "e17_clock_seconds_15.png" COMP;
-   image: "e17_clock_seconds_16.png" COMP;
-   image: "e17_clock_seconds_17.png" COMP;
-   image: "e17_clock_seconds_18.png" COMP;
-   image: "e17_clock_seconds_19.png" COMP;
-   image: "e17_clock_seconds_20.png" COMP;
-   image: "e17_clock_seconds_21.png" COMP;
-   image: "e17_clock_seconds_22.png" COMP;
-   image: "e17_clock_seconds_23.png" COMP;
-   image: "e17_clock_seconds_24.png" COMP;
-   image: "e17_clock_seconds_25.png" COMP;
-   image: "e17_clock_seconds_26.png" COMP;
-   image: "e17_clock_seconds_27.png" COMP;
-   image: "e17_clock_seconds_28.png" COMP;
-   image: "e17_clock_seconds_29.png" COMP;
-   image: "e17_clock_seconds_30.png" COMP;
-   image: "e17_clock_seconds_31.png" COMP;
-   image: "e17_clock_seconds_32.png" COMP;
-   image: "e17_clock_seconds_33.png" COMP;
-   image: "e17_clock_seconds_34.png" COMP;
-   image: "e17_clock_seconds_35.png" COMP;
-   image: "e17_clock_seconds_36.png" COMP;
-   image: "e17_clock_seconds_37.png" COMP;
-   image: "e17_clock_seconds_38.png" COMP;
-   image: "e17_clock_seconds_39.png" COMP;
-   image: "e17_clock_seconds_40.png" COMP;
-   image: "e17_clock_seconds_41.png" COMP;
-   image: "e17_clock_seconds_42.png" COMP;
-   image: "e17_clock_seconds_43.png" COMP;
-   image: "e17_clock_seconds_44.png" COMP;
-   image: "e17_clock_seconds_45.png" COMP;
-   image: "e17_clock_seconds_46.png" COMP;
-   image: "e17_clock_seconds_47.png" COMP;
-   image: "e17_clock_seconds_48.png" COMP;
-   image: "e17_clock_seconds_49.png" COMP;
-   image: "e17_clock_seconds_50.png" COMP;
-   image: "e17_clock_seconds_51.png" COMP;
-   image: "e17_clock_seconds_52.png" COMP;
-   image: "e17_clock_seconds_53.png" COMP;
-   image: "e17_clock_seconds_54.png" COMP;
-   image: "e17_clock_seconds_55.png" COMP;
-   image: "e17_clock_seconds_56.png" COMP;
-   image: "e17_clock_seconds_57.png" COMP;
-   image: "e17_clock_seconds_58.png" COMP;
-   image: "e17_clock_seconds_59.png" COMP;
-   image: "e17_clock_hour_00.png" COMP;
+        image: "e17_clock_seconds_10.png" COMP;
+        image: "e17_clock_seconds_11.png" COMP;
+        image: "e17_clock_seconds_12.png" COMP;
+        image: "e17_clock_seconds_13.png" COMP;
+        image: "e17_clock_seconds_14.png" COMP;
+        image: "e17_clock_seconds_15.png" COMP;
+        image: "e17_clock_seconds_16.png" COMP;
+        image: "e17_clock_seconds_17.png" COMP;
+        image: "e17_clock_seconds_18.png" COMP;
+        image: "e17_clock_seconds_19.png" COMP;
+        image: "e17_clock_seconds_20.png" COMP;
+        image: "e17_clock_seconds_21.png" COMP;
+        image: "e17_clock_seconds_22.png" COMP;
+        image: "e17_clock_seconds_23.png" COMP;
+        image: "e17_clock_seconds_24.png" COMP;
+        image: "e17_clock_seconds_25.png" COMP;
+        image: "e17_clock_seconds_26.png" COMP;
+        image: "e17_clock_seconds_27.png" COMP;
+        image: "e17_clock_seconds_28.png" COMP;
+        image: "e17_clock_seconds_29.png" COMP;
+        image: "e17_clock_seconds_30.png" COMP;
+        image: "e17_clock_seconds_31.png" COMP;
+        image: "e17_clock_seconds_32.png" COMP;
+        image: "e17_clock_seconds_33.png" COMP;
+        image: "e17_clock_seconds_34.png" COMP;
+        image: "e17_clock_seconds_35.png" COMP;
+        image: "e17_clock_seconds_36.png" COMP;
+        image: "e17_clock_seconds_37.png" COMP;
+        image: "e17_clock_seconds_38.png" COMP;
+        image: "e17_clock_seconds_39.png" COMP;
+        image: "e17_clock_seconds_40.png" COMP;
+        image: "e17_clock_seconds_41.png" COMP;
+        image: "e17_clock_seconds_42.png" COMP;
+        image: "e17_clock_seconds_43.png" COMP;
+        image: "e17_clock_seconds_44.png" COMP;
+        image: "e17_clock_seconds_45.png" COMP;
+        image: "e17_clock_seconds_46.png" COMP;
+        image: "e17_clock_seconds_47.png" COMP;
+        image: "e17_clock_seconds_48.png" COMP;
+        image: "e17_clock_seconds_49.png" COMP;
+        image: "e17_clock_seconds_50.png" COMP;
+        image: "e17_clock_seconds_51.png" COMP;
+        image: "e17_clock_seconds_52.png" COMP;
+        image: "e17_clock_seconds_53.png" COMP;
+        image: "e17_clock_seconds_54.png" COMP;
+        image: "e17_clock_seconds_55.png" COMP;
+        image: "e17_clock_seconds_56.png" COMP;
+        image: "e17_clock_seconds_57.png" COMP;
+        image: "e17_clock_seconds_58.png" COMP;
+        image: "e17_clock_seconds_59.png" COMP;
+        image: "e17_clock_hour_00.png" COMP;
    image: "e17_clock_hour_01.png" COMP;
    image: "e17_clock_hour_02.png" COMP;
    image: "e17_clock_hour_03.png" COMP;
@@ -133,58 +133,58 @@ group
    image: "e17_clock_hour_37.png" COMP;
    image: "e17_clock_hour_38.png" COMP;
    image: "e17_clock_hour_39.png" COMP;
-   image: "e17_clock_hour_40.png" COMP;
-   image: "e17_clock_hour_41.png" COMP;
-   image: "e17_clock_hour_42.png" COMP;
-   image: "e17_clock_hour_43.png" COMP;
-   image: "e17_clock_hour_44.png" COMP;
-   image: "e17_clock_hour_45.png" COMP;
-   image: "e17_clock_hour_46.png" COMP;
-   image: "e17_clock_hour_47.png" COMP;
-   image: "e17_clock_hour_48.png" COMP;
-   image: "e17_clock_hour_49.png" COMP;
-   image: "e17_clock_hour_50.png" COMP;
-   image: "e17_clock_hour_51.png" COMP;
-   image: "e17_clock_hour_52.png" COMP;
-   image: "e17_clock_hour_53.png" COMP;
-   image: "e17_clock_hour_54.png" COMP;
-   image: "e17_clock_hour_55.png" COMP;
-   image: "e17_clock_hour_56.png" COMP;
-   image: "e17_clock_hour_57.png" COMP;
-   image: "e17_clock_hour_58.png" COMP;
-   image: "e17_clock_hour_59.png" COMP;
-   image: "e17_clock_minutes_00.png" COMP;
-   image: "e17_clock_minutes_01.png" COMP;
-   image: "e17_clock_minutes_02.png" COMP;
-   image: "e17_clock_minutes_03.png" COMP;
-   image: "e17_clock_minutes_04.png" COMP;
-   image: "e17_clock_minutes_05.png" COMP;
-   image: "e17_clock_minutes_06.png" COMP;
-   image: "e17_clock_minutes_07.png" COMP;
-   image: "e17_clock_minutes_08.png" COMP;
-   image: "e17_clock_minutes_09.png" COMP;
-   image: "e17_clock_minutes_10.png" COMP;
-   image: "e17_clock_minutes_11.png" COMP;
-   image: "e17_clock_minutes_12.png" COMP;
-   image: "e17_clock_minutes_13.png" COMP;
-   image: "e17_clock_minutes_14.png" COMP;
-   image: "e17_clock_minutes_15.png" COMP;
-   image: "e17_clock_minutes_16.png" COMP;
-   image: "e17_clock_minutes_17.png" COMP;
-   image: "e17_clock_minutes_18.png" COMP;
-   image: "e17_clock_minutes_19.png" COMP;
-   image: "e17_clock_minutes_20.png" COMP;
-   image: "e17_clock_minutes_21.png" COMP;
-   image: "e17_clock_minutes_22.png" COMP;
-   image: "e17_clock_minutes_23.png" COMP;
-   image: "e17_clock_minutes_24.png" COMP;
-   image: "e17_clock_minutes_25.png" COMP;
-   image: "e17_clock_minutes_26.png" COMP;
-   image: "e17_clock_minutes_27.png" COMP;
-   image: "e17_clock_minutes_28.png" COMP;
-   image: "e17_clock_minutes_29.png" COMP;
-   image: "e17_clock_minutes_30.png" COMP;
-   image: "e17_clock_minutes_31.png" COMP;
+        image: "e17_clock_hour_40.png" COMP;
+        image: "e17_clock_hour_41.png" COMP;
+        image: "e17_clock_hour_42.png" COMP;
+        image: "e17_clock_hour_43.png" COMP;
+        image: "e17_clock_hour_44.png" COMP;
+        image: "e17_clock_hour_45.png" COMP;
+        image: "e17_clock_hour_46.png" COMP;
+        image: "e17_clock_hour_47.png" COMP;
+        image: "e17_clock_hour_48.png" COMP;
+        image: "e17_clock_hour_49.png" COMP;
+        image: "e17_clock_hour_50.png" COMP;
+        image: "e17_clock_hour_51.png" COMP;
+        image: "e17_clock_hour_52.png" COMP;
+        image: "e17_clock_hour_53.png" COMP;
+        image: "e17_clock_hour_54.png" COMP;
+        image: "e17_clock_hour_55.png" COMP;
+        image: "e17_clock_hour_56.png" COMP;
+        image: "e17_clock_hour_57.png" COMP;
+        image: "e17_clock_hour_58.png" COMP;
+        image: "e17_clock_hour_59.png" COMP;
+        image: "e17_clock_minutes_00.png" COMP;
+        image: "e17_clock_minutes_01.png" COMP;
+        image: "e17_clock_minutes_02.png" COMP;
+        image: "e17_clock_minutes_03.png" COMP;
+        image: "e17_clock_minutes_04.png" COMP;
+        image: "e17_clock_minutes_05.png" COMP;
+        image: "e17_clock_minutes_06.png" COMP;
+        image: "e17_clock_minutes_07.png" COMP;
+        image: "e17_clock_minutes_08.png" COMP;
+        image: "e17_clock_minutes_09.png" COMP;
+        image: "e17_clock_minutes_10.png" COMP;
+        image: "e17_clock_minutes_11.png" COMP;
+        image: "e17_clock_minutes_12.png" COMP;
+        image: "e17_clock_minutes_13.png" COMP;
+        image: "e17_clock_minutes_14.png" COMP;
+        image: "e17_clock_minutes_15.png" COMP;
+        image: "e17_clock_minutes_16.png" COMP;
+        image: "e17_clock_minutes_17.png" COMP;
+        image: "e17_clock_minutes_18.png" COMP;
+        image: "e17_clock_minutes_19.png" COMP;
+        image: "e17_clock_minutes_20.png" COMP;
+        image: "e17_clock_minutes_21.png" COMP;
+        image: "e17_clock_minutes_22.png" COMP;
+        image: "e17_clock_minutes_23.png" COMP;
+        image: "e17_clock_minutes_24.png" COMP;
+        image: "e17_clock_minutes_25.png" COMP;
+        image: "e17_clock_minutes_26.png" COMP;
+        image: "e17_clock_minutes_27.png" COMP;
+        image: "e17_clock_minutes_28.png" COMP;
+        image: "e17_clock_minutes_29.png" COMP;
+        image: "e17_clock_minutes_30.png" COMP;
+        image: "e17_clock_minutes_31.png" COMP;
         image: "e17_clock_minutes_32.png" COMP;
         image: "e17_clock_minutes_33.png" COMP;
         image: "e17_clock_minutes_34.png" COMP;
@@ -447,7 +447,8 @@ group
 # undef IND
 #endif
 #define IND "hour"
-      part {
+      part
+      {
 	 name: IND;
 	 mouse_events: 0;
 	 description {
@@ -536,31 +537,32 @@ group
 	 HAND("58")
 	 HAND("59")
       }
-      part {
-	 name: "main";
-	 mouse_events: 0;
-	 description {
-	    state: "default" 0.0;
-	    rel1 {
-	       to: "bg";
-	    }
-	    rel2 {
-	       to: "bg";
-	    }
-	    image {
-	       normal: "e17_clock_fg.png";
-	    }
-	 }
-      }
-   }
-   programs {
-      program {
-	 name: "init";
-	 signal: "load";
-	 source: "";
-	 script {
-	    clock_cb(0);
-	 }
-      }
-   }
+
+        part
+        {
+            name: "main";
+    	    mouse_events: 0;
+    	    description
+    	    {
+    	        state: "default" 0.0;
+    	        rel1.to: "bg";
+                rel2.to: "bg";
+        	    image.normal: "e17_clock_fg.png";
+            }
+        }/*main*/
+    }/*parts*/
+
+    programs
+    {
+        program
+        {
+	        name: "init";
+            signal: "load";
+            source: "";
+	        script
+	        {
+                clock_cb(0);
+	        }
+        }
+    }/*programs*/
 }
