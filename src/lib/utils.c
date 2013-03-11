@@ -73,14 +73,13 @@ evas_object_image_scale (Evas_Object * obj, int width, int height)
    evas_object_resize (obj, w3, h3);
 }
 
-/*Return user home dir*/
-const char *
-user_home_get (void)
-{
-   return (getenv ("HOME"));
-}
+/*
+ *Return user home dir
+ */
 
-/*Close a window by deleting evas object passing arg*/
+/*
+ *Close a window by deleting evas object passing arg
+ */
 void
 window_clicked_close_cb (void *data, Evas_Object * obj __UNUSED__,
                          void *event_info __UNUSED__)
@@ -90,7 +89,9 @@ window_clicked_close_cb (void *data, Evas_Object * obj __UNUSED__,
 }
 
 
-/*Show a window message to inform user about something*/
+/*
+ *Show a window message to inform user about something
+ */
 void
 msgbox (const char *msg)
 {
@@ -122,10 +123,12 @@ msgbox (const char *msg)
     evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb , win);
 
    	evas_object_show (win);
-}
+}/*msgbox*/
 
 
-/*Set debugging mode*/
+/*
+ *Set debugging mode
+ */
 void
 set_debug_mode(Eina_Bool debug)
  {
@@ -133,7 +136,9 @@ set_debug_mode(Eina_Bool debug)
 }
 
 
-/*Write a debug message out (if we are in debugging mode)*/
+/*
+ *Write a debug message out (if we are in debugging mode)
+ */
 void
 debug(FILE *stream, const char *format, ...)
 {
@@ -159,7 +164,7 @@ debug(FILE *stream, const char *format, ...)
 
   	/* Release parms */
   	va_end(params);
-}
+}/*debug*/
 
 
 
@@ -178,7 +183,8 @@ _strdelchr( char *s, size_t i, size_t *a, size_t *b)
     for( j = *b + 1; j < i; j++)
       s[++(*a)] = s[j];
   *b = i;
-}
+}/*_strdelchr*/
+
 
 /*
  * delete all occurrences of characters in search from s
@@ -202,4 +208,145 @@ strdelstr(char *s, const char *search)
   _strdelchr( s, l, &a, &b);
   s[++a] = '\0';
   return l - a;
-}
+}/*strdelstr*/
+
+
+/*
+ *
+ */
+const char *
+home_dir_get(void)
+{
+    const char *home_dir = NULL;
+
+    home_dir = getenv("HOME");
+
+    if (!home_dir || home_dir[0] == '\0')
+        home_dir = "/tmp";
+
+    home_dir = eina_stringshare_add(home_dir);
+
+    return home_dir;
+}/*home_dir_get*/
+
+
+/*
+ *
+ */
+static const char *
+_env_expand(const char *in)
+{
+    Eina_Strbuf *sb;
+    const char *ret, *p, *e1 = NULL, *e2 = NULL, *val;
+    char *env;
+
+    if (!in) return NULL;
+    sb = eina_strbuf_new();
+    if (!sb) return NULL;
+
+    /* maximum length of any env var is the input string */
+    env = alloca(strlen(in) + 1);
+    for (p = in; *p; p++)
+    {
+        if (!e1)
+        {
+            if (*p == '$') e1 = p + 1;
+            else eina_strbuf_append_char(sb, *p);
+        }
+        else if (!(((*p >= 'a') && (*p <= 'z')) ||
+                   ((*p >= 'A') && (*p <= 'Z')) ||
+                   ((*p >= '0') && (*p <= '9')) ||
+                   (*p == '_')))
+        {
+            size_t len;
+
+            e2 = p;
+            len = (size_t)(e2 - e1);
+            if (len > 0)
+            {
+                memcpy(env, e1, len);
+                env[len] = 0;
+                val = getenv(env);
+                if (val) eina_strbuf_append(sb, val);
+            }
+            e1 = NULL;
+            eina_strbuf_append_char(sb, *p);
+        }
+    }
+    ret = eina_stringshare_add(eina_strbuf_string_get(sb));
+    eina_strbuf_free(sb);
+    return ret;
+}/*env_expand*/
+
+
+/*
+ *
+ */
+static const char *
+_xdg_user_dir_get(const char *key, const char *fallback)
+{
+    Eina_File *file = NULL;
+    Eina_File_Line *line;
+    Eina_Iterator *it = NULL;
+    const char *config_home;
+    char path[PATH_MAX];
+    char *ret = NULL;
+
+    config_home = efreet_config_home_get();
+    snprintf(path, sizeof(path), "%s/user-dirs.dirs", config_home);
+
+    file = eina_file_open(path, EINA_FALSE);
+    if (!file) goto fallback;
+    it = eina_file_map_lines(file);
+    if (!it) goto fallback;
+    EINA_ITERATOR_FOREACH(it, line)
+    {
+        const char *eq, *end;
+
+        if (line->length < 3) continue;
+        if (line->start[0] == '#') continue;
+        if (strncmp(line->start, "XDG", 3)) continue;
+        eq = memchr(line->start, '=', line->length);
+        if (!eq) continue;
+        if (strncmp(key, line->start, eq - line->start)) continue;
+        if (++eq >= line->end) continue;
+        if (*eq == '"')
+        {
+            if (++eq >= line->end) continue;
+            end = memchr(eq, '"', line->end - eq);
+        }
+        else
+        {
+            end = line->end;
+            while (isspace(*end)) end--;
+        }
+        if (!end) continue;
+        ret = alloca(end - eq + 1);
+        memcpy(ret, eq, end - eq);
+        ret[end - eq] = '\0';
+        break;
+    }
+fallback:
+    if (it) eina_iterator_free(it);
+    if (file) eina_file_close(file);
+    if (!ret)
+    {
+        const char *home;
+        home = home_dir_get();
+        ret = alloca(strlen(home) + strlen(fallback) + 2);
+        sprintf(ret, "%s/%s", home, fallback);
+    }
+    return _env_expand(ret);
+}/*user_dir_get*/
+
+
+/*
+ *
+ */
+const char *
+xdg_pictures_dir_get(void)
+{
+    const char *xdg_pictures_dir = NULL;
+    xdg_pictures_dir = _xdg_user_dir_get("XDG_PICTURES_DIR", _("Pictures"));
+    return xdg_pictures_dir;
+}/*xdg_pictures_dir_get*/

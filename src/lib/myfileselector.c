@@ -246,7 +246,7 @@ myfileselector_add()
     myfs->fs = elm_fileselector_add(myfs->win);
     elm_fileselector_buttons_ok_cancel_set(myfs->fs, EINA_FALSE);
     elm_fileselector_is_save_set(myfs->fs, EINA_FALSE);
-    elm_fileselector_path_set(myfs->fs, user_home_get());
+    elm_fileselector_path_set(myfs->fs, home_dir_get());
     evas_object_size_hint_weight_set(myfs->fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(myfs->fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
     elm_grid_pack(grid, myfs->fs , 1, 1, 50, 80);

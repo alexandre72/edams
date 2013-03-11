@@ -28,4 +28,4 @@ Eina_Bool cosm_location_feed_add(Location *location);
 Eina_Bool cosm_location_feed_delete(Location *location);
 Eina_Bool cosm_device_datastream_update(Location *location, Widget *widget);
 
-#endif
+#endif /*__COSM_H*/

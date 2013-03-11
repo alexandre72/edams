@@ -55,8 +55,8 @@ debugeditor_add()
 {
     DebugEditor *debugeditor = calloc(1, sizeof(DebugEditor));
 
-	debugeditor->win = elm_win_util_standard_add("mail_editor", NULL);
-	elm_win_title_set(debugeditor->win, _("Edit mail"));
+	debugeditor->win = elm_win_util_standard_add("voice_editor", NULL);
+	elm_win_title_set(debugeditor->win, _("Edit debug message"));
 	elm_win_autodel_set(debugeditor->win, EINA_TRUE);
 	elm_win_center(debugeditor->win, EINA_TRUE, EINA_TRUE);
 
@@ -69,7 +69,7 @@ debugeditor_add()
 
 	debugeditor->frame = elm_frame_add(debugeditor->win);
 	elm_object_text_set(debugeditor->frame, _("Message:"));
-	elm_grid_pack(debugeditor->grid, debugeditor->frame, 1, 1, 99, 15);
+	elm_grid_pack(debugeditor->grid, debugeditor->frame, 1, 1, 99, 79);
 	evas_object_show(debugeditor->frame);
 
 	debugeditor->message_entry = elm_entry_add(debugeditor->win);
@@ -82,7 +82,7 @@ debugeditor_add()
 	debugeditor->hbox = elm_box_add(debugeditor->win);
 	elm_box_horizontal_set(debugeditor->hbox, EINA_TRUE);
 	elm_box_homogeneous_set(debugeditor->hbox, EINA_TRUE);
-	elm_grid_pack(debugeditor->grid, debugeditor->hbox, 1, 90, 99, 10);
+	elm_grid_pack(debugeditor->grid, debugeditor->hbox, 1, 80, 99, 10);
 	evas_object_show(debugeditor->hbox);
 
 	debugeditor->ok_button = elm_button_add(debugeditor->win);
@@ -106,7 +106,7 @@ debugeditor_add()
 	evas_object_size_hint_align_set(debugeditor->cancel_button, EVAS_HINT_FILL, 0);
 	evas_object_smart_callback_add(debugeditor->cancel_button, "clicked", _button_cancel_clicked_cb , debugeditor);
 
-	evas_object_resize(debugeditor->win, 400, 115);
+	evas_object_resize(debugeditor->win, 400, 180);
 	evas_object_show(debugeditor->win);
 
 	return debugeditor;

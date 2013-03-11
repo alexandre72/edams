@@ -50,11 +50,11 @@ requirements="\
    "
 PKG_CHECK_MODULES([EDAMS], [${requirements}])
 
-PKG_CHECK_MODULES([EMOTION],
-        [emotion >= 1.7],
-        [have_emotion="yes"],
-        [have_emotion="no"])
+PKG_CHECK_MODULES([EMOTION], [emotion >= 1.0.99 ], [have_emotion="yes"],[have_emotion="no"])
+have_emotion="no"
 AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
+#AM_COND_IF([HAVE_EMOTION], [AC_DEFINE(HAVE_EMOTION, 1, [Set to 1 if emotion package is installed.])])
+
 
 #Set edje_cc path.
 AC_ARG_WITH([edje-cc],

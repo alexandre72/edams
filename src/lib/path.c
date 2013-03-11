@@ -25,73 +25,90 @@
 #include <Eina.h>
 #include <Efreet.h>
 
-// Return FriLogos installation directory. useful to get global installation data path.
-// @return char pointer containing installation directory.
+
+
+/*
+ * Return EDAMS installation directory. useful to get global installation data path.
+ */
 const char *
 edams_install_path_get (void)
 {
 	return PACKAGE_DIR;
-}
+}/*edams_install_path_get*/
 
 
-// Return FriLogos user data directory. useful to get user data path.
-// @return char pointer containing installation directory.
+/*
+ *Return EDAMS user data directory. useful to get user data path.
+ */
 const char *
 edams_data_path_get(void)
 {
 	char s[PATH_MAX];
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"data"DIR_SEPARATOR_S"edams", efreet_data_home_get());
 	return strdup(s);
-}
+}/*edams_data_path_get*/
 
-
+/*
+ *
+ */
 const char *
 edams_locale_path_get(void)
 {
 	return PACKAGE_LOCALE_DIR;
-}
+}/*edams_locale_path_get*/
 
 
-//
-//
-//
+/*
+ *
+ */
 const char *
 edams_devices_data_path_get (void)
 {
     char s[PATH_MAX];
     snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"devices", edams_data_path_get());
 	return strdup(s);
-}
+}/*edams_devices_data_path_get*/
 
 
-//
-//
-//
+/*
+ *
+ */
+const char *
+edams_sounds_data_path_get (void)
+{
+    char s[PATH_MAX];
+    snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"sounds", edams_data_path_get());
+	return strdup(s);
+}/*edams_devices_data_path_get*/
+
+/*
+ *
+ */
 const char *
 edams_locations_data_path_get(void)
 {
     char s[PATH_MAX];
     snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"locations", edams_data_path_get());
 	return strdup(s);
-}
+}/*edams_locations_data_path_get*/
 
 
 
-//
-//
-//
+/*
+ *
+ */
 const char *
 edams_settings_file_get (void)
 {
     char s[PATH_MAX];
     snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"settings.eet", edams_data_path_get());
 	return strdup(s);
-}
+}/*edams_settings_file_get*/
 
 
-//
-//
-//
+/*
+ *
+ */
 const char *
 edams_theme_path_get(void)
 {
@@ -99,11 +116,11 @@ edams_theme_path_get(void)
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"themes"DIR_SEPARATOR_S"default", edams_install_path_get());
 	return strdup(s);
-}
+}/*edams_theme_path_get*/
 
-//
-//
-//
+/*
+ *
+ */
 const char *
 edams_edje_theme_file_get (void)
 {
@@ -111,4 +128,4 @@ edams_edje_theme_file_get (void)
 
 	snprintf(s, sizeof(s), "%s"DIR_SEPARATOR_S"share"DIR_SEPARATOR_S"edams"DIR_SEPARATOR_S"themes"DIR_SEPARATOR_S"default"DIR_SEPARATOR_S"edams.edj", edams_install_path_get());
 	return strdup(s);
-}
+}/*edams_edje_theme_file_get*/

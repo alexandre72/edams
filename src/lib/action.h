@@ -47,6 +47,7 @@ typedef enum _Action_Type
 	ACTION_TYPE_EXEC		= (3),
 	ACTION_TYPE_DEBUG		= (4),
 	ACTION_TYPE_OSD		    = (5),
+	ACTION_TYPE_VOICE		= (6),
 	ACTION_TYPE_LAST
 }Action_Type;
 
@@ -64,5 +65,6 @@ const char *action_exec_data_format(const char *exec, const char *terminal);
 const char *action_mail_data_format(const char *from, const char *to, const char *subject, const char *body);
 const char *action_cmnd_data_format(const char *device, const char *type, const char *current, const char *data1);
 const char *action_osd_data_format(const char *command, const char *text, double delay);
+const char *action_voice_data_format(const char *text, const char *file);
 
 #endif /*__ACTION_H*/

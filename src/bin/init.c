@@ -19,21 +19,26 @@
  */
 
 #include <Elementary.h>
-
 #include <Ecore_Con.h>
 #include <Ecore_File.h>
+
 
 #include "crontab.h"
 #include "edams.h"
 #include "path.h"
 #include "settings.h"
+#include "sound.h"
 #include "utils.h"
 
 
 /*Others funcs*/
-static int paths_init(App_Info * app);
 static int efl_init(App_Info * app);
+static int paths_init(App_Info * app);
+static int i18n_init(App_Info * app __UNUSED__);
 
+/*
+ *
+ */
 static int
 efl_init(App_Info * app)
 {
@@ -81,9 +86,11 @@ efl_init(App_Info * app)
 	elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
 
 	return 0;
-}
+}/*efl_init*/
 
-
+/*
+ *
+ */
 static int
 paths_init(App_Info * app __UNUSED__)
 {
@@ -91,29 +98,37 @@ paths_init(App_Info * app __UNUSED__)
 
 	char s[PATH_MAX];
 
-	// If no configurations path then create a new one in user home's.
+	/*If no configurations path then create a new one in user home's*/
 	strcpy(s, edams_data_path_get());
 	if (ecore_file_is_dir(s) == EINA_FALSE)
 	{
 		ecore_file_mkpath(edams_data_path_get());
 	}
 
-	// Create locations database directory.
+	/* Create locations database directory*/
 	strcpy(s, edams_locations_data_path_get());
 	if (ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 
-	// Create devices database directory.
+	/*Create devices database directory*/
 	strcpy(s, edams_devices_data_path_get());
 	if (ecore_file_is_dir(s) == EINA_FALSE)
 		ecore_file_mkpath(s);
 
+	/*Create sounds database directory*/
+	strcpy(s, edams_sounds_data_path_get());
+	if (ecore_file_is_dir(s) == EINA_FALSE)
+		ecore_file_mkpath(s);
+
 	return 0;
-}
+}/*paths_init*/
 
 
+/*
+ *
+ */
 static int
- i18n_init(App_Info * app __UNUSED__)
+i18n_init(App_Info * app __UNUSED__)
 {
 #if ENABLE_NLS
 	setlocale(LC_ALL, "");
@@ -123,10 +138,14 @@ static int
 #endif
 
 	return 0;
-}
+}/*i18n_init*/
 
 
 
+
+/*
+ *
+ */
 int
 edams_init(App_Info * app)
 {
@@ -135,6 +154,7 @@ edams_init(App_Info * app)
 	efl_init(app);
 	paths_init(app);
 	locations_init();
+	sound_init();
 	xpl_init();
     crontab_init();
 

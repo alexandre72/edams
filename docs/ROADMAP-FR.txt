@@ -1,4 +1,4 @@
-=>
+=>Interfacer http://emoncms.org/ avec EDAMS(web api possible?)
 
 =>Monitoring capteurs DS18B20,DHT11,PIR,ouvertures fenêtres,gaz,compteur téléinfo EDF ou par capteur opto voir possiblités,compteur EAU...
 =>Protocole des capteurs à définir(xplarduino,fait maison...?).

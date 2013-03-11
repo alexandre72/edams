@@ -31,4 +31,5 @@ const char *edams_devices_data_path_get (void);
 const char *edams_edje_theme_file_get (void);
 const char *edams_theme_path_get(void);
 const char *edams_settings_file_get (void);
+const char *edams_sounds_data_path_get (void);
 #endif /* __PATH_H__ */

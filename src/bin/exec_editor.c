@@ -93,8 +93,8 @@ execeditor_add()
 {
     ExecEditor *execeditor = calloc(1, sizeof(ExecEditor));
 
-	execeditor->win = elm_win_util_standard_add("mail_editor", NULL);
-	elm_win_title_set(execeditor->win, _("Edit mail"));
+	execeditor->win = elm_win_util_standard_add("exec_editor", NULL);
+	elm_win_title_set(execeditor->win, _("Edit exec"));
 	elm_win_autodel_set(execeditor->win, EINA_TRUE);
 	elm_win_center(execeditor->win, EINA_TRUE, EINA_TRUE);
 
@@ -107,7 +107,7 @@ execeditor_add()
 
 	execeditor->frame = elm_frame_add(execeditor->win);
 	elm_object_text_set(execeditor->frame, _("Exec:"));
-	elm_grid_pack(execeditor->grid, execeditor->frame, 1, 1, 99, 15);
+	elm_grid_pack(execeditor->grid, execeditor->frame, 1, 1, 99, 60);
 	evas_object_show(execeditor->frame);
 
 	execeditor->hbox = elm_box_add(execeditor->win);
@@ -138,13 +138,13 @@ execeditor_add()
 	execeditor->terminal_check = elm_check_add(execeditor->win);
 	evas_object_name_set(execeditor->terminal_check , "terminal check");
 	elm_object_text_set(execeditor->terminal_check , _("Exec in terminal"));
-	elm_grid_pack(execeditor->grid, execeditor->terminal_check , 0, 20, 30, 10);
+	elm_grid_pack(execeditor->grid, execeditor->terminal_check , 1, 65, 99, 10);
 	evas_object_show(execeditor->terminal_check );
 
 	execeditor->hbox = elm_box_add(execeditor->win);
 	elm_box_horizontal_set(execeditor->hbox, EINA_TRUE);
 	elm_box_homogeneous_set(execeditor->hbox, EINA_TRUE);
-	elm_grid_pack(execeditor->grid, execeditor->hbox, 1, 90, 99, 10);
+	elm_grid_pack(execeditor->grid, execeditor->hbox, 1, 80, 99, 10);
 	evas_object_show(execeditor->hbox);
 
 	execeditor->ok_button = elm_button_add(execeditor->win);
@@ -168,7 +168,7 @@ execeditor_add()
 	evas_object_size_hint_align_set(execeditor->cancel_button, EVAS_HINT_FILL, 0);
 	evas_object_smart_callback_add(execeditor->cancel_button, "clicked", _button_cancel_clicked_cb , execeditor);
 
-	evas_object_resize(execeditor->win, 400, 400);
+	evas_object_resize(execeditor->win, 400, 200);
 	evas_object_show(execeditor->win);
 
 	return execeditor;
