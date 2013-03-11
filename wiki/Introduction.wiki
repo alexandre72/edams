@@ -9,6 +9,7 @@ EDAMS support:
 
   * xPL protocol
   * Data handling via Cosm.com(ex-pachube.com)
+  * Voice support via voicerss.org. 
   * Location handling with geolocalization service.
   * Widgets for sensor.basic show your device's data in a nice way.
   * Widgets for control.basic to sens cmnd to xPL devices(like light on a lamp...).
