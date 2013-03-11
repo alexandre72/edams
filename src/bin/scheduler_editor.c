@@ -177,11 +177,9 @@ _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 	Elm_Object_Item *selected_item = elm_list_selected_item_get(list);
 
 
-
-
 	if(selected_item)
 	{
-    Cron_Entry *cron_elem = elm_object_item_data_get(selected_item);
+        Cron_Entry *cron_elem = elm_object_item_data_get(selected_item);
         root = cJSON_Parse(cron_elem->action_data);
     }
 

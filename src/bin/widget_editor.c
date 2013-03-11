@@ -118,6 +118,9 @@ _layout_samples_test(Evas_Object *layout)
         sample = app->widget;
     }
 
+	Evas_Object *entry = elm_object_name_find(win, "preview entry", -1);
+	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
+
     const char *t;
     /*Special widget with drag part, so need to convert device current value to float.*/
     if ((t = elm_layout_data_get(layout, "drag")))
@@ -153,17 +156,6 @@ _layout_samples_test(Evas_Object *layout)
 }/*_layout_samples_test*/
 
 
-/*
- *
- */
- /*
-static void
-_update_cmnd_preview(Widget *widget)
-{
-	//Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
-   	//elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
-}_update_cmnd_preview*/
-
 
 /*
  *
@@ -183,9 +175,6 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
 	if(strstr(emission, "load")) return;
 	if(strstr(emission, "updated")) return;
 	if(strstr(emission, "drag,stop")) return;
-
-	//fprintf(stdout, "emission=%s\n", emission);
-	//fprintf(stdout, "source=%s\n", source);
 
     if(strstr(emission, "drag"))
     {
@@ -224,7 +213,8 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
 
-    //_update_cmnd_preview(widget);
+	Evas_Object *entry = elm_object_name_find(win, "preview entry", -1);
+   	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
 }/*_layout_signals_cb*/
 
 
@@ -252,32 +242,8 @@ _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     }
 	else if(widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC)
 	{
-	 	/*Show cmnd schema specific parameters for control.basic widget according to edc item flags values.*/
-	    /*xPL type is set by widget Edc file in 'tag' data*/
-		if((t = elm_layout_data_get(layout, "tags")))
-		{
-			//FIXME:Hack to avoid setting input or ouput from sensor.basic class!
-			if(strcmp(t, "input") == 0)			widget_xpl_type_set(widget, XPL_TYPE_INPUT_CONTROL_BASIC);
-			else if(strcmp(t, "ouput") == 0)	widget_xpl_type_set(widget, XPL_TYPE_OUTPUT_CONTROL_BASIC);
-			else								widget_xpl_type_set(widget, t);
 			elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, NULL);
-		}
 	}
-
-/*
-	Evas_Object *entry = elm_object_name_find(win, "widget description entry", -1);
-	if((t = elm_layout_data_get(layout, "description")))
-	{
-		const char *s;
-		asprintf(&s, _("Description:%s"), t);
-   		elm_object_text_set(entry, t);
-   		FREE(s);
-   	}
-   	else
-   	{
-   		elm_object_text_set(entry, NULL);
-   	}
-*/
 }/*_list_item_group_selected_cb*/
 
 
@@ -305,8 +271,12 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     Widget_Class class = (Widget_Class)data;
     Evas_Object *list = elm_object_name_find(win, "sensors.basic list", -1);
     Evas_Object *frame = elm_object_name_find(win, "name frame", -1);
+    Evas_Object *entry = elm_object_name_find(win, "name entry", -1);
+    Evas_Object *preview_frame = elm_object_name_find(win, "preview frame", -1);
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
-	Evas_Object *check = elm_object_name_find(win, "cosm check", -1);
+	Evas_Object *cosm_check = elm_object_name_find(win, "cosm check", -1);
+	Evas_Object *gnuplot_check = elm_object_name_find(win, "gnuplot check", -1);
+    Evas_Object *hoversel = elm_object_name_find(win, "type hoversel", -1);
     App_Info *app = edams_app_info_get();
 
 	elm_layout_file_set(layout, edams_edje_theme_file_get(), NULL);
@@ -314,28 +284,47 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     widget_class_set(widget, class);
 
     elm_object_text_set(frame, _("Widget name"));
+    elm_object_text_set(entry, widget_name_get(widget));
     elm_object_disabled_set(list, EINA_TRUE);
-    evas_object_hide(check);
+    evas_object_hide(cosm_check);
+    evas_object_hide(gnuplot_check);
+    evas_object_hide(hoversel);
+    evas_object_hide(preview_frame);
 
     if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)
     {
         if(!elm_list_items_get(list))
+        {
             elm_object_disabled_set(list, EINA_TRUE);
+        }
         else
         {
             elm_object_disabled_set(list, EINA_FALSE);
-            evas_object_show(check);
+            evas_object_show(cosm_check);
+            evas_object_show(gnuplot_check);
+            evas_object_show(preview_frame);
+            if(app->widget)
+            {
+                elm_check_state_set(cosm_check, widget_cosm_get(widget));
+                elm_check_state_set(gnuplot_check, widget_gnuplot_get(widget));
+            }
         }
     }
     if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
     {
         elm_object_text_set(frame, _("xpl device"));
+        elm_object_text_set(hoversel, widget_xpl_type_get(widget));
+        evas_object_show(hoversel);
+        evas_object_show(preview_frame);
     }
 
     _fill_widget_groups(app);
 }/*_list_item_class_selected_cb*/
 
 
+/*
+ *
+ */
 static void
 _fill_widget_groups()
 {
@@ -379,6 +368,18 @@ _fill_widget_groups()
 	}
 	elm_list_go(list);
 }/*_fill_widget_groups*/
+
+
+
+/*
+ *Callback called in any hoversel objects when clicked signal is emitted.
+ */
+static void
+_hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+{
+	elm_object_text_set(obj, elm_object_item_text_get(event_info));
+    widget_xpl_type_set(widget, elm_object_item_text_get(event_info));
+}/*_hoversel_selected_cb*/
 
 /*
  *
@@ -434,7 +435,7 @@ void
 widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	Evas_Object *grid, *box;
-	Evas_Object *button, *icon, *separator, *frame, *list, *entry, *layout, *check;
+	Evas_Object *button, *icon, *separator, *frame, *list, *entry, *layout, *check, *hoversel;
 	App_Info *app = (App_Info *) edams_app_info_get();
 
 	if (!app->location)	return;
@@ -548,6 +549,24 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	evas_object_smart_callback_add(entry, "changed", _entry_name_changed_cb, NULL);
 	evas_object_show(entry);
 
+   	hoversel = elm_hoversel_add(grid);
+   	evas_object_name_set(hoversel, "type hoversel");
+   	elm_object_text_set(hoversel, _("Type"));
+    elm_grid_pack(grid, hoversel, 70, 35, 25, 6);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_BALANCE_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 0);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_FLAG_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 1);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_INFRARED_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 2);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_INPUT_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 3);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_MACRO_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 4);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_MUTE_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 5);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_OUTPUT_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 6);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_VARIABLE_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 7);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_PERIODIC_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 8);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_SCHEDULED_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 9);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_SLIDER_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 10);
+	elm_hoversel_item_add(hoversel, XPL_TYPE_TIMER_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, 11);
+    evas_object_smart_callback_add(hoversel, "selected", _hoversel_selected_cb, NULL);
+
 	check = elm_check_add(win);
 	evas_object_name_set(check, "cosm check");
 	icon = elm_icon_add(win);
@@ -555,7 +574,6 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	elm_icon_standard_set(icon, "cosm-logo");
 	elm_object_part_content_set(check, "icon", icon);
 	elm_grid_pack(grid, check, 69, 32, 15, 5);
-	evas_object_hide(check);
 	evas_object_smart_callback_add(check, "changed", _check_cosm_changed_cb, NULL);
 
 	check = elm_check_add(win);
@@ -565,12 +583,11 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	elm_icon_standard_set(icon, "gnuplot-logo");
 	elm_object_part_content_set(check, "icon", icon);
 	elm_grid_pack(grid, check, 69, 37, 15, 5);
-	evas_object_hide(check);
 	evas_object_smart_callback_add(check, "changed", _check_gnuplot_changed_cb, NULL);
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Preview"));
-	elm_grid_pack(grid, frame, 1, 46, 42, 40);
+	elm_grid_pack(grid, frame, 1, 46, 42, 20);
 	evas_object_show(frame);
 
 	layout = elm_layout_add(win);
@@ -579,6 +596,21 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
    	evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_object_content_set(frame, layout);
 	evas_object_show(layout);
+
+	frame = elm_frame_add(win);
+    evas_object_name_set(frame, "preview frame");
+	elm_object_text_set(frame, _("xPL Preview"));
+	elm_grid_pack(grid, frame, 1, 66, 42, 20);
+	evas_object_show(frame);
+
+    entry = elm_entry_add(win);
+    evas_object_name_set(entry, "preview entry");
+   	elm_entry_scrollable_set(entry, EINA_FALSE);
+    elm_entry_editable_set(entry, EINA_FALSE);
+   	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set( entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_object_content_set(frame,  entry);
+	evas_object_show(entry);
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Widgets"));
@@ -629,21 +661,8 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	elm_box_pack_end(box, separator);
 	evas_object_show(separator);
 
-    if(app->widget)
-    {
-        elm_object_text_set(entry, widget_name_get(widget));
-        _fill_widget_groups(app);
-
-        check = elm_object_name_find(win, "cosm check", -1);
-        elm_check_state_set(check, widget_cosm_get(widget));
-	    evas_object_show(check);
-
-        check = elm_object_name_find(win, "gnuplot check", -1);
-        elm_check_state_set(check, widget_gnuplot_get(widget));
-	    evas_object_show(check);
-    }
 
 	/*Resize window*/
-	evas_object_resize(win, 650, 500);
+	evas_object_resize(win, 650, 650);
 	evas_object_show(win);
 }/*widget_editor_add*/
