@@ -162,15 +162,21 @@ static void
 _voiceeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	VoiceEditor *voiceeditor = data;
+    char *to_file;
     const char *s;
-
 
     if(voiceeditor->sound_file)
     {
-        s = action_voice_data_format(elm_object_text_get(voiceeditor->message_entry), voiceeditor->sound_file);
+        asprintf(&to_file, "%s/%s", edams_sounds_data_path_get(), ecore_file_file_get(voiceeditor->sound_file));
+        ecore_file_mv(voiceeditor->sound_file, to_file);
+        FREE(voiceeditor->sound_file);
+
+        s = action_voice_data_format(elm_object_text_get(voiceeditor->message_entry), to_file);
+        FREE(to_file);
         evas_object_data_set(win, "action data", s);
-	    voiceeditor_close(voiceeditor);
-	}
+    }
+
+	voiceeditor_close(voiceeditor);
 }/*_voiceeditor_button_action_clicked_cb*/
 
 
@@ -263,7 +269,15 @@ _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void 
         VoiceEditor *voiceeditor;
         voiceeditor = voiceeditor_add();
         evas_object_smart_callback_add(voiceeditor->ok_button, "clicked", _voiceeditor_button_ok_clicked_cb, voiceeditor);
-        //elm_object_text_set(voiceeditor->message, );
+
+        if(root)
+        {
+            cJSON *jtext = cJSON_GetObjectItem(root, "TEXT");
+            char *text = cJSON_PrintUnformatted(jtext);
+            strdelstr(text, "\"");
+    	    elm_object_text_set(voiceeditor->message_entry, text);
+        }
+        return;
     }
 
 
