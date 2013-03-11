@@ -374,21 +374,24 @@ xpl_message_print(xPL_MessagePtr message, xPL_ObjectPtr data __UNUSED__)
   if (xPL_isBroadcastMessage(message))
   {
     fprintf(stdout, "*");
-  } else {
+  }
+  else
+  {
     if (xPL_isGroupMessage(message))
     {
-      fprintf(stdout, "XPL-GROUP.%s", xPL_getTargetGroup(message));
-    } else {
-      fprintf(stdout, "%s-%s.%s",
-	      xPL_getTargetVendor(message),
-	      xPL_getTargetDeviceID(message),
-	      xPL_getTargetInstanceID(message));
+        fprintf(stdout, "XPL-GROUP.%s", xPL_getTargetGroup(message));
+    }
+    else
+    {
+        fprintf(stdout, "%s-%s.%s",
+                xPL_getTargetVendor(message),
+                xPL_getTargetDeviceID(message),
+                xPL_getTargetInstanceID(message));
     }
   }
 
   /* Echo Schema Info */
-  fprintf(stdout, "\tCLASS=%s\tTYPE=%s", xPL_getSchemaClass(message), xPL_getSchemaType(message));
-  fprintf(stdout, "\n");
+  fprintf(stdout, " CLASS=%s TYPE=%s\n", xPL_getSchemaClass(message), xPL_getSchemaType(message));
 }
 
 
@@ -506,6 +509,11 @@ const char*
 xpl_control_basic_cmnd_to_elm_str(Widget *widget)
 {
     const char *s;
+
+    if( !widget_xpl_device_get(widget) ||
+        !widget_xpl_type_get(widget) ||
+        !widget_xpl_current_get(widget))
+            return NULL;
 
     if(!widget_xpl_data1_get(widget))
     {

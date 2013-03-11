@@ -156,7 +156,9 @@ debug(FILE *stream, const char *format, ...)
 
   	/* Write to the console or system log file */
   	if(stream == stdout)
-		fprintf(stdout, "\033[32m[DBG]\033[0m");
+  	{
+    	fprintf(stdout, "\033[32m[DBG]\033[0m");
+	}
 	else if(stream == stderr)
 		fprintf(stderr, "\033[31m[ERROR]\033[0m");
 
