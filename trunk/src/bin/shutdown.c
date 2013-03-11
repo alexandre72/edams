@@ -26,12 +26,18 @@
 #include "crontab.h"
 #include "settings.h"
 #include "shutdown.h"
+#include "sound.h"
 #include "utils.h"
+
 
 static int efl_shutdown(App_Info * app);
 
 
-static int efl_shutdown(App_Info * app __UNUSED__)
+/*
+ *
+ */
+static int
+efl_shutdown(App_Info * app __UNUSED__)
 {
 	debug(stdout, _("Shutdown Enlightenment Foundation Libraries..."));
 	eina_shutdown();
@@ -42,11 +48,16 @@ static int efl_shutdown(App_Info * app __UNUSED__)
 	elm_shutdown();
 
 	return 0;
-}
+}/*efl_shutdown*/
 
 
-int edams_shutdown(App_Info * app)
+/*
+ *
+ */
+int
+edams_shutdown(App_Info * app)
 {
+    sound_shutdown();
 	xpl_shutdown(app);
 
 	debug(stdout, _("Free allocated memory..."));
@@ -61,4 +72,4 @@ int edams_shutdown(App_Info * app)
 	efl_shutdown(app);
 
 	return EINA_TRUE;
-}
+}/*edams_shutdown*/

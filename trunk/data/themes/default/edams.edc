@@ -27,6 +27,7 @@ images
 	image: "icons/gnuplot-logo.png" COMP;
 	image: "icons/debug-action.png" COMP;
     image: "icons/osd-action.png" COMP;
+    image: "icons/voice-action.png" COMP;
 	image: "cursors/left_ptr.png" COMP;
 	image: "cursors/dotbox.png" COMP;
 	image: "cursors/grab.png" COMP;
@@ -126,6 +127,7 @@ ICON("elm/icon/gnuplot-logo/default", "icons/gnuplot-logo.png")
 ICON("elm/icon/debug-action/default", "icons/debug-action.png")
 ICON("elm/icon/osd-action/default", "icons/osd-action.png")
 ICON("elm/icon/global-view/default", "icons/global-view.png")
+ICON("elm/icon/voice-action/default", "icons/voice-action.png")
 
 CURSOR("cursors/left_ptr",  "cursors/left_ptr.png")
 CURSOR("cursors/grab",  "cursors/grab.png")

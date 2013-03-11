@@ -49,9 +49,9 @@ void set_debug_mode(Eina_Bool debug);
 void debug(FILE *stream, const char *theFormat, ...);
 void evas_object_image_scale(Evas_Object *obj, int width, int height);
 void window_clicked_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
-const char *user_home_get(void);
 void msgbox(const char *msg);
 const char *filename_create(const char *filename);
 size_t strdelstr(char *s, const char *search);
-
+const char *home_dir_get(void);
+const char *xdg_pictures_dir_get(void);
 #endif /* __UTILS_H__ */

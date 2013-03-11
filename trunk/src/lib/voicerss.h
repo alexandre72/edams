@@ -1,5 +1,5 @@
 /*
- * sound.h
+ * cosm.h
  * This file is part of EDAMS
  *
  * Copyright (C) 2012 - Alexandre Dussart
@@ -11,7 +11,7 @@
  *
  * EDAMS is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PAR TICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -19,11 +19,11 @@
  */
 
 
-#ifndef __SOUND_H
-#define __SOUND_H
+#ifndef __VOICERSS_H
+#define __VOICERSS_H
 
-int sound_init();
-int sound_shutdown();
-int sound_file_play(const char *f);
+#include "edams.h"
 
-#endif /*__SOUND_H*/
+Eina_Bool voicerss_play(const char *text, VoiceEditor *ve);
+
+#endif /*__VOICERSS_H*/

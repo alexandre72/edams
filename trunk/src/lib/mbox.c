@@ -116,11 +116,9 @@ _mbox_check_mail_parser()
 void
 mbox_monitoring_init()
 {
-    if(mbox)
-    {
-        fprintf(stdout, "Don't add monitor to mbox\n");
-        return;
-    }
+    /*If mbox is already monitored don't monitor it again*/
+    if(mbox) return;
+
     mbox = calloc(1, sizeof(Mbox_Client));
 
     mbox->num_new = 0;

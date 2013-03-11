@@ -484,6 +484,7 @@ elm_main(int argc, char **argv)
     char *opt_action_type = NULL;
     char *opt_action_data = NULL;
 
+
     Ecore_Getopt_Value values[] =
     {
         ECORE_GETOPT_VALUE_STR(opt_action_type),
@@ -574,7 +575,7 @@ elm_main(int argc, char **argv)
     elm_toolbar_icon_order_lookup_set(app->toolbar, ELM_ICON_LOOKUP_FDO_THEME);
     evas_object_size_hint_align_set(app->toolbar, -1.0, 0.0);
     evas_object_size_hint_weight_set(app->toolbar, 1.0, 0.0);
-    elm_toolbar_item_append(app->toolbar, "global-view", _("Global View"), global_view_new, app);
+    elm_toolbar_item_append(app->toolbar, "view-fullscreen", _("Global View"), global_view_new, app);
     elm_toolbar_item_append(app->toolbar, "appointment-new", _("Scheduler Editor"), scheduler_editor_new, app);
     elm_toolbar_item_append(app->toolbar, "applications-utilities", _("Preferences"), preferences_dlg_new, app);
     elm_toolbar_item_append(app->toolbar, "help-about", _("About"), about_dialog_new, app);

@@ -394,8 +394,58 @@ cmnd_action_parse(const char *data)
 }/*cmnd_action*/
 
 
+/*
+ *
+ */
+const char *
+action_voice_data_format(const char *text, const char *file)
+{
+    cJSON *root;
+    const char *s;
 
-//{"TYPE":"EXEC","DATA":"/usr/bin/gedit"}
+	root = cJSON_CreateObject();
+
+	cJSON_AddItemToObject(root, "TEXT", cJSON_CreateString(text));
+	cJSON_AddItemToObject(root, "FILE", cJSON_CreateString(file));
+    s = cJSON_PrintUnformatted(root);
+
+	cJSON_Delete(root);
+
+    return s;
+}/*voice_action_data_format*/
+
+/*
+ *
+ */
+static Eina_Bool
+voice_action_parse(const char *data)
+{
+	cJSON *root = cJSON_Parse(data);
+
+	if(!root) return EINA_FALSE;
+
+	cJSON *jtext = cJSON_GetObjectItem(root, "TEXT");
+	cJSON *jfile = cJSON_GetObjectItem(root, "FILE");
+
+    char *text =cJSON_PrintUnformatted(jtext);
+    char *file =cJSON_PrintUnformatted(jfile);
+
+    strdelstr(text, "\"");
+    strdelstr(file, "\"");
+
+	if(file)
+        sound_file_play(file);
+	else
+		return EINA_FALSE;
+
+	cJSON_Delete(root);
+	FREE(text);
+	FREE(file);
+	return EINA_TRUE;
+}/*voice_action_parse*/
+
+
+
 
 
 /*
@@ -429,6 +479,9 @@ action_parse(Action *action)
 				 break;
 		case ACTION_TYPE_OSD:
 				 return osd_action_parse(action_data_get(action));
+				 break;
+		case ACTION_TYPE_VOICE:
+				 return voice_action_parse(action_data_get(action));
 				 break;
 		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
@@ -489,6 +542,7 @@ action_str_to_type(const char *s)
 	else if(strcmp(s, "DEBUG") == 0)return ACTION_TYPE_DEBUG;
 	else if(strcmp(s, "MAIL") == 0)	return ACTION_TYPE_MAIL;
 	else if(strcmp(s, "OSD") == 0)	return ACTION_TYPE_OSD;
+	else if(strcmp(s, "VOICE") == 0)	return ACTION_TYPE_VOICE;
 	else							return ACTION_TYPE_UNKNOWN;
 }/*action_str_to_condition*/
 
@@ -504,6 +558,7 @@ action_type_to_desc(Action_Type type)
 	else if(type == ACTION_TYPE_EXEC)		return _("Execute an external program");
 	else if(type == ACTION_TYPE_DEBUG)		return _("Debug stuff for testing purpose");
 	else if(type == ACTION_TYPE_OSD)		return _("Send xPL CMND to osd.basic");
+	else if(type == ACTION_TYPE_VOICE)		return _("Use synthetized voice to say some message");
 	else 									return NULL;
 }/*action_type_to_str*/
 
@@ -519,5 +574,6 @@ action_type_to_str(Action_Type type)
 	else if(type == ACTION_TYPE_EXEC)		return "EXEC";
 	else if(type == ACTION_TYPE_DEBUG)		return "DEBUG";
 	else if(type == ACTION_TYPE_OSD)		return "OSD";
+	else if(type == ACTION_TYPE_VOICE)		return "VOICE";
 	else 									return NULL;
 }/*action_type_to_str*/

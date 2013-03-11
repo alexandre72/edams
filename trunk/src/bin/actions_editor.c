@@ -32,6 +32,7 @@
 #include "osd_editor.h"
 #include "path.h"
 #include "utils.h"
+#include "voice_editor.h"
 #include "xpl.h"
 
 /*Global objects*/
@@ -154,6 +155,25 @@ _maileditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 }/*_maileditor_button_action_clicked_cb*/
 
 
+/*
+ *
+ */
+static void
+_voiceeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	VoiceEditor *voiceeditor = data;
+    const char *s;
+
+
+    if(voiceeditor->sound_file)
+    {
+        s = action_voice_data_format(elm_object_text_get(voiceeditor->message_entry), voiceeditor->sound_file);
+        evas_object_data_set(win, "action data", s);
+	    voiceeditor_close(voiceeditor);
+	}
+}/*_voiceeditor_button_action_clicked_cb*/
+
+
 
 /*
  *Callback called in hoversel 'action type' objects when clicked signal is emitted.
@@ -238,6 +258,14 @@ _hoversel_action_type_selected_cb(void *data __UNUSED__, Evas_Object *obj, void 
         evas_object_smart_callback_add(cmndeditor->ok_button, "clicked", _cmndeditor_button_ok_clicked_cb, cmndeditor);
         //elm_object_text_set(cmndeditor->message, );
     }
+    else if(type == ACTION_TYPE_VOICE)
+    {
+        VoiceEditor *voiceeditor;
+        voiceeditor = voiceeditor_add();
+        evas_object_smart_callback_add(voiceeditor->ok_button, "clicked", _voiceeditor_button_ok_clicked_cb, voiceeditor);
+        //elm_object_text_set(voiceeditor->message, );
+    }
+
 
 }/*_hoversel_action_type_selected_cb*/
 
@@ -347,7 +375,10 @@ _list_action_add(Evas_Object *list, Action *action)
         elm_icon_standard_set(icon, "debug-action");
     else if(action_type_get(action) == ACTION_TYPE_DEBUG)
         elm_icon_standard_set(icon, "osd-action");
-       	elm_image_file_set(icon, edams_edje_theme_file_get(), "");
+    else if(action_type_get(action) == ACTION_TYPE_VOICE)
+        elm_icon_standard_set(icon, "voice-action");
+    else
+        elm_image_file_set(icon, edams_edje_theme_file_get(), "");
 
 	//elm_image_aspect_fixed_set(icon, EINA_TRUE);
 	//evas_object_resize(icon, 24, 24);
@@ -457,6 +488,8 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *ev
     		elm_hoversel_item_icon_set(it, "debug-action", NULL, ELM_ICON_STANDARD);
         else if(x == ACTION_TYPE_OSD)
     		elm_hoversel_item_icon_set(it, "osd-action", NULL, ELM_ICON_STANDARD);
+        else if(x == ACTION_TYPE_VOICE)
+    		elm_hoversel_item_icon_set(it, "voice-action", NULL, ELM_ICON_STANDARD);
         else
     		elm_hoversel_item_icon_set(it, NULL, NULL, ELM_ICON_NONE);
 

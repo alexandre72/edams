@@ -34,6 +34,7 @@
 #include "path.h"
 #include "settings.h"
 #include "utils.h"
+#include "voice_editor.h"
 
 
 /*Global objects*/
@@ -138,6 +139,32 @@ _maileditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 
 
 /*
+ *
+ */
+static void
+_voiceeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+	VoiceEditor *voiceeditor = data;
+    char *to_file;
+    const char *s;
+
+    if(voiceeditor->sound_file)
+    {
+        asprintf(&to_file, "%s/%s", edams_sounds_data_path_get(), ecore_file_file_get(voiceeditor->sound_file));
+        ecore_file_mv(voiceeditor->sound_file, to_file);
+        FREE(voiceeditor->sound_file);
+
+        s = action_voice_data_format(elm_object_text_get(voiceeditor->message_entry), to_file);
+        FREE(to_file);
+        evas_object_data_set(win, "action data", s);
+    }
+
+	voiceeditor_close(voiceeditor);
+}/*_voiceeditor_button_action_clicked_cb*/
+
+
+
+/*
  *Callback called in any hoversel objects when clicked signal is emitted.
  */
 static void
@@ -225,6 +252,22 @@ _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
         evas_object_smart_callback_add(cmndeditor->ok_button, "clicked", _cmndeditor_button_ok_clicked_cb, cmndeditor);
         //elm_object_text_set(cmndeditor->message, );
     }
+    else if(type == ACTION_TYPE_VOICE)
+    {
+        VoiceEditor *voiceeditor;
+        voiceeditor = voiceeditor_add();
+        evas_object_smart_callback_add(voiceeditor->ok_button, "clicked", _voiceeditor_button_ok_clicked_cb, voiceeditor);
+
+        if(root)
+        {
+            cJSON *jtext = cJSON_GetObjectItem(root, "TEXT");
+            char *text = cJSON_PrintUnformatted(jtext);
+            strdelstr(text, "\"");
+    	    elm_object_text_set(voiceeditor->message_entry, text);
+        }
+        return;
+    }
+
 }/*_hoversel_selected_cb*/
 
 
@@ -390,6 +433,8 @@ _list_crons_add(Evas_Object *list, Cron_Entry *cron_elem)
         elm_icon_standard_set(icon, "debug-action");
     else if(type == ACTION_TYPE_DEBUG)
         elm_icon_standard_set(icon, "osd-action");
+    else if(type == ACTION_TYPE_VOICE)
+        elm_icon_standard_set(icon, "voice-action");
     else
        	elm_image_file_set(icon, edams_edje_theme_file_get(), "");
 
@@ -570,13 +615,15 @@ scheduler_editor_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *
         if(x == ACTION_TYPE_CMND)
             elm_hoversel_item_icon_set(it, "xpl-logo", NULL, ELM_ICON_STANDARD);
         else if(x == ACTION_TYPE_MAIL)
-        elm_hoversel_item_icon_set(it, "mail-message-new", NULL, ELM_ICON_STANDARD);
+            elm_hoversel_item_icon_set(it, "mail-message-new", NULL, ELM_ICON_STANDARD);
         else if(x == ACTION_TYPE_EXEC)
     		elm_hoversel_item_icon_set(it, "system-run", NULL, ELM_ICON_STANDARD);
         else if(x == ACTION_TYPE_DEBUG)
     		elm_hoversel_item_icon_set(it, "debug-action", NULL, ELM_ICON_STANDARD);
         else if(x == ACTION_TYPE_OSD)
     		elm_hoversel_item_icon_set(it, "osd-action", NULL, ELM_ICON_STANDARD);
+        else if(x == ACTION_TYPE_VOICE)
+    		elm_hoversel_item_icon_set(it, "voice-action", NULL, ELM_ICON_STANDARD);
         else
     		elm_hoversel_item_icon_set(it, NULL, NULL, ELM_ICON_NONE);
 	}

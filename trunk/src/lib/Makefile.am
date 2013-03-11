@@ -22,8 +22,10 @@ myfileselector.c \
 path.c \
 location.c \
 settings.c \
+sound.c \
 cosm.c \
 utils.c \
+voicerss.c \
 widget.c \
 xpl.c \
 xpl-config.c \

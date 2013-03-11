@@ -32,7 +32,8 @@ osd_editor.c \
 preferences_dlg.c \
 scheduler_editor.c \
 shutdown.c \
-widget_editor.c
+widget_editor.c \
+voice_editor.c
 
 edams_LDADD = \
     $(top_builddir)/src/lib/libedams.la \

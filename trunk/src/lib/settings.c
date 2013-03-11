@@ -28,19 +28,23 @@
 
 typedef struct
 {
+	Eina_Stringshare *voicerss_apikey;			/*Voicerss API key account. Eg 'idde778445458778877989'*/
 	Eina_Stringshare *cosm_apikey;			    /*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
 	Eina_Stringshare *gnuplot_path;			    /*Gnuplot path. Eg '/usr/bin/gnuplot'*/
 	Eina_Stringshare *global_view_background;   /*Global view background image filename.*/
 	Eina_Stringshare *mbox_path; 			    /*mbox path file. Eg '/home/jdoe/mbox'*/
 	Eina_Stringshare *user_name;                /*User name. Eg 'John Doe'*/
 	Eina_Stringshare *user_mail;                /*User mail. Eg 'john.doe@imail.net'*/
-	Eina_Bool softemu;			    /*TODO:Sotfware emulation, mainly used to test EDAMS.*/
-	Eina_Bool debug;			    /*Use printf to help to debug EDAMS.*/
+	Eina_Bool softemu;			                /*TODO:Sotfware emulation, mainly used to test EDAMS.*/
+	Eina_Bool debug;			                /*Use printf to help to debug EDAMS.*/
 } Settings;
 
 
 static Settings *settings = NULL;
 static Eet_File *ef = NULL;
+
+
+
 
 
 #define EET_STRING_SETTINGS_READ(_field, _var) \
@@ -295,6 +299,37 @@ edams_settings_user_name_set(const char *user_name)
 
 
 
+/*
+ *
+ */
+const char*
+edams_settings_voicerss_apikey_get()
+{
+    settings->voicerss_apikey = NULL;
+	EET_STRING_SETTINGS_READ("edams/voicerss_apikey",settings->voicerss_apikey);
+	return settings->voicerss_apikey;
+}/*edams_settings_voicerss_apikey_get*/
+
+
+/*
+ *
+ */
+void
+edams_settings_voicerss_apikey_set(const char *voicerss_apikey)
+{
+    if((!voicerss_apikey) || (strlen(voicerss_apikey) == 0))
+    {
+        eet_delete(ef, "edams/voicerss_apikey");
+        voicerss_apikey = NULL;
+    }
+    else
+    {
+        eet_write(ef, "edams/voicerss_apikey", voicerss_apikey, strlen(voicerss_apikey)+1, 0);
+    }
+	debug(stdout, _("Voicerss handling options is %s"), voicerss_apikey?_("enabled"):_("disabled"));
+}/*edams_settings_voicerss_apikey_set*/
+
+
 
 /*
  *
@@ -312,16 +347,20 @@ edams_settings_init()
 
 	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE);
 
-	settings->gnuplot_path = NULL;
+	settings->gnuplot_path = eina_stringshare_add("/usr/bin/gnuplot");
 	settings->cosm_apikey = NULL;
+	settings->voicerss_apikey = NULL;
 	settings->global_view_background = NULL;
 	settings->user_name = eina_stringshare_add(getlogin());
-	const char *s;
+	char *s;
 	asprintf(&s, "%s@localhost", getlogin());
 	settings->user_mail = eina_stringshare_add(s);
     FREE(s);
 	settings->softemu = EINA_FALSE;
-	settings->mbox_path = NULL;
+    if(home_dir_get())
+        asprintf(&s, "%s/mbox", home_dir_get());
+	settings->mbox_path = eina_stringshare_add(s);
+	FREE(s);
 	settings->debug = edams_settings_debug_get();
 
 	set_debug_mode(settings->debug);
@@ -338,6 +377,7 @@ edams_settings_shutdown()
 
 	eina_stringshare_del(settings->gnuplot_path);
 	eina_stringshare_del(settings->cosm_apikey);
+	eina_stringshare_del(settings->voicerss_apikey);
 	eina_stringshare_del(settings->global_view_background);
 	eina_stringshare_del(settings->mbox_path);
 	eina_stringshare_del(settings->user_name);
