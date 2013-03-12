@@ -30,7 +30,6 @@ typedef struct
 {
 	Eina_Stringshare *voicerss_apikey;			/*Voicerss API key account. Eg 'idde778445458778877989'*/
 	Eina_Stringshare *cosm_apikey;			    /*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
-	Eina_Stringshare *gnuplot_path;			    /*Gnuplot path. Eg '/usr/bin/gnuplot'*/
 	Eina_Stringshare *global_view_background;   /*Global view background image filename.*/
 	Eina_Stringshare *mbox_path; 			    /*mbox path file. Eg '/home/jdoe/mbox'*/
 	Eina_Stringshare *user_name;                /*User name. Eg 'John Doe'*/
@@ -182,35 +181,6 @@ edams_settings_cosm_apikey_set(const char *cosm_apikey)
 	debug(stdout, _("Cosm data handling options is %s"), cosm_apikey?_("enabled"):_("disabled"));
 }/*edams_settings_cosm_apikey_set*/
 
-/*
- *
- */
-const char*
-edams_settings_gnuplot_path_get()
-{
-    settings->gnuplot_path = NULL;
-	EET_STRING_SETTINGS_READ("edams/gnuplot_path", settings->gnuplot_path);
-	return settings->gnuplot_path;
-}/*edams_settings_gnuplot_path_get*/
-
-/*
- *
- */
-void
-edams_settings_gnuplot_path_set(const char *gnuplot_path)
-{
-    if((!gnuplot_path) || (strlen(gnuplot_path) == 0))
-    {
-        eet_delete(ef, "edams/gnuplot_path");
-        gnuplot_path = NULL;
-    }
-    else
-    {
-        eet_write(ef, "edams/gnuplot_path", gnuplot_path, strlen(gnuplot_path)+1, 0);
-    }
-	debug(stdout, _("Gnuplot data handling options is %s"), gnuplot_path ? _("enabled"):_("disabled"));
-}/*edams_settings_gnuplot_path_set*/
-
 
 /*
  *
@@ -346,8 +316,6 @@ edams_settings_init()
 	}
 
 	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE);
-
-	settings->gnuplot_path = eina_stringshare_add("/usr/bin/gnuplot");
 	settings->cosm_apikey = NULL;
 	settings->voicerss_apikey = NULL;
 	settings->global_view_background = NULL;
@@ -375,7 +343,6 @@ edams_settings_shutdown()
 {
 	eet_close(ef);
 
-	eina_stringshare_del(settings->gnuplot_path);
 	eina_stringshare_del(settings->cosm_apikey);
 	eina_stringshare_del(settings->voicerss_apikey);
 	eina_stringshare_del(settings->global_view_background);

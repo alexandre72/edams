@@ -16,7 +16,6 @@ libedams_la_SOURCES = \
 action.c \
 cJSON.c \
 crontab.c \
-gnuplot.c \
 mbox.c \
 myfileselector.c \
 path.c \

@@ -90,8 +90,6 @@ const char * widget_xpl_lowest_get(const Widget *widget);
 void widget_cosm_set(Widget *widget, Eina_Bool cosm);
 Eina_Bool widget_cosm_get(const Widget *widget);
 
-void widget_gnuplot_set(Widget *widget, Eina_Bool gnuplot);
-Eina_Bool widget_gnuplot_get(const Widget *widget);
 
 void widget_action_add(Widget *widget, Action *action);
 void widget_action_del(Widget *widget,Action *action);

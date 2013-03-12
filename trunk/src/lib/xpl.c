@@ -28,7 +28,6 @@
 #include "cJSON.h"
 #include "cosm.h"
 #include "edams.h"
-#include "gnuplot.h"
 #include "global_view.h"
 #include "xpl.h"
 
@@ -262,9 +261,6 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
                             if(widget_cosm_get(widget))
                                 cosm_device_datastream_update(location, widget);
-
-                            if(widget_gnuplot_get(widget))
-                                gnuplot_device_data_write(widget);
 
                             global_view_widget_data_update(location, widget);
                         }
