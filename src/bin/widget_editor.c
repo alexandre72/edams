@@ -28,10 +28,12 @@
 #include "utils.h"
 #include "widget_editor.h"
 
+
+/*Global objects*/
 static Evas_Object *win = NULL;
 static Widget *widget = NULL;
 
-
+/*Evas_Object Callbacks*/
 static void _button_close_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source);
@@ -42,6 +44,7 @@ static void _entry_name_changed_cb(void *data __UNUSED__, Evas_Object * obj __UN
 static void _check_cosm_changed_cb(void *data, Evas_Object *obj, void *event_info);
 static void _check_gnuplot_changed_cb(void *data, Evas_Object *obj, void *event_info);
 
+/*Others funcs*/
 static void _layout_samples_test(Evas_Object *layout);
 static void _fill_widget_groups();
 
@@ -226,7 +229,6 @@ static void
 _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
 	const char *group = data;
-	const char *t;
 
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
 	if(group)
@@ -300,6 +302,7 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
         else
         {
             elm_object_disabled_set(list, EINA_FALSE);
+        }
             evas_object_show(cosm_check);
             evas_object_show(gnuplot_check);
             evas_object_show(preview_frame);
@@ -308,7 +311,6 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
                 elm_check_state_set(cosm_check, widget_cosm_get(widget));
                 elm_check_state_set(gnuplot_check, widget_gnuplot_get(widget));
             }
-        }
     }
     if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
     {
@@ -434,8 +436,8 @@ _check_gnuplot_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_i
 void
 widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *grid, *box;
-	Evas_Object *button, *icon, *separator, *frame, *list, *entry, *layout, *check, *hoversel;
+	Evas_Object *grid, *box, *layout, *frame;
+	Evas_Object *button, *icon, *separator, *class_list, *types_list, *groups_list, *entry, *check, *hoversel;
 	App_Info *app = (App_Info *) edams_app_info_get();
 
 	if (!app->location)	return;
@@ -470,69 +472,21 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	elm_grid_pack(grid, frame, 1, 1, 42, 44);
 	evas_object_show(frame);
 
-	list = elm_list_add(win);
-	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
-	evas_object_show(list);
-
-    unsigned int x;
-    for(x = 0; x != WIDGET_CLASS_LAST ; x++)
-	{
-	    if(x != WIDGET_CLASS_UNKNOWN)
-	    {
-    		Elm_Object_Item *it =  elm_list_item_append(list, widget_class_to_str(x), NULL, NULL, _list_item_class_selected_cb, (void*)x);
-
-            if((app->widget)  && (x == widget_class_get(widget)))
-                elm_list_item_selected_set(it, EINA_TRUE);
-    	}
-	}
-	elm_list_go(list);
-	elm_object_content_set(frame, list);
+	class_list = elm_list_add(win);
+	elm_list_select_mode_set(class_list ,ELM_OBJECT_SELECT_MODE_ALWAYS);
+	evas_object_show(class_list);
+	elm_object_content_set(frame, class_list);
 
    	frame = elm_frame_add(win);
     elm_object_text_set(frame, _("Available"));
     elm_grid_pack(grid, frame, 43, 1, 56, 30);
     evas_object_show(frame);
 
-    list = elm_list_add(win);
-    evas_object_name_set(list, "sensors.basic list");
-    elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
-    evas_object_show(list);
-    elm_object_content_set(frame, list);
-
-    Eina_List *devices = NULL, *l;
-    char *device_elem;
-
-    devices = xpl_sensor_basic_list_get();
-
-    EINA_LIST_FOREACH(devices, l, device_elem)
-    {
-        cJSON *root = cJSON_Parse(device_elem);
-	    if(!root) continue;
-	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
-	    cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
-        char *device = cJSON_PrintUnformatted(jdevice);
-        char *type = cJSON_PrintUnformatted(jtype);
-	    cJSON_Delete(root);
-
-        strdelstr(device, "\"");
-        strdelstr(type, "\"");
-
-	    asprintf(&s, _("'%s' of type '%s'"), device, type);
-            Elm_Object_Item *it = elm_list_item_append(list, s, NULL, NULL, _list_item_xpl_device_selected_cb, device_elem);
-
-            if((app->widget)  &&
-                (strcmp(device, widget_xpl_device_get(widget)) == 0) &&
-                (strcmp(type, widget_xpl_type_get(widget)) == 0))
-            {
-                elm_list_item_selected_set(it, EINA_TRUE);
-            }
-        FREE(s);
-        FREE(device);
-        FREE(type);
-    }
-    elm_object_disabled_set(list, EINA_TRUE);
-    elm_list_go(list);
-	elm_object_content_set(frame, list);
+    types_list = elm_list_add(win);
+    evas_object_name_set(types_list, "sensors.basic list");
+    elm_list_select_mode_set(types_list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
+    evas_object_show(types_list);
+	elm_object_content_set(frame, types_list);
 
 	frame = elm_frame_add(win);
 	evas_object_name_set(frame, "name frame");
@@ -617,11 +571,57 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	elm_grid_pack(grid, frame, 43, 46, 58, 40);
 	evas_object_show(frame);
 
-	list = elm_list_add(win);
-	elm_list_select_mode_set(list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
-	evas_object_name_set(list, "groups list");
-	evas_object_show(list);
-	elm_object_content_set(frame, list);
+	groups_list = elm_list_add(win);
+	elm_list_select_mode_set(groups_list ,ELM_OBJECT_SELECT_MODE_ALWAYS );
+	evas_object_name_set(groups_list, "groups list");
+	evas_object_show(groups_list);
+	elm_object_content_set(frame, groups_list);
+
+    Eina_List *devices = NULL, *l;
+    char *device_elem;
+    devices = xpl_sensor_basic_list_get();
+    EINA_LIST_FOREACH(devices, l, device_elem)
+    {
+        cJSON *root = cJSON_Parse(device_elem);
+	    if(!root) continue;
+	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
+	    cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
+        char *device = cJSON_PrintUnformatted(jdevice);
+        char *type = cJSON_PrintUnformatted(jtype);
+	    cJSON_Delete(root);
+
+        strdelstr(device, "\"");
+        strdelstr(type, "\"");
+
+	    asprintf(&s, _("'%s' of type '%s'"), device, type);
+            Elm_Object_Item *it = elm_list_item_append(types_list, s, NULL, NULL, _list_item_xpl_device_selected_cb, device_elem);
+
+            if((app->widget)  &&
+                (strcmp(device, widget_xpl_device_get(widget)) == 0) &&
+                (strcmp(type, widget_xpl_type_get(widget)) == 0))
+            {
+                elm_list_item_selected_set(it, EINA_TRUE);
+            }
+        FREE(s);
+        FREE(device);
+        FREE(type);
+    }
+    elm_list_go(types_list);
+
+    unsigned int x;
+    for(x = 0; x != WIDGET_CLASS_LAST ; x++)
+	{
+	    if(x != WIDGET_CLASS_UNKNOWN)
+	    {
+    		Elm_Object_Item *it =  elm_list_item_append(class_list, widget_class_to_str(x), NULL, NULL, _list_item_class_selected_cb, (void*)x);
+
+            if((app->widget)  && (x == widget_class_get(widget)))
+            {
+                elm_list_item_selected_set(it, EINA_TRUE);
+            }
+    	}
+	}
+	elm_list_go(class_list);
 
 	box = elm_box_add(win);
 	elm_box_horizontal_set(box, EINA_TRUE);
@@ -661,8 +661,6 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	elm_box_pack_end(box, separator);
 	evas_object_show(separator);
 
-
-	/*Resize window*/
 	evas_object_resize(win, 650, 650);
 	evas_object_show(win);
 }/*widget_editor_add*/
