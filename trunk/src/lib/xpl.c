@@ -193,7 +193,45 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                         /*Compare xpl device with arg 'xpl_device', if found return widget*/
 	        	        if(strcmp(device, widget_xpl_device_get(widget)) == 0)
 	        	        {
-	        	            widget_xpl_current_set(widget, current);
+                            /*Parse all device action's and to execute them(if condition is full)*/
+                            Eina_List *l3, *actions;
+                            Action *action;
+                            actions = widget_actions_list_get(widget);
+                            EINA_LIST_FOREACH(actions, l3, action)
+                            {
+                                switch(action_ifcondition_get(action))
+                                {
+                                    case CONDITION_EGAL_TO:
+                                        if(atoi(current) == atoi(action_ifvalue_get(action)))
+                                            action_parse(action);
+                                             break;
+                                    case CONDITION_LESS_THAN:
+                                        if(atoi(current) < atoi(action_ifvalue_get(action)))
+                                            action_parse(action);
+                                            break;
+                                    case CONDITION_MORE_THAN:
+                                        if(atoi(current) > atoi(action_ifvalue_get(action)))
+                                            action_parse(action);
+                                            break;
+                                    case CONDITION_LESS_OR_EGAL_TO:
+                                            if(atoi(current) <= atoi(action_ifvalue_get(action)))
+                                            action_parse(action);
+                                            break;
+                                    case CONDITION_MORE_OR_EGAL_TO:
+                                            if(atoi(current) >= atoi(action_ifvalue_get(action)))
+                                            action_parse(action);
+                                            break;
+                                    case CONDITION_DIFFERENT_TO:
+                                            if(atoi(current) != atoi(action_ifvalue_get(action)))
+                                            action_parse(action);
+                                            break;
+                                    case CONDITION_UNKNOWN:
+                                     case CONDITION_LAST:
+                                            break;
+                                }
+                            }
+
+                            widget_xpl_current_set(widget, current);
 
 
                            if((widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC))

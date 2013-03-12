@@ -1,8 +1,8 @@
 /*
- * monitor.edc
+ * door.edc
  * This file is part of EDAMS
  *
- * Copyright (C) 2012 - Alexandre Dussart
+ * Copyright (C) 2013 - Alexandre Dussart
  *
  * EDAMS is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,19 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 group
 {
-	name: "widget/sensor.basic/monitor/icon";
+	name: "widget/sensor.basic/door/icon";
     min: 32 32;
 
 	images
 	{
-		image: "monitor_icon.png" COMP;
+		image: "door_icon.png" COMP;
 	}
-      parts
-      {
+
+    parts
+	{
       	part
       	{
 			type: IMAGE;
@@ -37,35 +39,34 @@ group
                	aspect: 1 1;
                	aspect_preference: BOTH;
             	state: "default" 0;
-		   		image.normal: "monitor_icon.png";
+		   		image.normal: "door_icon.png";
             }
          }
-      }
-}/*group widget/sensor.basic/monitor/icon*/
+	}
+}/*group widget/sensor.basic/door/icon*/
 
 
 group
 {
-	name: "widget/sensor.basic/monitor";
-	min: 140 110;
-    max: 140 110;
+    name: "widget/sensor.basic/door";
+    min: 70 130;
+    max: 70 130;
 
 	data
 	{
-		item: "description" "Monitor display boolean data in a monitor with an red animated guy when data is > 0. Sensor name is displayed at the bottom. Mostly useful when using boolean/input/switches xPL sensor device. Maybe you can use it in your xPL alarm system?";
-		item: "tags" "sensor.basic,input,switches";
+		item: "description" "";
+		item: "tags" "";
 	}
 
-	images
+    images
     {
-		image: "monitor_base.png" COMP;
-		image: "monitor_show.png" COMP;
+        image: "door_closed.png" COMP;
+        image: "door_opened.png" COMP;
     }
-
 
     parts
     {
-        part
+	   part
         {
             name: "whole";
             type: RECT;
@@ -75,45 +76,27 @@ group
                 state: "default" 0.0;
             }
         }/*whole*/
-         part
-         {
-            name: "base";
-			type: IMAGE;
-            clip_to: "whole";
-            description
-            {
-               state: "default" 0.0;
-               aspect_preference: BOTH;
-               align: 0.5 0.5;
-               rel1.relative: 0.20 0.00;
-               rel2.relative: 0.80 0.70;
-               image.normal: "monitor_base.png";
-	        }
-         }
-         part
-         {
-            name: "monitor";
-			type: IMAGE;
-            clip_to: "whole";
-            description
-            {
-			   	state: "default" 0.0;
-               	image.normal: "monitor_show.png";
-               	visible: 0;
-                aspect_preference: BOTH;
-				rel1.relative: 0.60 0.20;
-				rel2.relative: 0.70 0.50;
-            }
-            description
-            {
-				state: "show" 0.0;
-               	image.normal: "monitor_show.png";
-                visible:1;
-                aspect_preference: BOTH;
-				rel1.relative: 0.28 0.15;
-				rel2.relative: 0.38 0.45;
-             }
-         }
+  		part
+       	{
+			name: "base";
+            type: IMAGE;
+
+				description
+				{
+                    state: "default" 0.0;
+                    image.normal: "door_closed.png";
+                    rel1.relative: 0.20 0.00;
+                    rel2.relative: 0.80 0.70;
+                }
+		        description
+		        {
+		            state: "opened" 0.0;
+                    image.normal: "door_opened.png";
+                    rel1.relative: 0.20 0.00;
+                    rel2.relative: 0.80 0.70;
+		        }
+		}/*base*/
+
 
         part
         {
@@ -123,8 +106,8 @@ group
             description
             {
                 state: "default" 0.0;
-                rel1.relative: 0.2 0.70;
-                rel2.relative: 0.8 0.70;
+                rel1.relative: 0.2 0.72;
+                rel2.relative: 0.8 0.72;
                 rel2.offset: 0 3;
                 image.normal: "division_line.png";
             }
@@ -140,7 +123,7 @@ group
             description
             {
                 state: "default" 0.0;
-                rel1.relative: 0.0 0.77;
+                rel1.relative: 0.0 0.85;
                 rel2.relative: 1.0 1.0;
                 text
                 {
@@ -175,23 +158,23 @@ group
             }
 		}/*update*/
 
-        part
-        {
-            name: "icon_min";
-            mouse_events: 0;
-            clip_to: "whole";
-            description
+            part
             {
-                state: "default" 0.0;
-                aspect: 0.655 1;
-                aspect_preference: VERTICAL;
-                rel1.to_y: "text.lowest";
-                rel1.relative: 0.2 0.0;
-                rel2.to_y: "text.lowest";
-                rel2.relative: 0.2 1.0;
-                image.normal: "icon_min.png";
+                name: "icon_min";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.lowest";
+                    rel1.relative: 0.2 0.0;
+                    rel2.to_y: "text.lowest";
+                    rel2.relative: 0.2 1.0;
+                    image.normal: "icon_min.png";
+                }
             }
-        }
             part
             {
                 name: "text.lowest";
@@ -203,9 +186,9 @@ group
                     state: "default" 0.0;
                     align: 0.0 0.0;
                     rel1.to_x: "icon_min";
-                    rel1.relative: 1.0 0.68;
+                    rel1.relative: 1.0 0.70;
                     rel1.offset: 3 5;
-                    rel2.relative: 1.0 0.68;
+                    rel2.relative: 1.0 0.70;
                     rel2.offset: 3 0;
                     text
                     {
@@ -246,10 +229,10 @@ group
                 {
                     state: "default" 0.0;
                     align: 1.0 0.0;
-                    rel1.relative: 0.0 0.68;
+                    rel1.relative: 0.0 0.70;
                     rel1.offset: -3 5;
                     rel2.to_x: "icon_max";
-                    rel2.relative: 0.0 0.68;
+                    rel2.relative: 0.0 0.70;
                     rel2.offset: -3 0;
                     text
                     {
@@ -262,39 +245,27 @@ group
                     }
                 }
             }/*text.highest*/
-      }/*parts*/
-       programs
-       {
-         program
-         {
-            name: "animate,start";
-            signal: "true";
-            source: "whole";
-            action: STATE_SET "show" 0.0;
-		    transition: SINUSOIDAL 1.0;
-            target: "monitor";
-            after: "animate,step1";
-		}
-        program
-         {
-            name: "animate,step1";
-            signal: "true";
-            source: "whole";
-            action: STATE_SET "default" 0.0;
-		    transition: SINUSOIDAL 1.0;
-            target: "monitor";
-            after: "animate,start";
-		}
+    }/*parts*/
 
-         program
-         {
-            name: "animate,end";
-            signal: "false";
-            source: "whole";
-            action: STATE_SET "default" 0.0;
-		    transition: LINEAR 0.5;
-            target: "monitor";
-         }
+    programs
+    {
+		program
+		{
+		    name : "start";
+			signal: "true";
+			source: "whole";
+			action: STATE_SET "opened" 0.0;
+    	    transition: SINUSOIDAL 9.0;
+			target: "base";
+		}
+		program
+		{
+			signal: "false";
+			source: "whole";
+			action: STATE_SET "closed" 0.0;
+    	    transition: SINUSOIDAL 9.0;
+			target: "base";
+		}
         program
          {
             signal: "updated";
@@ -317,5 +288,5 @@ group
 	        source: "title.text";
 	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
         }
-      }
-}/*group widget/sensor.basic/monitor*/
+	}/*programs*/
+}/*group widget/sensor.basic/door*/
