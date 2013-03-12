@@ -59,6 +59,9 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 
 	values_names = xPL_getMessageBody(msg);
 
+    printf("device=%s current=%s\n", xPL_getNamedValue(values_names, "device"), xPL_getNamedValue(values_names, "current"));
+    //asprintf(&str, _("New xPL sensor.basic '%s 'of type '%s' has been discovered"), device, type);
+
     /*Add to xpl_devices in json format to easing parsing*/
     cJSON *root;
     root = cJSON_CreateObject();
@@ -120,6 +123,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
     cJSON *root = cJSON_Parse(str);
 	if(!root) return;
+    FREE(str);
 
 	cJSON *jschema = cJSON_GetObjectItem(root, "SCHEMA");
 
@@ -128,18 +132,13 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
     char *schema = cJSON_PrintUnformatted(jschema);
     strdelstr(schema, "\"");
 
+    /*If schema to parse is osd.basic*/
     if(strcmp(schema, "osd.basic") == 0)
     {
-	    cJSON_Delete(root);
         osd_action_parse(str);
-        FREE(str);
-        FREE(schema);
-        return;
     }
-    FREE(str);
-
     /*If schema to parse is sensor.basic*/
-    if(strcmp(schema, "sensor.basic") == 0)
+    else if(strcmp(schema, "sensor.basic") == 0)
     {
 	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
 	    cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
@@ -148,164 +147,117 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
         char *type = cJSON_PrintUnformatted(jtype);
         char * current = cJSON_PrintUnformatted(jcurrent);
         str = cJSON_PrintUnformatted(root);
-	    cJSON_Delete(root);
 
         strdelstr(device, "\"");
         strdelstr(current, "\"");
         strdelstr(type, "\"");
 
-        /*Check if xPL device is already registered in devices Eina_List*/
-        Eina_List *l;
-        char *elem;
+        /*Parse all locations and sync with global and cosm*/
+        Eina_List *locations = NULL, *l;
+        Location *location;
+        locations = edams_locations_list_get();
 
-        EINA_LIST_FOREACH(xpl_devices, l, elem)
+        EINA_LIST_FOREACH(locations, l, location)
         {
-            cJSON *root = cJSON_Parse(elem);
-            char *device_elem;
-	        if(!root) continue;
+            Eina_List *widgets = NULL, *l2;
+            Widget *widget;
 
-	        cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
-            device_elem = cJSON_PrintUnformatted(jdevice);
-            strdelstr(device_elem, "\"");
+            widgets = location_widgets_list_get(location);
 
-            /*If found sync with widget in global map and cosm if needed*/
-            if(strcmp(device, device_elem) == 0)
+            EINA_LIST_FOREACH(widgets, l2, widget)
             {
-                /*Parse all locations and sync with global and cosm*/
-                Eina_List *locations = NULL, *l;
-                Location *location;
-                locations = edams_locations_list_get();
+                /*If xPL widget class, then check xpl device*/
+                if((widget_class_get(widget) != WIDGET_CLASS_XPL_SENSOR_BASIC)) continue;
 
-                EINA_LIST_FOREACH(locations, l, location)
+                /*Compare xpl device with arg 'xpl_device', if found return widget*/
+                if(strcmp(device, widget_xpl_device_get(widget)) == 0)
                 {
-                Eina_List *widgets = NULL, *l2;
-                Widget *widget;
-
-                widgets = location_widgets_list_get(location);
-
-                EINA_LIST_FOREACH(widgets, l2, widget)
-                {
-                   	/*Ift xPL widget class, then check xpl device*/
-                    if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC) ||
-                       (widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC))
+                    /*Parse all widget action's and to execute them(if condition is full)*/
+                    Eina_List *l3, *actions;
+                    Action *action;
+                    actions = widget_actions_list_get(widget);
+                    EINA_LIST_FOREACH(actions, l3, action)
                     {
-                        /*Compare xpl device with arg 'xpl_device', if found return widget*/
-	        	        if(strcmp(device, widget_xpl_device_get(widget)) == 0)
-	        	        {
-                            /*Parse all device action's and to execute them(if condition is full)*/
-                            Eina_List *l3, *actions;
-                            Action *action;
-                            actions = widget_actions_list_get(widget);
-                            EINA_LIST_FOREACH(actions, l3, action)
-                            {
-                                switch(action_ifcondition_get(action))
-                                {
-                                    case CONDITION_EGAL_TO:
-                                        if(atoi(current) == atoi(action_ifvalue_get(action)))
-                                            action_parse(action);
-                                             break;
-                                    case CONDITION_LESS_THAN:
-                                        if(atoi(current) < atoi(action_ifvalue_get(action)))
-                                            action_parse(action);
-                                            break;
-                                    case CONDITION_MORE_THAN:
-                                        if(atoi(current) > atoi(action_ifvalue_get(action)))
-                                            action_parse(action);
-                                            break;
-                                    case CONDITION_LESS_OR_EGAL_TO:
-                                            if(atoi(current) <= atoi(action_ifvalue_get(action)))
-                                            action_parse(action);
-                                            break;
-                                    case CONDITION_MORE_OR_EGAL_TO:
-                                            if(atoi(current) >= atoi(action_ifvalue_get(action)))
-                                            action_parse(action);
-                                            break;
-                                    case CONDITION_DIFFERENT_TO:
-                                            if(atoi(current) != atoi(action_ifvalue_get(action)))
-                                            action_parse(action);
-                                            break;
-                                    case CONDITION_UNKNOWN:
-                                     case CONDITION_LAST:
-                                            break;
-                                }
-                            }
-
-                            widget_xpl_current_set(widget, current);
+                        switch(action_ifcondition_get(action))
+                        {
+                            case CONDITION_EGAL_TO:
+                                if(atoi(current) == atoi(action_ifvalue_get(action)))
+                                action_parse(action);
+                                break;
+                            case CONDITION_LESS_THAN:
+                                if(atoi(current) < atoi(action_ifvalue_get(action)))
+                                action_parse(action);
+                                break;
+                            case CONDITION_MORE_THAN:
+                                if(atoi(current) > atoi(action_ifvalue_get(action)))
+                                action_parse(action);
+                                break;
+                            case CONDITION_LESS_OR_EGAL_TO:
+                                if(atoi(current) <= atoi(action_ifvalue_get(action)))
+                                action_parse(action);
+                                break;
+                            case CONDITION_MORE_OR_EGAL_TO:
+                                if(atoi(current) >= atoi(action_ifvalue_get(action)))
+                                action_parse(action);
+                                break;
+                            case CONDITION_DIFFERENT_TO:
+                                if(atoi(current) != atoi(action_ifvalue_get(action)))
+                                action_parse(action);
+                                break;
+                            case CONDITION_UNKNOWN:
+                            case CONDITION_LAST:
+                                break;
+                        }/*switch*/
+                    }/*EINA_LIST_FOREACH actions*/
 
 
-                           if((widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC))
-                           {
-                                if(!widget_xpl_highest_get(widget))
-                                    widget_xpl_highest_set(widget, current);
-                                else
-                                {
-                                    if(atoi(current) > atoi(widget_xpl_highest_get(widget)))
-                                    {
-                                        debug(stdout, ("New highest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_highest_get(widget));
-                                        widget_xpl_highest_set(widget, current);
-                                    }
-                                }
+                    widget_xpl_current_set(widget, current);
 
-                                if(!widget_xpl_lowest_get(widget))
-                                    widget_xpl_lowest_set(widget, current);
-                                {
-                                    if(atoi(current) < atoi(widget_xpl_lowest_get(widget)))
-                                    {
-                                        debug(stdout, ("New lowest value for '%s' set to '%s'(old was '%s')"), widget_name_get(widget), current, widget_xpl_lowest_get(widget));
-                                        widget_xpl_lowest_set(widget, current);
-                                    }
-                                }
-                            }
-
-                            location_save(location);
-
-                            if(widget_cosm_get(widget))
-                                cosm_device_datastream_update(location, widget);
-
-                            global_view_widget_data_update(location, widget);
+                    if(!widget_xpl_highest_get(widget))
+                           widget_xpl_highest_set(widget, current);
+                    {
+                        if(atoi(current) > atoi(widget_xpl_highest_get(widget)))
+                        {
+                            debug(stdout, ("New highest value for '%s' set to '%s'(old was '%s')"),
+                                                    widget_name_get(widget),
+                                                    current,
+                                                    widget_xpl_highest_get(widget));
+                            widget_xpl_highest_set(widget, current);
                         }
                     }
-                }
-            }
-            cJSON_Delete(root);
-            FREE(device_elem);
-            FREE(device);
-            FREE(type);
-            FREE(current);
-            FREE(str);
-            return;
-        }
-        else
-        {
-          	FREE(device_elem);
-            cJSON_Delete(root);
-        }
+
+                    if(!widget_xpl_lowest_get(widget))
+                        widget_xpl_lowest_set(widget, current);
+                    {
+                        if(atoi(current) < atoi(widget_xpl_lowest_get(widget)))
+                        {
+                                debug(stdout, ("New lowest value for '%s' set to '%s'(old was '%s')"),
+                                                    widget_name_get(widget),
+                                                    current,
+                                                    widget_xpl_lowest_get(widget));
+                                widget_xpl_lowest_set(widget, current);
+                            }
+                    }
+
+
+                    global_view_widget_data_update(location, widget);
+                    location_save(location);
+
+                    if(widget_cosm_get(widget))
+                        cosm_device_datastream_update(location, widget);
+                }/*If device is registered in EDAMS*/
+            }/*EINA_LIST_FOREACH widgets*/
+        }/*EINA_LIST_FOREACH locations*/
+
+        FREE(device);
+        FREE(type);
+        FREE(current);
+        FREE(str);
     }/*End if schema to parse is sensor.basic*/
 
-    xpl_devices = eina_list_append(xpl_devices, eina_stringshare_add(str));
-    FREE(str);
-
-    asprintf(&str, _("New xPL sensor.basic '%s 'of type '%s' has been discovered"), device, type);
-    statusbar_text_set(str, "xpl-logo");
-    FREE(str);
-
-    FREE(device);
-    FREE(type);
-    FREE(current);
     FREE(schema);
-    }/*If schema to parse is sensor.basic*/
-
+	cJSON_Delete(root);
 }/*_xpl_handler*/
-
-
-/*
- *
- */
-Eina_List *
-xpl_sensor_basic_list_get()
-{
-    return xpl_devices;
-}/*xpl_process_messages*/
 
 
 
