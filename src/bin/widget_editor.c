@@ -439,6 +439,24 @@ _hoversel_xpl_type_fill(Widget_Class class)
 	{
     	elm_hoversel_item_add(hoversel, XPL_TYPE_BATTERY_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, XPL_TYPE_COUNT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_CURRENT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_DIRECTION_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_DISTANCE_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_ENERGY_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_FAN_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_GENERIC_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_HUMIDITY_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_INPUT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_OUTPUT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_POWER_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_PRESSURE_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_SETPOINT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_SPEED_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_TEMP_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_UV_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_VOLTAGE_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_VOLUME_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, XPL_TYPE_WEIGHT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
 	}
 }/*_hoversel_fill*/
 

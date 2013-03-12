@@ -41,7 +41,6 @@ static void _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len);
 static void _xpl_emulate_messages(Ecore_Pipe *pipe);
 
 /*Globals vars*/
-static Eina_List*       xpl_devices;
 static Eina_Bool        XPL_STARTED;
 static xPL_ServicePtr   xpl_edams_service;
 static pid_t            child_pid;
@@ -248,7 +247,6 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                 }/*If device is registered in EDAMS*/
             }/*EINA_LIST_FOREACH widgets*/
         }/*EINA_LIST_FOREACH locations*/
-
         FREE(device);
         FREE(type);
         FREE(current);
@@ -453,7 +451,6 @@ xpl_init()
 	/*Enable the service*/
 	xPL_setServiceEnabled(xpl_edams_service, EINA_TRUE);
 
-    xpl_devices = NULL;
     XPL_STARTED	= EINA_TRUE;
 
 	return EINA_TRUE;
@@ -474,13 +471,6 @@ xpl_shutdown()
 	    xPL_setServiceEnabled(xpl_edams_service, EINA_FALSE);
 	    xPL_releaseService(xpl_edams_service);
 	    xPL_shutdown();
-
-        if (xpl_devices)
-        {
-            char *it;
-            EINA_LIST_FREE(xpl_devices, it)
-                 eina_stringshare_del(it);
-        }
     }
 
 	return 0;
