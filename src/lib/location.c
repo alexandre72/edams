@@ -514,7 +514,7 @@ widget_xpl_device_set(Widget *widget, const char *xpl_device)
     }
     else
     {
-        debug(stderr, ("Can't set xpl name to a not xpl widget"));
+        debug(stderr, ("Can't set xpl device to a not xpl widget"));
         return;
     }
 }/*widget_xpl_device_set*/
@@ -533,7 +533,7 @@ widget_xpl_device_get(const Widget *widget)
     }
     else
     {
-        debug(stderr, ("Can't get xpl name from a not xpl widget"));
+        debug(stderr, ("Can't get xpl device from a not xpl widget"));
         return NULL;
     }
 }/*widget_xpl_device_get*/

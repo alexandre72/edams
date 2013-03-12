@@ -1151,11 +1151,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
 
 	if(edje_object_part_exists(edje, "title.text"))
 	{
-
-		snprintf(s, sizeof(s), "%d - %s",
-		        widget_id_get(widget),
-		        widget_name_get(widget));
-		edje_object_part_text_set(edje, "title.text", s);
+		edje_object_part_text_set(edje, "title.text", widget_name_get(widget));
 	}
 
 	if(edje_object_part_exists(edje, "value.text"))
