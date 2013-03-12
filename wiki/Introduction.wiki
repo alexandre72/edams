@@ -21,7 +21,7 @@ EDAMS support:
 To use EDAMS, you'll needs:
 
   * EFLs http://www.enlightenment.org
-  * xPL HUB http://www.xpl4java.org/xPL4Linux/ oe https://github.com/beanz/xpl-perl/
+  * xPL HUB http://www.xpl4java.org/xPL4Linux/ or https://github.com/beanz/xpl-perl/
 
 See your own distribution manager for these package, they should be available. Currently, EDAMS isn't available in a packaging version, you'll need to do the following step:
 
