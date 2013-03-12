@@ -68,9 +68,6 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 	entry = elm_object_name_find(win, "global_view background entry", -1);
 	edams_settings_global_view_background_set(elm_object_text_get(entry));
 
-	entry = elm_object_name_find(win, "gnuplot path entry", -1);
-	edams_settings_gnuplot_path_set(elm_object_text_get(entry));
-
 	entry = elm_object_name_find(win, "mbox path entry", -1);
 	edams_settings_mbox_path_set(elm_object_text_get(entry));
 
@@ -274,24 +271,8 @@ _globalview_settings_content()
 	evas_object_smart_callback_add(button, "clicked", _button_gv_reset_clicked_cb, win);
 
     frame = elm_frame_add(win);
-    elm_object_text_set(frame, _("Gnuplot path:"));
-    elm_grid_pack(grid, frame, 1, 27, 99, 15);
-    evas_object_show(frame);
-
-    entry = elm_entry_add(win);
-    evas_object_name_set(entry, "gnuplot path entry");
-    elm_entry_scrollable_set(entry, EINA_TRUE);
-    elm_entry_editable_set(entry, EINA_TRUE);
-    elm_entry_single_line_set(entry, EINA_TRUE);
-    evas_object_show(entry);
-    evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_object_text_set(entry, edams_settings_gnuplot_path_get());
-    elm_object_content_set(frame, entry);
-
-    frame = elm_frame_add(win);
     elm_object_text_set(frame, _("Mbox file path:"));
-    elm_grid_pack(grid, frame, 1, 44, 99, 15);
+    elm_grid_pack(grid, frame, 1, 27, 99, 15);
     evas_object_show(frame);
 
     entry = elm_entry_add(win);

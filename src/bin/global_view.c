@@ -24,9 +24,8 @@
 #include <Ecore_File.h>
 #include <Edje.h>
 
-
+#include "edams.h"
 #include "global_view.h"
-#include "gnuplot.h"
 #include "location.h"
 #include "path.h"
 #include "utils.h"
@@ -585,20 +584,11 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 			continue;
 		}
 
-		if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
-        {
-            if(edje_object_part_exists(priv->children[x], "title.text"))
-			{
-				asprintf(&s, "%d - %s", widget_id_get(widget), widget_name_get(widget));
-				edje_object_part_text_set(priv->children[x], "title.text", s);
-                FREE(s);
-			}
-    	   edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
-        }
-		else if((widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC))
-        {
-    	   edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
-        }
+        if(edje_object_part_exists(priv->children[x], "title.text"))
+		{
+			edje_object_part_text_set(priv->children[x], "title.text", widget_name_get(widget));
+		}
+    	edje_object_signal_callback_add(priv->children[x], "*", "*", _edje_object_signals_cb, widget);
 
 		evas_object_propagate_events_set(priv->children[x], EINA_FALSE);
 		evas_object_event_callback_add(priv->children[x], EVAS_CALLBACK_MOUSE_IN, _on_mouse_in, NULL);
@@ -661,32 +651,6 @@ evas_smart_group_remove(Evas_Object * o )
 }/*evas_smart_group_remove*/
 
 
-/*
- *Timer called when adding a new obj that must be deleted after some delay to make screen space(OSD and stuff like that).
- */
-static Eina_Bool
-_timer_cb(void *data)
-{
-	Evas_Object *obj = data;
-
-	evas_object_del(obj);
-
-	return EINA_FALSE;
-}/*_timer_cb*/
-
-
-/*
- *
- */
-static void
-widget_gnuplot_redraw(Widget *widget)
-{
-	Evas_Object *img = evas_object_name_find(evas, "stat_img");
-
-	evas_object_image_file_set(img, gnuplot_device_png_write(widget), NULL);
-	evas_object_image_reload(img);
-}/*widget_gnuplot_redraw*/
-
 
 /*
  *
@@ -697,6 +661,99 @@ global_view_edition_lock_set(Eina_Bool set)
     SCREEN_LOCK = set;
 	debug(stdout, _("Global view edition has been %s\n"), SCREEN_LOCK ? "enabled" : "disabled");
 }/*global_view_edition_lock_set*/
+
+
+
+
+static Evas_Object *line[100];
+static Evas_Object *mid;
+static int column = 0;
+
+/*
+ *
+ */
+void
+grapher_value_add(int value)
+{
+    if(column == 100)
+    {
+        column = 0;
+        int x;
+        for(x = 0; x != 100;x++)
+        {
+            evas_object_color_set(line[x], 255, 255, 255, 255);
+            evas_object_line_xy_set(line[x], column, 100, column, 100);
+        }
+    }
+
+    if(value > 50) value = 50;
+
+    evas_object_color_set(line[column], 255, 0, 255, 255);
+    evas_object_line_xy_set(line[column], column, (100/2), column, (100/2)-value);
+    column++;
+}/*grapher_value_add*/
+
+
+/*
+ *
+ */
+void
+grapher_show()
+{
+    int x;
+
+    for(x = 0; x != 100;x++)
+        evas_object_show(line[x]);
+
+    evas_object_show(mid);
+}/*grapher_show*/
+
+
+/*
+ *
+ */
+static Eina_Bool
+grapher_hide(void *data __UNUSED__)
+{
+    int x;
+
+    for(x = 0; x != 100;x++)
+        evas_object_hide(line[x]);
+
+    evas_object_hide(mid);
+
+    return EINA_FALSE;
+}/*grapher_hide*/
+
+/*
+ *
+ */
+void
+grapher_init()
+{
+    int x;
+
+    for(x = 0; x != 100;x++)
+    {
+        line[x] = evas_object_line_add(evas);
+    }
+
+    mid = evas_object_line_add(evas);
+    evas_object_color_set(mid, 10, 255, 10, 255);
+    evas_object_line_xy_set(mid, 0, (100/2), 100, (100/2));
+}/*grapher_init*/
+
+
+
+/*
+ *
+ */
+void
+grapher_redraw(int value)
+{
+    grapher_value_add(value);
+}/*grapher_redraw*/
+
 
 
 /*
@@ -715,32 +772,19 @@ _on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
 
 	if(evas_object_smart_parent_get(o))
 	{
-			/*Key 's' show data device in graphics generated from gnuplot(PNG format)*/
-			if (strcmp(ev->keyname, "s") == 0)
+		/*Key 's' show data device in grapher widget*/
+		if (strcmp(ev->keyname, "s") == 0)
+		{
+			Widget *widget = evas_object_data_get(o, "widget");
+
+			if(widget)
 			{
-				Widget *widget = evas_object_data_get(o, "widget");
-
-				if(widget)
-				{
-					Evas_Object *stat_img  = evas_object_image_filled_add(evas);
-					evas_object_data_set(o, "stat_img", stat_img);
-					evas_object_image_alpha_set(stat_img, EINA_TRUE);
-    				evas_object_image_file_set(stat_img, gnuplot_device_png_write(widget), NULL);
-					Evas_Load_Error err = evas_object_image_load_error_get(stat_img);
-    				if (err != EVAS_LOAD_ERROR_NONE)
-					{
-						debug(stdout, _("Can't load Evas_Object image"));
-						return;
-					}
-
-					evas_object_image_scale(stat_img, 600, 300);
-					evas_object_move(stat_img, 0,  400);
-				    evas_object_show(stat_img);
-					ecore_timer_add(2.0, _timer_cb, stat_img);
-					evas_object_show(stat_img);
+                grapher_show();
+                grapher_redraw(5);
+				ecore_timer_add(2.0, grapher_hide, NULL);
 			}
-			return;
 		}
+		return;
 	}
 	else
 	{
@@ -873,7 +917,6 @@ _virtual_widgets_add(Location *location)
 }/*_virtual_widgets_add*/
 
 
-
 /*
  *
  */
@@ -962,22 +1005,8 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 	evas_object_resize(osd_text, 100, 20);
     evas_object_move(osd_text, 0, geometry.h / 2);
 
-
-/*
-	//FIXME:Should be a widget, can use of swallow type?
-	Evas_Object *stat_img  = evas_object_image_filled_add(evas);
-	evas_object_name_set(stat_img, "stat_img");
-	evas_object_image_alpha_set(stat_img, EINA_TRUE);
-    evas_object_image_file_set(stat_img, "/home/alex/DHT11.6.png", NULL);
-	err = evas_object_image_load_error_get(stat_img);
-    if (err != EVAS_LOAD_ERROR_NONE)
-	{
-		debug(stdout, _("Can't load Edje image!"));
-	}
-	evas_object_image_scale(stat_img, 200, 200);
-	evas_object_move(stat_img, 0,  480);
-	evas_object_show(stat_img);
-*/
+	//FIXME:Grapher should be a widget, can use of swallow type?
+    grapher_init();
 
 	ecore_evas_show(ee);
 	ecore_main_loop_begin();
@@ -1077,7 +1106,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
 	if (!evas || !location || !widget) return;
 
 	/*Update Edje widget objects.*/
-    widget_gnuplot_redraw(widget);
+    grapher_redraw(atoi(widget_xpl_current_get(widget)));
 
     /*All Edje widget's object name follow same scheme _widgetid_locationame_edje*/
 	char s[128];
@@ -1125,7 +1154,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
 
 		snprintf(s, sizeof(s), "%d - %s",
 		        widget_id_get(widget),
-		        widget_xpl_device_get(widget));
+		        widget_name_get(widget));
 		edje_object_part_text_set(edje, "title.text", s);
 	}
 

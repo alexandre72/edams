@@ -33,7 +33,6 @@
 #include "about_dlg.h"
 #include "cosm.h"
 #include "edams.h"
-#include "gnuplot.h"
 #include "init.h"
 #include "location.h"
 #include "locations_creator.h"
