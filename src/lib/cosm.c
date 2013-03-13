@@ -223,7 +223,6 @@ static Eina_Bool
 _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Url_Complete *event_info)
 {
     const Eina_List *headers = NULL;
-    //const char *header = NULL;
 
     if((event_info->status != 201) && (event_info->status != 200))
     {
@@ -263,31 +262,29 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
-    else
-    {
-        headers = ecore_con_url_response_headers_get(event_info->url_con);
 
-         EINA_LIST_FOREACH(headers, it, header)
-        {
-		    if(strncmp(header, "Location:", 9) == 0)
-		    {
-			    unsigned int feedid;
-			    if (sscanf(header, "Location: http://api.cosm.com/v2/feeds/%d", &feedid)==1)
-			    {
-				    Location *location = ecore_con_url_data_get(event_info->url_con);;
-				    location_cosm_feedid_set(location, feedid);
-				    location_save(location);
-				    char *s;
-				    asprintf(&s, _("Location has been added to Cosm with feedid '%d'"), feedid);
-                    debug(MSG_COSM, s);
-				    FREE(s);
-				    update_naviframe_content(location);
-                    ecore_con_url_free(event_info->url_con);
-				    break;
-			    }
-     	    }
-	    }
-    }
+    headers = ecore_con_url_response_headers_get(event_info->url_con);
+
+    EINA_LIST_FOREACH(headers, it, header)
+    {
+		if(strncmp(header, "Location:", 9) == 0)
+		{
+			unsigned int feedid;
+			if (sscanf(header, "Location: http://api.cosm.com/v2/feeds/%d", &feedid)==1)
+			{
+			    Location *location = ecore_con_url_data_get(event_info->url_con);;
+				location_cosm_feedid_set(location, feedid);
+				location_save(location);
+				char *s;
+				asprintf(&s, _("Location has been added to Cosm with feedid '%d'"), feedid);
+                debug(MSG_COSM, s);
+				FREE(s);
+				update_naviframe_content(location);
+                ecore_con_url_free(event_info->url_con);
+				break;
+			 }
+     	}
+	}
 
     return ECORE_CALLBACK_CANCEL;
 }/*_url_feed_add_complete_cb*/
@@ -310,23 +307,21 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Ur
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
-    else
-    {
-        headers = ecore_con_url_response_headers_get(event_info->url_con);
 
-   	    EINA_LIST_FOREACH(headers, it, header)
-   	    {
-   	    	if(strncmp(header, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
-	    	{
-	    		char *s;
-				asprintf(&s, _("Location with feedid '%d' has been removed from Cosm"), (int)data);
-                debug(MSG_COSM, s);
-				FREE(s);
-                ecore_con_url_free(event_info->url_con);
-				break;
-		    }
-	    }
-    }
+    headers = ecore_con_url_response_headers_get(event_info->url_con);
+
+   	EINA_LIST_FOREACH(headers, it, header)
+   	{
+   	    if(strncmp(header, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
+	    {
+	    	char *s;
+			asprintf(&s, _("Location with feedid '%d' has been removed from Cosm"), (int)data);
+            debug(MSG_COSM, s);
+			FREE(s);
+            ecore_con_url_free(event_info->url_con);
+			break;
+		}
+	}
 
     return ECORE_CALLBACK_CANCEL;
 }/*_url_feed_delete_complete_cb*/
