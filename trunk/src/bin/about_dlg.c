@@ -38,10 +38,9 @@ void about_dialog_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 	elm_win_autodel_set(win, EINA_TRUE);
 
 	bg = elm_bg_add(win);
-	elm_bg_file_set(bg, edams_edje_theme_file_get(), "bg/edams-bg");
-	elm_bg_option_set(bg, ELM_BG_OPTION_TILE);
 	elm_win_resize_object_add(win, bg);
 	evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_bg_color_set(bg, 255, 255, 255);
 	evas_object_show(bg);
 
 	bx = elm_box_add(win);
@@ -67,6 +66,6 @@ void about_dialog_new(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 	evas_object_smart_callback_add(bt, "clicked", window_clicked_close_cb, win);
 	evas_object_show(bt);
 
-	evas_object_resize(win, 500, 300);
+	evas_object_resize(win, 400, 250);
 	evas_object_show(win);
 }/*about_dialog_new*/
