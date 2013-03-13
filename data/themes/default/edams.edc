@@ -25,7 +25,7 @@ images
 	image: "icons/cosm-logo.png" COMP;
 	image: "icons/e-logo.png" COMP;
 	image: "icons/geolocated-logo.png" COMP;
-	image: "icons/gnuplot-logo.png" COMP;
+	image: "icons/grapher-logo.png" COMP;
 	image: "icons/debug-action.png" COMP;
     image: "icons/osd-action.png" COMP;
     image: "icons/voice-action.png" COMP;
@@ -127,13 +127,14 @@ collections
 
 ICON("elm/icon/xpl-logo/default", "icons/xpl-logo.png")
 ICON("elm/icon/cosm-logo/default", "icons/cosm-logo.png")
-ICON("elm/icon/gnuplot-logo/default", "icons/gnuplot-logo.png")
-ICON("elm/icon/debug-action/default", "icons/debug-action.png")
 ICON("elm/icon/e-logo/default", "icons/e-logo.png")
-ICON("elm/icon/osd-action/default", "icons/osd-action.png")
-ICON("elm/icon/global-view/default", "icons/global-view.png")
-ICON("elm/icon/voice-action/default", "icons/voice-action.png")
+ICON("elm/icon/geolocated-logo/default", "icons/geolocated-logo.png")
+ICON("elm/icon/grapher-logo/default", "icons/grapher-logo.png")
 ICON("elm/icon/voicerss-logo/default", "icons/voicerss-logo.png")
+
+ICON("elm/icon/debug-action/default", "icons/debug-action.png")
+ICON("elm/icon/osd-action/default", "icons/osd-action.png")
+ICON("elm/icon/voice-action/default", "icons/voice-action.png")
 
 CURSOR("cursors/left_ptr",  "cursors/left_ptr.png")
 CURSOR("cursors/grab",  "cursors/grab.png")

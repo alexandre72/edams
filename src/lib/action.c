@@ -368,29 +368,35 @@ cmnd_action_parse(const char *data)
     device =cJSON_PrintUnformatted(jdevice);
     type =cJSON_PrintUnformatted(jtype);
     current =cJSON_PrintUnformatted(jcurrent);
-    data1 =cJSON_PrintUnformatted(jdata1);
 
     strdelstr(device, "\"");
     strdelstr(type, "\"");
     strdelstr(current, "\"");
 
+    widget = widget_new(device, WIDGET_CLASS_XPL_CONTROL_BASIC);
     widget_xpl_device_set(widget, device);
     widget_xpl_type_set(widget, type);
     widget_xpl_current_set(widget, current);
 
-    if(data1)
+    if(jdata1)
     {
+        data1 =cJSON_PrintUnformatted(jdata1);
         strdelstr(data1, "\"");
         widget_xpl_data1_set(widget, data1);
+        FREE(data1);
     }
 
 	cJSON_Delete(root);
     FREE(device);
     FREE(type);
     FREE(current);
-    FREE(data1);
 
-    return xpl_control_basic_cmnd_send(widget);
+    xpl_control_basic_cmnd_send(widget);
+
+    widget_free(widget);
+
+    return EINA_TRUE;
+
 }/*cmnd_action*/
 
 

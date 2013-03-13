@@ -39,11 +39,38 @@ static void _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len);
 
 /*Others funcs*/
 static void _xpl_emulate_messages(Ecore_Pipe *pipe);
+const char *xpl_message_type_to_str(xPL_MessagePtr msg);
 
 /*Globals vars*/
 static Eina_Bool        XPL_STARTED;
 static xPL_ServicePtr   xpl_edams_service;
 static pid_t            child_pid;
+
+
+/*
+ *
+ */
+const char *
+xpl_message_type_to_str(xPL_MessagePtr msg)
+{
+    switch(xPL_getMessageType(msg))
+    {
+        case xPL_MESSAGE_COMMAND:
+            return "xpl-cmnd";
+            break;
+        case xPL_MESSAGE_STATUS:
+            return "xpl-stat";
+            break;
+        case xPL_MESSAGE_TRIGGER:
+            return "xpl-trig";
+            break;
+        default:
+            return "unknown";
+            break;
+  }
+  return NULL;
+}/*xpl_message_type_to_str*/
+
 
 /*
  *Callback called in xPL Message when 'sensor.basic' is triggered.
@@ -58,8 +85,6 @@ _xpl_sensor_basic_handler(xPL_ServicePtr service __UNUSED__, xPL_MessagePtr msg,
 
 	values_names = xPL_getMessageBody(msg);
 
-    printf("device=%s current=%s\n", xPL_getNamedValue(values_names, "device"), xPL_getNamedValue(values_names, "current"));
-    //asprintf(&str, _("New xPL sensor.basic '%s 'of type '%s' has been discovered"), device, type);
 
     /*Add to xpl_devices in json format to easing parsing*/
     cJSON *root;
@@ -134,6 +159,11 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
     /*If schema to parse is osd.basic*/
     if(strcmp(schema, "osd.basic") == 0)
     {
+        char *s;
+        asprintf(&s, _("MSG=xpl-cmnd CLASS=osd.basic"));
+        debug(MSG_XPL, s);
+        FREE(s);
+
         osd_action_parse(str);
     }
     /*If schema to parse is sensor.basic*/
@@ -150,6 +180,11 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
         strdelstr(device, "\"");
         strdelstr(current, "\"");
         strdelstr(type, "\"");
+
+        char *s;
+        asprintf(&s, _("MSG=xpl-trig CLASS=sensor.basic DEVICE=%s TYPE=%s CURRENT=%s"), device, type, current);
+        debug(MSG_XPL, s);
+        FREE(s);
 
         /*Parse all locations and sync with global and cosm*/
         Eina_List *locations = NULL, *l;
@@ -217,7 +252,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                     {
                         if(atoi(current) > atoi(widget_xpl_highest_get(widget)))
                         {
-                            debug(MSG_INFO, ("New highest value for '%s' set to '%s'(old was '%s')"),
+                            debug(MSG_XPL, ("New highest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
                                                     widget_xpl_highest_get(widget));
@@ -230,12 +265,12 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                     {
                         if(atoi(current) < atoi(widget_xpl_lowest_get(widget)))
                         {
-                                debug(MSG_INFO, ("New lowest value for '%s' set to '%s'(old was '%s')"),
+                            debug(MSG_XPL, ("New lowest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
                                                     widget_xpl_lowest_get(widget));
-                                widget_xpl_lowest_set(widget, current);
-                            }
+                            widget_xpl_lowest_set(widget, current);
+                        }
                     }
 
 
@@ -319,66 +354,6 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
 
 
 
-/* Print info on incoming messages */
-void
-xpl_message_print(xPL_MessagePtr message, xPL_ObjectPtr data __UNUSED__)
-{
-    fprintf(stdout, "\033[34m[XPL]:\033[0m");
-
-    fprintf(stdout, "TYPE=");
-    switch(xPL_getMessageType(message))
-    {
-        case xPL_MESSAGE_COMMAND:
-            fprintf(stdout, "xpl-cmnd");
-            break;
-
-        case xPL_MESSAGE_STATUS:
-            fprintf(stdout, "xpl-stat");
-            break;
-
-        case xPL_MESSAGE_TRIGGER:
-            fprintf(stdout, "xpl-trig");
-            break;
-        default:
-            fprintf(stdout, "!UNKNOWN!");
-            break;
-  }
-
-
-  /* Print hop count, if interesting */
-  if (xPL_getHopCount(message) != 1) fprintf(stdout, ", HOPS=%d", xPL_getHopCount(message));
-
-  /* Source Info */
-  fprintf(stdout, ", SOURCE=%s-%s.%s\tTARGET=",
-	  xPL_getSourceVendor(message),
-	  xPL_getSourceDeviceID(message),
-	  xPL_getSourceInstanceID(message));
-
-  /* Handle various target types */
-  if (xPL_isBroadcastMessage(message))
-  {
-    fprintf(stdout, "*");
-  }
-  else
-  {
-    if (xPL_isGroupMessage(message))
-    {
-        fprintf(stdout, "XPL-GROUP.%s", xPL_getTargetGroup(message));
-    }
-    else
-    {
-        fprintf(stdout, "%s-%s.%s",
-                xPL_getTargetVendor(message),
-                xPL_getTargetDeviceID(message),
-                xPL_getTargetInstanceID(message));
-    }
-  }
-
-  /* Echo Schema Info */
-  fprintf(stdout, " CLASS=%s TYPE=%s\n", xPL_getSchemaClass(message), xPL_getSchemaType(message));
-}
-
-
 
 /*
  *
@@ -388,22 +363,17 @@ xpl_start()
 {
     Ecore_Pipe *pipe = NULL;
 
-
     if(XPL_STARTED == EINA_FALSE)
         return pipe;
 
     pipe = ecore_pipe_add(_xpl_handler, NULL);
-
-    /*Add all xPL messages listener*/
-    if(edams_settings_debug_get() == EINA_TRUE)
-        xPL_addMessageListener(xpl_message_print, NULL);
 
     /*Add xPL sensor.basic listener*/
     xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_TRIGGER, "sensor", "basic",(xPL_ObjectPtr)pipe);
     xPL_addServiceListener(xpl_edams_service, _xpl_sensor_basic_handler, xPL_MESSAGE_STATUS, "sensor", "basic",(xPL_ObjectPtr)pipe);
 
     /*Add xPL osd.basic listener*/
-    xPL_addServiceListener(xpl_edams_service, _xpl_osd_basic_handler, xPL_MESSAGE_ANY, "osd", "basic",(xPL_ObjectPtr)pipe);
+    xPL_addServiceListener(xpl_edams_service, _xpl_osd_basic_handler, xPL_MESSAGE_COMMAND, "osd", "basic",(xPL_ObjectPtr)pipe);
 
     child_pid = fork();
 
@@ -726,6 +696,14 @@ xpl_osd_basic_cmnd_send(char *command, char *text, char *delay)
 		return EINA_FALSE;
 	}
 
+    char *s;
+    asprintf(&s, _("MSG=xpl-cmnd CLASS=osd.basic COMMAND=%s TEXT=%s DELAY=%s"),
+                    command,
+                    text,
+                    delay);
+    debug(MSG_XPL, s);
+    FREE(s);
+
     xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;
 }/*xpl_osd_basic_cmnd_send*/
@@ -764,6 +742,14 @@ xpl_control_basic_cmnd_send(Widget *widget)
 		return EINA_FALSE;
 	}
 
+    char *s;
+    asprintf(&s, _("MSG=xpl-cmnd CLASS=control.basic DEVICE=%s TYPE=%s CURRENT=%s"),
+                    widget_xpl_device_get(widget),
+                    widget_xpl_type_get(widget),
+                    widget_xpl_current_get(widget));
+    debug(MSG_XPL, s);
+    FREE(s);
+
     xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;
 }/*xpl_control_basic_cmnd_send*/
@@ -797,6 +783,11 @@ xpl_sensor_basic_cmnd_send(Widget *widget)
 		xPL_releaseMessage(xpl_message_cmnd);
 		return EINA_FALSE;
 	}
+
+    char *s;
+    asprintf(&s, _("MSG=xpl-cmnd CLASS=sensor.request DEVICE=%s"), widget_xpl_device_get(widget));
+    debug(MSG_XPL, s);
+    FREE(s);
 
     xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;

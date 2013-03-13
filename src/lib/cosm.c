@@ -235,7 +235,6 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, E
     else
     {
     	headers = ecore_con_url_response_headers_get(event_info->url_con);
-
     }
 
     ecore_con_url_free(event_info->url_con);
