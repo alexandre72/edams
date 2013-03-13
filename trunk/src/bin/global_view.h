@@ -34,7 +34,4 @@ void global_view_widget_data_update(Location *location, Widget *widget);
 void global_view_new_mail_emit(int num_new, int num_total);
 void global_view_osd_write(const char *text, double delay);
 
-static const int TEMP_MIN = -30;
-static const int TEMP_MAX = 50;
-
 #endif
