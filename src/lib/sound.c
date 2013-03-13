@@ -38,7 +38,7 @@ static Emotion_Vis  vis        = EMOTION_VIS_NONE;
 int
 sound_init()
 {
-    debug(stdout, _("Sound support with Emotion has been enabled"));
+    debug(MSG_XPL, _("Sound support with Emotion has been enabled"));
 
     return 0;
 }/*sound_init*/
@@ -68,7 +68,7 @@ sound_file_play(const char *f)
 
     if (!emotion_object_init(em, NULL))
     {
-        debug(stdout, _("Can't play sound with Emotion gstreamer backend"));
+        debug(MSG_ERROR, _("Can't play sound with Emotion gstreamer backend"));
          return -1;
     }
     emotion_object_file_set(em, f);
@@ -89,7 +89,7 @@ sound_file_play(const char *f)
 int
 sound_init()
 {
-	debug(stderr, _("No sound system for playing audio, using mplayer pipe"));
+	debug(MSG_ERROR, _("No sound system for playing audio, using mplayer pipe"));
 	return 0;
 }/*sound_init*/
 
@@ -120,7 +120,7 @@ sound_file_play(const char *f)
 
    	if (child_handle == NULL)
 	{
-        debug(stderr, _("Can't create an Ecore_Exec_Pipe process"));
+        debug(MSG_ERROR, _("Can't create an Ecore_Exec_Pipe process"));
         FREE(s);
 		return EINA_FALSE;
 	}
@@ -129,13 +129,13 @@ sound_file_play(const char *f)
 
 	if (child_pid == -1)
    	{
-        debug(stderr, _("Can't create get PID of Ecore_Exec_Pipe process"));
+        debug(MSG_ERROR, _("Can't create get PID of Ecore_Exec_Pipe process"));
         FREE(s);
 		return EINA_FALSE;
 	}
 	else
 	{
-		debug(stdout, _("Exec '%s' with PID '%d'"), s, child_pid);
+		debug(MSG_INFO, _("Exec '%s' with PID '%d'"), s, child_pid);
 	}
 
     ecore_exe_free(child_handle);

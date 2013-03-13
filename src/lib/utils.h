@@ -22,7 +22,6 @@
 #define __UTILS_H__
 
 #include <Evas.h>
-
 #include "gettext.h"
 
 #define DIR_SEPARATOR '/'
@@ -44,9 +43,23 @@
 #define RANDOMIZE() srand((unsigned)time(NULL))
 #endif
 
+
+typedef enum
+{
+    MSG_ERROR,
+    MSG_WARNING,
+    MSG_INFO,
+    MSG_XPL,
+    MSG_ACTION,
+    MSG_COSM,
+    MSG_VOICERSS
+} Message_Type;
+
+
+
 void _free(const char * var, const char * filename, unsigned long line, void *ptr);
 void set_debug_mode(Eina_Bool debug);
-void debug(FILE *stream, const char *theFormat, ...);
+void debug(Message_Type msgtype, const char *format, ...);
 void evas_object_image_scale(Evas_Object *obj, int width, int height);
 void window_clicked_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 void msgbox(const char *msg);

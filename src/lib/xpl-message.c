@@ -525,7 +525,7 @@ xPL_formatMessage(xPL_MessagePtr theMessage)
     WRITE_TEXT("xpl-trig");
     break;
   default:
-    debug(stderr, _("Can't format xPL message -- invalid/unknown message type '%d'"), theMessage->messageType);
+    debug(MSG_XPL, _("Can't format xPL message -- invalid/unknown message type '%d'"), theMessage->messageType);
     return NULL;
   }
 
@@ -649,7 +649,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
       }
 
       /* Handle error */
-      debug(stderr, _("Got invalid character parsing block header - %c at position %d"), theChar, curIndex);
+      debug(MSG_XPL, _("Got invalid character parsing block header - %c at position %d"), theChar, curIndex);
       return -curIndex;
 
     case 1:
@@ -660,7 +660,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
       }
 
       /* Crapola */
-      debug(stderr, _("Got invalid character parsing start of block - %c at position %d (wanted a {)"), theChar, curIndex);
+      debug(MSG_XPL, _("Got invalid character parsing start of block - %c at position %d (wanted a {)"), theChar, curIndex);
       return -curIndex;
 
 
@@ -673,7 +673,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
       }
 
       /* Crapola */
-      debug(stderr, _("Got invalid character parsing start of block -  %c at position %d (wanted a LF)"), theChar, curIndex);
+      debug(MSG_XPL, _("Got invalid character parsing start of block -  %c at position %d (wanted a LF)"), theChar, curIndex);
       return -curIndex;
 
     case 3:
@@ -709,7 +709,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
       }
 
       /* Bad chararters! */
-      debug(stderr, _("Got invalid character parsing block name/value name -  %c at position %d"), theChar, curIndex);
+      debug(MSG_XPL, _("Got invalid character parsing block name/value name -  %c at position %d"), theChar, curIndex);
       return -curIndex;
 
     case 4:
@@ -726,7 +726,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
 	{
 	  if ((theNameValue->itemValue = textToBinary(blockValueBuff, &theNameValue->binaryLength)) == NULL)
 	  {
-	    debug(stderr, _("Can't xlate binary value for name %s"), blockValueBuff);
+	    debug(MSG_XPL, _("Can't xlate binary value for name %s"), blockValueBuff);
 	    return -curIndex;
 	  }
 	}
@@ -745,7 +745,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
       }
 
       /* Bad character! */
-      debug(stderr, _("Got invalid character parsing name/value value -  %c at position %d"), theChar, curIndex);
+      debug(MSG_XPL, _("Got invalid character parsing name/value value -  %c at position %d"), theChar, curIndex);
       return -curIndex;
 
     case 5:
@@ -759,7 +759,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
       }
 
       /* Bad data */
-      debug(stderr, _("Got invalid character parsing end of name/value -  %c at position %d (wanted a LF)"), theChar, curIndex);
+      debug(MSG_XPL, _("Got invalid character parsing end of name/value -  %c at position %d (wanted a LF)"), theChar, curIndex);
       return -curIndex;
     }
     break;
@@ -769,7 +769,7 @@ parseBlock(String theText, String *blockHeader, xPL_NameValueListPtr nameList, E
   if (!blockStarted) return 0;
 
   /* If we got here, we ran out of characters - this is an error too */
-  debug(stderr, _("Ran out of characters parsing block"));
+  debug(MSG_XPL, _("Ran out of characters parsing block"));
   return -theLength;
 }
 
@@ -786,30 +786,30 @@ parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueListPtr nameValueList
 
   /* Parse the hop count */
   if ((theNameValue = xPL_getNamedValuePair(nameValueList, "HOP")) == NULL) {
-    debug(stderr, _("Message missing HOP count"));
+    debug(MSG_XPL, _("Message missing HOP count"));
     return EINA_FALSE;
   }
   if (!xPL_strToInt(theNameValue->itemValue, &hopCount) || (hopCount < 1)) {
-    debug(stderr, _("Message HOP Count invalid"));
+    debug(MSG_XPL, _("Message HOP Count invalid"));
     return EINA_FALSE;
   }
   theMessage->hopCount = hopCount;
 
   /* Parse the source */
   if ((theNameValue = xPL_getNamedValuePair(nameValueList, "SOURCE")) == NULL) {
-    debug(stderr, _("Message missing SOURCE"));
+    debug(MSG_XPL, _("Message missing SOURCE"));
     return EINA_FALSE;
   }
   theVendor = theNameValue->itemValue;
   if ((theDeviceID = strchr(theVendor, '-')) == NULL) {
-    debug(stderr, _("SOURCE Missing Device ID - %s"), theVendor);
+    debug(MSG_XPL, _("SOURCE Missing Device ID - %s"), theVendor);
     return EINA_FALSE;
   }
 
   dashPtr = theDeviceID;
   *theDeviceID++ = '\0';
   if ((theInstanceID = strchr(theDeviceID, '.')) == NULL) {
-    debug(stderr, _("SOURCE Missing Instance ID - %s.%s"), theVendor, theDeviceID);
+    debug(MSG_XPL, _("SOURCE Missing Instance ID - %s.%s"), theVendor, theDeviceID);
     return EINA_FALSE;
   }
 
@@ -826,7 +826,7 @@ parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueListPtr nameValueList
 
   /* Parse the target (if anything) */
   if ((theNameValue = xPL_getNamedValuePair(nameValueList, "TARGET")) == NULL) {
-    debug(stderr, _("Message missing TARGET"));
+    debug(MSG_XPL, _("Message missing TARGET"));
     return EINA_FALSE;
   }
 
@@ -841,14 +841,14 @@ parseMessageHeader(xPL_MessagePtr theMessage, xPL_NameValueListPtr nameValueList
     /* Parse vendor and such */
     theVendor = theNameValue->itemValue;
     if ((theDeviceID = strchr(theVendor, '-')) == NULL) {
-      debug(stderr, _("TARGET Missing Device ID - %s"), theVendor);
+      debug(MSG_XPL, _("TARGET Missing Device ID - %s"), theVendor);
       return EINA_FALSE;
     }
 
     dashPtr = theDeviceID;
     *theDeviceID++ = '\0';
     if ((theInstanceID = strchr(theDeviceID, '.')) == NULL) {
-      debug(stderr, _("TARGET Missing Instance ID - %s.%s"), theVendor, theDeviceID);
+      debug(MSG_XPL, _("TARGET Missing Instance ID - %s.%s"), theVendor, theDeviceID);
       return EINA_FALSE;
     }
 
@@ -890,7 +890,7 @@ xPL_MessagePtr
 
   /* Parse the header */
   if ((parsedThisTime = parseBlock(theText, &blockHeaderKeyword, theMessage->messageBody, EINA_FALSE)) <= 0) {
-    debug(stderr, _("Error parsing message header"));
+    debug(MSG_XPL, _("Error parsing message header"));
     xPL_releaseMessage(theMessage);
     return NULL;
   }
@@ -904,7 +904,7 @@ xPL_MessagePtr
   } else if (!strcasecmp(blockHeaderKeyword, "XPL-TRIG")) {
     xPL_setMessageType(theMessage, xPL_MESSAGE_TRIGGER);
   } else {
-    debug(stderr, _("Unknown message header of %s - bad message"), blockHeaderKeyword);
+    debug(MSG_XPL, _("Unknown message header of %s - bad message"), blockHeaderKeyword);
     STR_FREE(blockHeaderKeyword);
     xPL_releaseMessage(theMessage);
     return NULL;
@@ -916,7 +916,7 @@ xPL_MessagePtr
   /* Parse the name/values into the message */
   if (!parseMessageHeader(theMessage, theMessage->messageBody))
   {
-    debug(stderr, _("Can't parse message header"));
+    debug(MSG_XPL, _("Can't parse message header"));
     xPL_releaseMessage(theMessage);
     return NULL;
   }
@@ -929,7 +929,7 @@ xPL_MessagePtr
 
     /* Parse the next block */
     if ((parsedThisTime = parseBlock(&(theText[parsedChars]), &blockHeaderKeyword, theMessage->messageBody, EINA_FALSE)) < 0) {
-      debug(stderr, _("Can't parse message block"));
+      debug(MSG_XPL, _("Can't parse message block"));
       xPL_releaseMessage(theMessage);
       STR_FREE(blockHeaderKeyword);
       return NULL;
@@ -943,7 +943,7 @@ xPL_MessagePtr
 
     /* Parse the block header */
     if ((blockDelimPtr = strchr(blockHeaderKeyword, '.')) == NULL) {
-      debug(stderr, _("Malformed message block header - %s"), blockHeaderKeyword);
+      debug(MSG_XPL, _("Malformed message block header - %s"), blockHeaderKeyword);
       xPL_releaseMessage(theMessage);
       STR_FREE(blockHeaderKeyword);
       return NULL;
@@ -1001,7 +1001,7 @@ xPL_receiveMessage(int theFD __UNUSED__, int thePollInfo __UNUSED__, int userVal
       if (errno == EAGAIN) return;
 
       /* Note the error and bail */
-      debug(stderr, _("Can't read xPL message from network - %s (%d)"), strerror(errno), errno);
+      debug(MSG_XPL, _("Can't read xPL message from network - %s (%d)"), strerror(errno), errno);
       return;
     }
 
@@ -1013,7 +1013,7 @@ xPL_receiveMessage(int theFD __UNUSED__, int thePollInfo __UNUSED__, int userVal
 
     /* Parse the message */
     if ((theMessage = parseMessage(messageBuff)) == NULL) {
-      debug(stderr, _("Can't parse network message - ignored"));
+      debug(MSG_XPL, _("Can't parse network message - ignored"));
       continue;
     }
 

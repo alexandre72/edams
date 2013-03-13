@@ -53,7 +53,7 @@ typedef struct
 
 const Eina_List *edams_locations_list_get();
 App_Info *edams_app_info_get();
-void statusbar_text_set(const char *msg, const char *ic);
+void console_text_add(Message_Type msgtype, const char *msg);
 void update_naviframe_content(Location *location);
 Evas_Object*_location_naviframe_content_set(Location *location);
 

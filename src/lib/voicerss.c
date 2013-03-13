@@ -124,7 +124,7 @@ voicerss_play(const char *text, VoiceEditor *ve)
     fd = mkostemps(tmpfile, 4, O_CREAT | O_WRONLY | O_TRUNC);
     if (fd == -1)
     {
-        debug(stderr, _("Can't create a valid temp name file"));
+        debug(MSG_ERROR, _("Can't create a valid temp name file"));
         return -1;
     }
 
@@ -137,7 +137,7 @@ voicerss_play(const char *text, VoiceEditor *ve)
 
     if (!url)
     {
-	    debug(stderr, _("Can't create Ecore_Con_Url object"));
+	    debug(MSG_ERROR, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
     }
 
@@ -151,7 +151,7 @@ voicerss_play(const char *text, VoiceEditor *ve)
     if(!ecore_con_url_get(url))
     {
 
-	    debug(stderr, _("Can't realize Ecore_Con_Url GET request"));
+	    debug(MSG_ERROR, _("Can't realize Ecore_Con_Url GET request"));
         return EINA_FALSE;
     }
     return EINA_TRUE;
@@ -170,7 +170,7 @@ _url_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
 
     if((url_complete->status != 201) && (url_complete->status != 200))
     {
-        debug(stderr, _("Voicerss server returned code: '%d'"), url_complete->status);
+        debug(MSG_VOICERSS, _("Voicerss server returned code: '%d'"), url_complete->status);
         if(file)
         {
             ecore_file_remove(file);
@@ -181,6 +181,7 @@ _url_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
 
     if(file)
     {
+		debug(MSG_VOICERSS, _("Voice has been created from voicerss.org"), (int)data);
         sound_file_play(file);
         voiceeditor->sound_file = strdup(file);
         eina_stringshare_del(file);

@@ -85,8 +85,7 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 
     location_save(app->location);
     update_naviframe_content(app->location);
-
-    statusbar_text_set(s, "dialog-information");
+    console_text_add(MSG_INFO, s);
     FREE(s);
 
     evas_object_del(win);
@@ -383,6 +382,12 @@ _list_widgets_groups_fill()
 		}
 		edje_file_collection_list_free(groups);
 	}
+
+	if(!(app->widget))
+	{
+        elm_list_item_selected_set(elm_list_first_item_get(list), EINA_TRUE);
+    }
+
 	elm_list_go(list);
 }/*_fill_widget_groups*/
 
@@ -479,7 +484,7 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
     {
     	asprintf(&s, _("Add a new widget to '%s' location"),
     	                location_name_get(app->location));
-        widget = widget_new(NULL, WIDGET_CLASS_UNKNOWN);
+        widget = widget_new(NULL, WIDGET_CLASS_XPL_SENSOR_BASIC);
     }
     else
     {
@@ -564,7 +569,7 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 
 	frame = elm_frame_add(win);
     evas_object_name_set(frame, "xpl preview frame");
-	elm_object_text_set(frame, _("xPL Preview"));
+	elm_object_text_set(frame, _("xPL scheme preview"));
 	elm_grid_pack(grid, frame, 1, 66, 42, 20);
 	evas_object_show(frame);
 
@@ -601,7 +606,13 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
             }
     	}
 	}
+	if(!(app->widget))
+	{
+        elm_list_item_selected_set(elm_list_first_item_get(class_list), EINA_TRUE);
+    }
+
 	elm_list_go(class_list);
+
 
 	box = elm_box_add(win);
 	elm_box_horizontal_set(box, EINA_TRUE);

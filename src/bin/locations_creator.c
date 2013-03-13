@@ -120,7 +120,7 @@ _button_apply_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_i
 	}
 
 	asprintf(&s, _("Location %s has been created."), location_name_get(location));
-	statusbar_text_set(s, "dialog-information");
+	console_text_add(MSG_INFO, s);
 	FREE(s);
 	evas_object_del(win);
 }/*_button_apply_clicked_cb*/

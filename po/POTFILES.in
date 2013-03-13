@@ -12,12 +12,12 @@ src/bin/osd_editor.c
 src/bin/preferences_dlg.c
 src/bin/scheduler_editor.c
 src/bin/shutdown.c
+src/bin/voice_editor.c
 src/bin/widget_editor.c
 src/lib/action.c
 src/lib/cJSON.c
 src/lib/cosm.c
 src/lib/crontab.c
-src/lib/gnuplot.c
 src/lib/location.c
 src/lib/mbox.c
 src/lib/myfileselector.c
@@ -25,6 +25,7 @@ src/lib/path.c
 src/lib/settings.c
 src/lib/sound.c
 src/lib/utils.c
+src/lib/voicerss.c
 src/lib/widget.c
 src/lib/xpl-config.c
 src/lib/xpl-io.c

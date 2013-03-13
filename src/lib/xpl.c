@@ -217,7 +217,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                     {
                         if(atoi(current) > atoi(widget_xpl_highest_get(widget)))
                         {
-                            debug(stdout, ("New highest value for '%s' set to '%s'(old was '%s')"),
+                            debug(MSG_INFO, ("New highest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
                                                     widget_xpl_highest_get(widget));
@@ -230,7 +230,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                     {
                         if(atoi(current) < atoi(widget_xpl_lowest_get(widget)))
                         {
-                                debug(stdout, ("New lowest value for '%s' set to '%s'(old was '%s')"),
+                                debug(MSG_INFO, ("New lowest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
                                                     widget_xpl_lowest_get(widget));
@@ -419,7 +419,6 @@ xpl_start()
     }
     else
     {
-        debug(stdout, _("Closing xPL Ecore_Pipe"));
         ecore_pipe_write_close(pipe);
     }
 
@@ -434,12 +433,10 @@ xpl_start()
 Eina_Bool
 xpl_init()
 {
-    debug(stdout, _("Initialize xPL service"));
-
 	/*Initialize xPL*/
 	if (!xPL_initialize(xPL_getParsedConnectionType()))
 	{
-	    debug(stderr, _("Can't init xPL service"));
+	    debug(MSG_XPL, _("Can't init xPL service"));
         XPL_STARTED	= EINA_FALSE;
 	    return EINA_FALSE;
 	}
@@ -450,6 +447,7 @@ xpl_init()
 
 	/*Enable the service*/
 	xPL_setServiceEnabled(xpl_edams_service, EINA_TRUE);
+    debug(MSG_XPL, _("xPL service initialized"));
 
     XPL_STARTED	= EINA_TRUE;
 
@@ -463,7 +461,7 @@ xpl_init()
 Eina_Bool
 xpl_shutdown()
 {
-	debug(stdout, _("Shutdown xPL..."));
+	debug(MSG_XPL, _("Shutdown xPL..."));
 
 	if(XPL_STARTED == EINA_TRUE)
 	{
@@ -705,7 +703,7 @@ xpl_osd_basic_cmnd_send(char *command, char *text, char *delay)
     /* Create an appropriate message */
     if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
     {
-        debug(stderr, _("Can't create broadcast message"));
+        debug(MSG_XPL, _("Can't create broadcast message"));
         return EINA_FALSE;
     }
 
@@ -723,7 +721,7 @@ xpl_osd_basic_cmnd_send(char *command, char *text, char *delay)
 	/*Broadcast the message*/
 	if (!xPL_sendMessage(xpl_message_cmnd))
 	{
-		debug(stderr, _("Can't send xPL message"));
+		debug(MSG_XPL, _("Can't send xPL message"));
         xPL_releaseMessage(xpl_message_cmnd);
 		return EINA_FALSE;
 	}
@@ -744,7 +742,7 @@ xpl_control_basic_cmnd_send(Widget *widget)
     /* Create an appropriate message */
     if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
     {
-        debug(stderr, _("Can't create broadcast message"));
+        debug(MSG_XPL, _("Can't create broadcast message"));
         return EINA_FALSE;
     }
 
@@ -761,7 +759,7 @@ xpl_control_basic_cmnd_send(Widget *widget)
 	/*Broadcast the message*/
 	if (!xPL_sendMessage(xpl_message_cmnd))
 	{
-		debug(stderr, _("Can't send xPL message"));
+		debug(MSG_XPL, _("Can't send xPL message"));
 		xPL_releaseMessage(xpl_message_cmnd);
 		return EINA_FALSE;
 	}
@@ -782,7 +780,7 @@ xpl_sensor_basic_cmnd_send(Widget *widget)
     /* Create an appropriate message */
     if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
     {
-        debug(stderr, _("Can't create broadcast message"));
+        debug(MSG_XPL, _("Can't create broadcast message"));
         return EINA_FALSE;
     }
 
@@ -795,7 +793,7 @@ xpl_sensor_basic_cmnd_send(Widget *widget)
 	/*Broadcast the message*/
 	if (!xPL_sendMessage(xpl_message_cmnd))
 	{
-		debug(stderr, _("Can't send xPL message"));
+		debug(MSG_XPL, _("Can't send xPL message"));
 		xPL_releaseMessage(xpl_message_cmnd);
 		return EINA_FALSE;
 	}

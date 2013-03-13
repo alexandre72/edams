@@ -78,7 +78,7 @@ exec_action_parse(const char *data)
 
    	if (child_handle == NULL)
 	{
-        debug(stderr, _("Can't create an Ecore_Exec_Pipe process"));
+        debug(MSG_ERROR, _("Can't create an Ecore_Exec_Pipe process"));
         FREE(exec);
         FREE(terminal);
 		cJSON_Delete(root);
@@ -89,7 +89,7 @@ exec_action_parse(const char *data)
 
 	if (child_pid == -1)
    	{
-        debug(stderr, _("Can't create get PID of Ecore_Exec_Pipe process"));
+        debug(MSG_ERROR, _("Can't create get PID of Ecore_Exec_Pipe process"));
 		cJSON_Delete(root);
         FREE(exec);
         FREE(terminal);
@@ -99,8 +99,8 @@ exec_action_parse(const char *data)
 	{
 		char *s;
 		asprintf(&s, _("Exec '%s' with PID '%d'"), exec, child_pid);
-        debug(stdout, s);
-		statusbar_text_set(s, "dialog-informations");
+        debug(MSG_ACTION, s);
+		console_text_add(MSG_ACTION, s);
         FREE(s);
 		cJSON_Delete(root);
         FREE(exec);
@@ -175,7 +175,7 @@ mail_action_parse(const char *data)
 	    }
 	    else
 	    {
-	    	debug(stderr, _("Can't found sendmail"));
+	    	debug(MSG_ACTION, _("Can't send mail with sendmail"));
 	    }
 	    FREE(str);
 
@@ -232,7 +232,7 @@ debug_action_parse(const char *data)
     strdelstr(print, "\"");
 
 	if(print)
-		debug(stdout, print);
+		debug(MSG_INFO, print);
 	else
 		return EINA_FALSE;
 
@@ -459,7 +459,7 @@ action_parse(Action *action)
 
 	if(!action_data_get(action))
 	{
-		debug(stderr, _("Can't execute action with no data passed in arg"));
+		debug(MSG_ACTION, _("Can't execute action with no data passed in arg"));
 		return EINA_FALSE;
 	}
 
@@ -485,7 +485,7 @@ action_parse(Action *action)
 				 break;
 		case ACTION_TYPE_UNKNOWN:
 		case ACTION_TYPE_LAST:
-				debug(stderr, _("Can't execute an unknown action"));
+				debug(MSG_ACTION, _("Can't execute an unknown action"));
 				return EINA_FALSE;
 				break;
 	}
