@@ -760,7 +760,7 @@ grapher_redraw(int value)
  *Callback called in smart object when a key is pressed
  */
 static void
-_on_keydown(void *data __UNUSED__, Evas * evas, Evas_Object * o, void *einfo)
+_on_keydown(void *data __UNUSED__, Evas * evas __UNUSED__, Evas_Object * o, void *einfo)
 {
 	Evas_Event_Key_Down *ev = einfo;
 
@@ -1096,7 +1096,6 @@ global_view_location_add(Location *location)
 }/*global_view_location_add*/
 
 
-
 /*
  *Sync global_view widgets with xPL device's current.
  */
@@ -1130,7 +1129,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
 	    {
 			int x, y;
 			sscanf(widget_xpl_current_get(widget), "%d.%02d", &x, &y);
-			level =	(double)((x + (y * 0.01)) - TEMP_MIN) / (double)(TEMP_MAX - TEMP_MIN);
+			level =	(double)((x + (y * 0.01)) - xpl_type_current_min_get(widget_xpl_type_get(widget))) / (double)(xpl_type_current_max_get(widget_xpl_type_get(widget)) - xpl_type_current_min_get(widget_xpl_type_get(widget)));
 		}
 		else
 		{
