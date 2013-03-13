@@ -39,7 +39,7 @@ static int efl_shutdown(App_Info * app);
 static int
 efl_shutdown(App_Info * app __UNUSED__)
 {
-	debug(stdout, _("Shutdown Enlightenment Foundation Libraries..."));
+	debug(MSG_INFO, _("Shutdown Enlightenment Foundation Libraries..."));
 	eina_shutdown();
 	ecore_evas_shutdown();
 	ecore_shutdown();
@@ -60,7 +60,7 @@ edams_shutdown(App_Info * app)
     sound_shutdown();
 	xpl_shutdown(app);
 
-	debug(stdout, _("Free allocated memory..."));
+	debug(MSG_INFO, _("Free allocated memory..."));
 	app->locations = locations_list_free(app->locations);
 	locations_shutdown();
 	edams_settings_shutdown();

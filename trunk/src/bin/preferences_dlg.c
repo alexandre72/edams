@@ -195,7 +195,7 @@ _button_gv_reset_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__,
 
     if(!(ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE)))
     {
-        debug(stderr, _("Can't open Eet file '%s' in rw mode"));
+        debug(MSG_ERROR, _("Can't open Eet file '%s' in rw mode"));
         return;
     }
 

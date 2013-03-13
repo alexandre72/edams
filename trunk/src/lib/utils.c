@@ -23,6 +23,7 @@
 
 #include <ctype.h>
 
+#include "edams.h"
 #include "utils.h"
 #include "settings.h"
 
@@ -45,7 +46,7 @@ _free(const char * var, const char * filename, unsigned long line, void *ptr)
     }
     else
     {
-        debug(stderr, _("Caught attempt to free NULL pointer variable %s at %s:%lu!"), var, filename, line);
+        debug(MSG_ERROR, _("Caught attempt to free NULL pointer variable %s at %s:%lu!"), var, filename, line);
     }
 }//_free
 
@@ -140,29 +141,29 @@ set_debug_mode(Eina_Bool debug)
  *Write a debug message out (if we are in debugging mode)
  */
 void
-debug(FILE *stream, const char *format, ...)
+debug(Message_Type msgtype, const char *format, ...)
 {
-	if(!_debug)
-		return;
-
-	char logMessageBuffer[LOG_BUFF_MAX] = "0";
-
+	char log[LOG_BUFF_MAX] = "";
   	va_list params;
+
+	if(!_debug)return;
+
   	/* Get access to the variable parms */
   	va_start(params, format);
 
   	/* Convert formatted message */
-  	vsprintf(&logMessageBuffer[strlen(logMessageBuffer)], format, params);
+  	vsprintf(&log[strlen(log)], format, params);
 
   	/* Write to the console or system log file */
-  	if(stream == stdout)
+  	if(msgtype == MSG_ERROR)
   	{
-    	fprintf(stdout, "\033[32m[DBG]\033[0m");
+		fprintf(stderr, "\033[31m[ERROR]\033[0m%s\n", log);
 	}
-	else if(stream == stderr)
-		fprintf(stderr, "\033[31m[ERROR]\033[0m");
-
-	fprintf(stream, "%s\n", logMessageBuffer);
+	else
+	{
+        fprintf(stdout, "\033[32m[DBG]\033[0m%s\n", log);
+    }
+    console_text_add(msgtype, log);
 
   	/* Release parms */
   	va_end(params);

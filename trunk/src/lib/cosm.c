@@ -72,7 +72,7 @@ cosm_device_datastream_update(Location *location, Widget *widget)
 	cosm_url = ecore_con_url_custom_new(s, "PUT");
    	if (!cosm_url)
      {
-	    debug(stderr, _("Can't create Ecore_Con_Url object"));
+	    debug(MSG_COSM, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
 	FREE(s);
@@ -104,7 +104,7 @@ cosm_device_datastream_update(Location *location, Widget *widget)
 
 	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), "text/json"))
 	{
-	   	debug(stderr, _("Can't realize url PUT request"));
+	   	debug(MSG_COSM, _("Can't realize url PUT request"));
 		return EINA_FALSE;
 	}
 	FREE(s);
@@ -125,13 +125,13 @@ cosm_location_feed_add(Location *location)
 	if(!location || (location_cosm_feedid_get(location) != 0) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
 
-	debug(stdout, _("Creating cosm feed for '%s'..."), location_name_get(location));
+	debug(MSG_COSM, _("Creating cosm feed '%s'..."), location_name_get(location));
 
    	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, (Ecore_Event_Handler_Cb)_url_feed_add_complete_cb,NULL);
    	cosm_url = ecore_con_url_custom_new("http://api.cosm.com/v2/feeds", "POST");
    	if (!cosm_url)
      {
-		debug(stderr, _("Can't create Ecore_Con_Url object"));
+		debug(MSG_COSM, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
 	//ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
@@ -166,7 +166,7 @@ cosm_location_feed_add(Location *location)
 
 	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), NULL))
 	{
-		debug(stderr, _("Can't realize url PUT request"));
+		debug(MSG_COSM, _("Can't realize url PUT request"));
 		return EINA_FALSE;
 	}
 	FREE(s);
@@ -190,14 +190,14 @@ cosm_location_feed_delete(Location *location)
 
 	int feedid = location_cosm_feedid_get(location);
 
-	debug(stdout, _("Delete cosm feed for '%s'..."), location_name_get(location));
+	debug(MSG_COSM, _("Deleting Cosm feed '%s'..."), location_name_get(location));
 
    	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_feed_delete_complete_cb, (void*)feedid);
 	asprintf(&s, "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
 	cosm_url = ecore_con_url_custom_new(s, "DELETE");
    	if (!cosm_url)
      {
-	    debug(stderr, _("Can't create Ecore_Con_Url object"));
+	    debug(MSG_ERROR, _("Can't create Ecore_Con_Url object"));
 		return EINA_FALSE;
      }
 	//ecore_con_url_verbose_set(cosm_url, edams_settings_debug_get());
@@ -206,7 +206,7 @@ cosm_location_feed_delete(Location *location)
 
 	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), NULL))
 	{
-		debug(stderr, _("Can't realize url PUT request"));
+		debug(MSG_ERROR, _("Can't realize url PUT request"));
 		return EINA_FALSE;
 	}
 	FREE(s);
@@ -227,10 +227,9 @@ _url_datastream_update_complete_cb(void *data __UNUSED__, int type __UNUSED__, E
 
     if((event_info->status != 201) && (event_info->status != 200))
     {
-    printf("cosm server returned code: '%d'\n", event_info->status);
         char *s;
-        asprintf(&s, _("A datastream feed hasn't been updated, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
-        statusbar_text_set(s, "cosm-logo");
+        asprintf(&s, _("A datastream feed hasn't been updated, Cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
+        debug(MSG_COSM, s);
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
@@ -257,10 +256,10 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_
 
     if((event_info->status != 201) && (event_info->status != 200))
     {
-        debug(stderr, _("Cosm server returned code: '%d'"), event_info->status);
+        debug(MSG_COSM, _("Cosm server returned code: '%d'"), event_info->status);
         char *s;
-        asprintf(&s, _("A location feed hasn't been added, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
-        statusbar_text_set(s, "cosm-logo");
+        asprintf(&s, _("A location feed hasn't been added, Cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
+       debug(MSG_COSM, s);
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
@@ -279,8 +278,8 @@ _url_feed_add_complete_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_
 				    location_cosm_feedid_set(location, feedid);
 				    location_save(location);
 				    char *s;
-				    asprintf(&s, _("Location has been added to cosm with feedid '%d'"), feedid);
-                    statusbar_text_set(s, "cosm-logo");
+				    asprintf(&s, _("Location has been added to Cosm with feedid '%d'"), feedid);
+                    debug(MSG_COSM, s);
 				    FREE(s);
 				    update_naviframe_content(location);
                     ecore_con_url_free(event_info->url_con);
@@ -304,10 +303,10 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Ur
 
     if((event_info->status != 201) && (event_info->status != 200))
     {
-        debug(stderr, _("Cosm server returned code: '%d'"), event_info->status);
+        debug(MSG_COSM, _("Cosm server returned code: '%d'"), event_info->status);
         char *s;
-        asprintf(&s, _("A location feed hasn't been deleted, cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
-        statusbar_text_set(s, "cosm-logo");
+        asprintf(&s, _("A location feed hasn't been deleted, Cosm server returned error '%s'"), cosm_server_error_to_str(event_info->status));
+        debug(MSG_COSM, s);
         FREE(s);
         return ECORE_CALLBACK_RENEW;
     }
@@ -320,8 +319,8 @@ _url_feed_delete_complete_cb(void *data, int type __UNUSED__, Ecore_Con_Event_Ur
    	    	if(strncmp(header, "HTTP/1.1 200 OK", strlen("HTTP/1.1 200 OK")) == 0)
 	    	{
 	    		char *s;
-				asprintf(&s, _("Location with feedid '%d' has been removed from cosm"), (int)data);
-                statusbar_text_set(s, "cosm-logo");
+				asprintf(&s, _("Location with feedid '%d' has been removed from Cosm"), (int)data);
+                debug(MSG_COSM, s);
 				FREE(s);
                 ecore_con_url_free(event_info->url_con);
 				break;

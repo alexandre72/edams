@@ -137,7 +137,7 @@ action_new(Condition ifcondition, const char *ifvalue, Action_Type type, const c
 
     if (!action)
        {
-          debug(stderr, _("Can't calloc Action struct"));
+          debug(MSG_ERROR, _("Can't calloc Action struct"));
           return NULL;
        }
 
@@ -314,7 +314,7 @@ widget_new(const char * name, Widget_Class class)
 
     if (!widget)
 	{
-		debug(stderr, _("Can't calloc Widget struct"));
+		debug(MSG_ERROR, _("Can't calloc Widget struct"));
     	return NULL;
 	}
 
@@ -330,7 +330,7 @@ widget_new(const char * name, Widget_Class class)
 	else if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)
    	 	widget->group = eina_stringshare_add("widget/sensor.basic/counter");
     else
-        debug(stderr, _("You shouldn't create a new widget with unknown class"));
+        debug(MSG_ERROR, _("You shouldn't create a new widget with unknown class"));
 
     /*Initialize xPL specifics field*/
     widget->xpl_device = NULL;
@@ -416,8 +416,6 @@ widget_clone(Widget *src)
     return ret;
 }
 
-
-
 /*
  *
  */
@@ -426,7 +424,6 @@ widget_id_get(const Widget *widget)
 {
     return widget->id;
 }/*widget_id_get*/
-
 
 /*
  *
@@ -437,7 +434,6 @@ widget_id_set(Widget *widget, unsigned int id)
     EINA_SAFETY_ON_NULL_RETURN(widget);
     widget->id = id;
 }/*widget_id_set*/
-
 
 /*
  *
@@ -512,11 +508,6 @@ widget_xpl_device_set(Widget *widget, const char *xpl_device)
     {
     	eina_stringshare_replace(&(widget->xpl_device), xpl_device);
     }
-    else
-    {
-        debug(stderr, ("Can't set xpl device to a not xpl widget"));
-        return;
-    }
 }/*widget_xpl_device_set*/
 
 
@@ -531,14 +522,8 @@ widget_xpl_device_get(const Widget *widget)
     {
         return elm_entry_markup_to_utf8(widget->xpl_device);
     }
-    else
-    {
-        debug(stderr, ("Can't get xpl device from a not xpl widget"));
-        return NULL;
-    }
+    return NULL;
 }/*widget_xpl_device_get*/
-
-
 
 /*
  *
@@ -553,10 +538,6 @@ widget_xpl_type_set(Widget *widget, const char *xpl_type)
     {
     	eina_stringshare_replace(&(widget->xpl_type), xpl_type);
     }
-    else
-    {
-        debug(stderr, ("Can't set xpl type to a not xpl widget class"));
-    }
 }/*widget_xpl_type_set*/
 
 /*
@@ -570,14 +551,8 @@ widget_xpl_type_get(const Widget *widget)
     {
         return widget->xpl_type;
     }
-    else
-    {
-        debug(stderr, ("Can't get xpl type from a not xpl widget"));
-        return NULL;
-    }
+    return NULL;
 }/*widget_xpl_type_get*/
-
-
 
 /*
  *
@@ -591,12 +566,7 @@ widget_xpl_current_set(Widget *widget, const char *xpl_current)
     {
     	eina_stringshare_replace(&(widget->xpl_current), xpl_current);
     }
-    else
-    {
-        debug(stderr, ("Can't set xpl current to a not xpl widget"));
-    }
 }/*widget_xpl_current_set*/
-
 
 /*
  *
@@ -609,11 +579,8 @@ widget_xpl_current_get(const Widget *widget)
     {
         return widget->xpl_current;
     }
-    else
-    {
-        debug(stderr, ("Can't get xpl current from a not xpl widget"));
-        return NULL;
-    }
+
+    return NULL;
 }/*widget_xpl_current_get*/
 
 
@@ -630,10 +597,6 @@ widget_xpl_data1_set(Widget *widget, const char *xpl_data1)
     {
     	eina_stringshare_replace(&(widget->xpl_data1), xpl_data1);
     }
-    else
-    {
-        debug(stderr, ("Can't set xpl data1 to a not xpl widget"));
-    }
 }/*widget_xpl_current_set*/
 
 
@@ -648,11 +611,8 @@ widget_xpl_data1_get(const Widget *widget)
     {
         return widget->xpl_data1;
     }
-    else
-    {
-        debug(stderr, ("Can't get xpl data1 from a not xpl widget"));
-        return NULL;
-    }
+
+    return NULL;
 }/*widget_xpl_current_get*/
 
 
@@ -668,11 +628,6 @@ widget_xpl_highest_set(Widget *widget, const char *xpl_highest)
     {
     	eina_stringshare_replace(&(widget->xpl_highest), xpl_highest);
     }
-    else
-    {
-        debug(stderr, ("Can't set xpl highest to a not xpl widget"));
-        return;
-    }
 }/*widget_xpl_highest_set*/
 
 
@@ -687,11 +642,8 @@ widget_xpl_highest_get(const Widget *widget)
     {
         return widget->xpl_highest;
     }
-    else
-    {
-        debug(stderr, ("Can't get xpl highest from a not xpl widget"));
-        return NULL;
-    }
+
+    return NULL;
 }/*widget_xpl_highest_get*/
 
 
@@ -707,10 +659,6 @@ widget_xpl_lowest_set(Widget *widget, const char *xpl_lowest)
     {
     	eina_stringshare_replace(&(widget->xpl_lowest), xpl_lowest);
     }
-    else
-    {
-        debug(stderr, ("Can't set xpl lowest to a not xpl widget"));
-    }
 }/*widget_xpl_lowest_set*/
 
 
@@ -725,11 +673,8 @@ widget_xpl_lowest_get(const Widget *widget)
     {
         return widget->xpl_lowest;
     }
-    else
-    {
-        debug(stderr, ("Can't get xpl lowest from a not xpl widget"));
-        return NULL;
-    }
+
+    return NULL;
 }/*widget_xpl_lowest_get*/
 
 
@@ -885,7 +830,7 @@ location_new(const char * name)
 
     if (!location)
 	{
-		debug(stderr, _("Can't calloc Location struct"));
+		debug(MSG_ERROR, _("Can't calloc Location struct"));
 		return NULL;
 	}
     location->name = eina_stringshare_add(name ? name : _("undefined"));
@@ -1072,7 +1017,7 @@ location_image_set(Location *location, Evas_Object *image)
     ef = eet_open(location->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
       {
-        debug(stderr, _("Can't open Eet file '%s' in write mode"), location->__eet_filename);
+        debug(MSG_ERROR, _("Can't open Eet file '%s' in write mode"), location->__eet_filename);
         return;
       }
 
@@ -1088,7 +1033,7 @@ location_image_set(Location *location, Evas_Object *image)
 
 	if (!ret)
 	{
-		debug(stderr, _("Can't write any data to Eet file '%s'"), location->__eet_filename);
+		debug(MSG_ERROR, _("Can't write any data to Eet file '%s'"), location->__eet_filename);
 	}
 }
 
@@ -1201,7 +1146,7 @@ location_load(const char *filename)
     Eet_File *ef = eet_open(filename, EET_FILE_MODE_READ);
     if (!ef)
       {
-        debug(stderr, _("Can't open Eet file '%s' in read mode"), filename);
+        debug(MSG_ERROR, _("Can't open Eet file '%s' in read mode"), filename);
         return NULL;
       }
 
@@ -1212,7 +1157,7 @@ location_load(const char *filename)
 	/*FIXME:In future release handle this code's parts by adding newly field(extensions)*/
    	if (location->version < LOCATION_FILE_VERSION)
      	{
-        	debug(stderr, _("Eet file '%s' %#x was too old, upgrading it to %#x"),
+        	debug(MSG_ERROR, _("Eet file '%s' %#x was too old, upgrading it to %#x"),
         			location->__eet_filename,
                 	location->version,
                 	LOCATION_FILE_VERSION);
@@ -1239,7 +1184,7 @@ location_save(Location *location)
     ef = eet_open(location->__eet_filename, EET_FILE_MODE_WRITE);
     if (!ef)
 	{
-        debug(stderr, _("Can't open Eet file '%s' in write mode"), location->__eet_filename);
+        debug(MSG_ERROR, _("Can't open Eet file '%s' in write mode"), location->__eet_filename);
 		return EINA_FALSE;
 	}
 
@@ -1248,7 +1193,7 @@ location_save(Location *location)
     eet_close(ef);
 	if (!ret)
 	{
-		debug(stderr, _("Can't write any data to Eet file '%s'"), location->__eet_filename);
+		debug(MSG_ERROR, _("Can't write any data to Eet file '%s'"), location->__eet_filename);
 		return EINA_FALSE;
 	}
 
@@ -1288,11 +1233,11 @@ location_remove(Location *location)
 
 	if(!ecore_file_remove(location->__eet_filename))
 	{
-	    debug(stderr, _("Can't remove Eet location file '%s'"), location->__eet_filename);
+	    debug(MSG_ERROR, _("Can't remove Eet location file '%s'"), location->__eet_filename);
 	    return EINA_FALSE;
 	}
 
-	debug(stdout, _("Eet Location file '%s' has been removed"), location->__eet_filename);
+	debug(MSG_INFO, _("Eet Location file '%s' has been removed"), location->__eet_filename);
 
 	return EINA_TRUE;
 }/*location_remove*/
@@ -1317,8 +1262,6 @@ locations_list_free(Eina_List *locations)
 		location_free(data);
 	}
 	eina_list_free(locations);
-
-	debug(stdout, _("%d Location struct of Eina_list freed"), n);
 
     return NULL;
 }/*locations_list_free*/
@@ -1378,7 +1321,7 @@ locations_list_get()
 					locations = eina_list_append(locations, location);
 					if (eina_error_get())
 					{
-						debug(stderr, _("Can't alloc Eina_List node"));
+						debug(MSG_ERROR, _("Can't alloc Eina_List node"));
 						exit(-1);
 					}
 				}
@@ -1388,7 +1331,7 @@ locations_list_get()
 	eina_iterator_free(it);
 	}
 
-	debug(stdout, _("%d locations registered"), eina_list_count(locations));
+	debug(MSG_INFO, _("%d locations registered"), eina_list_count(locations));
 
 	return locations;
 }/*locations_list_get*/

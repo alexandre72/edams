@@ -42,11 +42,9 @@ static int i18n_init(App_Info * app __UNUSED__);
 static int
 efl_init(App_Info * app)
 {
-	debug(stdout, _("Initialize EFL..."));
-
 	if (!eina_init())
 	{
-		debug(stderr, _("Can't init Eina"));
+		debug(MSG_ERROR, _("Can't init Eina"));
 		return EXIT_FAILURE;
 	}
 
@@ -55,13 +53,13 @@ efl_init(App_Info * app)
 
 	if (!ecore_con_init() || !ecore_con_url_init())
 	{
-		debug(stderr, _("Can't init Ecore_Con or Ecore_Con_Url"));
+		debug(MSG_ERROR, _("Can't init Ecore_Con or Ecore_Con_Url"));
 		return EXIT_FAILURE;
 	}
 
 	if (!ecore_con_url_pipeline_get())
 	{
-		debug(stdout, _("Ecore_Con_Url pipeline has been enabled"));
+		debug(MSG_INFO, _("Ecore_Con_Url pipeline has been enabled"));
 		ecore_con_url_pipeline_set(EINA_TRUE);
 	}
 
@@ -70,7 +68,7 @@ efl_init(App_Info * app)
 
 	if (!elm_init(app->argc, app->argv))
 	{
-		debug(stderr, _("Can't init Elementary"));
+		debug(MSG_ERROR, _("Can't init Elementary"));
 		return EXIT_FAILURE;
 	}
 	// Setting elementary options.
@@ -94,8 +92,6 @@ efl_init(App_Info * app)
 static int
 paths_init(App_Info * app __UNUSED__)
 {
-	debug(stdout, _("Checking EDAMS useful paths..."));
-
 	char s[PATH_MAX];
 
 	/*If no configurations path then create a new one in user home's*/

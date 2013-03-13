@@ -92,7 +92,7 @@ edams_settings_debug_set(Eina_Bool isdebug)
 {
 	set_debug_mode(isdebug);
 	EET_BOOL_SETTINGS_WRITE("edams/debug", isdebug);
-	debug(stdout, _("Debug is %s"), isdebug?_("enabled"):_("disabled"));
+	debug(MSG_INFO, _("Debug is %s"), isdebug?_("enabled"):_("disabled"));
 }/*edams_settings_debug_set*/
 
 
@@ -114,7 +114,7 @@ void
 edams_settings_softemu_set(Eina_Bool softemu)
 {
 	EET_BOOL_SETTINGS_WRITE("edams/softemu", softemu);
-	debug(stdout, _("Software emulation is %s"), softemu?_("enabled"):_("disabled"));
+	debug(MSG_INFO, _("Software emulation is %s"), softemu?_("enabled"):_("disabled"));
 }/*edams_settings_softemu_set*/
 
 
@@ -147,7 +147,7 @@ edams_settings_global_view_background_set(const char *file)
         eet_write(ef, "global_view/background", file, strlen(file)+1, 0);
     }
 
-	debug(stdout, _("Global view background options is %s"), file ?_("enabled"):_("disabled"));
+	debug(MSG_INFO, _("Global view background options is %s"), file ?_("enabled"):_("disabled"));
 }/*edams_settings_global_view_background_set*/
 
 
@@ -178,7 +178,7 @@ edams_settings_cosm_apikey_set(const char *cosm_apikey)
     {
         eet_write(ef, "edams/cosm_apikey", cosm_apikey, strlen(cosm_apikey)+1, 0);
     }
-	debug(stdout, _("Cosm data handling options is %s"), cosm_apikey?_("enabled"):_("disabled"));
+	debug(MSG_INFO, _("Cosm data handling options is %s"), cosm_apikey?_("enabled"):_("disabled"));
 }/*edams_settings_cosm_apikey_set*/
 
 
@@ -212,7 +212,7 @@ edams_settings_mbox_path_set(const char *mbox_path)
         mbox_monitoring_init();
     }
 
-	debug(stdout, _("Mbox monitoring is %s"), mbox_path ? _("enabled"):_("disabled"));
+	debug(MSG_INFO, _("Mbox monitoring is %s"), mbox_path ? _("enabled"):_("disabled"));
 }/*edams_settings_smtp_server_set*/
 
 
@@ -296,7 +296,7 @@ edams_settings_voicerss_apikey_set(const char *voicerss_apikey)
     {
         eet_write(ef, "edams/voicerss_apikey", voicerss_apikey, strlen(voicerss_apikey)+1, 0);
     }
-	debug(stdout, _("Voicerss handling options is %s"), voicerss_apikey?_("enabled"):_("disabled"));
+	debug(MSG_INFO, _("Voicerss handling options is %s"), voicerss_apikey?_("enabled"):_("disabled"));
 }/*edams_settings_voicerss_apikey_set*/
 
 
@@ -311,7 +311,7 @@ edams_settings_init()
 
 	if(!settings)
 	{
-		debug(stderr, _("Can't calloc Settings struct"));
+		debug(MSG_ERROR, _("Can't calloc Settings struct"));
 		return;
 	}
 

@@ -58,9 +58,6 @@ static void _button_edit_widget_clicked_cb(void *data, Evas_Object * obj __UNUSE
 /*List sorts callbacks*/
 static int _list_widgets_sort_cb(const void *pa, const void *pb);
 
-/*Timers callbacks*/
-static Eina_Bool _statusbar_timer_cb(void *data);
-
 /*Others funcs*/
 static Evas_Object *_item_provider(void *images __UNUSED__, Evas_Object *en, const char *item);
 EAPI_MAIN int elm_main(int argc, char *argv[]);
@@ -122,47 +119,44 @@ _button_quit_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, voi
 
 
 /*
- *
- */
-static Eina_Bool
-_statusbar_timer_cb(void *data __UNUSED__)
-{
-	char *s;
-	time_t timestamp;
-	struct tm *t;
-
-	Evas_Object *label = elm_object_name_find(app->win, "status text", -1);
-	timestamp = time(NULL);
-	t = localtime(&timestamp);
-  	asprintf(&s, _("EDAMS v%s - %02d/%02d/%d"),PACKAGE_VERSION, (int)t->tm_mday, (int)t->tm_mon + 1, 1900 + (int)t->tm_year);
-	elm_object_text_set(label, s);
-	FREE(s);
-
-	Evas_Object *icon = elm_object_name_find(app->win, "status icon", -1);
-	elm_icon_standard_set(icon, "help-about");
-
-	return EINA_FALSE;
-}/*_statusbar_timer_cb*/
-
-/*
- *Set elm label and elm icon of bottom status bar.
+ *Append text to console debug.
  */
 void
-statusbar_text_set(const char *msg, const char *ic)
+console_text_add(Message_Type msgtype, const char *msg)
 {
-	Evas_Object *label, *icon;
+    char *s;
+    Evas_Object *entry;
 
-	label = elm_object_name_find(app->win, "status text", -1);
-	if(label)
-    	elm_object_text_set(label, msg);
+    entry = elm_object_name_find(app->win, "console entry", -1);
 
-	icon = elm_object_name_find(app->win, "status icon", -1);
+    if(msgtype == MSG_ERROR)
+    {
+        asprintf(&s, "<b><color=#FF0000>ERROR:</b></color><em>%s</em><ps>", msg);
+    }
+    else if(msgtype == MSG_WARNING)
+    {
+        asprintf(&s, "<b>WARNING:</b><em>%s</em><ps>", msg);
+    }
+    else if(msgtype == MSG_INFO)
+    {
+        asprintf(&s, "<b><color=#2ad338>INFO:</b></color><em>%s</em><ps>", msg);
+    }
+    else if(msgtype == MSG_XPL)
+    {
+        asprintf(&s, "<b><color=#121cff>XPL:</b></color><em>%s</em><ps>", msg);
+    }
+    else if(msgtype == MSG_ACTION)
+    {
+        asprintf(&s, "<b>ACTION:</b><em>%s</em><ps>", msg);
+    }
+    else if(msgtype == MSG_COSM)
+    {
+        asprintf(&s, "<b><color=#ff4300>COSM:</b></color><em>%s</em><ps>", msg);
+    }
 
-	if(!elm_icon_standard_set(icon, ic))
-		elm_image_file_set(icon, edams_edje_theme_file_get(), ic);
-
-	ecore_timer_add(6.0, _statusbar_timer_cb, NULL);
-}/*statusbar_text_set*/
+    elm_entry_entry_insert(entry, s);
+    FREE(s);
+}/*console_text_add*/
 
 /*
  * Remove currently selected location.
@@ -178,7 +172,7 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 
 	if (!it)
 	{
-		statusbar_text_set(_("Can't remove:no location selected!"), "dialog-error");
+		console_text_add(MSG_ERROR, _("Can't remove:no location selected!"));
 		return;
 	}
 	else
@@ -192,7 +186,7 @@ _button_remove_location_clicked_cb(void *data __UNUSED__,Evas_Object * obj __UNU
 			global_view_location_del(location);
 			location_remove(location);
 			asprintf(&s, _("Location '%s' have been removed"), location_name_get(location));
-			statusbar_text_set(s, "dialog-information");
+			console_text_add(MSG_INFO, s);
 			FREE(s);
 			elm_object_item_del(it);
 
@@ -213,7 +207,7 @@ _button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 {
 	if (!app->location)
 	{
-		statusbar_text_set(_("Can't remove widget:no location selected!"), "dialog-error");
+		console_text_add(MSG_ERROR, _("Can't remove widget:no location selected!"));
 		return;
 	}
 
@@ -231,8 +225,7 @@ _button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 	asprintf(&s,  _("Widget '%s' have been removed from '%s' location's"),
 																widget_name_get(widget),
 																location_name_get(app->location));
-
-	statusbar_text_set(s, "widget");
+	console_text_add(MSG_INFO, s);
 	FREE(s);
 }/*_button_remove_widget_clicked_cb*/
 
@@ -475,13 +468,16 @@ elm_main(int argc, char **argv)
 {
     Evas_Object *vbx, *vbx2, *bg, *frame;
     Evas_Object *sep;
-    Evas_Object *tb, *bt, *icon, *label, *bx, *list, *naviframe;
+    Evas_Object *bt, *icon, *list, *naviframe, *entry;
     Ecore_Pipe *pipe = NULL;
     Eina_List *l;
     Eina_Bool quit_option = EINA_FALSE;
     int args, retval = EXIT_SUCCESS;
     char *opt_action_type = NULL;
     char *opt_action_data = NULL;
+    char *s;
+    time_t timestamp;
+    struct tm *t;
 
 
     Ecore_Getopt_Value values[] =
@@ -529,7 +525,7 @@ elm_main(int argc, char **argv)
     {
         if(!opt_action_data)
         {
-             debug(stderr, _("Can't parse action data"));
+             debug(MSG_ERROR, _("Can't parse action data"));
         }
         else
         {
@@ -537,7 +533,7 @@ elm_main(int argc, char **argv)
 
             if(type == ACTION_TYPE_UNKNOWN)
             {
-                debug(stderr, _("Can't parse action type"));
+                debug(MSG_ERROR, _("Can't parse action type"));
             }
             else
             {
@@ -596,12 +592,9 @@ elm_main(int argc, char **argv)
     evas_object_show(panes);
 
     vbx2 = elm_box_add(app->win);
-    evas_object_size_hint_weight_set(vbx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(vbx2, -1.0, -1.0);
     evas_object_show(vbx2);
 
     frame = elm_frame_add(app->win);
-    evas_object_size_hint_align_set(frame, -1.0, -1.0);
     elm_object_text_set(frame, _("Locations"));
     evas_object_size_hint_weight_set(frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -620,13 +613,6 @@ elm_main(int argc, char **argv)
     elm_panes_content_left_size_set(panes, 0.20);
     elm_object_part_content_set(panes, "left", vbx2);
 
-    /*Table widget, contains group/subgroup genlist navigation and actions buttons like add...*/
-    tb = elm_table_add(app->win);
-    elm_win_resize_object_add(app->win, tb);
-    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_box_pack_end(vbx2, tb);
-    evas_object_show(tb);
-
     bt = elm_button_add(app->win);
     elm_object_text_set(bt, _("Add"));
     icon = elm_icon_add(app->win);
@@ -634,7 +620,7 @@ elm_main(int argc, char **argv)
     elm_icon_standard_set(icon, "list-add");
     elm_object_part_content_set(bt, "icon", icon);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_table_pack(tb, bt, 0, 0, 1, 1);
+    elm_box_pack_end(vbx2, bt);
     evas_object_show(bt);
     evas_object_smart_callback_add(bt, "clicked", locations_creator_add, app);
 
@@ -645,7 +631,7 @@ elm_main(int argc, char **argv)
     elm_icon_standard_set(icon, "list-remove");
     elm_object_part_content_set(bt, "icon", icon);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_table_pack(tb, bt, 0, 1, 1, 1);
+    elm_box_pack_end(vbx2, bt);
     evas_object_show(bt);
     evas_object_smart_callback_add(bt, "clicked", _button_remove_location_clicked_cb, list);
 
@@ -653,6 +639,7 @@ elm_main(int argc, char **argv)
     elm_naviframe_content_preserve_on_pop_set(naviframe, EINA_FALSE);
     evas_object_name_set(naviframe, "naviframe");
     evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(naviframe);
 
     /*Insert location page to naviframe*/
@@ -682,37 +669,29 @@ elm_main(int argc, char **argv)
     elm_list_go(list);
     elm_object_part_content_set(panes, "right", naviframe);
 
-    /*Setup status bar to inform user.*/
+    /*Setup console entry to inform user.*/
     sep = elm_separator_add(app->win);
     elm_separator_horizontal_set(sep, EINA_TRUE);
     elm_box_pack_end(vbx, sep);
     evas_object_show(sep);
 
-    bx = elm_box_add(app->win);
-    elm_box_horizontal_set(bx, EINA_TRUE);
-    elm_box_pack_end(vbx, bx);
-    evas_object_show(bx);
+    Evas_Object *panel = elm_panel_add(app->win);
+    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_BOTTOM);
+    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(panel);
+    elm_box_pack_end(vbx, panel);
 
-    icon = elm_icon_add(bx);
-    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-    evas_object_name_set(icon, "status icon");
-    evas_object_size_hint_min_set(icon, 24, 24);
-    evas_object_size_hint_align_set(icon, 0.5, EVAS_HINT_FILL);
-    evas_object_show(icon);
-    elm_box_pack_end(bx, icon);
-
-    label = elm_label_add(app->win);
-    elm_label_slide_duration_set(label, 3);
-    elm_label_slide_set(label, EINA_TRUE);
-    elm_object_style_set(label, "slide_bounce");
-    evas_object_name_set(label, "status text");
-    evas_object_show(label);
-    elm_box_pack_end(bx, label);
-    evas_object_show(label);
-
-    elm_image_resizable_set(icon, EINA_TRUE, EINA_TRUE);
-    elm_image_aspect_fixed_set(icon, EINA_TRUE);
-    elm_image_fill_outside_set(icon, EINA_FALSE);
+    entry = elm_entry_add(app->win);
+    evas_object_name_set(entry, "console entry");
+   	elm_entry_scrollable_set(entry, EINA_TRUE);
+    elm_entry_editable_set(entry, EINA_FALSE);
+   	elm_entry_context_menu_disabled_set(entry, EINA_TRUE);
+	elm_entry_item_provider_append(entry, _item_provider, NULL);
+   	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_object_content_set(panel, entry);
+    evas_object_show(entry);
 
     sep = elm_separator_add(app->win);
     elm_separator_horizontal_set(sep, EINA_TRUE);
@@ -721,6 +700,12 @@ elm_main(int argc, char **argv)
 
     evas_object_resize(app->win, 700, 500);
     evas_object_show(app->win);
+
+    timestamp = time(NULL);
+    t = localtime(&timestamp);
+    asprintf(&s, _("Welcome to EDAMS v%s - %02d/%02d/%d"),PACKAGE_VERSION, (int)t->tm_mday, (int)t->tm_mon + 1, 1900 + (int)t->tm_year);
+    console_text_add(MSG_INFO, s);
+    FREE(s);
 
     pipe = xpl_start();
     elm_run();

@@ -63,7 +63,7 @@ struct _Evas_Smart_Group_Data
   EVAS_SMART_GROUP_DATA_GET(o, ptr);                       \
   if (!ptr)                                                  \
     {                                                        \
-       debug(stderr, _("No widget data for object %p (%s)"), \
+       debug(MSG_ERROR, _("No widget data for object %p (%s)"), \
                o, evas_object_type_get(o));                  \
        return;                                               \
     }
@@ -72,7 +72,7 @@ struct _Evas_Smart_Group_Data
   EVAS_SMART_GROUP_DATA_GET(o, ptr);                         \
   if (!ptr)                                                    \
     {                                                          \
-       debug(stderr, _("No widget data for object %p (%s)"),   \
+       debug(MSG_ERROR, _("No widget data for object %p (%s)"),   \
                o, evas_object_type_get(o));                    \
        return val;                                             \
     }
@@ -178,13 +178,13 @@ global_view_cursor_set(const char *cur)
  	cursor = edje_object_add(evas);
 	if (!cursor)
 	{
-		debug(stderr, _("Can't create Edje object"));
+		debug(MSG_ERROR, _("Can't create Edje object"));
 		return;
 	}
 
     if (!edje_object_file_set(cursor, edams_edje_theme_file_get(), cur))
     {
-        debug(stderr, _("Can't load cursor '%s' from '%s'"), cur, edams_edje_theme_file_get());
+        debug(MSG_ERROR, _("Can't load cursor '%s' from '%s'"), cur, edams_edje_theme_file_get());
         return;
     }
 	evas_object_resize(cursor, 24, 24);
@@ -571,13 +571,13 @@ evas_smart_group_location_add(Evas_Object * o, Location * location)
 
 		if (!priv->children[x])
 		{
-			debug(stderr, _("Can't create Edje_Object object"));
+			debug(MSG_ERROR, _("Can't create Edje_Object object"));
 			continue;
 		}
 
 		if (!edje_object_file_set(priv->children[x], edams_edje_theme_file_get(), widget_group_get(widget)))
 		{
-			debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
+			debug(MSG_ERROR, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
 		                                        				  	widget_group_get(widget),
 					  							  					edams_edje_theme_file_get());
 			evas_object_del(priv->children[x]);
@@ -659,7 +659,7 @@ void
 global_view_edition_lock_set(Eina_Bool set)
 {
     SCREEN_LOCK = set;
-	debug(stdout, _("Global view edition has been %s\n"), SCREEN_LOCK ? "enabled" : "disabled");
+	debug(MSG_INFO, _("Global view edition has been %s\n"), SCREEN_LOCK ? "enabled" : "disabled");
 }/*global_view_edition_lock_set*/
 
 
@@ -874,13 +874,13 @@ _virtual_widgets_add(Location *location)
 
 		if (!virtual)
 		{
-			debug(stderr, _("Can't create Edje_Object object"));
+			debug(MSG_ERROR, _("Can't create Edje_Object object"));
 			continue;
 		}
 
 		if (!edje_object_file_set(virtual, edams_edje_theme_file_get(), widget_group_get(widget)))
 		{
-			debug(stderr, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
+			debug(MSG_ERROR, _ ("Can't load group Edje group '%s' from Edje file '%s'"),
 		                                        				widget_group_get(widget),
 					  							  				edams_edje_theme_file_get());
 			 evas_object_del(virtual);
@@ -943,7 +943,7 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 	ee = ecore_evas_new(NULL, 0, 0, geometry.w, geometry.h, NULL);
 	if (!ee)
 	{
-		debug(stderr, _("Can't construct Ecore_Evas object"));
+		debug(MSG_ERROR, _("Can't construct Ecore_Evas object"));
 		return;
 	}
 
@@ -958,7 +958,7 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 
 
 	if (ecore_evas_ecore_evas_get(evas) == ee)
-	    debug(stdout, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
+	    debug(MSG_INFO, _("Using Ecore_Evas '%s' engine"), ecore_evas_engine_name_get(ee));
 
 	Evas_Object *bg;
 
@@ -974,7 +974,7 @@ global_view_new(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNU
 
 	if (err != EVAS_LOAD_ERROR_NONE)
 	{
-		debug(stderr, _("Can't load image file from '%s'"),	edams_settings_global_view_background_get());
+		debug(MSG_ERROR, _("Can't load image file from '%s'"),	edams_settings_global_view_background_get());
 		evas_object_del(bg);
 		bg = evas_object_rectangle_add(evas);
 	}

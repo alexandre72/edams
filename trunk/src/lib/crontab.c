@@ -196,7 +196,7 @@ crontab_init(void)
 {
     FILE *crontab = NULL;
 
-    debug(stdout, _("Listing crons entries with crontab"));
+    debug(MSG_INFO, _("Listing crons entries with crontab"));
 
     crontab = popen("crontab -l","r");
     if(crontab)
@@ -252,7 +252,7 @@ crontab_init(void)
     else
     {
         error:
-        debug(stderr, _("Can't parse crontab list"));
+        debug(MSG_ERROR, _("Can't parse crontab list"));
     }
 }/*crons_init*/
 
@@ -281,7 +281,7 @@ crons_list_write()
     s = tempnam(NULL, "edams.");
     if((crontab = fopen(s, "w+")) == NULL)
     {
-        debug(stderr, _("Can't create a valid temp name file"));
+        debug(MSG_ERROR, _("Can't create a valid temp name file"));
         return;
     }
 
@@ -315,7 +315,6 @@ void
 crontab_shutdown()
 {
     EINA_SAFETY_ON_NULL_RETURN(crons);
-    debug(stdout, _("Free cron allocated entries"));
 
 	Cron_Entry *cron_elem = NULL;
 
