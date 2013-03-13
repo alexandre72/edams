@@ -171,5 +171,20 @@ group
 			source: "base";
             action: SIGNAL_EMIT "no" "";
 		}
+		program
+		{
+			signal: "mute";
+			source: "base";
+			action: STATE_SET "mute" 0.0;
+			target: "base";
+		}
+		program
+		{
+			signal: "unmute";
+			source: "base";
+			action: STATE_SET "unmute" 0.0;
+			target: "base";
+		}
+
 	}/*programs*/
 }/*group widget/control.basic/mute*/

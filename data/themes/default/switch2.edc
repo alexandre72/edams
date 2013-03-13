@@ -168,5 +168,19 @@ group
 			source: "base";
             action: SIGNAL_EMIT "disable" "";
 		}
+		program
+		{
+			signal: "enable";
+			source: "base";
+			action: STATE_SET "enable" 0.0;
+			target: "base";
+		}
+		program
+		{
+			signal: "disable";
+			source: "base";
+			action: STATE_SET "disable" 0.0;
+			target: "base";
+		}
 	}/*programs*/
 }/*group widget/control.basic/realswitch*/
