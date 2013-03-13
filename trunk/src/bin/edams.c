@@ -124,34 +124,46 @@ _button_quit_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, voi
 void
 console_text_add(Message_Type msgtype, const char *msg)
 {
-    char *s;
+    char *s = NULL;
     Evas_Object *entry;
 
     entry = elm_object_name_find(app->win, "console entry", -1);
 
     if(msgtype == MSG_ERROR)
     {
-        asprintf(&s, "<b><color=#FF0000>ERROR:</b></color><em>%s</em><ps>", msg);
+        asprintf(&s, "<b><color=#FF0000>ERROR:%s</color></b><br>", msg);
     }
     else if(msgtype == MSG_WARNING)
     {
-        asprintf(&s, "<b>WARNING:</b><em>%s</em><ps>", msg);
+        asprintf(&s, "<b><color=#FF0010>WARNING:%s</color></b><br>", msg);
     }
     else if(msgtype == MSG_INFO)
     {
-        asprintf(&s, "<b><color=#2ad338>INFO:</b></color><em>%s</em><ps>", msg);
+        asprintf(&s, "<b><color=#2ad338>INFO:%s</b></color><br>", msg);
     }
     else if(msgtype == MSG_XPL)
     {
-        asprintf(&s, "<b><color=#121cff>XPL:</b></color><em>%s</em><ps>", msg);
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=xpl-logo></item>");
+        asprintf(&s, "<b><color=#121cff>%s</b></color><br>", msg);
     }
     else if(msgtype == MSG_ACTION)
     {
-        asprintf(&s, "<b>ACTION:</b><em>%s</em><ps>", msg);
+        asprintf(&s, "<b><color=#FF04547>ACTION:%s</color></b><br>", msg);
     }
     else if(msgtype == MSG_COSM)
     {
-        asprintf(&s, "<b><color=#ff4300>COSM:</b></color><em>%s</em><ps>", msg);
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=cosm-logo></item>");
+        asprintf(&s, "<b><color=#ff4300>%s</b></color><br>", msg);
+    }
+    else if(msgtype == MSG_E)
+    {
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=e-logo></item>");
+        asprintf(&s, "<b><color=#ff0000>%s</b></color><br>", msg);
+    }
+    else if(msgtype == MSG_VOICERSS)
+    {
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=voicerss-logo></item>");
+        asprintf(&s, "<b><color=#479700>%s</b></color><br>", msg);
     }
 
     elm_entry_entry_insert(entry, s);
@@ -274,17 +286,35 @@ _item_provider(void *images __UNUSED__, Evas_Object *en, const char *item)
 {
    Evas_Object *o = NULL;;
 
-   if (!strcmp(item, "cosm-logo"))
+   if ((strcmp(item, "cosm-logo")) == 0)
   {
    		o = elm_icon_add(en);
    		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
    		elm_icon_standard_set(o, "cosm-logo");
   }
-   else if (!strcmp(item, "xpl-logo"))
+   else if ((strcmp(item, "xpl-logo")) == 0)
    {
    		o = elm_icon_add(en);
    		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
    		elm_icon_standard_set(o, "xpl-logo");
+   }
+   else if ((strcmp(item, "geolocated-logo")) == 0)
+   {
+   		o = elm_icon_add(en);
+   		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
+   		elm_icon_standard_set(o, "geolocated-logo");
+   }
+   else if ((strcmp(item, "e-logo")) == 0)
+   {
+   		o = elm_icon_add(en);
+   		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
+   		elm_icon_standard_set(o, "e-logo");
+   }
+   else if ((strcmp(item, "voicerss-logo")) == 0)
+   {
+   		o = elm_icon_add(en);
+   		elm_icon_order_lookup_set(o, ELM_ICON_LOOKUP_FDO_THEME);
+   		elm_icon_standard_set(o, "voicerss-logo");
    }
 
    return o;
@@ -334,24 +364,25 @@ _location_naviframe_content_set(Location * location)
 
    	entry = elm_entry_add(app->win);
    	elm_entry_scrollable_set(entry, EINA_TRUE);
-    asprintf(&s, 	_("Name:%s<br>Cosm feedid:%d"),
-    				location_name_get(location),
-    				location_cosm_feedid_get(location));
-   	elm_object_text_set(entry, s);
-   	FREE(s);
     elm_entry_editable_set(entry, EINA_FALSE);
-   	elm_entry_context_menu_disabled_set(entry, EINA_TRUE);
 	elm_entry_item_provider_append(entry, _item_provider, NULL);
    	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
    	elm_grid_pack(grid, entry, 1, 1, 99, 20);
 	evas_object_show(entry);
 
-	if(location_cosm_feedid_get(location) != 0)
-		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=cosm-logo></item>");
+    asprintf(&s, 	_("Name:%s<br>Cosm feedid:%d"),
+    				location_name_get(location),
+    				location_cosm_feedid_get(location));
+    elm_entry_entry_insert(entry, s);
+   	FREE(s);
 
-//	if((location_latitude_get(location) != -1) && (location_longitude_get(location) != -1))
-//		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=geolocation-logo></item>");
+
+	if(location_cosm_feedid_get(location) != 0)
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=cosm-logo></item>");
+
+	if((location_latitude_get(location) != -1) && (location_longitude_get(location) != -1))
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=geolocated-logo></item>");
 
 	frame = elm_frame_add(app->win);
 	elm_object_text_set(frame, _("Widgets"));
@@ -686,7 +717,6 @@ elm_main(int argc, char **argv)
     evas_object_name_set(entry, "console entry");
    	elm_entry_scrollable_set(entry, EINA_TRUE);
     elm_entry_editable_set(entry, EINA_FALSE);
-   	elm_entry_context_menu_disabled_set(entry, EINA_TRUE);
 	elm_entry_item_provider_append(entry, _item_provider, NULL);
    	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    	evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
