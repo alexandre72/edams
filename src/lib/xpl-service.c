@@ -252,9 +252,6 @@ xPL_releaseService(xPL_ServicePtr theService)
     /* Release any listeners */
     if (theService->serviceListenerList != NULL) free(theService->serviceListenerList);
 
-    /* Release configuration data */
-    xPL_releaseServiceConfigurables(theService);
-
     /* Free the service */
     serviceCount--;
     if (ctxIndex < serviceCount)

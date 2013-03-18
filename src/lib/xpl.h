@@ -270,31 +270,6 @@ extern Eina_Bool xPL_sendServiceMessage(xPL_ServicePtr, xPL_MessagePtr);
 extern int xPL_getServiceCount();
 extern xPL_ServicePtr xPL_getServiceAt(int);
 
-/* xPL Service Configuratuion Support */
-extern xPL_ServicePtr xPL_createConfigurableService(char *, char *, char *);
-
-extern Eina_Bool xPL_isConfigurableService(xPL_ServicePtr);
-extern Eina_Bool xPL_isServiceConfigured(xPL_ServicePtr);
-
-extern char * xPL_getServiceConfigFile(xPL_ServicePtr);
-
-extern Eina_Bool xPL_addServiceConfigurable(xPL_ServicePtr, char *, xPL_ConfigurableType, int);
-extern Eina_Bool xPL_removeServiceConfigurable(xPL_ServicePtr, char *);
-extern void xPL_removeAllServiceConfigurables(xPL_ServicePtr);
-
-extern void xPL_clearServiceConfigValues(xPL_ServicePtr, char *);
-extern void xPL_clearAllServiceConfigValues(xPL_ServicePtr);
-
-extern Eina_Bool xPL_addServiceConfigValue(xPL_ServicePtr, char *, char *);
-extern void xPL_setServiceConfigValueAt(xPL_ServicePtr, char *, int, char *);
-extern void xPL_setServiceConfigValue(xPL_ServicePtr, char *, char *);
-
-extern int xPL_getServiceConfigValueCount(xPL_ServicePtr, char *);
-extern char * xPL_getServiceConfigValueAt(xPL_ServicePtr, char *, int);
-extern char * xPL_getServiceConfigValue(xPL_ServicePtr, char *);
-
-extern void xPL_addServiceConfigChangedListener(xPL_ServicePtr, xPL_ServiceConfigChangedListener, xPL_ObjectPtr);
-extern Eina_Bool xPL_removeServiceConfigChangedListener(xPL_ServicePtr, xPL_ServiceConfigChangedListener);
 
 
 /* Message support */

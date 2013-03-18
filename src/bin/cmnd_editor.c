@@ -58,9 +58,6 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 	if(strstr(emission, "updated")) return;
 	if(strstr(emission, "drag,stop")) return;
 
-	//fprintf(stdout, "emission=%s\n", emission);
-	//fprintf(stdout, "source=%s\n", source);
-
     if(strstr(emission, "drag"))
     {
         Evas_Object *edje_obj = elm_layout_edje_get(obj);

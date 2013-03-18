@@ -25,6 +25,7 @@
 #include "edams.h"
 #include "global_view.h"
 #include "location.h"
+#include "sound.h"
 #include "utils.h"
 #include "xpl.h"
 
