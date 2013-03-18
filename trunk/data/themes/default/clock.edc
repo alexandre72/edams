@@ -47,7 +47,7 @@ group
             }
          }
       }
-}/*widget/virtual/clock/digital/icon*/
+}/*widget/virtual/clockdigital/icon*/
 
 
 
@@ -611,7 +611,7 @@ group
 #undef DIGPRG
 #undef DIGPRGS
    }
-}
+}/*group widget/virtual/clock/digital*/
 
 
 group
@@ -621,7 +621,7 @@ group
 		image: "clock_icon.png" COMP;
 	}
 
-	name: "widget/virtual/clock/main/icon";
+	name: "widget/virtual/clock/analog/icon";
     min: 32 32;
 
 	parts
@@ -642,7 +642,7 @@ group
 
 group
 {
-	name: "widget/virtual/clock/main";
+	name: "widget/virtual/clock/analog";
 	min: 80 80;
 	max: 80 80;
 
@@ -934,4 +934,4 @@ group
          }
       }
    }
-}
+}/*group widget/virtual/clock/analog*/

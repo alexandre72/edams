@@ -18,13 +18,22 @@
  * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
  */
 
-group {
+group
+{
       name: "about";
       images
       {
-         image: "about1.png" COMP;
-         image: "about2.png" COMP;
-         image: "about3.png" COMP;
+         image: "title.png" COMP;
+         image: "title-01.png" COMP;
+         image: "title-02.png" COMP;
+         image: "title-03.png" COMP;
+         image: "title-04.png" COMP;
+         image: "title-05.png" COMP;
+         image: "title-06.png" COMP;
+         image: "title-07.png" COMP;
+         image: "title-08.png" COMP;
+         image: "title-09.png" COMP;
+         image: "logo.png" COMP;
       }
       parts
       {
@@ -38,33 +47,22 @@ group {
                 state: "default" 0.0;
             }
         }/*whole*/
-
          part
          {
-            name: "base";
-            clip_to:"whole";
-            description
-            {
-               state: "default" 0.0;
-               aspect_preference: BOTH;
-               align: 0 0;
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-               image.normal: "about1.png";
-	        }
-         }
-         part
-         {
-            name: "text";
+            name: "title";
+            type: IMAGE;
+            clip_to: "whole";
+            mouse_events: 0;
             description
             {
 			   	state: "default" 0.0;
                	visible: 1;
+                aspect: 1.0 1.0;
 				rel1.relative: 0.2 0.2;
 				rel2.relative: 0.8 0.8;
-               	image.normal: "about2.png";
+               image.normal: "title.png";
             }
-         }
+           }/*title*/
         part
          {
             name: "logo";
@@ -76,21 +74,19 @@ group {
 				aspect_preference: BOTH;
 				rel1.relative: 0.00 0.00;
 				rel2.relative: 1.0 1.0;
-               	image.normal: "about3.png";
+               	image.normal: "logo.png";
             }
             description
             {
 				state: "show" 0.0;
-                visible:1;
-				aspect_preference: BOTH;
+                inherit: "default";
 				rel1.relative: 0.00 0.00;
 				rel2.relative: 1.04 1.04;
-               	image.normal: "about3.png";
              }
-         }
+         }/*logo*/
 		part
 		{
-            name: "update";
+            name: "authors";
             type: TEXT;
             clip_to: "whole";
             effect: SOFT_SHADOW;
@@ -107,7 +103,7 @@ group {
                     min: 1 1;
                     align: 0.5 0.5;
                 }
-		    }/*update*/
+		    }/*authors*/
 		}
 
          part
@@ -137,7 +133,7 @@ group {
             source: "";
             action: STATE_SET "default" 0.0;
 		    transition: SINUSOIDAL 0.1;
-            target: "text";
+            target: "title";
             after: "logo_show";
         }
 		program
@@ -167,7 +163,7 @@ group {
             source: "whole";
             action: STATE_SET "show" 0.0;
 			transition: SINUSOIDAL 3.0;
-            target: "update";
+            target: "logo";
             after: "hover2";
          }
          program
@@ -175,7 +171,7 @@ group {
             name: "hover2";
             source: "whole";
             action: STATE_SET "default" 0.0;
-            target: "update";
+            target: "logo";
          }
       }
-   }
+}/*group about*/
