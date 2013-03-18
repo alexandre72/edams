@@ -150,16 +150,15 @@ group
 			}
            	description
             {
-            	max: 44 11;
                	state: "show" 0.0;
+                inherit: "default";
 				align: 0.5 0.7;
                	visible: 1;
                	color: 0 0 0 0;
             }
 		}/*update*/
-
-            part
-            {
+        part
+        {
                 name: "icon_min";
                 mouse_events: 0;
                 clip_to: "whole";

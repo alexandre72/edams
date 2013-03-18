@@ -37,7 +37,7 @@ group
             {
                	aspect: 1 1;
                	aspect_preference: BOTH;
-            	state: "default" 0;
+            	state: "default" 0.0;
 		   		image.normal: "thermometer_icon.png";
             }
          }
@@ -249,8 +249,8 @@ group
 			}
            	description
             {
-            	max: 44 11;
                	state: "show" 0.0;
+                inherit: "default";
 				align: 0.5 0.7;
                	visible: 1;
                	color: 0 0 0 0;
