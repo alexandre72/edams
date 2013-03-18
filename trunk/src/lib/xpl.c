@@ -241,9 +241,8 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                             case CONDITION_UNKNOWN:
                             case CONDITION_LAST:
                                 break;
-                        }/*switch*/
+                        }/*switch action_ifcondition_get*/
                     }/*EINA_LIST_FOREACH actions*/
-
 
                     widget_xpl_current_set(widget, current);
 

@@ -97,7 +97,7 @@ group
             clip_to: "whole";
             description
             {
-			   	state: "default" 0.0;
+			   	state: "LOW" 0.0;
                	image.normal: "monitor_show.png";
                	visible: 0;
                 aspect_preference: BOTH;
@@ -106,7 +106,7 @@ group
             }
             description
             {
-				state: "show" 0.0;
+				state: "HIGH" 0.0;
                	image.normal: "monitor_show.png";
                 visible:1;
                 aspect_preference: BOTH;
@@ -268,9 +268,9 @@ group
          program
          {
             name: "animate,start";
-            signal: "true";
+            signal: "HIGH";
             source: "whole";
-            action: STATE_SET "show" 0.0;
+            action: STATE_SET "HIGH" 0.0;
 		    transition: SINUSOIDAL 1.0;
             target: "monitor";
             after: "animate,step1";
@@ -278,9 +278,8 @@ group
         program
          {
             name: "animate,step1";
-            signal: "true";
             source: "whole";
-            action: STATE_SET "default" 0.0;
+            action: STATE_SET "LOW" 0.0;
 		    transition: SINUSOIDAL 1.0;
             target: "monitor";
             after: "animate,start";
@@ -289,9 +288,9 @@ group
          program
          {
             name: "animate,end";
-            signal: "false";
+            signal: "LOW";
             source: "whole";
-            action: STATE_SET "default" 0.0;
+            action: STATE_SET "LOW" 0.0;
 		    transition: LINEAR 0.5;
             target: "monitor";
          }

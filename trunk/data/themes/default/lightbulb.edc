@@ -86,7 +86,7 @@ group
 
 				description
 				{
-                    state: "off" 0.0;
+                    state: "LOW" 0.0;
                     image.normal: "lightbulb_off.png";
 					aspect: 1 1;
 					aspect_preference: BOTH;
@@ -95,7 +95,7 @@ group
                 }
 		        description
 		        {
-		            state: "on" 0.0;
+		            state: "HIGH" 0.0;
                     image.normal: "lightbulb_on.png";
 					aspect: 1 1;
 					aspect_preference: BOTH;
@@ -257,18 +257,17 @@ group
 	{
 		program
 		{
-		    name : "start";
-			signal: "true";
+			signal: "HIGH";
 			source: "whole";
-			action: STATE_SET "on" 0.0;
+			action: STATE_SET "HIGH" 0.0;
     	    transition: SINUSOIDAL 9.0;
 			target: "base";
 		}
 		program
 		{
-			signal: "false";
+			signal: "LOW";
 			source: "whole";
-			action: STATE_SET "off" 0.0;
+			action: STATE_SET "LOW" 0.0;
     	    transition: SINUSOIDAL 9.0;
 			target: "base";
 		}

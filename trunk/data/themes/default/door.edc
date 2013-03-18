@@ -83,14 +83,14 @@ group
 
 				description
 				{
-                    state: "default" 0.0;
+                    state: "LOW" 0.0;
                     image.normal: "door_closed.png";
                     rel1.relative: 0.20 0.00;
                     rel2.relative: 0.80 0.70;
                 }
 		        description
 		        {
-		            state: "opened" 0.0;
+		            state: "HIGH" 0.0;
                     image.normal: "door_opened.png";
                     rel1.relative: 0.20 0.00;
                     rel2.relative: 0.80 0.70;
@@ -251,18 +251,17 @@ group
     {
 		program
 		{
-		    name : "start";
-			signal: "true";
+			signal: "HIGH";
 			source: "whole";
-			action: STATE_SET "opened" 0.0;
+			action: STATE_SET "HIGH" 0.0;
     	    transition: SINUSOIDAL 9.0;
 			target: "base";
 		}
 		program
 		{
-			signal: "false";
+			signal: "LOW";
 			source: "whole";
-			action: STATE_SET "closed" 0.0;
+			action: STATE_SET "LOW" 0.0;
     	    transition: SINUSOIDAL 9.0;
 			target: "base";
 		}
