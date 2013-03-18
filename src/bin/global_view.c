@@ -1112,6 +1112,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
     snprintf(s, sizeof(s), 	"%d_%s_edje",
 								 	widget_id_get(widget),
 						 			location_name_get(location));
+
 	Evas_Object *edje = evas_object_name_find(evas, s);
 
 	/*Parse Edje widget's messages/actions and update them*/
@@ -1133,7 +1134,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
 		}
 		else
 		{
-	         level =	(double)atoi(widget_xpl_current_get(widget)) / 100;
+	         level = (double)atoi(widget_xpl_current_get(widget)) / 100;
 		}
 
     	if (level < 0.0) level = 0.0;
@@ -1143,10 +1144,7 @@ global_view_widget_data_update(Location *location, Widget *widget)
 		edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
 	}
 
-	if (atoi(widget_xpl_current_get(widget)) == 0)
-		edje_object_signal_emit(edje, "false", "whole");
-	else
-		edje_object_signal_emit(edje, "true", "whole");
+    edje_object_signal_emit(edje, widget_xpl_current_get(widget), "whole");
 
 	if(edje_object_part_exists(edje, "title.text"))
 	{

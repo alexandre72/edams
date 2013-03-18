@@ -101,6 +101,8 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 static void
 _layout_samples_test(Evas_Object *layout)
 {
+   	Evas_Object *edje;
+	Evas_Coord w, h;
     App_Info *app = edams_app_info_get();
     Widget *sample;
 	char *str;
@@ -120,6 +122,11 @@ _layout_samples_test(Evas_Object *layout)
         sample = app->widget;
     }
 
+   	edje = elm_layout_edje_get(layout);
+	edje_object_size_min_get(edje, &w, &h);
+	evas_object_resize(elm_layout_edje_get(layout), w, h);
+
+
 	Evas_Object *entry = elm_object_name_find(win, "preview entry", -1);
 	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
 
@@ -134,10 +141,7 @@ _layout_samples_test(Evas_Object *layout)
     	edje_object_message_send(elm_layout_edje_get(layout), EDJE_MESSAGE_FLOAT, 1, &msg);
     }
 
-    if (atoi(widget_xpl_current_get(sample)) == 0)
-    	elm_object_signal_emit(layout, "false", "whole");
-    else
-    	elm_object_signal_emit(layout, "true", "whole");
+    edje_object_signal_emit(edje, widget_xpl_current_get(widget), "whole");
 
     elm_object_part_text_set(layout, "title.text", widget_name_get(sample));
 
@@ -146,12 +150,6 @@ _layout_samples_test(Evas_Object *layout)
     FREE(str);
 
     elm_object_signal_emit(layout, "updated", "whole");
-
-   	Evas_Object *edje;
-	Evas_Coord w, h;
-   	edje = elm_layout_edje_get(layout);
-	edje_object_size_min_get(edje, &w, &h);
-	evas_object_resize(elm_layout_edje_get(layout), w, h);
 
 	if(!app->widget)
         widget_free(sample);

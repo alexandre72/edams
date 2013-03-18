@@ -19,7 +19,7 @@
  */
 group
 {
-	name: "widget/control.basic/realswitch/icon";
+	name: "widget/control.basic/switch2/icon";
     min: 32 32;
 
 	images
@@ -41,20 +41,20 @@ group
             }
          }
       }
-}/*group widget/control.basic/realswitch/icon*/
+}/*group widget/control.basic/switch2/icon*/
 
 
 
 group
 {
-	name: "widget/control.basic/realswitch";
+	name: "widget/control.basic/switch2";
 	min: 110 110;
 	max: 110 110;
 
 	data
 	{
-		item: "description" "Input control can be used to set binary  enable/disable true/false...";
-		item: "tags" "input";
+		item: "description" "Switch with realistic style that can be used to set enable/disable state";
+		item: "tags" "switch2";
 	}
 
 	images
@@ -171,16 +171,16 @@ group
 		program
 		{
 			signal: "enable";
-			source: "base";
+			source: "whole";
 			action: STATE_SET "enable" 0.0;
 			target: "base";
 		}
 		program
 		{
 			signal: "disable";
-			source: "base";
+			source: "whole";
 			action: STATE_SET "disable" 0.0;
 			target: "base";
 		}
 	}/*programs*/
-}/*group widget/control.basic/realswitch*/
+}/*group widget/control.basic/switch2*/
