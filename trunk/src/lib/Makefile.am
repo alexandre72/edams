@@ -27,7 +27,6 @@ utils.c \
 voicerss.c \
 widget.c \
 xpl.c \
-xpl-config.c \
 xpl-io.c \
 xpl-listeners.c \
 xpl-message.c \

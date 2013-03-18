@@ -131,14 +131,17 @@ console_text_add(Message_Type msgtype, const char *msg)
 
     if(msgtype == MSG_ERROR)
     {
-        asprintf(&s, "<b><color=#FF0000>ERROR:%s</color></b><br>", msg);
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=error-logo></item>");
+        asprintf(&s, "<b><color=#FF0000>%s</b></color><br>", msg);
     }
     else if(msgtype == MSG_WARNING)
     {
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=warning-logo></item>");
         asprintf(&s, "<b><color=#FF0010>WARNING:%s</color></b><br>", msg);
     }
     else if(msgtype == MSG_INFO)
     {
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=info-logo></item>");
         asprintf(&s, "<b><color=#2ad338>INFO:%s</b></color><br>", msg);
     }
     else if(msgtype == MSG_XPL)

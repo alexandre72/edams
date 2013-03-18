@@ -19,7 +19,6 @@ extern Eina_Bool xPL_sendHeartbeat(xPL_ServicePtr);
 extern Eina_Bool xPL_sendGoodbyeHeartbeat(xPL_ServicePtr);
 extern void xPL_sendTimelyHeartbeats();
 extern void xPL_handleServiceMessage(xPL_MessagePtr, xPL_ObjectPtr);
-extern void xPL_releaseServiceConfigurables(xPL_ServicePtr theService);
 extern void xPL_disableAllServices();
 
 
