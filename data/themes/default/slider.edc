@@ -41,7 +41,6 @@ group
     {
         image: "slider_run_base_horiz.png" COMP;
         image: "slider_run_bevel_horiz.png" COMP;
-        image: "slider_run_base_light_horiz.png" COMP;
         image: "horiz_glow_run.png" COMP;
         image: "knob_round_small_normal.png" COMP;
         image: "knob_round_small_selected.png" COMP;
