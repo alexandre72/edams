@@ -26,7 +26,7 @@ msg.AddCommand("current", dht11.value);
 ...
 }}}
 
-Après avoir démarré le hub XPL(en mode démon avec option de débogguage activé):
+Après avoir démarré le hub XPL(en mode démon avec option de débogage activé):
 
 {{{
 alex ~/$xPL_Hub -nodaemon -xpldebug

@@ -7,13 +7,13 @@ EDAMS est une application Linux permettant la gestion de la domotique de votre h
 
 EDAMS supporte:
 
-  * Le protocole xPL
-  * La gestion de vos données via cosm.com(ex-pachube.com)
+  * Le protocole xPL.
+  * La gestion de vos données via cosm.com(ex-pachube.com).
+  * Synthèse vocale via voicerss.org.
   * La gestion des pièces de votre habitation ainsi que la géolocalisation.
   * Des widgets pour une représentation graphiques des données.
   * Des widgets pour des tâches spéciales(vérificateur de mails, horloge...)
   * Une vue globale des widgets groupés par localité avec la possibilité d'agencer les widgets comme bon vous semble.
-  * La génération de graphiques via gnuplot avec contrôle du rendu dans la vue globale.
   * La gestion d'actions prédéfinies lorsque les données issues des capteurs remplissent certaines conditions(envoyer un mail lorsque la température du capteur XY est inférieure à 12, executer un programme externe lorsque le taux d'humidité est supérieur ou égal à 70, régler l'intensité lumineuse d'une lampe lorsque la nuit arrive...).
   * Editeur d'événements pour effectuer des actions à des temps bien prévis. L'éditeur d'événements utilise crontab(sans casser vos entrées actuelles).
 
