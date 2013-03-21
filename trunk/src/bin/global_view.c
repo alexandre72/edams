@@ -528,6 +528,13 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
             else
                 asprintf(&s, "enable");
         }
+        else if(strcmp(type, XPL_TYPE_MUTE_CONTROL_BASIC) == 0)
+        {
+            if(val == 0)
+            asprintf(&s, "no");
+            else
+            asprintf(&s, "yes");
+        }
         else if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
         {
             val = (val * 100);
