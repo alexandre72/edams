@@ -203,6 +203,13 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
             else
                 asprintf(&s, "enable");
     }
+    else if(strcmp(type, XPL_TYPE_MUTE_CONTROL_BASIC) == 0)
+    {
+        if(val == 0)
+            asprintf(&s, "no");
+        else
+            asprintf(&s, "yes");
+    }
     else if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
     {
         val = (val * 100);
