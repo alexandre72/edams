@@ -44,7 +44,6 @@ group
 }/*group widget/control.basic/switch/icon*/
 
 
-
 group
 {
 	name: "widget/control.basic/switch";
@@ -151,7 +150,7 @@ group
 			signal: "mouse,clicked,*";
             filter: "base" "disable";
 			source: "base";
-            action: SIGNAL_EMIT "enable" "";
+            action: SIGNAL_EMIT "1" "";
 		}
 		program
 		{
@@ -166,7 +165,7 @@ group
 			signal: "mouse,clicked,*";
             filter: "base" "enable";
 			source: "base";
-            action: SIGNAL_EMIT "disable" "";
+            action: SIGNAL_EMIT "0" "";
 		}
 		program
 		{

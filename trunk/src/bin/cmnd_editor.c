@@ -37,6 +37,7 @@ static void _list_control_basic_item_selected_cb(void *data, Evas_Object * obj _
 static void
 _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source)
 {
+    double val = 0;
     CmndEditor *cmndeditor = data;
     const char *type;
     char *s;
@@ -60,38 +61,47 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 
     if(strstr(emission, "drag"))
     {
-        Evas_Object *edje_obj = elm_layout_edje_get(obj);
-        Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje_obj, source);
-        double val;
+        Evas_Object *edje = elm_layout_edje_get(obj);
+        Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje, source);
 
         if(dir == EDJE_DRAG_DIR_X)
-            edje_object_part_drag_value_get(edje_obj, source, &val, NULL);
+            edje_object_part_drag_value_get(edje, source, &val, NULL);
         else if(dir == EDJE_DRAG_DIR_Y)
-            edje_object_part_drag_value_get(edje_obj, source, NULL, &val);
+            edje_object_part_drag_value_get(edje, source, NULL, &val);
         //else if(dir == EDJE_DRAG_DIR_XY)
         // edje_object_part_drag_value_get(o, source, &hval, &vval);
-
-        /*Scale to control.basic type format*/
-        if(strcmp(type, XPL_TYPE_BALANCE_CONTROL_BASIC) == 0)
-        {
-            val = (100 * val) - 100;
-            asprintf(&s, "%d", (int)val);
-        }
-        else
-        {
-            val = (100 * val);
-            asprintf(&s, "%d", (int)val);
-        }
-
-        widget_xpl_current_set(widget, s);
-        FREE(s);
     }
     else
     {
-	    widget_xpl_current_set(widget, emission);
+        val = atoi(emission);
     }
 
-	asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type));
+    /*Scale to device type format*/
+    if(strcmp(type, XPL_TYPE_OUTPUT_CONTROL_BASIC) == 0)
+    {
+            if(val == 0)
+                asprintf(&s, "disable");
+            else
+                asprintf(&s, "enable");
+    }
+    else if(strcmp(type, XPL_TYPE_INPUT_CONTROL_BASIC) == 0)
+    {
+            if(val == 0)
+                asprintf(&s, "disable");
+            else
+                asprintf(&s, "enable");
+    }
+    else if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
+    {
+        val = (val * 100);
+        asprintf(&s, "%d%%", (int)val);
+    }
+    else
+    {
+        asprintf(&s, "%d", (int)val);
+    }
+
+    widget_xpl_current_set(widget, s);
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
 
