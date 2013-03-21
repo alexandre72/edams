@@ -24,15 +24,6 @@ group
       images
       {
          image: "title.png" COMP;
-         image: "title-01.png" COMP;
-         image: "title-02.png" COMP;
-         image: "title-03.png" COMP;
-         image: "title-04.png" COMP;
-         image: "title-05.png" COMP;
-         image: "title-06.png" COMP;
-         image: "title-07.png" COMP;
-         image: "title-08.png" COMP;
-         image: "title-09.png" COMP;
          image: "logo.png" COMP;
       }
       parts

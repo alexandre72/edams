@@ -470,6 +470,9 @@ static void
 _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission, const char  *source)
 {
 	Widget *widget = data;
+    double val = 0;
+    char *s = NULL;
+    const char *type = widget_xpl_type_get(widget);
 
     /*Skip basic's edje signal emission*/
 	if(strstr(source, "edje")) return;
@@ -487,19 +490,16 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
     }
     else if((widget_class_get(widget) == WIDGET_CLASS_VIRTUAL))
     {
+        /*Handle virtual widgets, special system actions*/
 	    if(strstr(emission, "lock,on")) global_view_edition_lock_set(EINA_TRUE);
     	if(strstr(emission, "lock,off")) global_view_edition_lock_set(EINA_FALSE);
     	if(strstr(emission, "home")) global_view_quit();
     }
     else if((widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC))
     {
-        const char *type = widget_xpl_type_get(widget);
-        char *s;
-
         if(strstr(emission, "drag"))
         {
             Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje_obj, source);
-            double val;
 
             if(dir == EDJE_DRAG_DIR_X)
                 edje_object_part_drag_value_get(edje_obj, source, &val, NULL);
@@ -507,31 +507,40 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
                 edje_object_part_drag_value_get(edje_obj, source, NULL, &val);
             //else if(dir == EDJE_DRAG_DIR_XY)
             // edje_object_part_drag_value_get(o, source, &hval, &vval);
-
-            /*Scale to device type format*/
-            if(strcmp(type, XPL_TYPE_BALANCE_CONTROL_BASIC) == 0)
-            {
-                val = (100 * val) - 100;
-                asprintf(&s, "%d", (int)val);
-            }
-            else
-            {
-                val = (100 * val);
-                asprintf(&s, "%d", (int)val);
-            }
-
-            widget_xpl_current_set(widget, s);
-            FREE(s);
         }
         else
         {
-        	widget_xpl_current_set(widget, emission);
+            val = atoi(emission);
         }
 
-        /*Update widget value field*/
-		asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type));
-		edje_object_part_text_set(edje_obj, "value.text", s);
-		FREE(s);
+        /*Scale to device type format*/
+        if(strcmp(type, XPL_TYPE_OUTPUT_CONTROL_BASIC) == 0)
+        {
+            if(val == 0)
+                asprintf(&s, "disable");
+            else
+                asprintf(&s, "enable");
+        }
+        else if(strcmp(type, XPL_TYPE_INPUT_CONTROL_BASIC) == 0)
+        {
+            if(val == 0)
+                asprintf(&s, "disable");
+            else
+                asprintf(&s, "enable");
+        }
+        else if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
+        {
+            val = (val * 100);
+            asprintf(&s, "%d%%", (int)val);
+        }
+        else
+        {
+            asprintf(&s, "%d", (int)val);
+        }
+
+        widget_xpl_current_set(widget, s);
+	    edje_object_part_text_set(edje_obj, "value.text", s);
+	    FREE(s);
 
 	    xpl_control_basic_cmnd_send(widget);
     }

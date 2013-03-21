@@ -154,7 +154,7 @@ group
 			signal: "mouse,clicked,*";
             filter: "base" "unmute";
 			source: "base";
-            action: SIGNAL_EMIT "yes" "";
+            action: SIGNAL_EMIT "0" "";
 		}
 		program
 		{
@@ -169,7 +169,7 @@ group
 			signal: "mouse,clicked,*";
             filter: "base" "mute";
 			source: "base";
-            action: SIGNAL_EMIT "no" "";
+            action: SIGNAL_EMIT "1" "";
 		}
 		program
 		{

@@ -103,29 +103,22 @@ _layout_samples_test(Evas_Object *layout)
 {
    	Evas_Object *edje;
 	Evas_Coord w, h;
-    App_Info *app = edams_app_info_get();
     Widget *sample;
 	char *str;
     const char *type = widget_xpl_type_get(widget);
 
-    if(!widget_xpl_current_get(widget))
-    {
-    	sample = widget_new("sample", widget_class_get(widget));
-	    RANDOMIZE();
-	    asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(type)));
-	    widget_xpl_current_set(sample, str);
-        FREE(str);
-	    widget_xpl_type_set(sample, XPL_TYPE_GENERIC_SENSOR_BASIC);
-    }
-    else
-    {
-        sample = app->widget;
-    }
+    if (!type) return;
+
+    sample = widget_new("sample", WIDGET_CLASS_XPL_SENSOR_BASIC);
+	RANDOMIZE();
+	asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(type)));
+	widget_xpl_current_set(sample, str);
+    FREE(str);
+
 
    	edje = elm_layout_edje_get(layout);
 	edje_object_size_min_get(edje, &w, &h);
-	evas_object_resize(elm_layout_edje_get(layout), w, h);
-
+	evas_object_resize(edje, w, h);
 
 	Evas_Object *entry = elm_object_name_find(win, "preview entry", -1);
 	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
@@ -138,9 +131,8 @@ _layout_samples_test(Evas_Object *layout)
     	Edje_Message_Float msg;
            level =	(double)atoi(widget_xpl_current_get(sample)) / 100;
     	msg.val = level;
-    	edje_object_message_send(elm_layout_edje_get(layout), EDJE_MESSAGE_FLOAT, 1, &msg);
+    	edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
     }
-
     edje_object_signal_emit(edje, widget_xpl_current_get(widget), "whole");
 
     elm_object_part_text_set(layout, "title.text", widget_name_get(sample));
@@ -151,8 +143,7 @@ _layout_samples_test(Evas_Object *layout)
 
     elm_object_signal_emit(layout, "updated", "whole");
 
-	if(!app->widget)
-        widget_free(sample);
+    widget_free(sample);
 }/*_layout_samples_test*/
 
 
@@ -163,8 +154,11 @@ _layout_samples_test(Evas_Object *layout)
 static void
 _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emission, const char  *source)
 {
+    double val = 0;
     const char *type = widget_xpl_type_get(widget);
-    char *s;
+    char *s = NULL;
+
+    if (!type) return;
 
     /*Skip basic's edje signal emission*/
 	if(strstr(source, "edje")) return;
@@ -178,38 +172,48 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
 
     if(strstr(emission, "drag"))
     {
-        Evas_Object *edje_obj = elm_layout_edje_get(obj);
-        Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje_obj, source);
-        double val;
+        Evas_Object *edje = elm_layout_edje_get(obj);
+        Edje_Drag_Dir dir = edje_object_part_drag_dir_get(edje, source);
 
-        if(dir == EDJE_DRAG_DIR_X)
-            edje_object_part_drag_value_get(edje_obj, source, &val, NULL);
-        else if(dir == EDJE_DRAG_DIR_Y)
-            edje_object_part_drag_value_get(edje_obj, source, NULL, &val);
-        //else if(dir == EDJE_DRAG_DIR_XY)
-        // edje_object_part_drag_value_get(o, source, &hval, &vval);
 
-        /*Scale to device type format*/
-        if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
-        {
-            val = (100 * val);
-            asprintf(&s, "%d%%", (int)val);
-        }
-        else
-        {
-            val = (100 * val);
-            asprintf(&s, "%d%%", (int)val);
-        }
-
-        widget_xpl_current_set(widget, s);
-        FREE(s);
+            if(dir == EDJE_DRAG_DIR_X)
+                edje_object_part_drag_value_get(edje, source, &val, NULL);
+            else if(dir == EDJE_DRAG_DIR_Y)
+                edje_object_part_drag_value_get(edje, source, NULL, &val);
+            //else if(dir == EDJE_DRAG_DIR_XY)
+            // edje_object_part_drag_value_get(o, source, &hval, &vval);
     }
     else
     {
-	    widget_xpl_current_set(widget, emission);
+        val = atoi(emission);
     }
 
-	asprintf(&s, "%s%s", widget_xpl_current_get(widget), xpl_type_to_unit_symbol(type));
+    /*Scale to device type format*/
+    if(strcmp(type, XPL_TYPE_OUTPUT_CONTROL_BASIC) == 0)
+    {
+            if(val == 0)
+                asprintf(&s, "disable");
+            else
+                asprintf(&s, "enable");
+    }
+    else if(strcmp(type, XPL_TYPE_INPUT_CONTROL_BASIC) == 0)
+    {
+            if(val == 0)
+                asprintf(&s, "disable");
+            else
+                asprintf(&s, "enable");
+    }
+    else if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
+    {
+        val = (val * 100);
+        asprintf(&s, "%d%%", (int)val);
+    }
+    else
+    {
+        asprintf(&s, "%d", (int)val);
+    }
+
+    widget_xpl_current_set(widget, s);
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
 
