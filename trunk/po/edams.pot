@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edams 0.9.0.115:256M\n"
 "Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
-"POT-Creation-Date: 2013-03-13 13:30+0100\n"
+"POT-Creation-Date: 2013-03-26 20:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,12 +21,12 @@ msgstr ""
 msgid "About E.D.A.M.S..."
 msgstr ""
 
-#: src/bin/about_dlg.c:65 src/bin/actions_editor.c:547
-#: src/bin/cmnd_editor.c:257 src/bin/debug_editor.c:103
+#: src/bin/about_dlg.c:64 src/bin/actions_editor.c:547
+#: src/bin/cmnd_editor.c:271 src/bin/debug_editor.c:103
 #: src/bin/exec_editor.c:165 src/bin/locations_creator.c:342
 #: src/bin/mail_editor.c:139 src/bin/osd_editor.c:123
 #: src/bin/preferences_dlg.c:498 src/bin/scheduler_editor.c:669
-#: src/bin/voice_editor.c:149 src/bin/widget_editor.c:644 src/lib/utils.c:117
+#: src/bin/voice_editor.c:149 src/bin/widget_editor.c:653 src/lib/utils.c:117
 msgid "Close"
 msgstr ""
 
@@ -52,37 +52,37 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: src/bin/actions_editor.c:525 src/bin/edams.c:418 src/bin/edams.c:617
+#: src/bin/actions_editor.c:525 src/bin/edams.c:452 src/bin/edams.c:651
 #: src/bin/scheduler_editor.c:647
 msgid "Add"
 msgstr ""
 
-#: src/bin/actions_editor.c:536 src/bin/edams.c:428 src/bin/edams.c:628
+#: src/bin/actions_editor.c:536 src/bin/edams.c:462 src/bin/edams.c:662
 #: src/bin/scheduler_editor.c:658
 msgid "Remove"
 msgstr ""
 
-#: src/bin/cmnd_editor.c:175
+#: src/bin/cmnd_editor.c:189
 msgid "Edit xPL control.basic CMND"
 msgstr ""
 
-#: src/bin/cmnd_editor.c:187
+#: src/bin/cmnd_editor.c:201
 msgid "Select control.basic:"
 msgstr ""
 
-#: src/bin/cmnd_editor.c:212
+#: src/bin/cmnd_editor.c:226
 msgid "Widget set to"
 msgstr ""
 
-#: src/bin/cmnd_editor.c:224
+#: src/bin/cmnd_editor.c:238
 msgid "xPL CMND Preview"
 msgstr ""
 
-#: src/bin/cmnd_editor.c:247 src/bin/debug_editor.c:93
+#: src/bin/cmnd_editor.c:261 src/bin/debug_editor.c:93
 #: src/bin/exec_editor.c:155 src/bin/locations_creator.c:331
 #: src/bin/mail_editor.c:129 src/bin/osd_editor.c:113
 #: src/bin/preferences_dlg.c:487 src/bin/voice_editor.c:139
-#: src/bin/widget_editor.c:633
+#: src/bin/widget_editor.c:642
 msgid "Ok"
 msgstr ""
 
@@ -94,88 +94,88 @@ msgstr ""
 msgid "Message:"
 msgstr ""
 
-#: src/bin/edams.c:175
+#: src/bin/edams.c:190
 msgid "Can't remove:no location selected!"
 msgstr ""
 
-#: src/bin/edams.c:188
+#: src/bin/edams.c:203
 #, c-format
 msgid "Location '%s' have been removed"
 msgstr ""
 
-#: src/bin/edams.c:210
+#: src/bin/edams.c:225
 msgid "Can't remove widget:no location selected!"
 msgstr ""
 
-#: src/bin/edams.c:225
+#: src/bin/edams.c:240
 #, c-format
 msgid "Widget '%s' have been removed from '%s' location's"
 msgstr ""
 
-#: src/bin/edams.c:337
+#: src/bin/edams.c:377
 #, c-format
 msgid "Name:%s<br>Cosm feedid:%d"
 msgstr ""
 
-#: src/bin/edams.c:357 src/bin/widget_editor.c:586
+#: src/bin/edams.c:391 src/bin/widget_editor.c:595
 msgid "Widgets"
 msgstr ""
 
-#: src/bin/edams.c:398
+#: src/bin/edams.c:432
 msgid "Edit"
 msgstr ""
 
-#: src/bin/edams.c:408
+#: src/bin/edams.c:442
 msgid "Actions"
 msgstr ""
 
-#: src/bin/edams.c:500
+#: src/bin/edams.c:534
 #, c-format
 msgid "[31mERROR:[0mCan't parse command line options!\n"
 msgstr ""
 
-#: src/bin/edams.c:513
+#: src/bin/edams.c:547
 #, c-format
 msgid "[31mERROR:[0mCan't calloc App_Info struct!\n"
 msgstr ""
 
-#: src/bin/edams.c:528
+#: src/bin/edams.c:562
 msgid "Can't parse action data"
 msgstr ""
 
-#: src/bin/edams.c:536
+#: src/bin/edams.c:570
 msgid "Can't parse action type"
 msgstr ""
 
-#: src/bin/edams.c:554
+#: src/bin/edams.c:588
 msgid "Enlightened Domotics Alarm Monitoring System"
 msgstr ""
 
-#: src/bin/edams.c:573
+#: src/bin/edams.c:607
 msgid "Global View"
 msgstr ""
 
-#: src/bin/edams.c:574
+#: src/bin/edams.c:608
 msgid "Scheduler Editor"
 msgstr ""
 
-#: src/bin/edams.c:575
+#: src/bin/edams.c:609
 msgid "Preferences"
 msgstr ""
 
-#: src/bin/edams.c:576
+#: src/bin/edams.c:610
 msgid "About"
 msgstr ""
 
-#: src/bin/edams.c:577
+#: src/bin/edams.c:611
 msgid "Quit"
 msgstr ""
 
-#: src/bin/edams.c:598
+#: src/bin/edams.c:632
 msgid "Locations"
 msgstr ""
 
-#: src/bin/edams.c:706
+#: src/bin/edams.c:739
 #, c-format
 msgid "Welcome to EDAMS v%s - %02d/%02d/%d"
 msgstr ""
@@ -212,38 +212,38 @@ msgstr ""
 
 #: src/bin/global_view.c:187
 #, c-format
-msgid "Can't load cursor '%s' from '%s'"
+msgid "Can't load Edje cursor '%s' from '%s'"
 msgstr ""
 
-#: src/bin/global_view.c:574 src/bin/global_view.c:877
+#: src/bin/global_view.c:590 src/bin/global_view.c:893
 msgid "Can't create Edje_Object object"
 msgstr ""
 
-#: src/bin/global_view.c:580 src/bin/global_view.c:883
+#: src/bin/global_view.c:596 src/bin/global_view.c:899
 #, c-format
 msgid "Can't load group Edje group '%s' from Edje file '%s'"
 msgstr ""
 
-#: src/bin/global_view.c:662
+#: src/bin/global_view.c:678
 #, c-format
 msgid "Global view edition has been %s\n"
 msgstr ""
 
-#: src/bin/global_view.c:946
+#: src/bin/global_view.c:962
 msgid "Can't construct Ecore_Evas object"
 msgstr ""
 
-#: src/bin/global_view.c:954 src/bin/preferences_dlg.c:455
+#: src/bin/global_view.c:970 src/bin/preferences_dlg.c:455
 #: src/bin/preferences_dlg.c:456
 msgid "Global view"
 msgstr ""
 
-#: src/bin/global_view.c:961
+#: src/bin/global_view.c:977
 #, c-format
 msgid "Using Ecore_Evas '%s' engine"
 msgstr ""
 
-#: src/bin/global_view.c:977
+#: src/bin/global_view.c:993
 #, c-format
 msgid "Can't load image file from '%s'"
 msgstr ""
@@ -650,86 +650,86 @@ msgstr ""
 msgid "Widget '%s' from '%s' has been updated"
 msgstr ""
 
-#: src/bin/widget_editor.c:426 src/bin/widget_editor.c:545
+#: src/bin/widget_editor.c:435 src/bin/widget_editor.c:554
 msgid "xPL type"
 msgstr ""
 
-#: src/bin/widget_editor.c:485
+#: src/bin/widget_editor.c:494
 #, c-format
 msgid "Add a new widget to '%s' location"
 msgstr ""
 
-#: src/bin/widget_editor.c:492
+#: src/bin/widget_editor.c:501
 #, c-format
 msgid "Edit widget '%s' from '%s' location"
 msgstr ""
 
-#: src/bin/widget_editor.c:508
+#: src/bin/widget_editor.c:517
 msgid "Widget class"
 msgstr ""
 
-#: src/bin/widget_editor.c:518
+#: src/bin/widget_editor.c:527
 msgid "Widget name"
 msgstr ""
 
-#: src/bin/widget_editor.c:532
+#: src/bin/widget_editor.c:541
 msgid "xPL device"
 msgstr ""
 
-#: src/bin/widget_editor.c:559 src/lib/myfileselector.c:264
+#: src/bin/widget_editor.c:568 src/lib/myfileselector.c:264
 msgid "Preview"
 msgstr ""
 
-#: src/bin/widget_editor.c:572
-msgid "xPL Preview"
+#: src/bin/widget_editor.c:581
+msgid "xPL scheme preview"
 msgstr ""
 
-#: src/lib/action.c:81 src/lib/sound.c:123
+#: src/lib/action.c:82 src/lib/sound.c:123
 msgid "Can't create an Ecore_Exec_Pipe process"
 msgstr ""
 
-#: src/lib/action.c:92 src/lib/sound.c:132
+#: src/lib/action.c:93 src/lib/sound.c:132
 msgid "Can't create get PID of Ecore_Exec_Pipe process"
 msgstr ""
 
-#: src/lib/action.c:101 src/lib/sound.c:138
+#: src/lib/action.c:102 src/lib/sound.c:138
 #, c-format
 msgid "Exec '%s' with PID '%d'"
 msgstr ""
 
-#: src/lib/action.c:178
+#: src/lib/action.c:179
 msgid "Can't send mail with sendmail"
 msgstr ""
 
-#: src/lib/action.c:462
+#: src/lib/action.c:469
 msgid "Can't execute action with no data passed in arg"
 msgstr ""
 
-#: src/lib/action.c:488
+#: src/lib/action.c:495
 msgid "Can't execute an unknown action"
 msgstr ""
 
-#: src/lib/action.c:556
+#: src/lib/action.c:563
 msgid "Send xPL CMND to control.basic"
 msgstr ""
 
-#: src/lib/action.c:557
+#: src/lib/action.c:564
 msgid "Send a mail"
 msgstr ""
 
-#: src/lib/action.c:558
+#: src/lib/action.c:565
 msgid "Execute an external program"
 msgstr ""
 
-#: src/lib/action.c:559
+#: src/lib/action.c:566
 msgid "Debug stuff for testing purpose"
 msgstr ""
 
-#: src/lib/action.c:560
+#: src/lib/action.c:567
 msgid "Send xPL CMND to osd.basic"
 msgstr ""
 
-#: src/lib/action.c:561
+#: src/lib/action.c:568
 msgid "Use synthetized voice to say some message"
 msgstr ""
 
@@ -776,32 +776,32 @@ msgstr ""
 msgid "Deleting Cosm feed '%s'..."
 msgstr ""
 
-#: src/lib/cosm.c:231
+#: src/lib/cosm.c:230
 #, c-format
 msgid "A datastream feed hasn't been updated, Cosm server returned error '%s'"
 msgstr ""
 
-#: src/lib/cosm.c:259 src/lib/cosm.c:306
+#: src/lib/cosm.c:257 src/lib/cosm.c:302
 #, c-format
 msgid "Cosm server returned code: '%d'"
 msgstr ""
 
-#: src/lib/cosm.c:261
+#: src/lib/cosm.c:259
 #, c-format
 msgid "A location feed hasn't been added, Cosm server returned error '%s'"
 msgstr ""
 
-#: src/lib/cosm.c:281
+#: src/lib/cosm.c:278
 #, c-format
 msgid "Location has been added to Cosm with feedid '%d'"
 msgstr ""
 
-#: src/lib/cosm.c:308
+#: src/lib/cosm.c:304
 #, c-format
 msgid "A location feed hasn't been deleted, Cosm server returned error '%s'"
 msgstr ""
 
-#: src/lib/cosm.c:322
+#: src/lib/cosm.c:317
 #, c-format
 msgid "Location with feedid '%d' has been removed from Cosm"
 msgstr ""
@@ -1239,294 +1239,318 @@ msgstr ""
 msgid "Can't parse network message - ignored"
 msgstr ""
 
-#: src/lib/xpl.c:439
+#: src/lib/xpl.c:163
+msgid "MSG=xpl-cmnd CLASS=osd.basic"
+msgstr ""
+
+#: src/lib/xpl.c:185
+#, c-format
+msgid "MSG=xpl-trig CLASS=sensor.basic DEVICE=%s TYPE=%s CURRENT=%s"
+msgstr ""
+
+#: src/lib/xpl.c:408
 msgid "Can't init xPL service"
 msgstr ""
 
-#: src/lib/xpl.c:450
+#: src/lib/xpl.c:419
 msgid "xPL service initialized"
 msgstr ""
 
-#: src/lib/xpl.c:464
+#: src/lib/xpl.c:433
 msgid "Shutdown xPL..."
 msgstr ""
 
-#: src/lib/xpl.c:532
+#: src/lib/xpl.c:501
 msgid "A battery level in percent"
 msgstr ""
 
-#: src/lib/xpl.c:533
+#: src/lib/xpl.c:502
 msgid "A counter value (door openings, rain fall, etc)"
 msgstr ""
 
-#: src/lib/xpl.c:534
+#: src/lib/xpl.c:503
 msgid "A current value in Amps"
 msgstr ""
 
-#: src/lib/xpl.c:535
+#: src/lib/xpl.c:504
 msgid ""
 "Direction, represented as degrees from north (0-360, 0=north, 180=south, etc)"
 msgstr ""
 
-#: src/lib/xpl.c:536
+#: src/lib/xpl.c:505
 msgid "Distance measurments. Default unit of measure is meters"
 msgstr ""
 
-#: src/lib/xpl.c:537
+#: src/lib/xpl.c:506
 msgid "Consumption of energy over a preiod of time in kWh (kilowatt hours)"
 msgstr ""
 
-#: src/lib/xpl.c:538
+#: src/lib/xpl.c:507
 msgid "A fan speed in RPM"
 msgstr ""
 
-#: src/lib/xpl.c:539
+#: src/lib/xpl.c:508
 msgid ""
 "A generic analogue value who's units of measurement are application specific"
 msgstr ""
 
-#: src/lib/xpl.c:540
+#: src/lib/xpl.c:509
 msgid "A relative humidity percentage (0 to 100, no percent sign)"
 msgstr ""
 
-#: src/lib/xpl.c:541
+#: src/lib/xpl.c:510
 msgid ""
 "A switch that can either be current=HIGH (on), current=LOW (off) or "
 "current=PULSE (representing a button press)"
 msgstr ""
 
-#: src/lib/xpl.c:542
+#: src/lib/xpl.c:511
 msgid "A change in an output state with values of LOW and HIGH"
 msgstr ""
 
-#: src/lib/xpl.c:543
+#: src/lib/xpl.c:512
 msgid "Instantaneous energy consumption level in kW"
 msgstr ""
 
-#: src/lib/xpl.c:544
+#: src/lib/xpl.c:513
 msgid "A pressure value in Pascals (N/m2)"
 msgstr ""
 
-#: src/lib/xpl.c:545
+#: src/lib/xpl.c:514
 msgid ""
 "A thermostat threshold temperature value in degrees. Default unit of measure "
 "is centigrade/celsius"
 msgstr ""
 
-#: src/lib/xpl.c:546
+#: src/lib/xpl.c:515
 msgid "A generic speed. Default unit of measure is Miles per Hour"
 msgstr ""
 
-#: src/lib/xpl.c:547
+#: src/lib/xpl.c:516
 msgid ""
 "A temperature value in degrees. Default unit of measure is centigrade celsius"
 msgstr ""
 
-#: src/lib/xpl.c:548
+#: src/lib/xpl.c:517
 msgid "UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index"
 msgstr ""
 
-#: src/lib/xpl.c:549
+#: src/lib/xpl.c:518
 msgid "A voltage value in Volts"
 msgstr ""
 
-#: src/lib/xpl.c:550
+#: src/lib/xpl.c:519
 msgid "A volume in m3. Often used as a measure of gas and water consumption"
 msgstr ""
 
-#: src/lib/xpl.c:551
+#: src/lib/xpl.c:520
 msgid ""
 "The default unit is kilograms (yes, kilograms are a unit of mass, not weight)"
 msgstr ""
 
-#: src/lib/xpl.c:552
+#: src/lib/xpl.c:521
 msgid "balance - -100 to +100"
 msgstr ""
 
-#: src/lib/xpl.c:553
+#: src/lib/xpl.c:522
 msgid "flag - set, clear, neutral"
 msgstr ""
 
-#: src/lib/xpl.c:554
+#: src/lib/xpl.c:523
 msgid ""
 "infrared - send, enable_rx, disable_rx, enable_tx, disable_tx, sendx (send x "
 "times)"
 msgstr ""
 
-#: src/lib/xpl.c:555
+#: src/lib/xpl.c:524
 msgid "input - enable, disable"
 msgstr ""
 
-#: src/lib/xpl.c:556
+#: src/lib/xpl.c:525
 msgid "macro - enable, disable, do"
 msgstr ""
 
-#: src/lib/xpl.c:557
+#: src/lib/xpl.c:526
 msgid "mute - yes, no"
 msgstr ""
 
-#: src/lib/xpl.c:558
+#: src/lib/xpl.c:527
 msgid "output - enable, disable, high, low, toggle, pulse"
 msgstr ""
 
-#: src/lib/xpl.c:559
+#: src/lib/xpl.c:528
 msgid "variable - inc, dec, 0-255 (for set)"
 msgstr ""
 
-#: src/lib/xpl.c:560
+#: src/lib/xpl.c:529
 msgid "periodic - started, enable, disable"
 msgstr ""
 
-#: src/lib/xpl.c:561
+#: src/lib/xpl.c:530
 msgid "scheduled - started, enable, disable"
 msgstr ""
 
-#: src/lib/xpl.c:562
+#: src/lib/xpl.c:531
 msgid ""
 "slider - nn = set to value (0-255), +nn = increment by nn, -nn = decrement "
 "by nn, n% = set to nn (where nn is a percentage - 0-100%)"
 msgstr ""
 
-#: src/lib/xpl.c:563
+#: src/lib/xpl.c:532
 msgid "timer - went off, start, stop, halt, resume"
 msgstr ""
 
-#: src/lib/xpl.c:564
+#: src/lib/xpl.c:533
 msgid "Unknown xPL type"
 msgstr ""
 
-#: src/lib/xpl.c:641
+#: src/lib/xpl.c:610
 msgid "Percent"
 msgstr ""
 
-#: src/lib/xpl.c:642
+#: src/lib/xpl.c:611
 msgid "Counter"
 msgstr ""
 
-#: src/lib/xpl.c:643
+#: src/lib/xpl.c:612
 msgid "Amps"
 msgstr ""
 
-#: src/lib/xpl.c:644 src/lib/xpl.c:654
+#: src/lib/xpl.c:613 src/lib/xpl.c:623
 msgid "Degrees"
 msgstr ""
 
-#: src/lib/xpl.c:645
+#: src/lib/xpl.c:614
 msgid "Meters"
 msgstr ""
 
-#: src/lib/xpl.c:646
+#: src/lib/xpl.c:615
 msgid "Kilowatt hours"
 msgstr ""
 
-#: src/lib/xpl.c:647
+#: src/lib/xpl.c:616
 msgid "Rotation/min"
 msgstr ""
 
-#: src/lib/xpl.c:648
+#: src/lib/xpl.c:617
 msgid "Generic"
 msgstr ""
 
-#: src/lib/xpl.c:649
+#: src/lib/xpl.c:618
 msgid "Humidity ratio"
 msgstr ""
 
-#: src/lib/xpl.c:650
+#: src/lib/xpl.c:619
 msgid "Input"
 msgstr ""
 
-#: src/lib/xpl.c:651
+#: src/lib/xpl.c:620
 msgid "Output"
 msgstr ""
 
-#: src/lib/xpl.c:652
+#: src/lib/xpl.c:621
 msgid "Kilowatt"
 msgstr ""
 
-#: src/lib/xpl.c:653
+#: src/lib/xpl.c:622
 msgid "Pascals"
 msgstr ""
 
-#: src/lib/xpl.c:655
+#: src/lib/xpl.c:624
 msgid "Miles per Hour"
 msgstr ""
 
-#: src/lib/xpl.c:656
+#: src/lib/xpl.c:625
 msgid "Celsius"
 msgstr ""
 
-#: src/lib/xpl.c:657
+#: src/lib/xpl.c:626
 msgid "UV"
 msgstr ""
 
-#: src/lib/xpl.c:658
+#: src/lib/xpl.c:627
 msgid "Volts"
 msgstr ""
 
-#: src/lib/xpl.c:659
+#: src/lib/xpl.c:628
 msgid "Cubic meter"
 msgstr ""
 
-#: src/lib/xpl.c:660
+#: src/lib/xpl.c:629
 msgid "Kilograms"
 msgstr ""
 
-#: src/lib/xpl.c:672 src/lib/xpl.c:680
+#: src/lib/xpl.c:641 src/lib/xpl.c:649
 msgid "%"
 msgstr ""
 
-#: src/lib/xpl.c:674
+#: src/lib/xpl.c:643
 msgid "A"
 msgstr ""
 
-#: src/lib/xpl.c:675
+#: src/lib/xpl.c:644
 msgid "o"
 msgstr ""
 
-#: src/lib/xpl.c:676
+#: src/lib/xpl.c:645
 msgid "m"
 msgstr ""
 
-#: src/lib/xpl.c:677
+#: src/lib/xpl.c:646
 msgid "kWh"
 msgstr ""
 
-#: src/lib/xpl.c:678
+#: src/lib/xpl.c:647
 msgid "RPM"
 msgstr ""
 
-#: src/lib/xpl.c:683
+#: src/lib/xpl.c:652
 msgid "kW"
 msgstr ""
 
-#: src/lib/xpl.c:684
+#: src/lib/xpl.c:653
 msgid "N/m2"
 msgstr ""
 
-#: src/lib/xpl.c:685 src/lib/xpl.c:687
+#: src/lib/xpl.c:654 src/lib/xpl.c:656
 msgid "C"
 msgstr ""
 
-#: src/lib/xpl.c:686
+#: src/lib/xpl.c:655
 msgid "MpH"
 msgstr ""
 
-#: src/lib/xpl.c:689
+#: src/lib/xpl.c:658
 msgid "V"
 msgstr ""
 
-#: src/lib/xpl.c:690
+#: src/lib/xpl.c:659
 msgid "m3"
 msgstr ""
 
-#: src/lib/xpl.c:691
+#: src/lib/xpl.c:660
 msgid "kg"
 msgstr ""
 
-#: src/lib/xpl.c:706 src/lib/xpl.c:745 src/lib/xpl.c:783
+#: src/lib/xpl.c:675 src/lib/xpl.c:722 src/lib/xpl.c:768
 msgid "Can't create broadcast message"
 msgstr ""
 
-#: src/lib/xpl.c:724 src/lib/xpl.c:762 src/lib/xpl.c:796
+#: src/lib/xpl.c:693 src/lib/xpl.c:739 src/lib/xpl.c:781
 msgid "Can't send xPL message"
+msgstr ""
+
+#: src/lib/xpl.c:699
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=osd.basic COMMAND=%s TEXT=%s DELAY=%s"
+msgstr ""
+
+#: src/lib/xpl.c:745
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=control.basic DEVICE=%s TYPE=%s CURRENT=%s"
+msgstr ""
+
+#: src/lib/xpl.c:787
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=sensor.request DEVICE=%s"
 msgstr ""

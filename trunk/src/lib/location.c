@@ -319,7 +319,18 @@ widget_new(const char * name, Widget_Class class)
 	}
 
     /*Initialize and set widget generic's fields*/
-    widget->name = eina_stringshare_add(name ? name : _("undefined"));
+    if(name)
+    {
+        widget->name = eina_stringshare_add(name);
+    }
+    else
+    {
+        char *s;
+        asprintf(&s, "undefined-%d", time(NULL));
+        widget->name = eina_stringshare_add(s);
+        FREE(s);
+    }
+
     widget->class = class;
 
     /*Set default group, according to class*/
