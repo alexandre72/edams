@@ -27,7 +27,6 @@ src/lib/sound.c
 src/lib/utils.c
 src/lib/voicerss.c
 src/lib/widget.c
-src/lib/xpl-config.c
 src/lib/xpl-io.c
 src/lib/xpl-listeners.c
 src/lib/xpl-message.c

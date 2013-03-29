@@ -32,6 +32,7 @@
 /*Global objects*/
 static Evas_Object *win = NULL;
 static Widget *widget = NULL;
+static App_Info *app = NULL;
 
 /*Evas_Object Callbacks*/
 static void _button_close_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
@@ -55,10 +56,7 @@ static void _entry_xpl_preview_update();
 static void
 _button_close_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    App_Info *app = edams_app_info_get();
-
-    if(!app->widget)
-        widget_free(widget);
+    widget_free(widget);
 
     evas_object_del(win);
 }/*_button_close_clicked_cb*/
@@ -70,7 +68,6 @@ _button_close_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 static void
 _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    App_Info *app = edams_app_info_get();
     char *s;
 
     if(!app->widget)
@@ -80,7 +77,15 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
     }
     else
     {
-        asprintf(&s, _("Widget '%s' from '%s' has been updated"), widget_name_get(widget), location_name_get(app->location));
+        widget_name_set(app->widget, widget_name_get(widget));
+        widget_class_set(app->widget, widget_class_get(widget));
+        widget_id_set(app->widget, widget_id_get(widget));
+        widget_group_set(app->widget, widget_group_get(widget));
+        widget_cosm_set(app->widget, widget_cosm_get(widget));
+        widget_xpl_device_set(app->widget, widget_xpl_device_get(widget));
+        widget_xpl_type_set(app->widget, widget_xpl_type_get(widget));
+
+        asprintf(&s, _("Widget '%s' from '%s' has been updated"), widget_name_get(app->widget), location_name_get(app->location));
     }
 
     location_save(app->location);
@@ -215,6 +220,26 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
         val = (val * 100);
         asprintf(&s, "%d%%", (int)val);
     }
+    /*
+    else if(strcmp(type, XPL_TYPE_BALANCE_CONTROL_BASIC) == 0)
+    {
+        val = (val * 100);
+
+        if(val < 50)
+        {
+            int t = val;
+
+            val = 0;
+            val = val - t;
+        }
+        else if(val == 50)
+        {
+            val = 0;
+        }
+
+        asprintf(&s, "%d", (int)val);
+    }
+    */
     else
     {
         asprintf(&s, "%d", (int)val);
@@ -244,6 +269,7 @@ _entry_xpl_preview_update()
 static void
 _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
+    Widget_Class class = widget_class_get(widget);
 	const char *group = data;
 
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
@@ -254,11 +280,11 @@ _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     }
 
     /*If widget is xPL sensor.basic then load random sample data*/
-    if(widget_class_get(widget) == WIDGET_CLASS_XPL_SENSOR_BASIC)
+    if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)
     {
 	    _layout_samples_test(layout);
     }
-	else if(widget_class_get(widget) == WIDGET_CLASS_XPL_CONTROL_BASIC)
+	else if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
 	{
 		elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, NULL);
 	}
@@ -301,9 +327,8 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     Evas_Object *preview_frame = elm_object_name_find(win, "xpl preview frame", -1);
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
 	Evas_Object *cosm_check = elm_object_name_find(win, "cosm check", -1);
-    App_Info *app = edams_app_info_get();
 
-    if((app->widget))
+    if(app->widget)
      {
         elm_list_item_bring_in(event_info);
         elm_layout_file_set(layout, edams_edje_theme_file_get(), widget_group_get(widget));
@@ -350,7 +375,6 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
 static void
 _list_widgets_groups_fill()
 {
-    App_Info *app = edams_app_info_get();
     Evas_Object *list = elm_object_name_find(win, "groups list", -1);
 	Eina_List *groups = NULL, *l;
     Widget_Class class = widget_class_get(widget);
@@ -378,11 +402,11 @@ _list_widgets_groups_fill()
 
 				Elm_Object_Item *it = elm_list_item_append(list, group, icon, NULL, _list_item_group_selected_cb, group);
 
-				    if((app->widget) && (strcmp(group, widget_group_get(widget)) == 0))
-				    {
-                        elm_list_item_selected_set(it, EINA_TRUE);
-                        elm_list_item_bring_in(it);
-                    }
+				if((strcmp(group, widget_group_get(widget)) == 0))
+				{
+                    elm_list_item_selected_set(it, EINA_TRUE);
+                    elm_list_item_bring_in(it);
+                }
 			}
 			else
 			{
@@ -392,10 +416,7 @@ _list_widgets_groups_fill()
 		edje_file_collection_list_free(groups);
 	}
 
-	if(!(app->widget))
-	{
-        elm_list_item_selected_set(elm_list_first_item_get(list), EINA_TRUE);
-    }
+    elm_list_item_selected_set(elm_list_first_item_get(list), EINA_TRUE);
 
 	elm_list_go(list);
 }/*_fill_widget_groups*/
@@ -472,7 +493,7 @@ _hoversel_xpl_type_fill(Widget_Class class)
     	elm_hoversel_item_add(hoversel, XPL_TYPE_VOLUME_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, XPL_TYPE_WEIGHT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
 	}
-}/*_hoversel_fill*/
+}/*_hoversel_xpl_type_fill*/
 
 
 
@@ -484,11 +505,12 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 {
 	Evas_Object *grid, *box, *layout, *frame;
 	Evas_Object *button, *icon, *separator, *class_list, *groups_list, *entry, *check, *hoversel;
-	App_Info *app = (App_Info *) edams_app_info_get();
+    char *s;
+
+	app = edams_app_info_get();
 
 	if (!app->location)	return;
 
-    char *s;
     if(!app->widget)
     {
     	asprintf(&s, _("Add a new widget to '%s' location"),
@@ -497,11 +519,18 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
     }
     else
     {
-        widget = app->widget;
     	asprintf(&s, _("Edit widget '%s' from '%s' location"),
-    	                widget_name_get(widget),
+    	                widget_name_get(app->widget),
                         location_name_get(app->location));
+        widget = widget_new(widget_name_get(app->widget), widget_class_get(app->widget));
+        widget_id_set(widget, widget_id_get(app->widget));
+        widget_group_set(widget, widget_group_get(app->widget));
+        widget_cosm_set(widget, widget_cosm_get(app->widget));
+        widget_xpl_device_set(widget, widget_xpl_device_get(app->widget));
+        widget_xpl_type_set(widget, widget_xpl_type_get(app->widget));
     }
+
+
     win = elm_win_util_standard_add("widget_editor", s);
 	FREE(s);
     elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
@@ -609,19 +638,13 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	    {
     		Elm_Object_Item *it =  elm_list_item_append(class_list, widget_class_to_str(x), NULL, NULL, _list_item_class_selected_cb, x);
 
-            if((app->widget)  && (x == widget_class_get(widget)))
+            if((x == widget_class_get(widget)))
             {
                 elm_list_item_selected_set(it, EINA_TRUE);
             }
     	}
 	}
-	if(!(app->widget))
-	{
-        elm_list_item_selected_set(elm_list_first_item_get(class_list), EINA_TRUE);
-    }
-
 	elm_list_go(class_list);
-
 
 	box = elm_box_add(win);
 	elm_box_horizontal_set(box, EINA_TRUE);

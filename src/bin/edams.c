@@ -251,8 +251,8 @@ _button_remove_widget_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 static void
 _button_add_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	app->widget = NULL;
-    widget_editor_add(app, NULL, NULL);
+    app->widget = NULL;
+    widget_editor_add(NULL, NULL, NULL);
 }/*_button_add_widget_clicked_cb*/
 
 
@@ -262,8 +262,8 @@ _button_add_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED_
 static void
 _button_edit_widget_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    widget_editor_add(app, NULL, NULL);
-}/*_button_remove_widget_clicked_cb*/
+    widget_editor_add(NULL, NULL, NULL);
+}/*_button_edit_widget_clicked_cb*/
 
 
 /*
@@ -341,8 +341,25 @@ update_naviframe_content(Location *location)
 static void
 _list_item_widget_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-	app->widget = data;
+    char *s;
+    Evas_Object *bt;
 
+    asprintf(&s, "%s remove button", location_name_get(app->location));
+    bt = elm_object_name_find(app->win, s, -1);
+    elm_object_disabled_set(bt, EINA_FALSE);
+    FREE(s);
+
+    asprintf(&s, "%s edit button", location_name_get(app->location));
+    bt = elm_object_name_find(app->win, s, -1);
+    elm_object_disabled_set(bt, EINA_FALSE);
+    FREE(s);
+
+    asprintf(&s, "%s actions button", location_name_get(app->location));
+    bt = elm_object_name_find(app->win, s, -1);
+    elm_object_disabled_set(bt, EINA_FALSE);
+    FREE(s);
+
+    app->widget = data;
 }/*_list_item_widget_selected_cb*/
 
 /*
@@ -404,10 +421,7 @@ _location_naviframe_content_set(Location * location)
 	Eina_List *l, *widgets;
 	Widget *widget;
 	widgets = location_widgets_list_get(location);
-/*
-	if(widgets)
-		elm_entry_entry_append(entry, "<item size=65x16 vsize=full href=xpl-logo></item>");
-*/
+
     /*Append widgets from location to list*/
 	EINA_LIST_FOREACH(widgets, l, widget)
 	{
@@ -428,26 +442,6 @@ _location_naviframe_content_set(Location * location)
 	elm_grid_pack(grid, bx, 1, 81, 90, 10);
 	evas_object_show(bx);
 
-	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Edit"));
-    icon = elm_icon_add(app->win);
-    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(icon, "document-properties");
-    elm_object_part_content_set(bt, "icon", icon);
-	elm_box_pack_end(bx, bt);
-    evas_object_smart_callback_add(bt, "clicked", _button_edit_widget_clicked_cb, list);
-    evas_object_show(bt);
-
-	bt = elm_button_add(app->win);
-	elm_object_text_set(bt, _("Actions"));
-    icon = elm_icon_add(app->win);
-    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
-    elm_icon_standard_set(icon, "document-properties");
-    elm_object_part_content_set(bt, "icon", icon);
-	elm_box_pack_end(bx, bt);
-    evas_object_smart_callback_add(bt, "clicked", actions_editor_add, app);
-    evas_object_show(bt);
-
     bt = elm_button_add(app->win);
     elm_object_text_set(bt, _("Add"));
 	icon = elm_icon_add(app->win);
@@ -459,6 +453,9 @@ _location_naviframe_content_set(Location * location)
 	evas_object_show(bt);
 
 	bt = elm_button_add(app->win);
+	asprintf(&s, "%s remove button", location_name_get(location));
+	evas_object_name_set(bt, s);
+	FREE(s);
 	elm_object_text_set(bt, _("Remove"));
     icon = elm_icon_add(app->win);
     elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
@@ -467,6 +464,35 @@ _location_naviframe_content_set(Location * location)
 	elm_box_pack_end(bx, bt);
     evas_object_smart_callback_add(bt, "clicked", _button_remove_widget_clicked_cb, list);
     evas_object_show(bt);
+    elm_object_disabled_set(bt, EINA_TRUE);
+
+	bt = elm_button_add(app->win);
+	asprintf(&s, "%s edit button", location_name_get(location));
+	evas_object_name_set(bt, s);
+	FREE(s);
+	elm_object_text_set(bt, _("Edit"));
+    icon = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(icon, "document-properties");
+    elm_object_part_content_set(bt, "icon", icon);
+	elm_box_pack_end(bx, bt);
+    evas_object_smart_callback_add(bt, "clicked", _button_edit_widget_clicked_cb, list);
+    evas_object_show(bt);
+    elm_object_disabled_set(bt, EINA_TRUE);
+
+	bt = elm_button_add(app->win);
+	asprintf(&s, "%s actions button", location_name_get(location));
+	evas_object_name_set(bt, s);
+	FREE(s);
+	elm_object_text_set(bt, _("Actions"));
+    icon = elm_icon_add(app->win);
+    elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+    elm_icon_standard_set(icon, "document-properties");
+    elm_object_part_content_set(bt, "icon", icon);
+	elm_box_pack_end(bx, bt);
+    evas_object_smart_callback_add(bt, "clicked", actions_editor_add, app);
+    evas_object_show(bt);
+    elm_object_disabled_set(bt, EINA_TRUE);
 
 	return grid;
 }/*_location_naviframe_content_set*/
@@ -675,6 +701,7 @@ elm_main(int argc, char **argv)
     evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
     evas_object_show(naviframe);
+
 
     /*Insert location page to naviframe*/
     Location *location;

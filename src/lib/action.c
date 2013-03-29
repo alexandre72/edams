@@ -108,7 +108,7 @@ exec_action_parse(const char *data)
         FREE(terminal);
 		return EINA_TRUE;
 	}
-}/*exec_action*/
+}/*exec_action_parse*/
 
 
 
@@ -194,7 +194,7 @@ mail_action_parse(const char *data)
 		cJSON_Delete(root);
 		return EINA_FALSE;
 	}
-}/*mail_action*/
+}/*mail_action_parse*/
 
 
 /*
@@ -240,7 +240,7 @@ debug_action_parse(const char *data)
 	cJSON_Delete(root);
 	FREE(print);
 	return EINA_TRUE;
-}/*debug_action*/
+}/*debug_action_parse*/
 
 
 /*
@@ -316,7 +316,7 @@ osd_action_parse(const char *data)
 	cJSON_Delete(root);
 
 	return EINA_TRUE;
-}/*debug_action*/
+}/*osd_action_parse*/
 
 
 
@@ -343,7 +343,7 @@ action_cmnd_data_format(const char *device, const char *type, const char *curren
 	cJSON_Delete(root);
 
     return s;
-}/*exec_action_format*/
+}/*action_cmnd_data_format*/
 
 
 /*
@@ -398,7 +398,7 @@ cmnd_action_parse(const char *data)
 
     return EINA_TRUE;
 
-}/*cmnd_action*/
+}/*cmnd_action_parse*/
 
 
 /*
@@ -419,7 +419,7 @@ action_voice_data_format(const char *text, const char *file)
 	cJSON_Delete(root);
 
     return s;
-}/*voice_action_data_format*/
+}/*action_voice_data_format*/
 
 /*
  *
@@ -551,7 +551,7 @@ action_str_to_type(const char *s)
 	else if(strcmp(s, "OSD") == 0)	return ACTION_TYPE_OSD;
 	else if(strcmp(s, "VOICE") == 0)	return ACTION_TYPE_VOICE;
 	else							return ACTION_TYPE_UNKNOWN;
-}/*action_str_to_condition*/
+}/*action_str_to_type*/
 
 
 /*
@@ -560,14 +560,14 @@ action_str_to_type(const char *s)
 const char *
 action_type_to_desc(Action_Type type)
 {
-	if(     type == ACTION_TYPE_CMND)		return _("Send xPL CMND to control.basic");
+	if(type == ACTION_TYPE_CMND)		    return _("Send xPL CMND to control.basic");
 	else if(type == ACTION_TYPE_MAIL)		return _("Send a mail");
 	else if(type == ACTION_TYPE_EXEC)		return _("Execute an external program");
 	else if(type == ACTION_TYPE_DEBUG)		return _("Debug stuff for testing purpose");
 	else if(type == ACTION_TYPE_OSD)		return _("Send xPL CMND to osd.basic");
 	else if(type == ACTION_TYPE_VOICE)		return _("Use synthetized voice to say some message");
 	else 									return NULL;
-}/*action_type_to_str*/
+}/*action_type_to_desc*/
 
 
 /*
