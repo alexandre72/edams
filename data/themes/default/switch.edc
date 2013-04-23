@@ -19,7 +19,7 @@
  */
 group
 {
-	name: "widget/control.basic/switch/icon";
+	name: "widget/control/switch/icon";
     min: 32 32;
 
 	images
@@ -41,12 +41,12 @@ group
             }
          }
       }
-}/*group widget/control.basic/switch/icon*/
+}/*group widget/control/switch/icon*/
 
 
 group
 {
-	name: "widget/control.basic/switch";
+	name: "widget/control/switch";
 	min: 110 110;
 	max: 110 110;
 
@@ -182,4 +182,4 @@ group
 			target: "base";
 		}
 	}/*programs*/
-}/*group widget/control.basic/switch*/
+}/*group widget/control/switch*/

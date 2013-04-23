@@ -25,6 +25,7 @@
 #include <Ecore_Con.h>
 #include "cJSON.h"
 #include "cosm.h"
+#include "device.h"
 #include "edams.h"
 #include "utils.h"
 
@@ -87,14 +88,14 @@ cosm_device_datastream_update(Location *location, Widget *widget)
 	cJSON_AddItemToObject(root, "datastreams", datastreams=cJSON_CreateArray());
 
 	fmt=cJSON_CreateObject();
-	cJSON_AddStringToObject(fmt,"current_value", widget_xpl_current_get(widget));
-	cJSON_AddStringToObject(fmt,"id", widget_xpl_device_get(widget));
+	cJSON_AddStringToObject(fmt,"current_value", widget_device_current_get(widget));
+	cJSON_AddStringToObject(fmt,"id", widget_device_id_get(widget));
 
-	if(xpl_type_to_unit_symbol(widget_xpl_type_get(widget)))
+	if(device_type_to_unit_symbol(widget_device_type_get(widget)))
 	{
 		cJSON_AddItemToObject(fmt, "unit", unit=cJSON_CreateObject());
-		cJSON_AddStringToObject(unit,"label", xpl_type_to_units(widget_xpl_type_get(widget)));
-		cJSON_AddStringToObject(unit,"symbol", xpl_type_to_unit_symbol(widget_xpl_type_get(widget)));
+		cJSON_AddStringToObject(unit,"label", device_type_to_units(widget_device_type_get(widget)));
+		cJSON_AddStringToObject(unit,"symbol", device_type_to_unit_symbol(widget_device_type_get(widget)));
 	}
 
 	cJSON_AddItemToArray(datastreams, fmt);

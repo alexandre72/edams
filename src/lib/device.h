@@ -27,14 +27,14 @@
 #define DEVICE_TYPE_VOLUME_SENSOR "volume"
 #define DEVICE_TYPE_WEIGHT_SENSOR "weight"
 
-#define DEVICE_TYPE_DIGITAL_CONTROL "output"	/*Control handle 0/1 values*/
-#define DEVICE_TYPE_SLIDER_CONTROL "slider"		/*Control handle values between min and max*/
+#define DEVICE_TYPE_DIGITAL_CONTROL "output"		/*Control handle 0/1 values*/
+#define DEVICE_TYPE_VARIABLE_CONTROL "variable"		/*Control handle values between min and max*/
+#define DEVICE_TYPE_PERCENTAGE_CONTROL "percentage"	/*Control handle percentage*/
 
-Eina_Bool device_control_send(Widget *widget);
-Eina_Bool device_sensor_basic_cmnd_send(Widget *widget);
-Eina_Bool device_osd_send(char *command, char *text, char *delay);
+Eina_Bool device_control_cmnd_send(Widget *widget);
+Eina_Bool device_sensor_cmnd_send(Widget *widget);
+Eina_Bool device_osd_cmnd_send(char *command, char *text, char *delay);
 
-const char *device_control_basic_cmnd_to_elm_str(Widget *widget);
 const char *device_type_to_desc(const char *type);
 const char *device_type_to_units(const char *type);
 const char *device_type_to_unit_symbol(const char *type);

@@ -258,8 +258,8 @@ edams.o: edams.c /usr/include/stdc-predef.h \
  /usr/include/bits/fcntl-linux.h ../../src/lib/action.h actions_editor.h \
  ../../src/lib/utils.h ../../src/lib/gettext.h about_dlg.h \
  ../../src/lib/cosm.h edams.h ../../config.h ../../src/lib/location.h \
- ../../src/lib/xpl.h ../../src/lib/widget.h ../../src/lib/action.h \
- ../../src/lib/settings.h ../../src/lib/xpl.h edams.h init.h \
+ ../../src/lib/device.h ../../src/lib/widget.h ../../src/lib/action.h \
+ ../../src/lib/settings.h ../../src/lib/widget.h edams.h init.h \
  locations_creator.h global_view.h ../../src/lib/path.h preferences_dlg.h \
  scheduler_editor.h shutdown.h widget_editor.h
 
@@ -957,7 +957,7 @@ edams.h:
 
 ../../src/lib/location.h:
 
-../../src/lib/xpl.h:
+../../src/lib/device.h:
 
 ../../src/lib/widget.h:
 
@@ -965,7 +965,7 @@ edams.h:
 
 ../../src/lib/settings.h:
 
-../../src/lib/xpl.h:
+../../src/lib/widget.h:
 
 edams.h:
 

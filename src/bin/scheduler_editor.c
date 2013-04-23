@@ -64,11 +64,9 @@ _cmndeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 
     Widget *widget = elm_object_item_data_get(selected_item);
 
-    s = action_cmnd_data_format(widget_xpl_device_get(widget),
-                            widget_xpl_type_get(widget),
-                            widget_xpl_current_get(widget),
-                            widget_xpl_data1_get(widget));
-
+    s = action_cmnd_data_format(widget_device_id_get(widget),
+                            widget_device_type_get(widget),
+                            widget_device_current_get(widget));
 
     evas_object_data_set(win, "action data", s);
 	cmndeditor_close(cmndeditor);

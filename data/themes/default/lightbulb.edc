@@ -21,7 +21,7 @@
 
 group
 {
-	name: "widget/sensor.basic/lightbulb/icon";
+	name: "widget/sensor/lightbulb/icon";
     min: 32 32;
 
 	images
@@ -43,14 +43,14 @@ group
             }
          }
 	}
-}/*group widget/sensor.basic/lightbulb/icon*/
+}/*group widget/sensor/lightbulb/icon*/
 
 
 
 
 group
 {
-	name: "widget/sensor.basic/lightbulb";
+	name: "widget/sensor/lightbulb";
 	min: 110 100;
  	max: 110 100;
 
@@ -294,4 +294,4 @@ group
 	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
         }
 	}/*programs*/
-}/*group widget/sensor.basic/switch*/
+}/*group widget/sensor/switch*/

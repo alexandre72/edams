@@ -21,7 +21,7 @@
 
 group
 {
-	name: "widget/sensor.basic/counter/icon";
+	name: "widget/sensor/counter/icon";
     min: 32 32;
 
 	images
@@ -43,12 +43,12 @@ group
             }
          }
       }
-}/*widget/sensor.basic/counter/icon*/
+}/*widget/sensor/counter/icon*/
 
 
 group
 {
-    name: "widget/sensor.basic/counter";
+    name: "widget/sensor/counter";
 	min: 150 60;
  	max: 150 60;
 
@@ -285,4 +285,4 @@ group
         }
 
 	}/*programs*/
-}/*group widget/sensor.basic/counter*/
+}/*group widget/sensor/counter*/

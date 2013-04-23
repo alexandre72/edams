@@ -79,7 +79,6 @@ AC_SUBST(LTLIBINTL)
 
 AC_CONFIG_FILES([
 Makefile
-edams.spec
 edams.desktop
 src/Makefile
 src/bin/Makefile

@@ -16,7 +16,7 @@ libedams_la_SOURCES = \
 action.c \
 cJSON.c \
 crontab.c \
-device.c
+device.c \
 mbox.c \
 myfileselector.c \
 path.c \
@@ -24,7 +24,6 @@ location.c \
 settings.c \
 sound.c \
 cosm.c \
-thingspeak.c \
 utils.c \
 voicerss.c \
 widget.c

@@ -255,8 +255,8 @@ locations_creator.o: locations_creator.c /usr/include/stdc-predef.h \
  /usr/include/elementary-1/elm_web.h /usr/include/elementary-1/elm_win.h \
  /usr/include/elementary-1/elm_deprecated.h ../../src/lib/cosm.h edams.h \
  ../../config.h ../../src/lib/utils.h ../../src/lib/gettext.h \
- ../../src/lib/location.h ../../src/lib/xpl.h ../../src/lib/widget.h \
- ../../src/lib/action.h ../../src/lib/settings.h ../../src/lib/xpl.h \
+ ../../src/lib/location.h ../../src/lib/device.h ../../src/lib/widget.h \
+ ../../src/lib/action.h ../../src/lib/settings.h ../../src/lib/widget.h \
  edams.h global_view.h locations_creator.h ../../src/lib/myfileselector.h \
  ../../src/lib/path.h
 
@@ -940,7 +940,7 @@ edams.h:
 
 ../../src/lib/location.h:
 
-../../src/lib/xpl.h:
+../../src/lib/device.h:
 
 ../../src/lib/widget.h:
 
@@ -948,7 +948,7 @@ edams.h:
 
 ../../src/lib/settings.h:
 
-../../src/lib/xpl.h:
+../../src/lib/widget.h:
 
 edams.h:
 

@@ -20,7 +20,7 @@
 
 group
 {
-	name: "widget/sensor.basic/monitor/icon";
+	name: "widget/sensor/monitor/icon";
     min: 32 32;
 
 	images
@@ -41,12 +41,12 @@ group
             }
          }
       }
-}/*group widget/sensor.basic/monitor/icon*/
+}/*group widget/sensor/monitor/icon*/
 
 
 group
 {
-	name: "widget/sensor.basic/monitor";
+	name: "widget/sensor/monitor";
 	min: 140 110;
     max: 140 110;
 
@@ -315,4 +315,4 @@ group
 	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
         }
       }
-}/*group widget/sensor.basic/monitor*/
+}/*group widget/sensor/monitor*/

@@ -125,12 +125,9 @@ global_view.o: global_view.c /usr/include/stdc-predef.h \
  /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.0/include/float.h edams.h \
  ../../config.h ../../src/lib/utils.h ../../src/lib/gettext.h \
  /usr/include/libintl.h /usr/include/locale.h /usr/include/bits/locale.h \
- ../../src/lib/location.h /usr/include/eet-1/Eet.h ../../src/lib/xpl.h \
- /usr/include/unistd.h /usr/include/bits/posix_opt.h \
- /usr/include/bits/environments.h /usr/include/bits/confname.h \
- /usr/include/getopt.h ../../src/lib/widget.h ../../src/lib/action.h \
- ../../src/lib/settings.h ../../src/lib/xpl.h global_view.h \
- ../../src/lib/path.h ../../src/lib/widget.h
+ ../../src/lib/location.h /usr/include/eet-1/Eet.h ../../src/lib/device.h \
+ ../../src/lib/widget.h ../../src/lib/action.h ../../src/lib/settings.h \
+ ../../src/lib/widget.h global_view.h ../../src/lib/path.h
 
 /usr/include/stdc-predef.h:
 
@@ -498,17 +495,7 @@ edams.h:
 
 /usr/include/eet-1/Eet.h:
 
-../../src/lib/xpl.h:
-
-/usr/include/unistd.h:
-
-/usr/include/bits/posix_opt.h:
-
-/usr/include/bits/environments.h:
-
-/usr/include/bits/confname.h:
-
-/usr/include/getopt.h:
+../../src/lib/device.h:
 
 ../../src/lib/widget.h:
 
@@ -516,10 +503,8 @@ edams.h:
 
 ../../src/lib/settings.h:
 
-../../src/lib/xpl.h:
+../../src/lib/widget.h:
 
 global_view.h:
 
 ../../src/lib/path.h:
-
-../../src/lib/widget.h:

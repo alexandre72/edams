@@ -151,7 +151,6 @@ edams_init(App_Info * app)
 	paths_init(app);
 	locations_init();
 	sound_init();
-	xpl_init();
     crontab_init();
 
     if(edams_settings_mbox_path_get())

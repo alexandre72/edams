@@ -254,8 +254,8 @@ widget_editor.o: widget_editor.c /usr/include/stdc-predef.h \
  /usr/include/elementary-1/elm_web.h /usr/include/elementary-1/elm_win.h \
  /usr/include/elementary-1/elm_deprecated.h ../../src/lib/cJSON.h edams.h \
  ../../config.h ../../src/lib/utils.h ../../src/lib/gettext.h \
- ../../src/lib/location.h ../../src/lib/xpl.h ../../src/lib/widget.h \
- ../../src/lib/action.h ../../src/lib/settings.h ../../src/lib/xpl.h \
+ ../../src/lib/location.h ../../src/lib/device.h ../../src/lib/widget.h \
+ ../../src/lib/action.h ../../src/lib/settings.h ../../src/lib/widget.h \
  ../../src/lib/path.h widget_editor.h
 
 /usr/include/stdc-predef.h:
@@ -938,7 +938,7 @@ edams.h:
 
 ../../src/lib/location.h:
 
-../../src/lib/xpl.h:
+../../src/lib/device.h:
 
 ../../src/lib/widget.h:
 
@@ -946,7 +946,7 @@ edams.h:
 
 ../../src/lib/settings.h:
 
-../../src/lib/xpl.h:
+../../src/lib/widget.h:
 
 ../../src/lib/path.h:
 

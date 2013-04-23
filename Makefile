@@ -53,10 +53,9 @@ host_triplet = x86_64-unknown-linux-gnu
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in $(srcdir)/edams.spec.in \
-	$(srcdir)/edams.desktop.in ABOUT-NLS AUTHORS COPYING ChangeLog \
-	INSTALL NEWS README config.guess config.rpath config.sub \
-	depcomp install-sh missing ltmain.sh
+	$(srcdir)/config.h.in $(srcdir)/edams.desktop.in ABOUT-NLS \
+	AUTHORS COPYING ChangeLog INSTALL NEWS README config.guess \
+	config.rpath config.sub depcomp install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
@@ -72,7 +71,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = edams.spec edams.desktop
+CONFIG_CLEAN_FILES = edams.desktop
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
@@ -202,13 +201,13 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/alex/Electronics/Edams/edams/missing aclocal-1.13
+ACLOCAL = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing aclocal-1.13
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
 AR = ar
-AUTOCONF = ${SHELL} /home/alex/Electronics/Edams/edams/missing autoconf
-AUTOHEADER = ${SHELL} /home/alex/Electronics/Edams/edams/missing autoheader
-AUTOMAKE = ${SHELL} /home/alex/Electronics/Edams/edams/missing automake-1.13
+AUTOCONF = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing autoconf
+AUTOHEADER = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing autoheader
+AUTOMAKE = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing automake-1.13
 AWK = gawk
 CC = gcc -std=gnu99
 CCDEPMODE = depmode=gcc3
@@ -254,7 +253,7 @@ LN_S = ln -s
 LTLIBICONV = -liconv
 LTLIBINTL = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/alex/Electronics/Edams/edams/missing makeinfo
+MAKEINFO = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
 MSGFMT = /usr/bin/msgfmt
@@ -269,10 +268,10 @@ OTOOL64 =
 PACKAGE = edams
 PACKAGE_BUGREPORT = alexandre.dussart@laposte.net
 PACKAGE_NAME = edams
-PACKAGE_STRING = edams 0.9.0.Répertoire non versionné
+PACKAGE_STRING = edams 0.9.0.288M
 PACKAGE_TARNAME = edams
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.9.0.Répertoire non versionné
+PACKAGE_VERSION = 0.9.0.288M
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
@@ -284,14 +283,14 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = strip
 USE_NLS = yes
-VERSION = 0.9.0.Répertoire non versionné
+VERSION = 0.9.0.288M
 XGETTEXT = /usr/bin/xgettext
 XGETTEXT_015 = /usr/bin/xgettext
 XGETTEXT_EXTRA_OPTIONS = 
-abs_builddir = /home/alex/Electronics/Edams/edams
-abs_srcdir = /home/alex/Electronics/Edams/edams
-abs_top_builddir = /home/alex/Electronics/Edams/edams
-abs_top_srcdir = /home/alex/Electronics/Edams/edams
+abs_builddir = /home/alex/Electronics/Edams/branches/edamsng
+abs_srcdir = /home/alex/Electronics/Edams/branches/edamsng
+abs_top_builddir = /home/alex/Electronics/Edams/branches/edamsng
+abs_top_srcdir = /home/alex/Electronics/Edams/branches/edamsng
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -321,7 +320,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/alex/Electronics/Edams/edams/install-sh
+install_sh = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -421,8 +420,6 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-edams.spec: $(top_builddir)/config.status $(srcdir)/edams.spec.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
 edams.desktop: $(top_builddir)/config.status $(srcdir)/edams.desktop.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 

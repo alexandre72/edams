@@ -21,7 +21,7 @@
 
 group
 {
-	name: "widget/sensor.basic/door/icon";
+	name: "widget/sensor/door/icon";
     min: 32 32;
 
 	images
@@ -43,12 +43,12 @@ group
             }
          }
 	}
-}/*group widget/sensor.basic/door/icon*/
+}/*group widget/sensor/door/icon*/
 
 
 group
 {
-    name: "widget/sensor.basic/door";
+    name: "widget/sensor/door";
     min: 70 130;
     max: 70 130;
 
@@ -287,4 +287,4 @@ group
 	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
         }
 	}/*programs*/
-}/*group widget/sensor.basic/door*/
+}/*group widget/sensor/door*/

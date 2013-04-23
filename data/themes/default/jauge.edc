@@ -22,7 +22,7 @@
 
 group
 {
-	name: "widget/sensor.basic/jauge/icon";
+	name: "widget/sensor/jauge/icon";
     min: 32 32;
     images
 	{
@@ -43,12 +43,12 @@ group
             }
          }
       }
-}/*group widget/sensor.basic/jauge/icon*/
+}/*group widget/sensor/jauge/icon*/
 
 
 group
 {
-   	name: "widget/sensor.basic/jauge";
+   	name: "widget/sensor/jauge";
 	min: 110 170;
 	max: 110 170;
 
@@ -331,4 +331,4 @@ group
 	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
         }
       }/*programs*/
-}/*group widget/sensor.basic/jauge*/
+}/*group widget/sensor/jauge*/

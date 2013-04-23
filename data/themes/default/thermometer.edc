@@ -21,13 +21,13 @@
 
 group
 {
+	name: "widget/sensor/thermometer/icon";
+    min: 32 32;
+
 	images
 	{
 		image: "thermometer_icon.png" COMP;
 	}
-
-	name: "widget/sensor.basic/thermometer/icon";
-    min: 32 32;
       parts
       {
       	part
@@ -42,12 +42,12 @@ group
             }
          }
       }
-}/*widget/sensor.basic/thermometer/icon*/
+}/*widget/sensor/thermometer/icon*/
 
 
 group
 {
-	name: "widget/sensor.basic/thermometer";
+	name: "widget/sensor/thermometer";
 	min: 110 150;
 	max: 110 150;
 
@@ -412,4 +412,4 @@ group
 	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
         }
       }/*programs*/
-}/*group widget/sensor.basic/thermometer*/
+}/*group widget/sensor/thermometer*/

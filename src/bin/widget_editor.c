@@ -48,7 +48,6 @@ static void _check_cosm_changed_cb(void *data, Evas_Object *obj, void *event_inf
 static void _layout_samples_test(Evas_Object *layout);
 static void _list_widgets_groups_fill();
 static void _hoversel_device_type_fill(Widget_Class class);
-static void _entry_device_preview_update();
 
 /*
  *
@@ -125,9 +124,6 @@ _layout_samples_test(Evas_Object *layout)
 	edje_object_size_min_get(edje, &w, &h);
 	evas_object_resize(edje, w, h);
 
-	Evas_Object *entry = elm_object_name_find(win, "preview entry", -1);
-	elm_object_text_set(entry, device_control_basic_cmnd_to_elm_str(widget));
-
     const char *t;
     /*Special widget with drag part, so need to convert device current value to float.*/
     if ((t = elm_layout_data_get(layout, "drag")))
@@ -194,7 +190,7 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
     }
 
     /*Scale to device type format*/
-    if(strcmp(type, DEVICE_TYPE_SLIDER_CONTROL) == 0)
+    if(strcmp(type, DEVICE_TYPE_PERCENTAGE_CONTROL) == 0)
     {
         val = (val * 100);
         asprintf(&s, "%d%%", (int)val);
@@ -207,8 +203,6 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
     widget_device_current_set(widget, s);
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
-
-    _entry_device_preview_update();
 }/*_layout_signals_cb*/
 
 
@@ -258,7 +252,6 @@ static void
 _entry_device_id_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
     widget_device_id_set(widget, elm_object_text_get(obj));
-    _entry_device_preview_update();
 }/*_entry_device_id_changed_cb*/
 
 
@@ -284,7 +277,6 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
 
     evas_object_hide(cosm_check);
     evas_object_hide(hoversel);
-    evas_object_hide(preview_frame);
     evas_object_hide(device_frame);
 
     widget_class_set(widget, class);
@@ -294,7 +286,6 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
         (class == WIDGET_CLASS_CONTROL))
     {
         evas_object_show(cosm_check);
-        evas_object_show(preview_frame);
         evas_object_show(device_frame);
         evas_object_show(hoversel);
 
@@ -404,14 +395,15 @@ _hoversel_device_type_fill(Widget_Class class)
 
     if(class == WIDGET_CLASS_CONTROL)
     {
-	    elm_hoversel_item_add(hoversel, DEVICE_TYPE_OUTPUT_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, DEVICE_TYPE_SLIDER_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+	    elm_hoversel_item_add(hoversel, DEVICE_TYPE_DIGITAL_CONTROL, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+		elm_hoversel_item_add(hoversel, DEVICE_TYPE_VARIABLE_CONTROL, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);	    
+	    elm_hoversel_item_add(hoversel, DEVICE_TYPE_PERCENTAGE_CONTROL, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
 	}
 	else if(class == WIDGET_CLASS_SENSOR)
 	{
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_BATTERY_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_COUNT_SENSOR_, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_CURRENT_SENSOR_, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_COUNT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_CURRENT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_DIRECTION_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_DISTANCE_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_ENERGY_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
@@ -421,11 +413,11 @@ _hoversel_device_type_fill(Widget_Class class)
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_INPUT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_OUTPUT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_POWER_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_PRESSURE_SENSOR ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_PRESSURE_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_SETPOINT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_SPEED_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_TEMP_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_UV_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_UV_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_VOLTAGE_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_VOLUME_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
     	elm_hoversel_item_add(hoversel, DEVICE_TYPE_WEIGHT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);

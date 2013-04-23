@@ -31,9 +31,7 @@
 #include "utils.h"
 #include "location.h"
 #include "settings.h"
-#include "xpl.h"
-
-#define PID_FILE "/var/run/edams.pid"
+#include "widget.h"
 
 /*
  *Define App UI struct.

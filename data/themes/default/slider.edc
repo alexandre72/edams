@@ -1,6 +1,6 @@
 group
 {
-	name: "widget/control.basic/slider/icon";
+	name: "widget/control/slider/icon";
     min: 32 32;
 
 	images
@@ -22,7 +22,7 @@ group
             }
          }
       }
-}/*group widget/control.basic/sliderh/icon*/
+}/*group widget/control/sliderh/icon*/
 
 group
 {
