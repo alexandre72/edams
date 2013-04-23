@@ -65,9 +65,9 @@ cosm_device_datastream_update(Location *location, Widget *widget)
 	char *s;
 
 	/*Don't add cosm device datastream if no feed available*/
-	if(!location || (location_cosm_feedid_get(location) == 0) || !edams_settings_cosm_apikey_get())
+	if(!location || !location_cosm_feedid_get(location) || !edams_settings_cosm_apikey_get())
 		return EINA_FALSE;
-
+		
    	ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _url_datastream_update_complete_cb, NULL);
 	asprintf(&s, "http://api.cosm.com/v2/feeds/%d", location_cosm_feedid_get(location));
 	cosm_url = ecore_con_url_custom_new(s, "PUT");
@@ -101,7 +101,7 @@ cosm_device_datastream_update(Location *location, Widget *widget)
 	cJSON_AddItemToArray(datastreams, fmt);
 
 	s = cJSON_PrintUnformatted(root);
-	cJSON_Delete(root);
+		cJSON_Delete(root);
 
 	if(!ecore_con_url_post(cosm_url, (void*)s, strlen(s), "text/json"))
 	{

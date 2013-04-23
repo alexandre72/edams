@@ -486,7 +486,7 @@ _edje_object_signals_cb(void *data, Evas_Object *edje_obj, const char  *emission
 
     if((widget_class_get(widget) == WIDGET_CLASS_SENSOR))
     {
-	    if(strstr(emission, "sensor.basic,cmnd"))  device_sensor_cmnd_send(widget);
+	    if(strstr(emission, "sensor,cmnd"))  device_sensor_cmnd_send(widget);
     }
     else if((widget_class_get(widget) == WIDGET_CLASS_VIRTUAL))
     {

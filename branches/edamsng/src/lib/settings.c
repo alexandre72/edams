@@ -359,17 +359,17 @@ edams_settings_init()
 
 	settings->cosm_apikey = NULL;
 	settings->voicerss_apikey = NULL;
+	settings->thingspeak_apikey = NULL;
 	settings->global_view_background = NULL;
 	settings->user_name = NULL;
 	settings->user_mail = NULL;
+
 /*
-	settings->user_name = eina_stringshare_add(getlogin());
-		
+	settings->user_name = eina_stringshare_add(getlogin());	
 	asprintf(&s, "%s@localhost", settings->user_name);
 	settings->user_mail = eina_stringshare_add(s);
 	FREE(s);
 */
-
 	settings->softemu = EINA_FALSE;
     if(home_dir_get())
         asprintf(&s, "%s/mbox", home_dir_get());
@@ -387,13 +387,13 @@ edams_settings_init()
 void
 edams_settings_shutdown()
 {
-	eet_close(ef);
-
 	eina_stringshare_del(settings->cosm_apikey);
 	eina_stringshare_del(settings->voicerss_apikey);
+	eina_stringshare_del(settings->thingspeak_apikey);
 	eina_stringshare_del(settings->global_view_background);
 	eina_stringshare_del(settings->mbox_path);
 	eina_stringshare_del(settings->user_name);
 	eina_stringshare_del(settings->user_mail);
 	FREE(settings);
+	eet_close(ef);	
 }/*edams_settings_shutdown*/

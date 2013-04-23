@@ -30,6 +30,7 @@
 #include "edams.h"
 #include "global_view.h"
 #include "location.h"
+#include "serial.h"
 #include "widget.h"
 
 
@@ -38,7 +39,8 @@
 static pid_t            child_pid;
 
 static void _devices_handler(void *data __UNUSED__, void *buf, unsigned int len);
-void devices_process_messages();
+static void _serial_devices_process_messages();
+static void _emulated_devices_process_messages(Ecore_Pipe *pipe);
 
 /*
  *
@@ -65,8 +67,8 @@ _devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
     if(strcmp(schema, "osd") == 0)
     {
         char *s;
-        asprintf(&s, _("CMND CLASS=osd.basic"));
-        debug(MSG_XPL, s);
+        asprintf(&s, _("CMND CLASS=osd"));
+        debug(MSG_DEVICE_OSD, s);
         FREE(s);
 
         osd_action_parse(str);
@@ -87,8 +89,8 @@ _devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
         strdelstr(type, "\"");
 
         char *s;
-        asprintf(&s, _("TRIG CLASS=sensor.basic DEVICE=%s TYPE=%s CURRENT=%s"), device, type, current);
-        debug(MSG_XPL, s);
+        asprintf(&s, _("TRIG CLASS=sensor DEVICE=%s TYPE=%s CURRENT=%s"), device, type, current);
+        debug(MSG_DEVICE_SENSOR, s);
         FREE(s);
 
         /*Parse all locations and sync with global and cosm*/
@@ -156,7 +158,7 @@ _devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
                     {
                         if(atoi(current) > atoi(widget_device_highest_get(widget)))
                         {
-                            debug(MSG_XPL, ("New highest value for '%s' set to '%s'(old was '%s')"),
+                            debug(MSG_DEVICE_SENSOR, ("New highest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
                                                     widget_device_highest_get(widget));
@@ -169,7 +171,7 @@ _devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
                     {
                         if(atoi(current) < atoi(widget_device_lowest_get(widget)))
                         {
-                            debug(MSG_XPL, ("New lowest value for '%s' set to '%s'(old was '%s')"),
+                            debug(MSG_DEVICE_SENSOR, ("New lowest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
                                                     widget_device_lowest_get(widget));
@@ -180,7 +182,7 @@ _devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
                     global_view_widget_data_update(location, widget);
                     location_save(location);
-
+					
                     if(widget_cosm_get(widget))
                         cosm_device_datastream_update(location, widget);
                 }/*If device is registered in EDAMS*/
@@ -190,7 +192,7 @@ _devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
         FREE(type);
         FREE(current);
         FREE(str);
-    }/*End if schema to parse is sensor.basic*/
+    }/*End if schema to parse is sensor*/
 
     FREE(schema);
 	cJSON_Delete(root);
@@ -199,14 +201,23 @@ _devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
 
 /*
- *Child process that listen devices messages received from wireless nodes.
+ *Child process that all devices messages received from wireless nodes.
  */
-void
-devices_process_messages()
+static void
+_serial_devices_process_messages(Ecore_Pipe *pipe)
 {
-	for (;;)
-	{
-	}
+	int fd = 0;
+    char buf[256];
+
+     int baudrate = 115200;  /*default*/
+     fd = serialport_init("/dev/ttyACM0", baudrate); /*Arduino serial*/
+
+     for(;;)
+     {                
+			serialport_read_until(fd, buf, '\n');
+			ecore_pipe_write(pipe, buf, strlen(buf));
+			sleep(2);
+   }
 }/*devices_process_messages*/
 
 
@@ -214,8 +225,8 @@ devices_process_messages()
  *
  */
 static void
-_devices_emulate_messages(Ecore_Pipe *pipe)
-{
+_emulated_devices_process_messages(Ecore_Pipe *pipe)
+{	
     char *samples[100][100]={
                                 {"DHT11", "humidity"},
                                 {"DS18B20", "temp"},
@@ -237,7 +248,7 @@ _devices_emulate_messages(Ecore_Pipe *pipe)
 
             cJSON *root;
         	root = cJSON_CreateObject();
-            cJSON_AddItemToObject(root, "SCHEMA", cJSON_CreateString("sensor.basic"));
+            cJSON_AddItemToObject(root, "SCHEMA", cJSON_CreateString("sensor"));
         	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(samples[i][0]));
         	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(samples[i][1]));
 	        RANDOMIZE();
@@ -248,7 +259,11 @@ _devices_emulate_messages(Ecore_Pipe *pipe)
         	FREE(str);
             str = cJSON_PrintUnformatted(root);
             cJSON_Delete(root);
+            
+			printf("COSM JSON:%s\n", str);
+     
             ecore_pipe_write(pipe, str, strlen(str));
+
             FREE(str);
             sleep(1);
         }
@@ -275,10 +290,9 @@ devices_start()
         ecore_pipe_read_close(pipe);
 
         if(edams_settings_softemu_get() == EINA_TRUE)
-            _devices_emulate_messages(pipe);
+            _emulated_devices_process_messages(pipe);
         else
-
-            devices_process_messages();
+			_serial_devices_process_messages(pipe);
     }
     else
     {
@@ -380,22 +394,22 @@ device_type_to_unit_symbol(const char *type)
 	if(!type) return NULL;
 
 	if(strcmp(type, DEVICE_TYPE_BATTERY_SENSOR) == 0) return _("%");
-	if(strcmp(type, DEVICE_TYPE_COUNT_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_COUNT_SENSOR) == 0)    return NULL;
 	if(strcmp(type, DEVICE_TYPE_CURRENT_SENSOR) == 0)    return _("A");
 	if(strcmp(type, DEVICE_TYPE_DIRECTION_SENSOR) == 0)    return _("o");
 	if(strcmp(type, DEVICE_TYPE_DISTANCE_SENSOR) == 0)    return _("m");
 	if(strcmp(type, DEVICE_TYPE_ENERGY_SENSOR) == 0)    return _("kWh");
 	if(strcmp(type, DEVICE_TYPE_FAN_SENSOR) == 0)    return _("RPM");
-	if(strcmp(type, DEVICE_TYPE_GENERIC_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_GENERIC_SENSOR) == 0)    return NULL;
 	if(strcmp(type, DEVICE_TYPE_HUMIDITY_SENSOR) == 0)    return _("%");
-	if(strcmp(type, DEVICE_TYPE_INPUT_SENSOR) == 0)    return " ";
-	if(strcmp(type, DEVICE_TYPE_OUTPUT_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_INPUT_SENSOR) == 0)    return NULL;
+	if(strcmp(type, DEVICE_TYPE_OUTPUT_SENSOR) == 0)    return NULL;
 	if(strcmp(type, DEVICE_TYPE_POWER_SENSOR) == 0)    return _("kW");
 	if(strcmp(type, DEVICE_TYPE_PRESSURE_SENSOR) == 0)    return _("N/m2");
 	if(strcmp(type, DEVICE_TYPE_SETPOINT_SENSOR) == 0)    return _("C");
 	if(strcmp(type, DEVICE_TYPE_SPEED_SENSOR) == 0)    return _("MpH");
 	if(strcmp(type, DEVICE_TYPE_TEMP_SENSOR) == 0)    return _("C");
-	if(strcmp(type, DEVICE_TYPE_UV_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_UV_SENSOR) == 0)    return NULL;
 	if(strcmp(type, DEVICE_TYPE_VOLTAGE_SENSOR) == 0)    return _("V");
 	if(strcmp(type, DEVICE_TYPE_VOLUME_SENSOR) == 0)    return _("m3");
 	if(strcmp(type, DEVICE_TYPE_WEIGHT_SENSOR) == 0)    return _("kg");
@@ -477,11 +491,11 @@ Eina_Bool
 device_osd_cmnd_send(char *command, char *text, char *delay)
 {
     char *s;
-    asprintf(&s, _("CMND CLASS=osd.basic COMMAND=%s TEXT=%s DELAY=%s"),
+    asprintf(&s, _("CMND CLASS=osd COMMAND=%s TEXT=%s DELAY=%s"),
                     command,
                     text,
                     delay);
-    debug(MSG_XPL, s);
+    debug(MSG_DEVICE_OSD, s);
     FREE(s);
 
     return EINA_TRUE;
@@ -499,7 +513,7 @@ device_control_cmnd_send(Widget *widget)
                     widget_device_id_get(widget),
                     widget_device_type_get(widget),
                     widget_device_current_get(widget));
-    debug(MSG_XPL, s);
+    debug(MSG_DEVICE_CONTROL, s);
 
     return EINA_TRUE;
 }/*device_control_cmnd_send*/
