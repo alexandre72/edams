@@ -26,7 +26,7 @@
 #include <Eet.h>
 #include <Evas.h>
 
-#include "xpl.h"
+#include "device.h"
 #include "action.h"
 #include "widget.h"
 
@@ -74,18 +74,16 @@ const char * widget_group_get(const Widget *widget);
 Widget_Class widget_class_get(const Widget *widget);
 void widget_class_set(Widget *widget, const Widget_Class class);
 
-const char *widget_xpl_device_get(const Widget *widget);
-void widget_xpl_device_set(Widget *widget, const char *xpl_device);
-const char * widget_xpl_type_get(const Widget *widget);
-void widget_xpl_type_set(Widget *widget, const char * xpl_type);
-const char *widget_xpl_current_get(const Widget *widget);
-void widget_xpl_current_set(Widget *widget, const char *xpl_current);
-const char *widget_xpl_data1_get(const Widget *widget);
-void widget_xpl_data1_set(Widget *widget, const char *xpl_data1);
-void widget_xpl_highest_set(Widget *widget, const char *xpl_highest);
-const char * widget_xpl_highest_get(const Widget *widget);
-void widget_xpl_lowest_set(Widget *widget, const char *xpl_lowest);
-const char * widget_xpl_lowest_get(const Widget *widget);
+const char *widget_device_id_get(const Widget *widget);
+void widget_device_id_set(Widget *widget, const char *id);
+const char * widget_device_type_get(const Widget *widget);
+void widget_device_type_set(Widget *widget, const char * type);
+const char *widget_device_current_get(const Widget *widget);
+void widget_device_current_set(Widget *widget, const char *current);
+void widget_device_highest_set(Widget *widget, const char *highest);
+const char * widget_device_highest_get(const Widget *widget);
+void widget_device_lowest_set(Widget *widget, const char *lowest);
+const char * widget_device_lowest_get(const Widget *widget);
 
 void widget_cosm_set(Widget *widget, Eina_Bool cosm);
 Eina_Bool widget_cosm_get(const Widget *widget);

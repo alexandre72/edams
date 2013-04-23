@@ -149,6 +149,11 @@ console_text_add(Message_Type msgtype, const char *msg)
 		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=xpl-logo></item>");
         asprintf(&s, "<b><color=#121cff>%s</b></color><br>", msg);
     }
+    else if(msgtype == MSG_THINGSPEAK)
+    {
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=thingspeak-logo></item>");
+        asprintf(&s, "<b><color=#ff0000>%s</b></color><br>", msg);
+    }   
     else if(msgtype == MSG_ACTION)
     {
         asprintf(&s, "<b><color=#FF04547>ACTION:%s</color></b><br>", msg);

@@ -30,6 +30,7 @@ typedef struct
 {
 	Eina_Stringshare *voicerss_apikey;			/*Voicerss API key account. Eg 'idde778445458778877989'*/
 	Eina_Stringshare *cosm_apikey;			    /*Cosm API key account. Eg 'h0154864887erz8erz8erz7rez'*/
+	Eina_Stringshare *thingspeak_apikey;		/*ThingSpeak API key account. Eg '8575456487yfhghfhghg'*/
 	Eina_Stringshare *global_view_background;   /*Global view background image filename.*/
 	Eina_Stringshare *mbox_path; 			    /*mbox path file. Eg '/home/jdoe/mbox'*/
 	Eina_Stringshare *user_name;                /*User name. Eg 'John Doe'*/
@@ -180,6 +181,36 @@ edams_settings_cosm_apikey_set(const char *cosm_apikey)
     }
 	debug(MSG_INFO, _("Cosm data handling options is %s"), cosm_apikey?_("enabled"):_("disabled"));
 }/*edams_settings_cosm_apikey_set*/
+
+
+/*
+ *
+ */
+const char*
+edams_settings_thingspeak_apikey_get()
+{
+    settings->thingspeak_apikey = NULL;
+	EET_STRING_SETTINGS_READ("edams/thingspeak_apikey",settings->thingspeak_apikey);
+	return settings->thingspeak_apikey;
+}/*edams_settings_thingspeak_apikey_get*/
+
+/*
+ *
+ */
+void
+edams_settings_thingspeak_apikey_set(const char *thingspeak_apikey)
+{
+    if((!thingspeak_apikey) || (strlen(thingspeak_apikey) == 0))
+    {
+        eet_delete(ef, "edams/thingspeak_apikey");
+        thingspeak_apikey = NULL;
+    }
+    else
+    {
+        eet_write(ef, "edams/thingspeak_apikey", thingspeak_apikey, strlen(thingspeak_apikey)+1, 0);
+    }
+	debug(MSG_INFO, _("ThingSpeak data handling options is %s"), thingspeak_apikey?_("enabled"):_("disabled"));
+}/*edams_settings_thingspeak_apikey_set*/
 
 
 /*

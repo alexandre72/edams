@@ -41,14 +41,14 @@ static void _layout_signals_cb(void *data, Evas_Object *obj, const char  *emissi
 static void _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 static void _entry_widget_name_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
-static void _entry_xpl_device_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
-static void _check_cosm_changed_cb(void *data, Evas_Object *obj, void *event_info);
+static void _entry_device_id_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _check_cosm_changed_cb(void *data, Evas_Object *obj, void *event_infxo);
 
 /*Others funcs*/
 static void _layout_samples_test(Evas_Object *layout);
 static void _list_widgets_groups_fill();
-static void _hoversel_xpl_type_fill(Widget_Class class);
-static void _entry_xpl_preview_update();
+static void _hoversel_device_type_fill(Widget_Class class);
+static void _entry_device_preview_update();
 
 /*
  *
@@ -82,8 +82,8 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
         widget_id_set(app->widget, widget_id_get(widget));
         widget_group_set(app->widget, widget_group_get(widget));
         widget_cosm_set(app->widget, widget_cosm_get(widget));
-        widget_xpl_device_set(app->widget, widget_xpl_device_get(widget));
-        widget_xpl_type_set(app->widget, widget_xpl_type_get(widget));
+        widget_device_id_set(app->widget, widget_device_id_get(widget));
+        widget_device_type_set(app->widget, widget_device_type_get(widget));
 
         asprintf(&s, _("Widget '%s' from '%s' has been updated"), widget_name_get(app->widget), location_name_get(app->location));
     }
@@ -110,14 +110,14 @@ _layout_samples_test(Evas_Object *layout)
 	Evas_Coord w, h;
     Widget *sample;
 	char *str;
-    const char *type = widget_xpl_type_get(widget);
+    const char *type = widget_device_type_get(widget);
 
     if (!type) return;
 
-    sample = widget_new("sample", WIDGET_CLASS_XPL_SENSOR_BASIC);
+    sample = widget_new("sample", WIDGET_CLASS_SENSOR);
 	RANDOMIZE();
-	asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(type)));
-	widget_xpl_current_set(sample, str);
+	asprintf(&str, "%d", RANDOM(device_type_current_max_get(type)));
+	widget_device_current_set(sample, str);
     FREE(str);
 
 
@@ -126,7 +126,7 @@ _layout_samples_test(Evas_Object *layout)
 	evas_object_resize(edje, w, h);
 
 	Evas_Object *entry = elm_object_name_find(win, "preview entry", -1);
-	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
+	elm_object_text_set(entry, device_control_basic_cmnd_to_elm_str(widget));
 
     const char *t;
     /*Special widget with drag part, so need to convert device current value to float.*/
@@ -134,15 +134,15 @@ _layout_samples_test(Evas_Object *layout)
     {
     	double level;
     	Edje_Message_Float msg;
-           level =	(double)atoi(widget_xpl_current_get(sample)) / 100;
+           level =	(double)atoi(widget_device_current_get(sample)) / 100;
     	msg.val = level;
     	edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, 1, &msg);
     }
-    edje_object_signal_emit(edje, widget_xpl_current_get(widget), "whole");
+    edje_object_signal_emit(edje, widget_device_current_get(widget), "whole");
 
     elm_object_part_text_set(layout, "title.text", widget_name_get(sample));
 
-	asprintf(&str, "%s%s", widget_xpl_current_get(sample), xpl_type_to_unit_symbol(type) ? xpl_type_to_unit_symbol(type) : "");
+	asprintf(&str, "%s%s", widget_device_current_get(sample), device_type_to_unit_symbol(type) ? device_type_to_unit_symbol(type) : "");
     elm_object_part_text_set(layout, "value.text", str);
     FREE(str);
 
@@ -160,7 +160,7 @@ static void
 _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emission, const char  *source)
 {
     double val = 0;
-    const char *type = widget_xpl_type_get(widget);
+    const char *type = widget_device_type_get(widget);
     char *s = NULL;
 
     if (!type) return;
@@ -194,73 +194,23 @@ _layout_signals_cb(void *data __UNUSED__, Evas_Object *obj, const char  *emissio
     }
 
     /*Scale to device type format*/
-    if(strcmp(type, XPL_TYPE_OUTPUT_CONTROL_BASIC) == 0)
-    {
-            if(val == 0)
-                asprintf(&s, "disable");
-            else
-                asprintf(&s, "enable");
-    }
-    else if(strcmp(type, XPL_TYPE_INPUT_CONTROL_BASIC) == 0)
-    {
-            if(val == 0)
-                asprintf(&s, "disable");
-            else
-                asprintf(&s, "enable");
-    }
-    else if(strcmp(type, XPL_TYPE_MUTE_CONTROL_BASIC) == 0)
-    {
-        if(val == 0)
-            asprintf(&s, "no");
-        else
-            asprintf(&s, "yes");
-    }
-    else if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
+    if(strcmp(type, DEVICE_TYPE_SLIDER_CONTROL) == 0)
     {
         val = (val * 100);
         asprintf(&s, "%d%%", (int)val);
     }
-    /*
-    else if(strcmp(type, XPL_TYPE_BALANCE_CONTROL_BASIC) == 0)
-    {
-        val = (val * 100);
-
-        if(val < 50)
-        {
-            int t = val;
-
-            val = 0;
-            val = val - t;
-        }
-        else if(val == 50)
-        {
-            val = 0;
-        }
-
-        asprintf(&s, "%d", (int)val);
-    }
-    */
     else
     {
         asprintf(&s, "%d", (int)val);
     }
 
-    widget_xpl_current_set(widget, s);
+    widget_device_current_set(widget, s);
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
 
-    _entry_xpl_preview_update();
+    _entry_device_preview_update();
 }/*_layout_signals_cb*/
 
-/*
- *
- */
-static void
-_entry_xpl_preview_update()
-{
-	Evas_Object *entry = elm_object_name_find(win, "preview entry", -1);
-   	elm_object_text_set(entry, xpl_control_basic_cmnd_to_elm_str(widget));
-}/*_entry_xpl_preview_update*/
 
 
 /*
@@ -279,12 +229,12 @@ _list_item_group_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     	widget_group_set(widget, group);
     }
 
-    /*If widget is xPL sensor.basic then load random sample data*/
-    if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)
+    /*If widget device is set to sensor then load random sample data*/
+    if(class == WIDGET_CLASS_SENSOR)
     {
 	    _layout_samples_test(layout);
     }
-	else if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
+	else if(class == WIDGET_CLASS_CONTROL)
 	{
 		elm_layout_signal_callback_add(layout, "*", "*", _layout_signals_cb, NULL);
 	}
@@ -305,12 +255,11 @@ _entry_widget_name_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED_
  *
  */
 static void
-_entry_xpl_device_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_entry_device_id_changed_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
-    widget_xpl_device_set(widget, elm_object_text_get(obj));
-    _entry_xpl_preview_update();
-}/*_entry_xpl_device_changed_cb*/
-
+    widget_device_id_set(widget, elm_object_text_get(obj));
+    _entry_device_preview_update();
+}/*_entry_device_id_changed_cb*/
 
 
 /*
@@ -321,10 +270,9 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
 {
     Widget_Class class = (Widget_Class)data;
     Evas_Object *widget_entry = elm_object_name_find(win, "widget name entry", -1);
-    Evas_Object *device_frame = elm_object_name_find(win, "xpl device frame", -1);
-    Evas_Object *device_entry = elm_object_name_find(win, "xpl device entry", -1);
-    Evas_Object *hoversel = elm_object_name_find(win, "xpl type hoversel", -1);
-    Evas_Object *preview_frame = elm_object_name_find(win, "xpl preview frame", -1);
+    Evas_Object *device_frame = elm_object_name_find(win, "device id frame", -1);
+    Evas_Object *device_entry = elm_object_name_find(win, "device id entry", -1);
+    Evas_Object *hoversel = elm_object_name_find(win, "device type hoversel", -1);
 	Evas_Object *layout = elm_object_name_find(win, "widget layout", -1);
 	Evas_Object *cosm_check = elm_object_name_find(win, "cosm check", -1);
 
@@ -342,20 +290,20 @@ _list_item_class_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *eve
     widget_class_set(widget, class);
     elm_object_text_set(widget_entry, widget_name_get(widget));
 
-    if((class == WIDGET_CLASS_XPL_SENSOR_BASIC) ||
-        (class == WIDGET_CLASS_XPL_CONTROL_BASIC))
+    if((class == WIDGET_CLASS_SENSOR) ||
+        (class == WIDGET_CLASS_CONTROL))
     {
         evas_object_show(cosm_check);
         evas_object_show(preview_frame);
         evas_object_show(device_frame);
         evas_object_show(hoversel);
 
-        _hoversel_xpl_type_fill(class);
+        _hoversel_device_type_fill(class);
 
         if(app->widget)
         {
-            elm_object_text_set(device_entry, widget_xpl_device_get(widget));
-            elm_object_text_set(hoversel, widget_xpl_type_get(widget));
+            elm_object_text_set(device_entry, widget_device_id_get(widget));
+            elm_object_text_set(hoversel, widget_device_type_get(widget));
             elm_check_state_set(cosm_check, widget_cosm_get(widget));
         }
         else
@@ -430,8 +378,7 @@ static void
 _hoversel_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
 	elm_object_text_set(obj, elm_object_item_text_get(event_info));
-    widget_xpl_type_set(widget, elm_object_item_text_get(event_info));
-    _entry_xpl_preview_update();
+    widget_device_type_set(widget, elm_object_item_text_get(event_info));
 }/*_hoversel_selected_cb*/
 
 
@@ -449,51 +396,41 @@ _check_cosm_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info
  *
  */
 static void
-_hoversel_xpl_type_fill(Widget_Class class)
+_hoversel_device_type_fill(Widget_Class class)
 {
-    Evas_Object *hoversel = elm_object_name_find(win, "xpl type hoversel", -1);
+    Evas_Object *hoversel = elm_object_name_find(win, "device type hoversel", -1);
     elm_hoversel_clear(hoversel);
-    elm_object_text_set(hoversel, _("xPL type"));
+    elm_object_text_set(hoversel, _("Device type"));
 
-    if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)
+    if(class == WIDGET_CLASS_CONTROL)
     {
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_BALANCE_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_FLAG_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_INFRARED_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_INPUT_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_MACRO_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_MUTE_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_OUTPUT_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_VARIABLE_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_PERIODIC_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_SCHEDULED_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_SLIDER_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-	    elm_hoversel_item_add(hoversel, XPL_TYPE_TIMER_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+	    elm_hoversel_item_add(hoversel, DEVICE_TYPE_OUTPUT_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+	    elm_hoversel_item_add(hoversel, DEVICE_TYPE_SLIDER_CONTROL_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
 	}
-	else if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)
+	else if(class == WIDGET_CLASS_SENSOR)
 	{
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_BATTERY_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_COUNT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_CURRENT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_DIRECTION_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_DISTANCE_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_ENERGY_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_FAN_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_GENERIC_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_HUMIDITY_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_INPUT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_OUTPUT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_POWER_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_PRESSURE_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_SETPOINT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_SPEED_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_TEMP_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_UV_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_VOLTAGE_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_VOLUME_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
-    	elm_hoversel_item_add(hoversel, XPL_TYPE_WEIGHT_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_BATTERY_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_COUNT_SENSOR_, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_CURRENT_SENSOR_, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_DIRECTION_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_DISTANCE_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_ENERGY_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_FAN_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_GENERIC_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_HUMIDITY_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_INPUT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_OUTPUT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_POWER_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_PRESSURE_SENSOR ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_SETPOINT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_SPEED_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_TEMP_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_UV_SENSOR_BASIC, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_VOLTAGE_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_VOLUME_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
+    	elm_hoversel_item_add(hoversel, DEVICE_TYPE_WEIGHT_SENSOR, ELM_ICON_NONE, ELM_ICON_NONE, NULL, NULL);
 	}
-}/*_hoversel_xpl_type_fill*/
+}/*_hoversel_device_type_fill*/
 
 
 
@@ -515,7 +452,7 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
     {
     	asprintf(&s, _("Add a new widget to '%s' location"),
     	                location_name_get(app->location));
-        widget = widget_new(NULL, WIDGET_CLASS_XPL_SENSOR_BASIC);
+        widget = widget_new(NULL, WIDGET_CLASS_SENSOR);
     }
     else
     {
@@ -526,8 +463,8 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
         widget_id_set(widget, widget_id_get(app->widget));
         widget_group_set(widget, widget_group_get(app->widget));
         widget_cosm_set(widget, widget_cosm_get(app->widget));
-        widget_xpl_device_set(widget, widget_xpl_device_get(app->widget));
-        widget_xpl_type_set(widget, widget_xpl_type_get(app->widget));
+        widget_device_id_set(widget, widget_device_id_get(app->widget));
+        widget_device_type_set(widget, widget_device_type_get(app->widget));
     }
 
 
@@ -566,21 +503,21 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 	evas_object_smart_callback_add(entry, "changed", _entry_widget_name_changed_cb, NULL);
 
 	frame = elm_frame_add(win);
-	evas_object_name_set(frame, "xpl device frame");
-	elm_object_text_set(frame, _("xPL device"));
+	evas_object_name_set(frame, "device id frame");
+	elm_object_text_set(frame, _("Device id"));
     elm_grid_pack(grid, frame, 43, 12, 50, 10);
 
 	entry = elm_entry_add(win);
-	evas_object_name_set(entry, "xpl device entry");
+	evas_object_name_set(entry, "device id entry");
 	elm_entry_scrollable_set(entry, EINA_TRUE);
 	elm_entry_editable_set(entry, EINA_TRUE);
 	elm_entry_single_line_set(entry, EINA_TRUE);
 	elm_object_content_set(frame, entry);
-    evas_object_smart_callback_add(entry, "changed", _entry_xpl_device_changed_cb, NULL);
+    evas_object_smart_callback_add(entry, "changed", _entry_device_id_changed_cb, NULL);
 
    	hoversel = elm_hoversel_add(grid);
-   	evas_object_name_set(hoversel, "xpl type hoversel");
-   	elm_object_text_set(hoversel, _("xPL type"));
+   	evas_object_name_set(hoversel, "device type hoversel");
+   	elm_object_text_set(hoversel, _("Device type"));
     elm_grid_pack(grid, hoversel, 43, 23, 50, 6);
     evas_object_smart_callback_add(hoversel, "selected", _hoversel_selected_cb, NULL);
 
@@ -604,21 +541,6 @@ widget_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
    	evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_object_content_set(frame, layout);
 	evas_object_show(layout);
-
-	frame = elm_frame_add(win);
-    evas_object_name_set(frame, "xpl preview frame");
-	elm_object_text_set(frame, _("xPL scheme preview"));
-	elm_grid_pack(grid, frame, 1, 66, 42, 20);
-	evas_object_show(frame);
-
-    entry = elm_entry_add(win);
-    evas_object_name_set(entry, "preview entry");
-   	elm_entry_scrollable_set(entry, EINA_FALSE);
-    elm_entry_editable_set(entry, EINA_FALSE);
-   	evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   	evas_object_size_hint_align_set( entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_object_content_set(frame,  entry);
-	evas_object_show(entry);
 
 	frame = elm_frame_add(win);
 	elm_object_text_set(frame, _("Widgets"));

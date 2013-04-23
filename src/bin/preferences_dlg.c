@@ -62,6 +62,9 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
 	edams_settings_cosm_apikey_set(elm_object_text_get(entry));
 
+	entry = elm_object_name_find(win, "thingspeak api key entry", -1);
+	edams_settings_cosm_apikey_set(elm_object_text_get(entry));
+
 	entry = elm_object_name_find(win, "voicerss api key entry", -1);
 	edams_settings_voicerss_apikey_set(elm_object_text_get(entry));
 
@@ -317,8 +320,22 @@ _services_settings_content()
     elm_object_text_set(entry, edams_settings_cosm_apikey_get());
 
     frame = elm_frame_add(win);
-    elm_object_text_set(frame, _("Voicerss API key:"));
+    elm_object_text_set(frame, _("ThingSpeak API key:"));
     elm_grid_pack(grid, frame, 1, 16, 99, 15);
+    evas_object_show(frame);
+
+    entry = elm_entry_add(win);
+    evas_object_name_set(entry, "thingspeak api key entry");
+    elm_entry_scrollable_set(entry, EINA_TRUE);
+    elm_entry_editable_set(entry, EINA_TRUE);
+    elm_entry_single_line_set(entry, EINA_TRUE);
+    evas_object_show(entry);
+    elm_object_content_set(frame, entry);
+    elm_object_text_set(entry, edams_settings_thingspeak_apikey_get());
+
+    frame = elm_frame_add(win);
+    elm_object_text_set(frame, _("Voicerss API key:"));
+    elm_grid_pack(grid, frame, 1, 31, 99, 15);
     evas_object_show(frame);
 
     entry = elm_entry_add(win);

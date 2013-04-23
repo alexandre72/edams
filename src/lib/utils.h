@@ -53,6 +53,7 @@ typedef enum
     MSG_ACTION,
     MSG_COSM,
     MSG_VOICERSS,
+    MSG_THINGSPEAK,
     MSG_E
 } Message_Type;
 

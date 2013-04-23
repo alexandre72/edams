@@ -28,6 +28,7 @@ images
 	image: "icons/grapher-logo.png" COMP;
 	image: "icons/info-logo.png" COMP;
     image: "icons/osd-action.png" COMP;
+	image: "icons/thingspeak-logo.png" COMP;
     image: "icons/voice-action.png" COMP;
     image: "icons/voicerss-logo.png" COMP;
 	image: "icons/xpl-logo.png" COMP;
@@ -122,6 +123,7 @@ ICON("elm/icon/error-logo/default", "icons/error-logo.png")
 ICON("elm/icon/geolocated-logo/default", "icons/geolocated-logo.png")
 ICON("elm/icon/grapher-logo/default", "icons/grapher-logo.png")
 ICON("elm/icon/info-logo/default", "icons/info-logo.png")
+ICON("elm/icon/thingspeak-logo/default", "icons/thingspeak-logo.png")
 ICON("elm/icon/voicerss-logo/default", "icons/voicerss-logo.png")
 ICON("elm/icon/xpl-logo/default", "icons/xpl-logo.png")
 

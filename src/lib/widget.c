@@ -30,8 +30,8 @@ widget_str_to_class(const char *str)
 {
 	if(!str) return WIDGET_CLASS_UNKNOWN;
 
-	if(strcmp(str, "sensor.basic") == 0) 			return WIDGET_CLASS_XPL_SENSOR_BASIC;
-	else if(strcmp(str, "control.basic") == 0)		return WIDGET_CLASS_XPL_CONTROL_BASIC;
+	if(strcmp(str, "sensor") == 0) 			return WIDGET_CLASS_SENSOR;
+	else if(strcmp(str, "control") == 0)		return WIDGET_CLASS_CONTROL;
 	else if(strcmp(str, "virtual") == 0)			return WIDGET_CLASS_VIRTUAL;
     else return WIDGET_CLASS_UNKNOWN;
 }/*widget_str_to_class*/
@@ -44,8 +44,8 @@ widget_str_to_class(const char *str)
 const char *
 widget_class_to_str(Widget_Class class)
 {
-	if(class == WIDGET_CLASS_XPL_SENSOR_BASIC)				return "sensor.basic";
-	else if(class == WIDGET_CLASS_XPL_CONTROL_BASIC)		return "control.basic";
-	else if(class == WIDGET_CLASS_VIRTUAL)				return "virtual";
-	else 									            return NULL;
+	if(class == WIDGET_CLASS_SENSOR)			return "sensor";
+	else if(class == WIDGET_CLASS_CONTROL)		return "control";
+	else if(class == WIDGET_CLASS_VIRTUAL)		return "virtual";
+	else 									    return NULL;
 }/*widget_class_to_str*/
