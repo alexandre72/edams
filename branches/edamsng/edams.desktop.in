@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Edams
+GenericName=Enlightened Domotics Alarm Monitoring System
+Comment=EDAMS is a tool to monitoring and process various sensors via atmega serial data...
+Comment[fr]=EDAMS est un outil utilisé pour visualiser et traiter les informations en provenance des divers capteurs par l'intermédiaire d'une liaison série atmega.
+Exec=@prefix@/bin/edams
+Icon=edams
+Type=Application
+Terminal=false
+Encoding=UTF-8
+Categories=AudioVideo;

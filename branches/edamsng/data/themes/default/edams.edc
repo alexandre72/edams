@@ -1,0 +1,138 @@
+/*
+ * edams.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+images
+{
+	image: "icons/cosm-logo.png" COMP;
+	image: "icons/debug-action.png" COMP;
+	image: "icons/e-logo.png" COMP;
+    image: "icons/error-logo.png" COMP;
+	image: "icons/geolocated-logo.png" COMP;
+	image: "icons/grapher-logo.png" COMP;
+	image: "icons/info-logo.png" COMP;
+    image: "icons/osd-action.png" COMP;
+	image: "icons/thingspeak-logo.png" COMP;
+    image: "icons/voice-action.png" COMP;
+    image: "icons/voicerss-logo.png" COMP;
+	image: "icons/xpl-logo.png" COMP;
+	image: "cursors/left_ptr.png" COMP;
+	image: "cursors/dotbox.png" COMP;
+	image: "cursors/grab.png" COMP;
+	image: "cursors/grabbing.png" COMP;
+
+    image: "updated.png" COMP;
+    image: "division_line.png" COMP;
+    image: "icon_max.png" COMP;
+    image: "icon_min.png" COMP;
+}/*images*/
+
+fonts
+{
+    font: "DS-Digital_Bold_Italic.ttf" "digital";
+}/*font*/
+
+
+collections
+{
+#define ICON_REL() \
+	rel1 {relative, 0.0 0.0; offset, 2 2;} \
+	rel2 {relative, 0.0 0.0; offset, 50 50;}
+
+#include "about.edc"
+#include "clock.edc"
+#include "clockbling.edc"
+#include "counter.edc"
+#include "door.edc"
+#include "home.edc"
+#include "jauge.edc"
+#include "led.edc"
+#include "lightbulb.edc"
+#include "lock.edc"
+#include "mail.edc"
+#include "mailbox.edc"
+#include "monitor.edc"
+#include "mute.edc"
+#include "sign.edc"
+#include "slider.edc"
+#include "switch.edc"
+#include "switch2.edc"
+#include "text.edc"
+#include "thermometer.edc"
+
+#define ICON(_name, _file)	\
+    group \
+    {  \
+	    name: _name; \
+        min: 32 32;  \
+        parts  \
+        {  \
+            part  \
+            {  \
+			    type: IMAGE;  \
+                description  \
+                {  \
+                  	aspect: 1 1;  \
+                 	aspect_preference: BOTH; \
+            	    state: "default" 0;  \
+		   		    image.normal: _file;  \
+                } \
+            }  \
+        } \
+    }  \
+
+#define CURSOR(_name, _file)	\
+    group \
+    { \
+        name: _name; \
+        parts \
+        { \
+            part \
+            { \
+                type: IMAGE; \
+                mouse_events: 0; \
+                description \
+                { \
+                    state: "default" 0; \
+                    image.normal: _file; \
+                } \
+         } \
+      } \
+    } \
+
+
+ICON("elm/icon/cosm-logo/default", "icons/cosm-logo.png")
+ICON("elm/icon/e-logo/default", "icons/e-logo.png")
+ICON("elm/icon/error-logo/default", "icons/error-logo.png")
+ICON("elm/icon/geolocated-logo/default", "icons/geolocated-logo.png")
+ICON("elm/icon/grapher-logo/default", "icons/grapher-logo.png")
+ICON("elm/icon/info-logo/default", "icons/info-logo.png")
+ICON("elm/icon/thingspeak-logo/default", "icons/thingspeak-logo.png")
+ICON("elm/icon/voicerss-logo/default", "icons/voicerss-logo.png")
+ICON("elm/icon/xpl-logo/default", "icons/xpl-logo.png")
+
+ICON("elm/icon/debug-action/default", "icons/debug-action.png")
+ICON("elm/icon/osd-action/default", "icons/osd-action.png")
+ICON("elm/icon/voice-action/default", "icons/voice-action.png")
+
+CURSOR("cursors/left_ptr",  "cursors/left_ptr.png")
+CURSOR("cursors/grab",  "cursors/grab.png")
+CURSOR("cursors/grabbing",  "cursors/grabbing.png")
+CURSOR("cursors/dotbox",  "cursors/dotbox.png")
+}/*collections*/

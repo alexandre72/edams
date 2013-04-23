@@ -1,0 +1,168 @@
+/*
+ * about.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2012 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+group
+{
+      name: "about";
+      images
+      {
+         image: "title.png" COMP;
+         image: "logo.png" COMP;
+      }
+      parts
+      {
+	    part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }/*whole*/
+         part
+         {
+            name: "title";
+            type: IMAGE;
+            clip_to: "whole";
+            mouse_events: 0;
+            description
+            {
+			   	state: "default" 0.0;
+               	visible: 1;
+                aspect: 1.0 1.0;
+				rel1.relative: 0.2 0.2;
+				rel2.relative: 0.8 0.8;
+               image.normal: "title.png";
+            }
+           }/*title*/
+        part
+         {
+            name: "logo";
+            clip_to: "whole";
+            description
+            {
+			   	state: "default" 0.0;
+               	visible: 1;
+				aspect_preference: BOTH;
+				rel1.relative: 0.00 0.00;
+				rel2.relative: 1.0 1.0;
+               	image.normal: "logo.png";
+            }
+            description
+            {
+				state: "show" 0.0;
+                inherit: "default";
+				rel1.relative: 0.00 0.00;
+				rel2.relative: 1.04 1.04;
+             }
+         }/*logo*/
+		part
+		{
+            name: "authors";
+            type: TEXT;
+            clip_to: "whole";
+            effect: SOFT_SHADOW;
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.77;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "Alexandre Dussart <alexandre.dussart@laposte.net>";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+		    }/*authors*/
+		}
+
+         part
+         {
+            name: "over";
+            type: RECT;
+            description
+            {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+      }
+    programs
+    {
+		program
+		{
+            signal: "load";
+            source: "";
+            in: 2.0 0.0;
+            after: "logo_show";
+		}
+		program
+        {
+            name: "text_show";
+            signal: "animation,start";
+            source: "";
+            action: STATE_SET "default" 0.0;
+		    transition: SINUSOIDAL 0.1;
+            target: "title";
+            after: "logo_show";
+        }
+		program
+        {
+            name: "logo_show";
+            signal: "animation,start";
+            source: "";
+            action: STATE_SET "show" 0.0;
+		    transition: SINUSOIDAL 0.2;
+            target: "logo";
+            after: "logo_hide";
+        }
+		program
+        {
+            name: "logo_hide";
+            signal: "animation,start";
+            source: "";
+            action: STATE_SET "hide" 0.0;
+		    transition: SINUSOIDAL 0.2;
+            target: "logo";
+            after: "logo_show";
+        }
+		program
+        {
+            name: "updated,start";
+            signal: "updated";
+            source: "whole";
+            action: STATE_SET "show" 0.0;
+			transition: SINUSOIDAL 3.0;
+            target: "logo";
+            after: "hover2";
+         }
+         program
+         {
+            name: "hover2";
+            source: "whole";
+            action: STATE_SET "default" 0.0;
+            target: "logo";
+         }
+      }
+}/*group about*/

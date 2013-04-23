@@ -1,0 +1,15 @@
+=>Interfacer http://emoncms.org/ avec EDAMS(web api possible?)
+
+=>Monitoring capteurs DS18B20,DHT11,PIR,ouvertures fenêtres,gaz,compteur téléinfo EDF ou par capteur opto voir possiblités,compteur EAU...
+
+=>Liaison I2C ou 1wire pour limiter le nombre de fils. Communication via I2C atmega slaves=> 1 atmega+PC master.
+=>Système de plugins permettant activation et configuration options (capteurs,transmetteur FM...).
+=>Plugin enregistrement des données + graph.
+=>Envoi SMS(gel,consommation elec, conso eau, intrusion).
+
+=>Interfaces Elementary+Edje.
+=>Possibilité télécharger nouveau plugins via web.
+
+DONE=>Construction d'un site web pour promotion d'EDAMS(http://code.google.com/edams)
+DONE=>Intégration Protocole xPL
+DONE=>Vocalisation(voicerss.org)

@@ -1,0 +1,2790 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <alexandre.dussart@laposte.net>, YEAR.
+# Alexandre Dussart <alexandre.dussart@laposte.net>, 2011, 2012, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: FriLogos 0.1\n"
+"Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
+"POT-Creation-Date: 2013-03-26 20:09+0100\n"
+"PO-Revision-Date: 2013-03-13 13:43+0100\n"
+"Last-Translator: Alexandre Dussart <alexandre.dussart@laposte.net>\n"
+"Language-Team: français <alexandre.dussart@laposte.net>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: src/bin/about_dlg.c:37
+msgid "About E.D.A.M.S..."
+msgstr "A propos d'E.D.A.M.S..."
+
+#: src/bin/about_dlg.c:64 src/bin/actions_editor.c:547
+#: src/bin/cmnd_editor.c:271 src/bin/debug_editor.c:103
+#: src/bin/exec_editor.c:165 src/bin/locations_creator.c:342
+#: src/bin/mail_editor.c:139 src/bin/osd_editor.c:123
+#: src/bin/preferences_dlg.c:498 src/bin/scheduler_editor.c:669
+#: src/bin/voice_editor.c:149 src/bin/widget_editor.c:653 src/lib/utils.c:117
+msgid "Close"
+msgstr "Fermer"
+
+#: src/bin/actions_editor.c:214 src/bin/scheduler_editor.c:198
+msgid "[EDAMS]About..."
+msgstr "[EDAMS]A propos de..."
+
+#: src/bin/actions_editor.c:371
+#, c-format
+msgid "If %s %s then %s"
+msgstr "Si %s %s alors %s"
+
+#: src/bin/actions_editor.c:425
+#, c-format
+msgid "Edit actions for '%s' xPL sensor.basic"
+msgstr "Éditer actions pour le sensor.basic xPL '%s'"
+
+#: src/bin/actions_editor.c:438
+msgid "Actions list"
+msgstr "Liste des actions"
+
+#: src/bin/actions_editor.c:487 src/bin/scheduler_editor.c:604
+msgid "Action"
+msgstr "Action"
+
+#: src/bin/actions_editor.c:525 src/bin/edams.c:452 src/bin/edams.c:651
+#: src/bin/scheduler_editor.c:647
+msgid "Add"
+msgstr "Ajouter"
+
+#: src/bin/actions_editor.c:536 src/bin/edams.c:462 src/bin/edams.c:662
+#: src/bin/scheduler_editor.c:658
+msgid "Remove"
+msgstr "Supprimer"
+
+#: src/bin/cmnd_editor.c:189
+msgid "Edit xPL control.basic CMND"
+msgstr "Éditer xpl-cmnd control.basic"
+
+#: src/bin/cmnd_editor.c:201
+msgid "Select control.basic:"
+msgstr "Sélection control.basic:"
+
+#: src/bin/cmnd_editor.c:226
+msgid "Widget set to"
+msgstr "Widget défini à"
+
+#: src/bin/cmnd_editor.c:238
+msgid "xPL CMND Preview"
+msgstr "Aperçu xpl-cmnd"
+
+#: src/bin/cmnd_editor.c:261 src/bin/debug_editor.c:93
+#: src/bin/exec_editor.c:155 src/bin/locations_creator.c:331
+#: src/bin/mail_editor.c:129 src/bin/osd_editor.c:113
+#: src/bin/preferences_dlg.c:487 src/bin/voice_editor.c:139
+#: src/bin/widget_editor.c:642
+msgid "Ok"
+msgstr "Ok"
+
+#: src/bin/debug_editor.c:59
+msgid "Edit debug message"
+msgstr "Éditer message de débogage"
+
+#: src/bin/debug_editor.c:71 src/bin/voice_editor.c:91
+msgid "Message:"
+msgstr "Message:"
+
+#: src/bin/edams.c:190
+msgid "Can't remove:no location selected!"
+msgstr "Impossible de supprimer:aucun emplacement sélectionné!"
+
+#: src/bin/edams.c:203
+#, c-format
+msgid "Location '%s' have been removed"
+msgstr "L'emplacement '%s' a été supprimé"
+
+#: src/bin/edams.c:225
+msgid "Can't remove widget:no location selected!"
+msgstr "Impossible de supprimer un widget:aucun emplacement sélectionné!"
+
+#: src/bin/edams.c:240
+#, c-format
+msgid "Widget '%s' have been removed from '%s' location's"
+msgstr "Le widget '%s' a été supprimé de l'emplacement '%s'"
+
+#: src/bin/edams.c:377
+#, c-format
+msgid "Name:%s<br>Cosm feedid:%d"
+msgstr "Nom:%s<br>Id flux Cosm:%d"
+
+#: src/bin/edams.c:391 src/bin/widget_editor.c:595
+msgid "Widgets"
+msgstr "Widgets"
+
+#: src/bin/edams.c:432
+msgid "Edit"
+msgstr "Éditer"
+
+#: src/bin/edams.c:442
+msgid "Actions"
+msgstr "Actions"
+
+#: src/bin/edams.c:534
+#, c-format
+msgid "[31mERROR:[0mCan't parse command line options!\n"
+msgstr ""
+"[31mERREUR:[0m Impossible de parcourir les options de la ligne de commande!\n"
+
+#: src/bin/edams.c:547
+#, c-format
+msgid "[31mERROR:[0mCan't calloc App_Info struct!\n"
+msgstr "[31mERREUR:[0m Impossible d'allouer App_Info struct!\n"
+
+#: src/bin/edams.c:562
+#, fuzzy
+msgid "Can't parse action data"
+msgstr "Impossible de parcourir les données de l'action"
+
+#: src/bin/edams.c:570
+#, fuzzy
+msgid "Can't parse action type"
+msgstr "Impossible de parcourir le type d'action"
+
+#: src/bin/edams.c:588
+msgid "Enlightened Domotics Alarm Monitoring System"
+msgstr "Enlightened Domotics Alarm Monitoring System"
+
+#: src/bin/edams.c:607
+msgid "Global View"
+msgstr "Vue globale"
+
+#: src/bin/edams.c:608
+msgid "Scheduler Editor"
+msgstr "Gestionnaire d'événements"
+
+#: src/bin/edams.c:609
+msgid "Preferences"
+msgstr "Préférences"
+
+#: src/bin/edams.c:610
+msgid "About"
+msgstr "A propos"
+
+#: src/bin/edams.c:611
+msgid "Quit"
+msgstr "Quitter"
+
+#: src/bin/edams.c:632
+msgid "Locations"
+msgstr "Emplacements"
+
+#: src/bin/edams.c:739
+#, c-format
+msgid "Welcome to EDAMS v%s - %02d/%02d/%d"
+msgstr "Bienvenue dans EDAMS v%s - %02d/%02d/%d"
+
+#: src/bin/exec_editor.c:82
+msgid "Select a program"
+msgstr "Sélectionner un programme"
+
+#: src/bin/exec_editor.c:97
+#, fuzzy
+msgid "Edit exec"
+msgstr "Éditer l'exécution du programme"
+
+#: src/bin/exec_editor.c:109
+msgid "Exec:"
+msgstr "Exec:"
+
+#: src/bin/exec_editor.c:127 src/bin/locations_creator.c:258
+#: src/bin/preferences_dlg.c:251
+msgid "Open..."
+msgstr "Ouvrir..."
+
+#: src/bin/exec_editor.c:140
+msgid "Exec in terminal"
+msgstr "Exécuter dans un terminal"
+
+#: src/bin/global_view.c:66 src/bin/global_view.c:75
+#, c-format
+msgid "No widget data for object %p (%s)"
+msgstr "Pas de données pour l'object widget %p (%s)"
+
+#: src/bin/global_view.c:181
+msgid "Can't create Edje object"
+msgstr "Impossible de créer un objet Edje_Object!"
+
+#: src/bin/global_view.c:187
+#, fuzzy, c-format
+msgid "Can't load Edje cursor '%s' from '%s'"
+msgstr "Impossible de charger le curseur '%s' du fichier '%s'"
+
+#: src/bin/global_view.c:590 src/bin/global_view.c:893
+#, fuzzy
+msgid "Can't create Edje_Object object"
+msgstr "Impossible de créer un objet Edje_Object!"
+
+#: src/bin/global_view.c:596 src/bin/global_view.c:899
+#, c-format
+msgid "Can't load group Edje group '%s' from Edje file '%s'"
+msgstr "Impossible de charger le groupe Edje group '%s' du fichier Edje '%s'"
+
+#: src/bin/global_view.c:678
+#, c-format
+msgid "Global view edition has been %s\n"
+msgstr "L'édition de la vue globale a été %s\n"
+
+#: src/bin/global_view.c:962
+#, fuzzy
+msgid "Can't construct Ecore_Evas object"
+msgstr "Impossible de construire un Ecore_Evas!"
+
+#: src/bin/global_view.c:970 src/bin/preferences_dlg.c:455
+#: src/bin/preferences_dlg.c:456
+msgid "Global view"
+msgstr "Vue globale"
+
+#: src/bin/global_view.c:977
+#, c-format
+msgid "Using Ecore_Evas '%s' engine"
+msgstr "Utilisation du moteur Ecore_Evas '%s'"
+
+#: src/bin/global_view.c:993
+#, c-format
+msgid "Can't load image file from '%s'"
+msgstr "Impossible de charger une image du fichier '%s'"
+
+#: src/bin/init.c:47
+#, fuzzy
+msgid "Can't init Eina"
+msgstr "Impossible d'initialiser Eina!"
+
+#: src/bin/init.c:56
+#, fuzzy
+msgid "Can't init Ecore_Con or Ecore_Con_Url"
+msgstr "Impossible d'initialiser Ecore_Con ou Ecore_Con_Url"
+
+#: src/bin/init.c:62
+msgid "Ecore_Con_Url pipeline has been enabled"
+msgstr "Le pipeline Ecore_Con_Url a été activé"
+
+#: src/bin/init.c:71
+#, fuzzy
+msgid "Can't init Elementary"
+msgstr "Impossible d'initialiser Elementary"
+
+#: src/bin/locations_creator.c:122
+#, c-format
+msgid "Location %s has been created."
+msgstr "L'emplacement %s a été créée."
+
+#: src/bin/locations_creator.c:166 src/bin/preferences_dlg.c:181
+msgid "Select a picture file"
+msgstr "Sélectionner un fichier image..."
+
+#: src/bin/locations_creator.c:226
+msgid "Add a location"
+msgstr "Ajouter un emplacement "
+
+#: src/bin/locations_creator.c:238
+msgid "Photo"
+msgstr "Photo"
+
+#: src/bin/locations_creator.c:270
+msgid "Name:"
+msgstr "Nom:"
+
+#: src/bin/locations_creator.c:283
+msgid "Geolocalization:"
+msgstr "Géolocalisation:"
+
+#: src/bin/locations_creator.c:313
+msgid "Go to"
+msgstr "Aller à"
+
+#: src/bin/mail_editor.c:58
+msgid "Edit mail"
+msgstr "Éditer mail"
+
+#: src/bin/mail_editor.c:70
+msgid "From:"
+msgstr "De:"
+
+#: src/bin/mail_editor.c:83
+msgid "To:"
+msgstr "A:"
+
+#: src/bin/mail_editor.c:95
+msgid "Subject:"
+msgstr "Sujet:"
+
+#: src/bin/mail_editor.c:107
+msgid "Body:"
+msgstr "Message:"
+
+#: src/bin/osd_editor.c:55
+msgid "Edit xPL osd.basic CMND"
+msgstr "Éditer xpl-cmnd osd.basic"
+
+#: src/bin/osd_editor.c:67
+msgid "Command:"
+msgstr "Commande:"
+
+#: src/bin/osd_editor.c:80
+msgid "Text:"
+msgstr "Texte:"
+
+#: src/bin/osd_editor.c:92
+msgid "Delay:"
+msgstr "Délai:"
+
+#: src/bin/osd_editor.c:97
+#, fuzzy, c-format
+msgid "%1.0f seconds"
+msgstr "%1.0f secondes"
+
+#: src/bin/preferences_dlg.c:107
+msgid "User name:"
+msgstr "Nom de l'utilisateur:"
+
+#: src/bin/preferences_dlg.c:121
+msgid "User mail:"
+msgstr "Mail de l'utilisateur:"
+
+#: src/bin/preferences_dlg.c:198
+#, c-format
+msgid "Can't open Eet file '%s' in rw mode"
+msgstr "Impossible d'ouvrir le fichier Eet '%s' en mode lecture-écriture"
+
+#: src/bin/preferences_dlg.c:231
+msgid "Global view background image:"
+msgstr "Fond d'écran vue globale:"
+
+#: src/bin/preferences_dlg.c:266
+msgid "Reset widgets geometry"
+msgstr "Remettre à zéro"
+
+#: src/bin/preferences_dlg.c:274
+msgid "Mbox file path:"
+msgstr "Chemin du fichier mbox"
+
+#: src/bin/preferences_dlg.c:306
+msgid "Cosm API key:"
+msgstr "Clé API Cosm"
+
+#: src/bin/preferences_dlg.c:320
+msgid "Voicerss API key:"
+msgstr "Clé API Voicerss"
+
+#: src/bin/preferences_dlg.c:351
+msgid "xPL software emulation"
+msgstr "Émulation logicielle xPL"
+
+#: src/bin/preferences_dlg.c:358
+msgid "Debug with printf"
+msgstr "Débogage avec printf"
+
+#: src/bin/preferences_dlg.c:405
+msgid "Settings"
+msgstr "Préférences"
+
+#: src/bin/preferences_dlg.c:442
+msgid "Options"
+msgstr "Options"
+
+#: src/bin/preferences_dlg.c:445 src/bin/preferences_dlg.c:446
+msgid "General"
+msgstr "Générales"
+
+#: src/bin/preferences_dlg.c:450 src/bin/preferences_dlg.c:451
+msgid "Services"
+msgstr "Services"
+
+#: src/bin/preferences_dlg.c:460 src/bin/preferences_dlg.c:461
+msgid "Advanced"
+msgstr "Avancées"
+
+#: src/bin/scheduler_editor.c:413
+#, c-format
+msgid "On %s %s %s %s %s"
+msgstr "Le %s %s %s %s %s"
+
+#: src/bin/scheduler_editor.c:456
+msgid "Scheduler editor"
+msgstr "Gestionnaire d'événements"
+
+#: src/bin/scheduler_editor.c:467
+msgid "Events"
+msgstr "Evénements"
+
+#: src/bin/scheduler_editor.c:485
+msgid "Weekday"
+msgstr "Jour de la semaine"
+
+#: src/bin/scheduler_editor.c:492 src/lib/crontab.c:137
+msgid "Sunday"
+msgstr "Dimanche"
+
+#: src/bin/scheduler_editor.c:493 src/lib/crontab.c:138
+msgid "Monday"
+msgstr "Lundi"
+
+#: src/bin/scheduler_editor.c:494 src/lib/crontab.c:139
+msgid "Tuesday"
+msgstr "Mardi"
+
+#: src/bin/scheduler_editor.c:495 src/lib/crontab.c:140
+msgid "Wednesday"
+msgstr "Mercredi"
+
+#: src/bin/scheduler_editor.c:496 src/lib/crontab.c:141
+msgid "Thursday"
+msgstr "Jeudi"
+
+#: src/bin/scheduler_editor.c:497 src/lib/crontab.c:142
+msgid "Friday"
+msgstr "Vendredi"
+
+#: src/bin/scheduler_editor.c:498 src/lib/crontab.c:143
+msgid "Saturday"
+msgstr "Samedi"
+
+#: src/bin/scheduler_editor.c:499 src/lib/crontab.c:144
+msgid "Every Weekday"
+msgstr "Tous les jours"
+
+#: src/bin/scheduler_editor.c:504
+msgid "Day"
+msgstr "Jour du mois"
+
+#: src/bin/scheduler_editor.c:520 src/lib/crontab.c:85
+msgid "Every Day"
+msgstr "Tous les jours"
+
+#: src/bin/scheduler_editor.c:523
+msgid "Month"
+msgstr "Mois"
+
+#: src/bin/scheduler_editor.c:530 src/lib/crontab.c:105
+msgid "January"
+msgstr "Janvier"
+
+#: src/bin/scheduler_editor.c:531 src/lib/crontab.c:106
+msgid "February"
+msgstr "Février"
+
+#: src/bin/scheduler_editor.c:532 src/lib/crontab.c:107
+msgid "March"
+msgstr "Mars"
+
+#: src/bin/scheduler_editor.c:533 src/lib/crontab.c:108
+msgid "April"
+msgstr "Avril"
+
+#: src/bin/scheduler_editor.c:534 src/lib/crontab.c:109
+msgid "May"
+msgstr "Mai"
+
+#: src/bin/scheduler_editor.c:535 src/lib/crontab.c:110
+msgid "June"
+msgstr "Juin"
+
+#: src/bin/scheduler_editor.c:536 src/lib/crontab.c:111
+msgid "July"
+msgstr "Juillet"
+
+#: src/bin/scheduler_editor.c:537 src/lib/crontab.c:112
+msgid "August"
+msgstr "Août"
+
+#: src/bin/scheduler_editor.c:538 src/lib/crontab.c:113
+msgid "September"
+msgstr "Septembre"
+
+#: src/bin/scheduler_editor.c:539 src/lib/crontab.c:114
+msgid "October"
+msgstr "Octobre"
+
+#: src/bin/scheduler_editor.c:540 src/lib/crontab.c:115
+msgid "November"
+msgstr "Novembre"
+
+#: src/bin/scheduler_editor.c:541 src/lib/crontab.c:116
+msgid "December"
+msgstr "Décembre"
+
+#: src/bin/scheduler_editor.c:542 src/lib/crontab.c:117
+msgid "Every Month"
+msgstr "Tous les mois"
+
+#: src/bin/scheduler_editor.c:548
+msgid "Hour"
+msgstr "Heure"
+
+#: src/bin/scheduler_editor.c:555 src/lib/crontab.c:63
+msgid "12 Midnight"
+msgstr "Minuit"
+
+#: src/bin/scheduler_editor.c:556
+msgid "1 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:557
+msgid "2 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:558
+msgid "3 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:559
+msgid "4 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:560
+msgid "5 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:561
+msgid "6 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:562
+msgid "7 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:563
+msgid "8 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:564
+msgid "9 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:565
+msgid "10 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:566
+msgid "11 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:567 src/lib/crontab.c:64
+msgid "12 Noon"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:568
+msgid "1 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:569
+msgid "2 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:570
+msgid "3 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:571
+msgid "4 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:572
+msgid "5 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:573
+msgid "6 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:574
+msgid "7 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:575
+msgid "8 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:576
+msgid "9 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:577
+msgid "10 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:578
+msgid "11 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:579 src/lib/crontab.c:65
+msgid "Every Hour"
+msgstr "Tous les heures"
+
+#: src/bin/scheduler_editor.c:584
+msgid "Minute"
+msgstr "Minute"
+
+#: src/bin/scheduler_editor.c:600 src/lib/crontab.c:43
+msgid "Every Minute"
+msgstr "Toutes les minutes"
+
+#: src/bin/shutdown.c:42
+msgid "Shutdown Enlightenment Foundation Libraries..."
+msgstr "Extinction des Fondations de Libraries d'Enlightenment..."
+
+#: src/bin/shutdown.c:63
+msgid "Free allocated memory..."
+msgstr "Libération de la mémoire allouée..."
+
+#: src/bin/voice_editor.c:79
+msgid "Edit voice message"
+msgstr "Éditer les messages vocaux"
+
+#: src/bin/voice_editor.c:109
+msgid "Make and play"
+msgstr "Créer et lire"
+
+#: src/bin/voice_editor.c:121
+msgid "Making voice"
+msgstr "Créer la voix"
+
+#: src/bin/widget_editor.c:78
+#, c-format
+msgid "Widget '%s' has been added to '%s'"
+msgstr "Le widget '%s' a été ajouté à '%s'"
+
+#: src/bin/widget_editor.c:83
+#, c-format
+msgid "Widget '%s' from '%s' has been updated"
+msgstr "Le widget '%s' de l'emplacement '%s' a été mis à jour"
+
+#: src/bin/widget_editor.c:435 src/bin/widget_editor.c:554
+msgid "xPL type"
+msgstr "Type xPL"
+
+#: src/bin/widget_editor.c:494
+#, c-format
+msgid "Add a new widget to '%s' location"
+msgstr "Ajouter un nouveau widget à l'emplacement '%s'"
+
+#: src/bin/widget_editor.c:501
+#, c-format
+msgid "Edit widget '%s' from '%s' location"
+msgstr "Éditer widget '%s' de l'emplacement '%s'"
+
+#: src/bin/widget_editor.c:517
+msgid "Widget class"
+msgstr "Classe du widget"
+
+#: src/bin/widget_editor.c:527
+msgid "Widget name"
+msgstr "Nom du widget"
+
+#: src/bin/widget_editor.c:541
+#, fuzzy
+msgid "xPL device"
+msgstr "périphérique xPL"
+
+#: src/bin/widget_editor.c:568 src/lib/myfileselector.c:264
+msgid "Preview"
+msgstr "Aperçu"
+
+#: src/bin/widget_editor.c:581
+#, fuzzy
+msgid "xPL scheme preview"
+msgstr "Aperçu schéma xPL"
+
+#: src/lib/action.c:82 src/lib/sound.c:123
+msgid "Can't create an Ecore_Exec_Pipe process"
+msgstr "Impossible de créer un processus Ecore_Exec_Pipe"
+
+#: src/lib/action.c:93 src/lib/sound.c:132
+msgid "Can't create get PID of Ecore_Exec_Pipe process"
+msgstr "Impossible d'obtenir un PID pour un processus Ecore_Exec_Pipe"
+
+#: src/lib/action.c:102 src/lib/sound.c:138
+#, c-format
+msgid "Exec '%s' with PID '%d'"
+msgstr "Lancement de '%s' avec le PID '%d'"
+
+#: src/lib/action.c:179
+msgid "Can't send mail with sendmail"
+msgstr "Impossible d'envoyer un mail avec sendmail"
+
+#: src/lib/action.c:469
+msgid "Can't execute action with no data passed in arg"
+msgstr "Impossible d'exécuter une action sans données passées en argument"
+
+#: src/lib/action.c:495
+msgid "Can't execute an unknown action"
+msgstr "Impossible d'exécuter une action inconnue"
+
+#: src/lib/action.c:563
+msgid "Send xPL CMND to control.basic"
+msgstr "Envoyer xPL-CMND à control.basic"
+
+#: src/lib/action.c:564
+msgid "Send a mail"
+msgstr "Envoyer un mail"
+
+#: src/lib/action.c:565
+msgid "Execute an external program"
+msgstr "Exécuter un programme externe"
+
+#: src/lib/action.c:566
+msgid "Debug stuff for testing purpose"
+msgstr "Débogage(développement)"
+
+#: src/lib/action.c:567
+msgid "Send xPL CMND to osd.basic"
+msgstr "Envoyer xpl-cmnd osd.basic"
+
+#: src/lib/action.c:568
+msgid "Use synthetized voice to say some message"
+msgstr "Utiliser une voix de synthèse"
+
+#: src/lib/cosm.c:44
+msgid "401 Not Authorized"
+msgstr "401 Accès non autorisé"
+
+#: src/lib/cosm.c:45
+msgid "403 Forbidden"
+msgstr "403 Accès Interdit"
+
+#: src/lib/cosm.c:46
+msgid "404 Not Found"
+msgstr "404 Serveur non trouvé"
+
+#: src/lib/cosm.c:47
+msgid "422 Unprocessable Entity"
+msgstr ""
+
+#: src/lib/cosm.c:48
+msgid "500 Internal Server Error"
+msgstr "500 Erreur de serveur interne"
+
+#: src/lib/cosm.c:49
+msgid "503 No server error"
+msgstr "503 Aucun serveur disponible"
+
+#: src/lib/cosm.c:75 src/lib/cosm.c:134 src/lib/cosm.c:200
+#: src/lib/voicerss.c:140
+#, fuzzy
+msgid "Can't create Ecore_Con_Url object"
+msgstr "Impossible de créer un objet Ecore_Con_Url"
+
+#: src/lib/cosm.c:107 src/lib/cosm.c:169 src/lib/cosm.c:209
+msgid "Can't realize url PUT request"
+msgstr "Impossible de réaliser une requête URL de type PUT"
+
+#: src/lib/cosm.c:128
+#, c-format
+msgid "Creating cosm feed '%s'..."
+msgstr "Création d'un flux cosm '%s'..."
+
+#: src/lib/cosm.c:193
+#, c-format
+msgid "Deleting Cosm feed '%s'..."
+msgstr "Suppression du flux cosm '%s'..."
+
+#: src/lib/cosm.c:230
+#, fuzzy, c-format
+msgid "A datastream feed hasn't been updated, Cosm server returned error '%s'"
+msgstr ""
+"Un flux de données n'a pas été mis à jour, le serveur cosm a retourné le "
+"code erreur '%s'"
+
+#: src/lib/cosm.c:257 src/lib/cosm.c:302
+#, fuzzy, c-format
+msgid "Cosm server returned code: '%d'"
+msgstr "Le serveur Cosm a retourné le code '%d'"
+
+#: src/lib/cosm.c:259
+#, fuzzy, c-format
+msgid "A location feed hasn't been added, Cosm server returned error '%s'"
+msgstr ""
+"Un flux d'emplacement cosm n'a pas pu être ajouté, le server cosm a retourné "
+"le code erreur '%s'"
+
+#: src/lib/cosm.c:278
+#, fuzzy, c-format
+msgid "Location has been added to Cosm with feedid '%d'"
+msgstr "L'emplacement a été ajouté à cosm avec l'identifiant de flux '%d'"
+
+#: src/lib/cosm.c:304
+#, fuzzy, c-format
+msgid "A location feed hasn't been deleted, Cosm server returned error '%s'"
+msgstr ""
+"Un flux d'emplacement cosm n'a pas été supprimé, le serveur cosm a retourné "
+"l'erreur '%s'"
+
+#: src/lib/cosm.c:317
+#, fuzzy, c-format
+msgid "Location with feedid '%d' has been removed from Cosm"
+msgstr "L'emplacement avec l'identifiant de flux '%d' a été supprimée de cosm"
+
+#: src/lib/crontab.c:199
+msgid "Listing crons entries with crontab"
+msgstr "Lecture des entrées crons avec crontab"
+
+#: src/lib/crontab.c:255
+msgid "Can't parse crontab list"
+msgstr "Impossible de parcourir le fichier crontab"
+
+#: src/lib/crontab.c:284 src/lib/voicerss.c:127
+msgid "Can't create a valid temp name file"
+msgstr "Impossible de créer un nom de fichier temporaire unique"
+
+#: src/lib/location.c:140
+msgid "Can't calloc Action struct"
+msgstr "Impossible d'allouer de la mémoire pour une structure de type Action"
+
+#: src/lib/location.c:317
+msgid "Can't calloc Widget struct"
+msgstr "Impossible d'allouer de la mémoire pour une structure de type Widget"
+
+#: src/lib/location.c:322 src/lib/location.c:836
+msgid "undefined"
+msgstr "indéfini"
+
+#: src/lib/location.c:333
+msgid "You shouldn't create a new widget with unknown class"
+msgstr ""
+"La création d'un widget avec une classe de type inconnue est fortement "
+"déconseillée"
+
+#: src/lib/location.c:833
+msgid "Can't calloc Location struct"
+msgstr "Impossible d'allouer de la mémoire pour une structure de type Location"
+
+#: src/lib/location.c:1020 src/lib/location.c:1187
+#, c-format
+msgid "Can't open Eet file '%s' in write mode"
+msgstr "Impossible d'ouvrir le fichier Eet '%s' en mode écriture"
+
+#: src/lib/location.c:1036 src/lib/location.c:1196
+#, c-format
+msgid "Can't write any data to Eet file '%s'"
+msgstr "Impossible d'écrire dans le fichier Eet '%s'"
+
+#: src/lib/location.c:1149
+#, c-format
+msgid "Can't open Eet file '%s' in read mode"
+msgstr "Impossible d'ouvrir le fichier Eet '%s' en mode lecture-seule"
+
+#: src/lib/location.c:1160
+#, c-format
+msgid "Eet file '%s' %#x was too old, upgrading it to %#x"
+msgstr "Le fichier Eet '%s' %#x est trop ancien, mise à jour vers %#x"
+
+#: src/lib/location.c:1236
+#, c-format
+msgid "Can't remove Eet location file '%s'"
+msgstr "Impossible de supprimer le fichier Eet '%s'"
+
+#: src/lib/location.c:1240
+#, c-format
+msgid "Eet Location file '%s' has been removed"
+msgstr "Le fichier Eet '%s' a été supprimé"
+
+#: src/lib/location.c:1324
+msgid "Can't alloc Eina_List node"
+msgstr "Impossible d'allouer de la mémoire pour un noeud Eina_List"
+
+#: src/lib/location.c:1334
+#, c-format
+msgid "%d locations registered"
+msgstr "%d emplacements enregistrés"
+
+#: src/lib/myfileselector.c:44
+#, c-format
+msgid "You"
+msgstr "Vous"
+
+#: src/lib/myfileselector.c:98
+#, c-format
+msgid "Protected"
+msgstr "Protégé"
+
+#: src/lib/myfileselector.c:100 src/lib/myfileselector.c:109
+#: src/lib/myfileselector.c:118
+#, c-format
+msgid "Read Only"
+msgstr "Lecture Seule"
+
+#: src/lib/myfileselector.c:107 src/lib/myfileselector.c:116
+#, c-format
+msgid "Forbidden"
+msgstr "Interdit"
+
+#: src/lib/myfileselector.c:125
+msgid "Read-Write"
+msgstr "Lecture-Ecriture"
+
+#: src/lib/myfileselector.c:138
+#, c-format
+msgid "%'.0f Bytes"
+msgstr "%'.0f Octets"
+
+#: src/lib/myfileselector.c:142
+#, c-format
+msgid "%'.0f KB"
+msgstr "%'.0f Ko"
+
+#: src/lib/myfileselector.c:146
+#, c-format
+msgid "%'.0f MB"
+msgstr "%'.0f Mo"
+
+#: src/lib/myfileselector.c:150
+#, c-format
+msgid "%'.1f GB"
+msgstr "%'.1f Go"
+
+#: src/lib/myfileselector.c:226
+msgid "Select a file..."
+msgstr "Ouvrir un fichier..."
+
+#: src/lib/myfileselector.c:270
+msgid "Type :"
+msgstr "Type :"
+
+#: src/lib/myfileselector.c:282
+msgid "Size :"
+msgstr "Taille :"
+
+#: src/lib/myfileselector.c:294
+msgid "Owner :"
+msgstr "Propriétaire :"
+
+#: src/lib/myfileselector.c:306
+msgid "Permissions :"
+msgstr "Permissions :"
+
+#: src/lib/myfileselector.c:326
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/lib/myfileselector.c:336
+msgid "Open"
+msgstr "Ouvrir"
+
+#: src/lib/settings.c:95
+#, c-format
+msgid "Debug is %s"
+msgstr "Débogguage est %s"
+
+#: src/lib/settings.c:95 src/lib/settings.c:117 src/lib/settings.c:150
+#: src/lib/settings.c:181 src/lib/settings.c:215 src/lib/settings.c:299
+msgid "enabled"
+msgstr "activé"
+
+#: src/lib/settings.c:95 src/lib/settings.c:117 src/lib/settings.c:150
+#: src/lib/settings.c:181 src/lib/settings.c:215 src/lib/settings.c:299
+msgid "disabled"
+msgstr "désactivé"
+
+#: src/lib/settings.c:117
+#, c-format
+msgid "Software emulation is %s"
+msgstr "Émulation logicielle est %s"
+
+#: src/lib/settings.c:150
+#, fuzzy, c-format
+msgid "Global view background options is %s"
+msgstr "Le fichier d'arrière plan pour la vue globale est %s"
+
+#: src/lib/settings.c:181
+#, c-format
+msgid "Cosm data handling options is %s"
+msgstr "L'envoi des données sur le serveur Cosm est %s"
+
+#: src/lib/settings.c:215
+#, c-format
+msgid "Mbox monitoring is %s"
+msgstr "Le monitoring Mbox est %s"
+
+#: src/lib/settings.c:299
+#, fuzzy, c-format
+msgid "Voicerss handling options is %s"
+msgstr "L'envoi des données sur le serveur cosm est %s"
+
+#: src/lib/settings.c:314
+msgid "Can't calloc Settings struct"
+msgstr "Impossible d'allouer de la mémoire pour une structure de type Setting"
+
+#: src/lib/sound.c:41
+msgid "Sound support with Emotion has been enabled"
+msgstr "Le support du son avec Emotion a été activé"
+
+#: src/lib/sound.c:71
+msgid "Can't play sound with Emotion gstreamer backend"
+msgstr "Impossible de lire les sons avec le support gstreamer d'Emotion"
+
+#: src/lib/sound.c:92
+#, fuzzy
+msgid "No sound system for playing audio, using mplayer pipe"
+msgstr "Pas de gestion sonore pour jouer des sons audio"
+
+#: src/lib/utils.c:49
+#, c-format
+msgid "Caught attempt to free NULL pointer variable %s at %s:%lu!"
+msgstr ""
+
+#: src/lib/utils.c:102
+msgid "Confirmation"
+msgstr "Confirmation"
+
+#: src/lib/utils.c:353
+msgid "Pictures"
+msgstr "Images"
+
+#: src/lib/voicerss.c:154
+#, fuzzy
+msgid "Can't realize Ecore_Con_Url GET request"
+msgstr "Impossible de réaliser une requête Ecore_Con_Url de type GET"
+
+#: src/lib/voicerss.c:173
+#, fuzzy, c-format
+msgid "Voicerss server returned code: '%d'"
+msgstr "Le serveur Voicerss a retourné l'erreur: '%d'"
+
+#: src/lib/voicerss.c:184
+msgid "Voice has been created from voicerss.org"
+msgstr "La voix été créée à partir du serveur Voicerss"
+
+#: src/lib/xpl-io.c:184
+#, fuzzy, c-format
+msgid "Can't remove managed IO device, fd=%d not found"
+msgstr "Impossible de supprimer le fichier de périphérique Eet '%s'"
+
+#: src/lib/xpl-io.c:283
+#, c-format
+msgid "Can't read receive socket buffer size - %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:289
+#, c-format
+msgid "Can't to set receive buffer to %d bytes - retrying"
+msgstr ""
+
+#: src/lib/xpl-io.c:297
+#, c-format
+msgid "Can't  read receive socket buffer size - %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:303
+#, fuzzy
+msgid "Can't increase receive buffer size - dang!"
+msgstr "Impossible de construire un tampon Ecore_Evas!"
+
+#: src/lib/xpl-io.c:323 src/lib/xpl-io.c:383
+msgid "Can't to lookup UDP protocol info"
+msgstr ""
+
+#: src/lib/xpl-io.c:330 src/lib/xpl-io.c:390
+#, c-format
+msgid "Can't create listener socket %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:337
+#, c-format
+msgid "Can't set SO_REUSEADDR on socket %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:345 src/lib/xpl-io.c:397 src/lib/xpl-io.c:518
+#, c-format
+msgid "Can't set SO_BROADCAST on socket %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:353 src/lib/xpl-io.c:405
+#, c-format
+msgid "Can't bind listener socket to port %d, %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:413
+#, c-format
+msgid "Can't fetch socket info for bound listener, %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:437
+#, c-format
+msgid "Standalong connect failed - %d %d"
+msgstr ""
+
+#: src/lib/xpl-io.c:504
+msgid "Can't lookup UDP protocol info"
+msgstr ""
+
+#: src/lib/xpl-io.c:511
+#, fuzzy, c-format
+msgid "Can't to create broadcast socket %s (%d)"
+msgstr "Impossible de créer un message d'émission %s (%d)"
+
+#: src/lib/xpl-io.c:528
+msgid "Can't find a working, non-loopback network interface"
+msgstr ""
+"Impossible de trouver une interface réseau(de type non loopback) en état de "
+"fonctionnement"
+
+#: src/lib/xpl-io.c:542
+#, c-format
+msgid "Can't get IP addr for interface %s"
+msgstr "Impossible d'obtenir l'adresse IP pour l'interface %s"
+
+#: src/lib/xpl-io.c:555
+msgid "Can't extract the interface net mask"
+msgstr "Impossible d'extraire l'interface du masque réseau"
+
+#: src/lib/xpl-io.c:583
+#, fuzzy, c-format
+msgid "Can't broadcast message, %s (%d)"
+msgstr "Impossible d'émettre un message, %s (%d)"
+
+#: src/lib/xpl-io.c:726
+#, c-format
+msgid "Can't poll devices - %s (%d) - terminating"
+msgstr "Impossible d'interroger les périphériques - %s (%d) - terminé"
+
+#: src/lib/xpl-message.c:528
+#, c-format
+msgid "Can't format xPL message -- invalid/unknown message type '%d'"
+msgstr ""
+"Impossible de formatter un message xPL -- type de message invalide/inconnu "
+"'%d'"
+
+#: src/lib/xpl-message.c:652
+#, c-format
+msgid "Got invalid character parsing block header - %c at position %d"
+msgstr ""
+
+#: src/lib/xpl-message.c:663
+#, c-format
+msgid ""
+"Got invalid character parsing start of block - %c at position %d (wanted a {)"
+msgstr ""
+
+#: src/lib/xpl-message.c:676
+#, c-format
+msgid ""
+"Got invalid character parsing start of block -  %c at position %d (wanted a "
+"LF)"
+msgstr ""
+
+#: src/lib/xpl-message.c:712
+#, c-format
+msgid ""
+"Got invalid character parsing block name/value name -  %c at position %d"
+msgstr ""
+
+#: src/lib/xpl-message.c:729
+#, fuzzy, c-format
+msgid "Can't xlate binary value for name %s"
+msgstr "Impossible de charger une image du fichier '%s'"
+
+#: src/lib/xpl-message.c:748
+#, c-format
+msgid "Got invalid character parsing name/value value -  %c at position %d"
+msgstr ""
+
+#: src/lib/xpl-message.c:762
+#, c-format
+msgid ""
+"Got invalid character parsing end of name/value -  %c at position %d (wanted "
+"a LF)"
+msgstr ""
+
+#: src/lib/xpl-message.c:772
+msgid "Ran out of characters parsing block"
+msgstr ""
+
+#: src/lib/xpl-message.c:789
+msgid "Message missing HOP count"
+msgstr ""
+
+#: src/lib/xpl-message.c:793
+msgid "Message HOP Count invalid"
+msgstr ""
+
+#: src/lib/xpl-message.c:800
+msgid "Message missing SOURCE"
+msgstr ""
+
+#: src/lib/xpl-message.c:805
+#, c-format
+msgid "SOURCE Missing Device ID - %s"
+msgstr ""
+
+#: src/lib/xpl-message.c:812
+#, c-format
+msgid "SOURCE Missing Instance ID - %s.%s"
+msgstr ""
+
+#: src/lib/xpl-message.c:829
+msgid "Message missing TARGET"
+msgstr "Le message manque TARGET"
+
+#: src/lib/xpl-message.c:844
+#, c-format
+msgid "TARGET Missing Device ID - %s"
+msgstr ""
+
+#: src/lib/xpl-message.c:851
+#, c-format
+msgid "TARGET Missing Instance ID - %s.%s"
+msgstr ""
+
+#: src/lib/xpl-message.c:893
+msgid "Error parsing message header"
+msgstr "Erreur lors de la lecture de l'entête du message"
+
+#: src/lib/xpl-message.c:907
+#, c-format
+msgid "Unknown message header of %s - bad message"
+msgstr "L'entête du message %s est inconnu - mauvais message"
+
+#: src/lib/xpl-message.c:919
+#, fuzzy
+msgid "Can't parse message header"
+msgstr "Impossible de parcourir l'entête du message"
+
+#: src/lib/xpl-message.c:932
+#, fuzzy
+msgid "Can't parse message block"
+msgstr "Impossible de parcourir le corps du message"
+
+#: src/lib/xpl-message.c:946
+#, c-format
+msgid "Malformed message block header - %s"
+msgstr "Le corps de l'entête du message est mal formatté - %s"
+
+#: src/lib/xpl-message.c:1004
+#, c-format
+msgid "Can't read xPL message from network - %s (%d)"
+msgstr "Impossible de lire un message provenant du réseau - %s (%d)"
+
+#: src/lib/xpl-message.c:1016
+msgid "Can't parse network message - ignored"
+msgstr "Impossible de parcourir un message réseau - ignoré"
+
+#: src/lib/xpl.c:163
+msgid "MSG=xpl-cmnd CLASS=osd.basic"
+msgstr ""
+
+#: src/lib/xpl.c:185
+#, c-format
+msgid "MSG=xpl-trig CLASS=sensor.basic DEVICE=%s TYPE=%s CURRENT=%s"
+msgstr ""
+
+#: src/lib/xpl.c:408
+msgid "Can't init xPL service"
+msgstr "Impossible d'initialiser le service xPL"
+
+#: src/lib/xpl.c:419
+msgid "xPL service initialized"
+msgstr "Le service xPL est initialisé"
+
+#: src/lib/xpl.c:433
+msgid "Shutdown xPL..."
+msgstr "Extinction du service xPL.."
+
+#: src/lib/xpl.c:501
+msgid "A battery level in percent"
+msgstr "Un niveau de batterie exprimé en pourcentage"
+
+#: src/lib/xpl.c:502
+msgid "A counter value (door openings, rain fall, etc)"
+msgstr "Une valeur de compteur(ouvertures d'une porte, gouttes tombées etc...)"
+
+#: src/lib/xpl.c:503
+msgid "A current value in Amps"
+msgstr "Une valeur de courant exprimée en ampères"
+
+#: src/lib/xpl.c:504
+msgid ""
+"Direction, represented as degrees from north (0-360, 0=north, 180=south, etc)"
+msgstr ""
+
+#: src/lib/xpl.c:505
+msgid "Distance measurments. Default unit of measure is meters"
+msgstr "Mesure de distance. La valeur par défaut s'exprime en mètres"
+
+#: src/lib/xpl.c:506
+msgid "Consumption of energy over a preiod of time in kWh (kilowatt hours)"
+msgstr ""
+"Consommation d'énergie sur une période de temps exprimée en kWh(kilowatts "
+"heure"
+
+#: src/lib/xpl.c:507
+msgid "A fan speed in RPM"
+msgstr "Une vitesse de rotation exprimée en RPM(tour par minute)"
+
+#: src/lib/xpl.c:508
+msgid ""
+"A generic analogue value who's units of measurement are application specific"
+msgstr ""
+
+#: src/lib/xpl.c:509
+msgid "A relative humidity percentage (0 to 100, no percent sign)"
+msgstr ""
+"Un taux d'humidité relatif exprimé en pourcentage(0 à 100, pas de signes de "
+"pourcentage)"
+
+#: src/lib/xpl.c:510
+msgid ""
+"A switch that can either be current=HIGH (on), current=LOW (off) or "
+"current=PULSE (representing a button press)"
+msgstr ""
+
+#: src/lib/xpl.c:511
+msgid "A change in an output state with values of LOW and HIGH"
+msgstr "Un changement d'état de sortie exprimé par les valeurs LOW ou HIGH"
+
+#: src/lib/xpl.c:512
+msgid "Instantaneous energy consumption level in kW"
+msgstr ""
+
+#: src/lib/xpl.c:513
+msgid "A pressure value in Pascals (N/m2)"
+msgstr "Une valeur de pression exprimée en Pascals (N/m2)"
+
+#: src/lib/xpl.c:514
+msgid ""
+"A thermostat threshold temperature value in degrees. Default unit of measure "
+"is centigrade/celsius"
+msgstr ""
+
+#: src/lib/xpl.c:515
+msgid "A generic speed. Default unit of measure is Miles per Hour"
+msgstr ""
+
+#: src/lib/xpl.c:516
+msgid ""
+"A temperature value in degrees. Default unit of measure is centigrade celsius"
+msgstr ""
+
+#: src/lib/xpl.c:517
+msgid "UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index"
+msgstr ""
+
+#: src/lib/xpl.c:518
+msgid "A voltage value in Volts"
+msgstr ""
+
+#: src/lib/xpl.c:519
+msgid "A volume in m3. Often used as a measure of gas and water consumption"
+msgstr ""
+
+#: src/lib/xpl.c:520
+msgid ""
+"The default unit is kilograms (yes, kilograms are a unit of mass, not weight)"
+msgstr ""
+
+#: src/lib/xpl.c:521
+msgid "balance - -100 to +100"
+msgstr ""
+
+#: src/lib/xpl.c:522
+msgid "flag - set, clear, neutral"
+msgstr ""
+
+#: src/lib/xpl.c:523
+msgid ""
+"infrared - send, enable_rx, disable_rx, enable_tx, disable_tx, sendx (send x "
+"times)"
+msgstr ""
+
+#: src/lib/xpl.c:524
+msgid "input - enable, disable"
+msgstr ""
+
+#: src/lib/xpl.c:525
+msgid "macro - enable, disable, do"
+msgstr ""
+
+#: src/lib/xpl.c:526
+msgid "mute - yes, no"
+msgstr ""
+
+#: src/lib/xpl.c:527
+msgid "output - enable, disable, high, low, toggle, pulse"
+msgstr ""
+
+#: src/lib/xpl.c:528
+msgid "variable - inc, dec, 0-255 (for set)"
+msgstr ""
+
+#: src/lib/xpl.c:529
+msgid "periodic - started, enable, disable"
+msgstr ""
+
+#: src/lib/xpl.c:530
+msgid "scheduled - started, enable, disable"
+msgstr ""
+
+#: src/lib/xpl.c:531
+msgid ""
+"slider - nn = set to value (0-255), +nn = increment by nn, -nn = decrement "
+"by nn, n% = set to nn (where nn is a percentage - 0-100%)"
+msgstr ""
+
+#: src/lib/xpl.c:532
+msgid "timer - went off, start, stop, halt, resume"
+msgstr ""
+
+#: src/lib/xpl.c:533
+#, fuzzy
+msgid "Unknown xPL type"
+msgstr "Inconnu"
+
+#: src/lib/xpl.c:610
+msgid "Percent"
+msgstr "Pourcent"
+
+#: src/lib/xpl.c:611
+msgid "Counter"
+msgstr "Compteur"
+
+#: src/lib/xpl.c:612
+msgid "Amps"
+msgstr "Ampères"
+
+#: src/lib/xpl.c:613 src/lib/xpl.c:623
+msgid "Degrees"
+msgstr "Degrés"
+
+#: src/lib/xpl.c:614
+msgid "Meters"
+msgstr "Mètres"
+
+#: src/lib/xpl.c:615
+msgid "Kilowatt hours"
+msgstr "Kilowatt heure"
+
+#: src/lib/xpl.c:616
+msgid "Rotation/min"
+msgstr "Rotation/min"
+
+#: src/lib/xpl.c:617
+msgid "Generic"
+msgstr "Générique"
+
+#: src/lib/xpl.c:618
+msgid "Humidity ratio"
+msgstr "Taux d'humidité"
+
+#: src/lib/xpl.c:619
+msgid "Input"
+msgstr "Entrée"
+
+#: src/lib/xpl.c:620
+msgid "Output"
+msgstr "Sortie"
+
+#: src/lib/xpl.c:621
+msgid "Kilowatt"
+msgstr "Kilowatt"
+
+#: src/lib/xpl.c:622
+msgid "Pascals"
+msgstr "Pascals"
+
+#: src/lib/xpl.c:624
+msgid "Miles per Hour"
+msgstr "Miles par Heure"
+
+#: src/lib/xpl.c:625
+msgid "Celsius"
+msgstr "Celsius"
+
+#: src/lib/xpl.c:626
+msgid "UV"
+msgstr "UV"
+
+#: src/lib/xpl.c:627
+msgid "Volts"
+msgstr "Volts"
+
+#: src/lib/xpl.c:628
+msgid "Cubic meter"
+msgstr "Mètre cubiques"
+
+#: src/lib/xpl.c:629
+msgid "Kilograms"
+msgstr "Kilogrammes"
+
+#: src/lib/xpl.c:641 src/lib/xpl.c:649
+msgid "%"
+msgstr "%"
+
+#: src/lib/xpl.c:643
+msgid "A"
+msgstr "A"
+
+#: src/lib/xpl.c:644
+msgid "o"
+msgstr "°"
+
+#: src/lib/xpl.c:645
+msgid "m"
+msgstr "m"
+
+#: src/lib/xpl.c:646
+msgid "kWh"
+msgstr "kWh"
+
+#: src/lib/xpl.c:647
+msgid "RPM"
+msgstr "RPM"
+
+#: src/lib/xpl.c:652
+msgid "kW"
+msgstr "kW"
+
+#: src/lib/xpl.c:653
+msgid "N/m2"
+msgstr "N/m2"
+
+#: src/lib/xpl.c:654 src/lib/xpl.c:656
+msgid "C"
+msgstr "°C"
+
+#: src/lib/xpl.c:655
+msgid "MpH"
+msgstr "MpH"
+
+#: src/lib/xpl.c:658
+msgid "V"
+msgstr "V"
+
+#: src/lib/xpl.c:659
+msgid "m3"
+msgstr "m3"
+
+#: src/lib/xpl.c:660
+msgid "kg"
+msgstr "kg"
+
+#: src/lib/xpl.c:675 src/lib/xpl.c:722 src/lib/xpl.c:768
+msgid "Can't create broadcast message"
+msgstr "Impossible d'émettre un message xPL"
+
+#: src/lib/xpl.c:693 src/lib/xpl.c:739 src/lib/xpl.c:781
+msgid "Can't send xPL message"
+msgstr "Impossible d'envoyer un message xPL"
+
+#: src/lib/xpl.c:699
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=osd.basic COMMAND=%s TEXT=%s DELAY=%s"
+msgstr ""
+
+#: src/lib/xpl.c:745
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=control.basic DEVICE=%s TYPE=%s CURRENT=%s"
+msgstr ""
+
+#: src/lib/xpl.c:787
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=sensor.request DEVICE=%s"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Can't load Evas_Object image"
+#~ msgstr "Impossible de charger une image Edje!"
+
+#~ msgid "Ecore_Evas has been correctly initalized"
+#~ msgstr "Ecore_Evas a été correctement initialisé"
+
+#~ msgid "Initialize Enlightenment Foundation Libraries..."
+#~ msgstr "Initialisation des Librairies de Fondation d'Enlightenment"
+
+#~ msgid "Checking EDAMS useful paths..."
+#~ msgstr "Vérification des répertoires internes à EDAMS..."
+
+#~ msgid ""
+#~ "It appears that it's the first time you run EDAMS. To be used, EDAMS "
+#~ "needs some database files containing items. I'll copy some default items "
+#~ "files, but you can easily remove them and create new ones(highly "
+#~ "recommended)!"
+#~ msgstr ""
+#~ "Il apparaît que c'est la première fois que vous démarrer EDAMS. Pour être "
+#~ "utilisé, EDAMS nécessite la présence de certains fichiers de données. Je "
+#~ "vais copier des fichiers de données par défaut, mais il est fortement "
+#~ "conseillé d'adapter EDAMS à ses besoins pour profiter pleinement de son "
+#~ "utilisation."
+
+#~ msgid "Emulation"
+#~ msgstr "Emulation"
+
+#~ msgid "Gnuplot path:"
+#~ msgstr "Répertoire gnuplot:"
+
+#~ msgid "Class"
+#~ msgstr "Classe"
+
+#~ msgid "Available"
+#~ msgstr "Disponible"
+
+#~ msgid "'%s' of type '%s'"
+#~ msgstr "'%s' de type '%s'"
+
+#~ msgid "Free cron allocated entries"
+#~ msgstr ""
+#~ "Libération de la mémoire allouée pour les structures de type Cron_Elem"
+
+#~ msgid "Gnuplot binary path isn't set!"
+#~ msgstr "Le répertoire de l'exécutable Gnuplot n'a pas été défini‏"
+
+#~ msgid "Couldn't found gnuplot binary in path:%s"
+#~ msgstr "Impossible de trouver le binaire gnuplot dans le répertoire '%s'"
+
+#~ msgid "Can't open gnuplot device data file '%s'"
+#~ msgstr "Impossible d'ouvrir le fichier de données Gnuplot '%s'"
+
+#~ msgid "%d Location struct of Eina_list freed"
+#~ msgstr "%d Location struct d'Eina_List libéré"
+
+#, fuzzy
+#~ msgid "Gnuplot data handling options is %s"
+#~ msgstr "L'envoi des données sur le serveur cosm est %s"
+
+#~ msgid "New xPL sensor.basic '%s 'of type '%s' has been discovered"
+#~ msgstr ""
+#~ "Un nouveau périphérique xPL sensor.basic '%s' de type '%s' a été découvert"
+
+#~ msgid "Closing xPL Ecore_Pipe"
+#~ msgstr "Fermeture de l'Ecore_Pipe xPL"
+
+#~ msgid "Initialize xPL service"
+#~ msgstr "Initialisation du service xPL"
+
+#~ msgid "Can't create Edje_Object!"
+#~ msgstr "Impossible de créer un objet Edje_Object!"
+
+#~ msgid "Edit..."
+#~ msgstr "Éditer..."
+
+#~ msgid "Value"
+#~ msgstr "Valeur"
+
+#~ msgid "Path of program:"
+#~ msgstr "Répertoire du programme:"
+
+#~ msgid "SMTP server adress:"
+#~ msgstr "Adresse du serveur SMTP:"
+
+#~ msgid "SMTP username:"
+#~ msgstr "Nom d'utilisateur SMTP:"
+
+#~ msgid "SMTP password:"
+#~ msgstr "Mot de passe SMTP:"
+
+#~ msgid "*FIXME*"
+#~ msgstr "*FIXME*"
+
+#~ msgid "Gnuplot path is '%s'"
+#~ msgstr "Répertoire pour gnuplot est '%s'"
+
+#~ msgid "Smtp server username set to '%s'"
+#~ msgstr "Nom d'utilisateur du serveur SMTP défini à '%s'"
+
+#~ msgid "Edit cmnd action"
+#~ msgstr "Éditer une requête CMND"
+
+#~ msgid "Internal error in file %s at %d"
+#~ msgstr "Erreur interne dans le fichier %s à la ligne %d"
+
+#~ msgid "Condition"
+#~ msgstr "Condition"
+
+#~ msgid "virtual"
+#~ msgstr "virtuel"
+
+#~ msgid "Couldn't registered new device '%s'"
+#~ msgstr "Impossible d'enregistrer le nouveau périphérique '%s'"
+
+#~ msgid "Sensors registered:%d"
+#~ msgstr "Capteurs enregistrés:%d"
+
+#~ msgid "Description:"
+#~ msgstr "Description:"
+
+#~ msgid "Description:%s"
+#~ msgstr "Description:%s"
+
+#~ msgid "Edit widget properties for '%s' xPL device"
+#~ msgstr "Éditeur de propriétés pour le périphérique xPL '%s'"
+
+#~ msgid "Description"
+#~ msgstr "Description"
+
+#~ msgid "Can't calloc Device struct"
+#~ msgstr "Impossible d'allouer de la mémoire pour Device struct"
+
+#~ msgid "Can't set an unknown Type_Flags to device '%s'"
+#~ msgstr "Impossible de définir un type inconnu pour le périphérique '%s'"
+
+#~ msgid "%d devices registered"
+#~ msgstr "%d de périphériques enregistrés"
+
+#~ msgid "Eet device file '%s' has been removed"
+#~ msgstr "La fichier de périphérique Eet '%s' a été supprimé."
+
+#~ msgid "Can't load device from widget '%d-%s'"
+#~ msgstr "Impossible de charger un périphérique depuis le gadget '%d-%s'!"
+
+#~ msgid "Select"
+#~ msgstr "Sélectionner"
+
+#~ msgid "Informations"
+#~ msgstr "Informations"
+
+#~ msgid "Type"
+#~ msgstr "Type"
+
+#~ msgid "Data"
+#~ msgstr "Données"
+
+#~ msgid "Received sensor.basic"
+#~ msgstr "Reçu sensor.basic"
+
+#~ msgid "Global map"
+#~ msgstr "Carte générale"
+
+#~ msgid "Location with cosm feedid '%d' for '%s' has been added with success"
+#~ msgstr ""
+#~ "Le flux cosm avec id '%d'  pour l'emplacement '%s' a été créé avec succès"
+
+#, fuzzy
+#~ msgid "Generating feeds, wait please..."
+#~ msgstr "Génération des fichiers images..."
+
+#~ msgid "Couldn't allocate Eina list node"
+#~ msgstr "Impossible d'allouer un nœud dans la liste Eina"
+
+#, fuzzy
+#~ msgid "Couldn't open '%s' for writing"
+#~ msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#, fuzzy
+#~ msgid "Couldn't open '%s' for read"
+#~ msgstr "Impossible d'ouvrir un fichier '%s'!"
+
+#, fuzzy
+#~ msgid "Device Creator"
+#~ msgstr "Créateur de capteurs"
+
+#~ msgid "Name"
+#~ msgstr "Nom"
+
+#, fuzzy
+#~ msgid "Datasheet URL"
+#~ msgstr "URL du datasheet:"
+
+#~ msgid "Are you sure to want to remove selected location?"
+#~ msgstr "Êtes vous sûr de vouloir supprimer l'emplacement sélectionné?"
+
+#~ msgid "Yes"
+#~ msgstr "Oui"
+
+#, fuzzy
+#~ msgid "Devices Creator"
+#~ msgstr "Créateur de capteurs"
+
+#~ msgid "Room Description"
+#~ msgstr "Description de la pièce"
+
+#~ msgid "INFO:Serial in content '%s'(%d bytes)\n"
+#~ msgstr "INFO:Contenu tampon série '%s'(%d octets)\n"
+
+#~ msgid ""
+#~ "INFO:Initialize EDAMS(calibrating sensors, init vars, setting serial "
+#~ "port...)\n"
+#~ msgstr ""
+#~ "INFO:Initialisation d'EDAMS(calibrage des capteurs, initialisation des "
+#~ "variables, mise en place du port série...)\n"
+
+#~ msgid "Initialize EDAMS wait please..."
+#~ msgstr "Initialisation d'EDAMS, attendez s'il vous plaît..."
+
+#~ msgid "calibrating sensors, setting serial port... "
+#~ msgstr "Calibrage des capteurs, mise en place du port série..."
+
+#~ msgid "INFO:EDAMS is ready and operationnal\n"
+#~ msgstr "INFO:EDAMS est prêt et opérationnel\n"
+
+#~ msgid "INFO:Updating sensor '%d-%s'  with data '%s'...\n"
+#~ msgstr "INFO:Capteur '%d-%s' avec donnée '%s'...\n"
+
+#~ msgid "Added new sensor '%d-%s'."
+#~ msgstr "Ajoute capteur '%d-%s'"
+
+#~ msgid "Can't add a sensor to room:no room selected!"
+#~ msgstr "Impossible d'ajouter un capteur:aucune pièce sélectionnée!"
+
+#~ msgid "Can't clear room sensors list:no room selected!"
+#~ msgstr "Impossible de retirer les capteurs:aucune pièce sélectionnée!"
+
+#~ msgid "Room:%s"
+#~ msgstr "Pièce:%s"
+
+#~ msgid "Sensors:"
+#~ msgstr "Capteurs:"
+
+#~ msgid "Add..."
+#~ msgstr "Ajouter..."
+
+#~ msgid "Remove..."
+#~ msgstr "Supprimer..."
+
+#~ msgid "Initialize Application..."
+#~ msgstr "Initialisation de l'application..."
+
+#~ msgid "Rooms"
+#~ msgstr "Pièces"
+
+#~ msgid "Can't load module %s: %s"
+#~ msgstr "Impossible de charger le module %s: %s"
+
+#~ msgid "Can't find _print_module_infos() in module %s: %s!"
+#~ msgstr "Fonction _print_module_infos() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_id_get() in module %s: %s!"
+#~ msgstr "Fonction _module_id_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_name_get() in module %s: %s!"
+#~ msgstr "Fonction _module_name_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_desc_get() in module %s: %s!"
+#~ msgstr "Fonction _module_desc_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_theme_get() in module %s: %s!"
+#~ msgstr "Fonction _module_theme_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't find _module_settings_get() in module %s: %s!"
+#~ msgstr "Fonction _module_settings_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Can't get modules list!"
+#~ msgstr "Impossible d'obtenir la liste des modules!"
+
+#~ msgid "INFO:%d rooms list freed.\n"
+#~ msgstr "INFO:libération mémoire de %d dans la liste des pièces.\n"
+
+#~ msgid "INFO:%d sensors list freed.\n"
+#~ msgstr "INFO:libération mémoire de %d dans la liste des capteurs.\n"
+
+#~ msgid "About edams..."
+#~ msgstr "A propos d'E.D.A.M.S..."
+
+#~ msgid "INFO:%d sensors registered on serial line...\n"
+#~ msgstr "INFO:%d capteurs trouvés sur la liaison série...\n"
+
+#~ msgid "Remove all sensors..."
+#~ msgstr "Supprimer les capteurs..."
+
+#~ msgid "Serial buffering simulation"
+#~ msgstr "Simulation du tampon série"
+
+#~ msgid "Installation path:%s"
+#~ msgstr "Répertoire d'installation:%s"
+
+#~ msgid "User home path:%s"
+#~ msgstr "Répertoire utilisateur:%s"
+
+#, fuzzy
+#~ msgid "User data path:%s"
+#~ msgstr "Répertoire des données utilisateur:%s"
+
+#, fuzzy
+#~ msgid "Locale path:%s"
+#~ msgstr "Répertoire des traductions:%s"
+
+#~ msgid "Edje theme file:%s"
+#~ msgstr "Fichier thème Edje:%s"
+
+#~ msgid "Apply"
+#~ msgstr "Appliquer"
+
+#~ msgid "Modules"
+#~ msgstr "Modules"
+
+#~ msgid "Sensor"
+#~ msgstr "Capteur"
+
+#~ msgid "Dumping memory usage:"
+#~ msgstr "Mémoire utilisé:"
+
+#~ msgid "Calls to malloc(): %d."
+#~ msgstr "Appels à malloc():%d."
+
+#~ msgid "Calls to realloc(): %d."
+#~ msgstr "Appels à realloc():%d."
+
+#~ msgid "Calls to calloc(): %d."
+#~ msgstr "Appels à calloc():%d."
+
+#~ msgid "Calls to free(): %d."
+#~ msgstr "Appels à free():%d."
+
+#~ msgid "Select a font..."
+#~ msgstr "Sélectionner une fonte"
+
+#~ msgid "INFO:%d rooms found in database.\n"
+#~ msgstr "INFO:%d pièces enregistrées dans la base de données.\n"
+
+#~ msgid "INFO:%d sensors found in database.\n"
+#~ msgstr "INFO:%d capteurs enregistrés dans la base de données.\n"
+
+#~ msgid "Can't read edams settings!"
+#~ msgstr "Impossible de lire les paramètres d'EDAMS!"
+
+#~ msgid "Can't read %s settings from %s!"
+#~ msgstr "Impossible de lire le paramètre %s de %s!"
+
+#~ msgid "Can't write %s settings from %s!"
+#~ msgstr "Impossible d'écrire le paramètre %s de %s!"
+
+#~ msgid "Can't write edams settings!"
+#~ msgstr "Impossible d'écrire les paramètres d'EDAMS!"
+
+#~ msgid "Patients"
+#~ msgstr "Patients"
+
+#, fuzzy
+#~ msgid ""
+#~ "<b>edams</>Welcome to edams!<br><br>You should select or create a patient "
+#~ "to start a session with him."
+#~ msgstr ""
+#~ "<b>FriLogos</>Bienvenue dans FriLogos!<br><br>Vous devez sélectionner ou "
+#~ "créer une fiche patient pour démarrer une session."
+
+#, fuzzy
+#~ msgid "Sensors Browser - %d sensors"
+#~ msgstr "Navigateur de profils - %d patients"
+
+#, fuzzy
+#~ msgid "sensors Browser - 0 sensor"
+#~ msgstr "Navigateur de profils - 0 patients"
+
+#~ msgid "Patients data path:%s"
+#~ msgstr "Répertoire des données utilisateur:%s"
+
+#~ msgid "Items data path:%s"
+#~ msgstr "Répertoire des données utilisateur:%s"
+
+#, fuzzy
+#~ msgid "edams Edje file Path:%s"
+#~ msgstr "Répertoire des fichiers Edje: %s"
+
+#~ msgid "Realistic"
+#~ msgstr "Réaliste"
+
+#~ msgid "Abstract"
+#~ msgstr "Abstrait"
+
+#~ msgid "Images Type"
+#~ msgstr "Type d'images"
+
+#~ msgid "Exercice"
+#~ msgstr "Exercice"
+
+#~ msgid "Graphemics"
+#~ msgstr "Graphémiques"
+
+#~ msgid "Visual"
+#~ msgstr "Visuel"
+
+#~ msgid "Semantics"
+#~ msgstr "Sémantiques"
+
+#~ msgid "Exposition time:"
+#~ msgstr "Temps d'exposition:"
+
+#~ msgid "Sequences:"
+#~ msgstr "Séquences:"
+
+#~ msgid "%1.0f"
+#~ msgstr "%1.0f"
+
+#~ msgid "%s module"
+#~ msgstr "%s module"
+
+#~ msgid "\tVersion:%d.%d.%d"
+#~ msgstr "\tVersion:%d.%d.%d"
+
+#~ msgid "\tBuild on:%s"
+#~ msgstr "\tCompilé le:%s"
+
+#~ msgid "Score:%d/%d Time:%0.3f secs"
+#~ msgstr "Score:%d/%d Temps:%0.3f secs"
+
+#, fuzzy
+#~ msgid "Items in queue:\n"
+#~ msgstr "%d éléments dans la file d'attente."
+
+#~ msgid "Sequence %d"
+#~ msgstr "Séquence %d"
+
+#~ msgid "%s - Session of %s"
+#~ msgstr "%s - Session du %s"
+
+#~ msgid "Can't set Edje object file: %s!"
+#~ msgstr "Impossible de charger un fichier Edje:%s!"
+
+#~ msgid "Closing session of :%s\n"
+#~ msgstr "Fermeture de la session du: %s\n"
+
+#~ msgid "Selected patient:%s %s"
+#~ msgstr "Patient sélectionné: %s %s"
+
+#~ msgid "Start"
+#~ msgstr "Démarrer"
+
+#~ msgid "Alloc module ressources."
+#~ msgstr "Allocation des ressources module."
+
+#~ msgid "Free module ressources."
+#~ msgstr "Libération des ressources module."
+
+#~ msgid "FriLogos %s - Session of %02d/%02d/%d"
+#~ msgstr "FriLogos %s - Session du %02d/%02d/%d"
+
+#~ msgid "Items"
+#~ msgstr "Eléments"
+
+#~ msgid "Patient selection"
+#~ msgstr "Sélection du patient"
+
+#~ msgid "Import a FriLogos item..."
+#~ msgstr "Importer un élément FriLogos..."
+
+#~ msgid "Import"
+#~ msgstr "Importer"
+
+#~ msgid "Item %s has been imported."
+#~ msgstr "L'élément %s a été importé."
+
+#~ msgid "Item %s has been exported."
+#~ msgstr "L'élément %s a été exporté."
+
+#~ msgid "Group name can't be null."
+#~ msgstr "Le nom du groupe ne doit pas être vide."
+
+#~ msgid "New %s group has been added."
+#~ msgstr "Nouveau groupe %s a été ajouté."
+
+#~ msgid "Create a new group"
+#~ msgstr "Créer un nouveau groupe"
+
+#~ msgid "Group name:"
+#~ msgstr "Nom du groupe:"
+
+#~ msgid "Subgroup name can't be null."
+#~ msgstr "Le nom du groupe ne doit pas être vide!"
+
+#~ msgid "New %s subgroup has been added."
+#~ msgstr "Nouveau sous-groupe %s a été ajouté."
+
+#~ msgid "Create a new subgroup to current group"
+#~ msgstr "Créer un nouveau sous-groupe dans le groupe actuel"
+
+#~ msgid "SubGroup name:"
+#~ msgstr "Nom du sous-groupe:"
+
+#~ msgid "You must select or create a group before creating a new subgroup."
+#~ msgstr ""
+#~ "Vous devez sélectionner ou créer un groupe avant de créer un nouveau sous-"
+#~ "groupe."
+
+#~ msgid "Items "
+#~ msgstr "Eléments"
+
+#~ msgid "Item "
+#~ msgstr "Elément"
+
+#~ msgid "has been removed."
+#~ msgstr "a été supprimé."
+
+#~ msgid "Item %s has been moved to subgroup %s."
+#~ msgstr "L'élément  %s a été déplacé vers le sous-groupe %s."
+
+#~ msgid "Moved %s to unknown space."
+#~ msgstr "Déplacement de l'élément %s vers un espace inconnu."
+
+#~ msgid "Subgroup %s"
+#~ msgstr "Sous-groupe %s"
+
+#~ msgid "You must select or create a group before creating a new item."
+#~ msgstr ""
+#~ "Vous devez sélectionner ou créer un groupe avant de créer un nouvel "
+#~ "élément."
+
+#~ msgid "Items Browser - %d items in %d groups"
+#~ msgstr "Navigateur d'éléments - %d éléments répartis dans %d groupes"
+
+#~ msgid "Item Description"
+#~ msgstr "Description de l'élément"
+
+#~ msgid "Distractors"
+#~ msgstr "Distracteurs"
+
+#~ msgid "Realistic..."
+#~ msgstr "Réaliste..."
+
+#~ msgid "Abstract..."
+#~ msgstr "Abstrait..."
+
+#~ msgid "Initialize Items Browser UI..."
+#~ msgstr "Initialisation de l'interface du navigateur d'éléments..."
+
+#~ msgid "Welcome to items browser!"
+#~ msgstr "Bienvenue dans le navigateur d'éléments!"
+
+#~ msgid "Add group"
+#~ msgstr "Ajouter groupe"
+
+#~ msgid "Add subgroup"
+#~ msgstr "Ajouter sous-groupe"
+
+#~ msgid "Groups"
+#~ msgstr "Groupes"
+
+#~ msgid "Export"
+#~ msgstr "Exporter"
+
+#~ msgid "Profil of %s %s has been updated."
+#~ msgstr "Le profil concernant %s %s a été mis à jour."
+
+#~ msgid "Patient Description"
+#~ msgstr "Description du patient"
+
+#~ msgid "Firstname:"
+#~ msgstr "Prénom:"
+
+#~ msgid "Lastname:"
+#~ msgstr "Nom:"
+
+#~ msgid "Profils selected have been removed."
+#~ msgstr "Les profils sélectionnés ont été supprimés."
+
+#~ msgid "Profil selected has been removed."
+#~ msgstr "Le profil sélectionné a été supprimé."
+
+#~ msgid "Are your sure you want to delete the following patients profils:"
+#~ msgstr "Êtes-vous sûr de vouloir supprimer les profils concernant:"
+
+#~ msgid "OK"
+#~ msgstr "Ok"
+
+#~ msgid "Profil of %s %s has been created."
+#~ msgstr "Le profil concernant %s %s a été créée."
+
+#~ msgid "Welcome to patients profil browser!"
+#~ msgstr "Bienvenue dans le navigateur de profils!"
+
+#~ msgid "Graphemic"
+#~ msgstr "Graphémique"
+
+#~ msgid "Semantic"
+#~ msgstr "Sémantique"
+
+#~ msgid "Neutral"
+#~ msgstr "Neutre"
+
+#~ msgid "Undefined"
+#~ msgstr "Indéfini"
+
+#~ msgid "Can't import %s!"
+#~ msgstr "Impossible d'importer un fichier Eet: '%s'!"
+
+#~ msgid "Can't export %s!"
+#~ msgstr "Impossible d'exporter un fichier Eet: '%s'!"
+
+#, fuzzy
+#~ msgid "Can't allocate list node to items Eina_List!"
+#~ msgstr "Impossible d'allouer un nœud dans la liste!"
+
+#, fuzzy
+#~ msgid "Can't get item with id: %d!"
+#~ msgstr "Impossible d'obtenir l'élément avec l'id:%d!"
+
+#, fuzzy
+#~ msgid "Test groups list load/count/subgroups...\n"
+#~ msgstr "Le groupe %s contient %d sous-groupes enregistrés."
+
+#, fuzzy
+#~ msgid "\t=>%s group has %d subgroups.\n"
+#~ msgstr "Le groupe %s contient %d sous-groupes enregistrés."
+
+#~ msgid "Couldn't calloc Group"
+#~ msgstr "Impossible d'allouer de la mémoire pour une structure Group!"
+
+#~ msgid "Can't get any items from group: %s!"
+#~ msgstr "Impossible d'obtenir des éléments provenant du groupe: %s!"
+
+#~ msgid "Can't return randomized items list when not enough items in list!"
+#~ msgstr ""
+#~ "Impossible de générer une liste d'éléments, pas assez d'éléments "
+#~ "enregistrés!"
+
+#~ msgid "Can't find _module_patient_set() in module %s: %s!"
+#~ msgstr "Fonction _module_patient_get() non trouvée dans le module %s: %s!"
+
+#~ msgid "Couldn't calloc Patient_Profil struct!"
+#~ msgstr "Impossible d'allouer de la mémoire pour la structure Patient_Profil"
+
+#~ msgid ""
+#~ "Patient_Info:\n"
+#~ "\t|->Filename.....:%s(%#x)\n"
+#~ "\t|->ID...........:%d\n"
+#~ "\t|->Name.........:%s %s\n"
+#~ "\t|->Gender.......:%s\n"
+#~ "\t|->BirthDay.....:%s\n"
+#~ "\t|->Creation Date:%s\n"
+#~ "\t|->Revision Date:%s\n"
+#~ msgstr ""
+#~ "Patient_Info:\n"
+#~ "\t|->Fichier:%s(%#x)\n"
+#~ "\t|->ID:%d\n"
+#~ "\t|->Nom:%s %s\n"
+#~ "\t|->Sexe:%s\n"
+#~ "\t|->Date de naissance:%s\n"
+#~ "\t|->Créé le:%s\n"
+#~ "\t|->Révisé le:%s\n"
+
+#~ msgid "Can't allocate list node."
+#~ msgstr "Impossible d'allouer un noeud dans la liste."
+
+#~ msgid "Diaporama"
+#~ msgstr "Diaporama"
+
+#~ msgid "Items appears and patient must memorize it."
+#~ msgstr ""
+#~ "Ce module permet d’afficher une image puis quatre propositions écrites de "
+#~ "façon à travailler la dénomination écrite (association référent – "
+#~ "signifiant écrit) ou la reconnaissance de l’objet à l’oral si les quatre "
+#~ "propositions sont oralisées par le thérapeute."
+
+#~ msgid "DIAPORAMA"
+#~ msgstr "DIAPORAMA"
+
+#~ msgid "Sequence %d Time:%0.f secs"
+#~ msgstr "Séquence %d Temps:%0.f secs"
+
+#~ msgid "Setting distractor for item %s."
+#~ msgstr "Définir distracteur pour l'élément %s."
+
+#~ msgid "Can't generate distractors, not enough items registered!"
+#~ msgstr ""
+#~ "Impossible de générer des distracteurs, pas assez d'éléments enregistrés!"
+
+#~ msgid "Denomitation"
+#~ msgstr "Dénomination"
+
+#~ msgid "Simple reading"
+#~ msgstr "Oralisation avec étiquette"
+
+#~ msgid "Pairs with distractors"
+#~ msgstr "Appariement"
+
+#~ msgid "Pairs and oralization"
+#~ msgstr "Appariement avec oralisation"
+
+#~ msgid "Rapido-Deno"
+#~ msgstr "Rapido-Déno"
+
+#~ msgid "Groups/Subgroups"
+#~ msgstr "Groupes/Sous-groupes"
+
+#~ msgid "Exercice selection"
+#~ msgstr "Sélection de l'exercice"
+
+#~ msgid "Found the intrus"
+#~ msgstr "Trouver l'intrus"
+
+#~ msgid "Items appears and patient must found the intrus."
+#~ msgstr ""
+#~ "Ce module permet de paramétrer un jeu où il s’agit de chasser parmi une "
+#~ "suite d’images l’intrus. Ce jeu de chasser l’intrus est conçu autour des "
+#~ "catégorisations sémantiques. En effet, toutes les images proposées sauf "
+#~ "une appartiennent à la même catégorie sémantique."
+
+#~ msgid "CLI"
+#~ msgstr "CLI"
+
+#~ msgid "Simple x4 items"
+#~ msgstr "x4 élements"
+
+#~ msgid "Simple x6 items"
+#~ msgstr "x6 éléments"
+
+#~ msgid "Simple x8 items"
+#~ msgstr "x8 éléments"
+
+#~ msgid "Frilexie"
+#~ msgstr "Frilexie"
+
+#~ msgid "TODO:Frilexie description...."
+#~ msgstr ""
+#~ "Frilexie est un logiciel destiné à l’entraînement des stratégies "
+#~ "d’identification du mot écrit (stratégie phonologique par segmentation et "
+#~ "transcodage et stratégie visuo-orthographique, cf. la figure ci-contre)."
+
+#~ msgid "FRILEXIE"
+#~ msgstr "FRILEXIE"
+
+#~ msgid ""
+#~ "Name:%s<br>Group:%s<br>Subgroup:%s<br>Created with:FriLogos "
+#~ "%s<br>Creation Date:%s<br>Revision Date:%s<br>"
+#~ msgstr ""
+#~ "Nom:%s<br>Groupe:%s<br>Sous-groupe:%s<br>FriLogos: %s<br>Créé le:"
+#~ "%s<br>Modifié le:%s<br>"
+
+#~ msgid "Following patients files:"
+#~ msgstr "Les fichiers patients suivants:"
+
+#~ msgid "Delete..."
+#~ msgstr "Supprimer..."
+
+#~ msgid "Initialize Patients Browser UI..."
+#~ msgstr "Initialisation de l'interface du navigateur de fiches patients..."
+
+#~ msgid "Graphemics:"
+#~ msgstr "Graphémiques:"
+
+#~ msgid "Semantics:"
+#~ msgstr "Sémantiques:"
+
+#~ msgid "Visuals:"
+#~ msgstr "Visuels:"
+
+#~ msgid "Group selection"
+#~ msgstr "Sélection du groupe"
+
+#~ msgid "Item size"
+#~ msgstr "Taille des éléments"
+
+#~ msgid "Add item"
+#~ msgstr "Ajouter élément"
+
+#~ msgid "Import item"
+#~ msgstr "Importer l'élément"
+
+#~ msgid "Can't read FriLogos Eet file %s!"
+#~ msgstr "Impossible de lire le fichier FriLogos Eet %s!"
+
+#~ msgid ""
+#~ "Can't set locale, NLS isn't enabled on these FriLogos version and it "
+#~ "should be!"
+#~ msgstr ""
+#~ "Impossible de définir la locale, NLS n'est pas activé sur cette version "
+#~ "de FriLogos et il devrait l'être!"
+
+#~ msgid "Can't clear item's distractors of an unknown type!"
+#~ msgstr "Impossible de supprimer les distracteurs d'un type inconnu!"
+
+#~ msgid "Can't add an item's distractor with an unknown type!"
+#~ msgstr "Impossible d'ajout un distracteur avec un type inconnu!"
+
+#~ msgid "\t|Graphemics->%s\n"
+#~ msgstr "\t|Graphémiques->%s\n"
+
+#~ msgid "\t|Neutrals->%s\n"
+#~ msgstr "\t|Neutres->%s\n"
+
+#~ msgid "\t|Visuals->%s\n"
+#~ msgstr "\t|Visuels->%s\n"
+
+#~ msgid "\t|Semantics->%s\n"
+#~ msgstr "\t|Sémantiques->%s\n"
+
+#~ msgid "Can't open %s."
+#~ msgstr "Impossible d'ouvrir %s."
+
+#~ msgid ""
+#~ "\n"
+#~ "Filename:%s\n"
+#~ "\t|->Patient: %s %s\n"
+#~ "\t|->BirthDay: %s\n"
+#~ "\t|->Creation Date:%s\n"
+#~ "\t|->Revision Date:%s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Nom du fichier:%s\n"
+#~ "\t|->Patient:%s %s\n"
+#~ "\t|->Date de naissance:%s\n"
+#~ "\t|->Créé le:%s\n"
+#~ "\t|->Révisé le:%s\n"
+
+#~ msgid "Not enough items generated!"
+#~ msgstr "Pas assez d'éléments générés!"
+
+#~ msgid "Playing with:%s."
+#~ msgstr "Joue avec:%s."
+
+#~ msgid "Playing with unknown patient."
+#~ msgstr "Joue avec un patient non enregistré."
+
+#~ msgid "Frilexie module"
+#~ msgstr "Module Frilexie"
+
+#~ msgid "Frilexie: label...."
+#~ msgstr ""
+#~ "S’appuyant sur le modèle cognitif des stratégies d’identification du mot "
+#~ "écrit, ce module a été élaboré de façon à pouvoir entraîner les "
+#~ "stratégies qu’elles soient phonologiques ou visuo-orthographiques."
+
+#~ msgid "INF:%s frilogos.c: 118 elm_main() Initialize EFL...\n"
+#~ msgstr "INF:%s frilogos.c: 118 elm_main() Initialisation des EFLs...\n"
+
+#~ msgid "Export %s to %s."
+#~ msgstr "Exportation de %s vers %s."
+
+#~ msgid "Randomize items from all groups."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments à partir de tous les groupes."
+
+#~ msgid "Randomize items from group %s and subgroup %s."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments à partir du groupe %s et sous-"
+#~ "groupe %s."
+
+#~ msgid "Randomize items except %s from any groups."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments à partir de n'importe quel "
+#~ "groupe expecté le groupe %s."
+
+#~ msgid "Randomize items except %s from group %s."
+#~ msgstr ""
+#~ "Génération aléatoire d'une liste d'éléments excepté %s à partir du groupe "
+#~ "%s."
+
+#~ msgid "Listing modules %s..."
+#~ msgstr "Liste des modules %s..."
+
+#~ msgid "Diaporama module"
+#~ msgstr "Module Diaporama"
+
+#~ msgid "Sequence %d Index %d"
+#~ msgstr "Séquence %d Index %d"
+
+#~ msgid "Playing with all groups."
+#~ msgstr "Jouer avec tous les groupes."
+
+#~ msgid "All groups"
+#~ msgstr "Tous les groupes"
+
+#~ msgid "Can't get Edje object part: %s!"
+#~ msgstr "Impossible de charger un objet Edje: %s!"
+
+#~ msgid "Score:%d/%d"
+#~ msgstr "Score:%d/%d"
+
+#~ msgid "Sample"
+#~ msgstr "Echantillon"
+
+#~ msgid "Group %s"
+#~ msgstr "Groupe %s"
+
+#, fuzzy
+#~ msgid "Groups Selection"
+#~ msgstr "Sélection du groupe"
+
+#~ msgid "Enable timers"
+#~ msgstr "Activer minuteurs"
+
+#~ msgid "Hiding time:"
+#~ msgstr "Temps avant réponse:"
+
+#~ msgid "Timers"
+#~ msgstr "Minuteurs"
+
+#~ msgid "Show item name"
+#~ msgstr "Activer étiquettage"
+
+#~ msgid "Navigation bar"
+#~ msgstr "Barre de navigation"
+
+#~ msgid "Navigation"
+#~ msgstr "Navigation"
+
+#~ msgid "Update"
+#~ msgstr "Mettre à jour"
+
+#~ msgid "Item %s has been successfully imported."
+#~ msgstr "L'élément %s a été créé avec succés."
+
+#~ msgid "Morphological/Visual:"
+#~ msgstr "Visuels/Morphologiques:"
+
+#~ msgid "Cannot create buffer engine canvas for image load."
+#~ msgstr ""
+#~ "Impossible de créer un canevas tampon pour le chargement des images."
+
+#~ msgid "Can't define more than 2 images levels per item, must be 0 or 1."
+#~ msgstr ""
+#~ "Impossible de définir plus de 2 images par élément, le niveau d'image "
+#~ "doit être 0 ou 1."
+
+#~ msgid "\t|Morphologicals->%s\n"
+#~ msgstr "\tVisuels/Morphologiques->%s\n"
+
+#~ msgid "Could not load image from '%s'. error string is \"%s\"\n"
+#~ msgstr ""
+#~ "Impossible de charger l'image du fichier '%s'. le message d'erreur est "
+#~ "\"%s\"\n"
+
+#~ msgid "Can't load '%s': %s!"
+#~ msgstr "Impossible de charger '%s': %s!"
+
+#~ msgid "<b>FriLogos</>Welcome to FriLogos!"
+#~ msgstr "<b>FriLogos</>Bienvenue dans FriLogos!"
+
+#~ msgid "Import a new item"
+#~ msgstr "Importer un nouvel élément"
+
+#, fuzzy
+#~ msgid "Are you sure you want to import these item?"
+#~ msgstr "Êtes vous sûr de vouloir importer les élements suivants?"
+
+#~ msgid "Select a realistic image file..."
+#~ msgstr "Sélectionner un fichier d'image réaliste..."
+
+#~ msgid "Select an abstract image file..."
+#~ msgstr "Sélectionner un fichier d'image abstrait..."
+
+#~ msgid "Could not load '%s': %s"
+#~ msgstr "Impossible de charger '%s': %s"
+
+#~ msgid "%1.0f sequencies"
+#~ msgstr "%1.0f séquences"
+
+#, fuzzy
+#~ msgid "Enable graphemics"
+#~ msgstr "Graphémique"
+
+#, fuzzy
+#~ msgid "Enable neutrals"
+#~ msgstr "Activer les minuteurs"
+
+#, fuzzy
+#~ msgid "Enable morphologicals"
+#~ msgstr "Visuel/Morphologique"
+
+#, fuzzy
+#~ msgid "Enable semantics"
+#~ msgstr "Activer les minuteurs"
+
+#~ msgid ""
+#~ "\n"
+#~ "Filename:%s\n"
+#~ "\t|->Name:%s\n"
+#~ "\t|->Locale:%s\n"
+#~ "\t|->Group:%s\n"
+#~ "\t|->SubGroup:%s\n"
+#~ "\t|->Distractor 1 %s of type %s\n"
+#~ "\t|->Distractor 2 %s of type %s\n"
+#~ "\t|->Distractor 3 %s of type %s\n"
+#~ "\t|->Distractor 4 %s of type %s\n"
+#~ "\t|->Creation Date:%s\n"
+#~ "\t|->Revision Date:%s\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Nom du fichier:%s\n"
+#~ "\t|->Nom:%s\n"
+#~ "\t|->Locale:%s\n"
+#~ "\t|->Groupe:%s\n"
+#~ "\t|->Sous-groupe:%s\n"
+#~ "\t|->Distracteur 1 %s de type %s\n"
+#~ "\t|->Distracteur 2 %s de type %s\n"
+#~ "\t|->Distracteur 3 %s de type %s\n"
+#~ "\t|->Distracteur 4 %s de type %s\n"
+#~ "\t|->Date de création:%s\n"
+#~ "\t|->Date de révision:%s\n"
+
+#~ msgid "Couldn't find _get_module_icon() in module \"%s\": %s"
+#~ msgstr "Fonction _get_module_icon() non trouvée dans le module \"%s\": %s."
+
+#~ msgid "Enable distractors"
+#~ msgstr "Activer les distracteurs"
+
+#, fuzzy
+#~ msgid "Patients "
+#~ msgstr "Patients"
+
+#~ msgid "Image file from %s has been extracted to Eet_Image struct."
+#~ msgstr "Le fichier image de %s a été extrait vers une structure Eet_Image."
+
+#~ msgid ""
+#~ "<item absize=250x70 vsize=full href=file://%s/icons/frilogos_header.png></"
+#~ "item><br><em>%s (build %s)</em></><ps></ps><b>Authors:</"
+#~ "b><br><em>Alexandre Dussart(main, plugins, website...)</em> "
+#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Remi "
+#~ "Samier(frilexie, suggestions, testings, doc)</em> <link>r.samier@gmail."
+#~ "com</link></><br><em>Corine Berte(suggestions...)</em></><br><em>Sonia "
+#~ "Dussart(some design and items parts)</em></><br><em>Simion "
+#~ "Ploscariu(learntocount based code)</em></><ps></ps><b>Web:</"
+#~ "b><br><link>http://www.frilogos.org</link></>"
+#~ msgstr ""
+#~ "<item absize=250x70 vsize=full href=file://%s/icons/frilogos_header.png></"
+#~ "item><br><em>%s (build %s)</em></><ps></ps><b>Auteurs:</"
+#~ "b><br><em>Alexandre Dussart(code principal, modules, site web...)</em> "
+#~ "<link>alexandre.dussart@laposte.net</link></><br><em>Rémi "
+#~ "Samier(frilexie, suggestions, tests, documentation)</em> <link>r."
+#~ "samier@gmail.com</link></><br><em>Corine Berté(suggestions...)</em></"
+#~ "><br><em>Sonia Dussart(graphismes)</em></><br><em>Simion Ploscariu(basé "
+#~ "sur le code de learntocount)</em></><ps></ps><b>Site Web:</"
+#~ "b><br><link>http://www.frilogos.org</link></>"
+
+#~ msgid "No application theme found"
+#~ msgstr "Aucun théme pour l'application trouvé."
+
+#~ msgid "New"
+#~ msgstr "Nouveau"
+
+#~ msgid "Filename:%s<br>Firstname:%s</><br>Lastname:%s</>"
+#~ msgstr "Nom du fichier:%s<br>Prénom:%s</><br>Nom:%s</>"
+
+#~ msgid "Thanks to set a patient firstname."
+#~ msgstr "Merci de définir un prénom pour le patient."
+
+#~ msgid "Thanks to set a patient lastname."
+#~ msgstr "Merci de définir un nom pour le patient."
+
+#~ msgid "Informations file about %s has been added."
+#~ msgstr "Le fichier d'informations au sujet de %s a été ajouté."
+
+#~ msgid "Informations file about %s has been removed from database."
+#~ msgstr "Le fichier d'informations au sujet de %s a été supprimé."
+
+#~ msgid "First"
+#~ msgstr "Premier"
+
+#~ msgid "Next"
+#~ msgstr "Suivant"
+
+#~ msgid "Last"
+#~ msgstr "Dernier"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "Filename:%s</><br>Name:%s</><br>Locale:%s</><br>Group:%s</><br>SubGroup:"
+#~ "%s</><br>Distractor 1 %s of type %s</><br>Distractor 2 %s of type %s</"
+#~ "><br>Distractor 3 %s of type %s</><br>Distractor 4 %s of type %s</"
+#~ "><br>Creation Date:%s</><br>Revision Date:%s</>"
+#~ msgstr ""
+#~ "\n"
+#~ "Nom du fichier:%s\n"
+#~ "\t|->Nom:%s\n"
+#~ "\t|->Locale:%s\n"
+#~ "\t|->Groupe:%s\n"
+#~ "\t|->Sous-groupe:%s\n"
+#~ "\t|->Distracteur 1 %s de type %s\n"
+#~ "\t|->Distracteur 2 %s de type %s\n"
+#~ "\t|->Distracteur 3 %s de type %s\n"
+#~ "\t|->Distracteur 4 %s de type %s\n"
+#~ "\t|->Date de création:%s\n"
+#~ "\t|->Date de révision:%s\n"
+
+#~ msgid "New group"
+#~ msgstr "Nouveau groupe"
+
+#~ msgid "Adding \"%s\" group."
+#~ msgstr "Ajout du groupe \"%s\"."
+
+#~ msgid "Adding \"%s\" subgroup to \"%s\" group."
+#~ msgstr "Ajout du sous-groupe \"%s\" au groupe \"%s\"."
+
+#~ msgid "%d groups registered."
+#~ msgstr "%d groupe enregistrés."
+
+#~ msgid "Reading %s."
+#~ msgstr "Lecture de %s."
+
+#~ msgid "%d fields found."
+#~ msgstr "%d champs trouvés."
+
+#~ msgid "The Diaporama"
+#~ msgstr "Le Diaporama"
+
+#~ msgid "Answer time:"
+#~ msgstr "Temps avant réponse:"
+
+#~ msgid "Moved %s to \"%s\" subgroup."
+#~ msgstr "Déplacement du sous-groupe \"%s\" vers le groupe \"%s\"."
+
+#~ msgid "Move to group..."
+#~ msgstr "Déplacer vers le groupe..."
+
+#~ msgid "Horizontal"
+#~ msgstr "Horizontal"
+
+#~ msgid ""
+#~ "<b>FriLogos</><br>For more informations:http://www.frilogos.org</"
+#~ "><br>FriLogos build date:%s</><br>Data directory:%s</><br>User data dir:"
+#~ "%s/data/FriLogos.Org/FriLogos</><br>Locale directory:%s</>"
+#~ msgstr ""
+#~ "<b>FriLogos</><br>Pour plus d'informations:http://www.frilogos.org</"
+#~ "><br>Date de compilation:%s</><br>Répertoire des données:%s</"
+#~ "><br>Répertoire utilisateur des données:%s/data/FriLogos.Org/FriLogos</"
+#~ "><br>Répertoire des traductions:%s</>"
+
+#, fuzzy
+#~ msgid "Initialize"
+#~ msgstr "Initialisation de l'interface principale..."
+
+#~ msgid "Append"
+#~ msgstr "Ajouter"
+
+#~ msgid "Can't allocate list node.\n"
+#~ msgstr "Impossible d'allouer un noeud dans la liste.\n"
+
+#~ msgid "\tCan't open %s."
+#~ msgstr "\tImpossible d'ouvrir %s."
+
+#~ msgid "All categories"
+#~ msgstr "Toutes les catégories"
+
+#, fuzzy
+#~ msgid "fileselector"
+#~ msgstr "Sélection du patient"
+
+#, fuzzy
+#~ msgid "<br>Distractor 1: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 1: %s de type %s</>"
+
+#, fuzzy
+#~ msgid "<br>Distractor 2: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 2: %s de type %s</>"
+
+#, fuzzy
+#~ msgid "<br>Distractor 3: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 3: %s de type %s</>"
+
+#, fuzzy
+#~ msgid "<br>Distractor 4: %s of type %s</>"
+#~ msgstr "<br>%s Distracteur 1: %s de type %s</>"
+
+#~ msgid "Select distractor 2"
+#~ msgstr "Activer distracteur 1"
+
+#, fuzzy
+#~ msgid "Select distractor 3"
+#~ msgstr "Activer distracteur 1"
+
+#, fuzzy
+#~ msgid "Select distractor 4"
+#~ msgstr "Activer distracteur 1"
+
+#, fuzzy
+#~ msgid "Initialize Patients Browser Interface..."
+#~ msgstr "Initialisation de l'interface principale..."
+
+#~ msgid "Initialize Ecore_Evas..."
+#~ msgstr "Initialisation d'Ecore_Evas..."
+
+#~ msgid "Unable to init Ecore_Evas."
+#~ msgstr "Impossible d'initialiser Ecore_Evas"

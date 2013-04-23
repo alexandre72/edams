@@ -1,0 +1,149 @@
+/*
+ * lock.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+group
+{
+	name: "widget/virtual/lock/icon";
+    min: 32 32;
+
+	images
+	{
+		image: "lock_icon.png" COMP;
+	}
+
+    parts
+	{
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "lock_icon.png";
+            }
+         }
+	}
+}/*group widget/virtual/lock/icon*/
+
+
+
+
+
+group
+{
+    name: "widget/virtual/lock";
+    min: 64 64;
+    max: 64 64;
+
+	data
+	{
+		item: "description" "Lock widget is a button used to set and show unlock/lock edition status in global view";
+		item: "tags" "lock";
+	}
+
+    images
+    {
+        image: "lock_on.png" COMP;
+        image: "lock_off.png" COMP;
+    }
+
+    parts
+    {
+        part
+        {
+            name: "base";
+            description
+            {
+                state: "on" 0.0;
+				aspect: 1 1;
+				aspect_preference: BOTH;
+                fill.smooth: 0;
+                image.normal: "lock_on.png";
+            }
+            description
+            {
+                state: "off" 0.0;
+				aspect: 1 1;
+				aspect_preference: BOTH;
+                rel1.offset: -1 0;
+                rel2.offset: 0 1;
+                fill.smooth: 0;
+                image.normal: "lock_off.png";
+            }
+        }
+        part
+        {
+            name: "event"; type: RECT;
+            ignore_flags: ON_HOLD;
+            description
+            {
+                state: "default" 0.0;
+                color: 0 0 0 0;
+            }
+        }
+    }/*parts*/
+
+    programs
+    {
+        program
+        {
+            signal: "load";
+            after: "set,lock,on";
+        }
+
+        program
+        {
+			signal: "mouse,clicked,*";
+            filter: "base" "off";
+            source: "event";
+            action: STATE_SET "on" 0.0;
+            target: "base";
+        }
+        program
+        {
+            name: "set,lock,on";
+			signal: "mouse,clicked,*";
+            filter: "base" "off";
+            source: "event";
+            action: SIGNAL_EMIT "lock,on" "";
+        }
+
+        program
+        {
+			signal: "mouse,clicked,*";
+            filter: "base" "on";
+            source: "event";
+            action: STATE_SET "off" 0.0;
+            target: "base";
+        }
+
+        program
+        {
+			signal: "mouse,clicked,*";
+            filter: "base" "on";
+            source: "event";
+            action: SIGNAL_EMIT "lock,off" "";
+        }
+
+    }/*programs*/
+}/*group widget/virtual/lock*/

@@ -1,0 +1,415 @@
+/*
+ * thermometer.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2012 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+group
+{
+	images
+	{
+		image: "thermometer_icon.png" COMP;
+	}
+
+	name: "widget/sensor.basic/thermometer/icon";
+    min: 32 32;
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0.0;
+		   		image.normal: "thermometer_icon.png";
+            }
+         }
+      }
+}/*widget/sensor.basic/thermometer/icon*/
+
+
+group
+{
+	name: "widget/sensor.basic/thermometer";
+	min: 110 150;
+	max: 110 150;
+
+	data
+	{
+		item: "drag" "EDJE_MESSAGE_FLOAT 1";
+		item: "description" "Thermometer display value in a classic red gauge, with numerical value display on the top. Mostly useful with temperature sensor device.";
+		item: "tags" "temperature,humidity,rpm";
+	}/*data*/
+
+	images
+	{
+		image: "thermometer_base.png" COMP;
+		image: "thermometer_filled.png" COMP;
+	}/*images*/
+
+
+    script
+	{
+		public message(Msg_Type:type, id, ...)
+		{
+			if ((type == MSG_FLOAT) && (id == 1))
+			{
+				new Float:val;
+				val = getfarg(2);
+				set_drag(PART:"temp_top", 0.0, val);
+			}
+		}
+	}/*script*/
+
+	parts
+	{
+	   part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 0;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }/*whole*/
+
+		part
+         {
+            name: "base";
+            type: IMAGE;
+			clip_to: "whole";
+            description
+            {
+               	state: "default" 0.0;
+               	aspect_preference: BOTH;
+               	align: 0.5 0.5;
+               	rel1.relative: 0.40 0.00;
+               	rel2.relative: 0.60 0.70;
+	          	image.normal: "thermometer_base.png";
+           }
+         }/*base*/
+
+         part
+         {
+            name: "temp";
+            type: IMAGE;
+            clip_to: "temp_clip";
+            description
+            {
+               	state: "default" 0.0;
+               	rel1.to: "base";
+               	rel2.to: "base";
+               	image.normal: "thermometer_filled.png";
+            }
+         }/*temp*/
+		part
+		{
+			name: "temp_clip";
+			type: RECT;
+			clip_to: "whole";
+			mouse_events: 0;
+
+			description
+			{
+				state: "default" 0.0;
+				rel1.to_x: "base";
+				rel1.to_y: "temp_top";
+				rel2.to: "base";
+			}
+		}/*temp_clip*/
+
+		part
+		{
+            name: "temp_top";
+            type: RECT;
+            mouse_events: 0;
+
+            dragable
+            {
+               x: 0 0 0;
+               y: -1 1 0;
+               confine: "temp_limit";
+            }
+
+            description
+            {
+               state: "default" 0.0;
+               visible: 0;
+			}
+		}/*temp_top*/
+
+		part
+		{
+			name: "temp_limit";
+            type: RECT;
+            mouse_events: 0;
+            description
+            {
+				state: "default" 0.0;
+				visible: 0;
+				rel1.relative: 0.414 0.132;
+				rel1.to: "base";
+				rel2.relative: 0.588 0.95;
+				rel2.to: "base";
+			}
+		}/*temp_limit*/
+         part
+         {
+            name: "value.text";
+            type: TEXT;
+            effect: OUTLINE_SOFT_SHADOW;
+            clip_to: "whole";
+            description
+            {
+				state: "default" 0.0;
+		       	rel1.relative: 0.0 0.0;
+    		   	rel2.relative: 1.0 1.0;
+				color: 255 255 255 255;
+				color2: 0 0 0 128;
+				color3: 0 0 0 32;
+				fixed: 1 1;
+               	text
+               	{
+                  	text: "N/A";
+                    font: "Sans,Edje-Vera";
+                  	size: 10;
+                  	min: 1 1;
+                  	align: 0.5 0.5;
+				}
+			}
+		}/*value.text*/
+
+        part
+        {
+            name: "separator";
+            mouse_events: 1;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.72;
+                rel2.relative: 0.8 0.72;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
+
+        part
+        {
+            name: "title.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            mouse_events: 1;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.77;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "sensor";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+            }
+        }/*title.text*/
+		part
+		{
+            name: "update";
+            type: IMAGE;
+            clip_to: "whole";
+			description
+            {
+               	state: "default" 0.0;
+				max: 34 34;
+               	aspect_preference: BOTH;
+	           	image.normal: "updated.png";
+               	visible: 0;
+			}
+           	description
+            {
+               	state: "show" 0.0;
+                inherit: "default";
+               	visible: 1;
+               	color: 0 0 0 0;
+            }
+		}/*update*/
+
+            part
+            {
+                name: "icon_min";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.lowest";
+                    rel1.relative: 0.2 0.0;
+                    rel2.to_y: "text.lowest";
+                    rel2.relative: 0.2 1.0;
+                    image.normal: "icon_min.png";
+                }
+            }
+            part
+            {
+                name: "text.lowest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 0.0 0.0;
+                    rel1.to_x: "icon_min";
+                    rel1.relative: 1.0 0.70;
+                    rel1.offset: 3 5;
+                    rel2.relative: 1.0 0.70;
+                    rel2.offset: 3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 0.0 0.5;
+                    }
+                }
+            }/*text.lowest*/
+            part
+            {
+                name: "icon_max";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    align: 0.5 0.0;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.highest";
+                    rel1.relative: 0.8 0.0;
+                    rel2.to_y: "text.highest";
+                    rel2.relative: 0.8 1.0;
+                    image.normal: "icon_max.png";
+                }
+            }
+            part
+            {
+                name: "text.highest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 1.0 0.0;
+                    rel1.relative: 0.0 0.70;
+                    rel1.offset: -3 5;
+                    rel2.to_x: "icon_max";
+                    rel2.relative: 0.0 0.70;
+                    rel2.offset: -3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 1.0 0.5;
+                    }
+                }
+            }/*text.highest*/
+/*
+        part
+        {
+            name: "cosm";
+            type: IMAGE;
+            mouse_events: 0;
+            description
+            {
+		       rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+               align: 0.0 0.0;
+               min: 50 25;
+               max: 50 25;
+               state: "default" 0.0;
+               visible: 1;
+               aspect: 1.0 1.0;
+               image
+               {
+                  tween: "cosm_001.png";
+                  tween: "cosm_002.png";
+                  tween: "cosm_003.png";
+                  tween: "cosm_004.png";
+                  tween: "cosm_005.png";
+                  tween: "cosm_006.png";
+                  tween: "cosm_007.png";
+                  tween: "cosm_008.png";
+                  tween: "cosm_009.png";
+                  tween: "cosm_001.png";
+                  normal: "cosm_001.png";
+               }
+            }
+            description
+            {
+               //the part is visible
+               state: "cosm" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+        */
+	}/*parts*/
+
+	programs
+	{
+		program
+        {
+            name: "updated,start";
+            signal: "updated";
+            source: "whole";
+            action: STATE_SET "show" 0.0;
+			transition: SINUSOIDAL 2.0;
+            target: "update";
+            after: "hover2";
+         }
+         program
+         {
+            name: "hover2";
+            source: "whole";
+            action: STATE_SET "default" 0.0;
+            target: "update";
+         }
+        program
+        {
+	        signal: "mouse,clicked,1";
+	        source: "title.text";
+	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
+        }
+      }/*programs*/
+}/*group widget/sensor.basic/thermometer*/

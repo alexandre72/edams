@@ -1,0 +1,271 @@
+/*
+ * text.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+group
+{
+	name: "widget/sensor.basic/text/icon";
+    min: 32 32;
+
+	images
+	{
+		image: "text_icon.png" COMP;
+	}
+
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "text_icon.png";
+            }
+         }
+      }
+}/*widget/sensor.basic/text/icon*/
+
+
+group
+{
+    name: "widget/sensor.basic/text";
+	min: 250 110;
+	max: 250 110;
+
+	data
+	{
+		item: "description" "Text widget display numerical data in a standard text label's way.";
+		item: "tags" "sensor.basic,temperature,humidity,rpm";
+	}/*data*/
+
+
+	parts
+	{
+	   part
+        {
+            name: "whole";
+            type: RECT;
+            description
+            {
+                state: "default" 0.0;
+                visible: 1;
+				color: 255 255 255 255;
+            }
+        }/*whole*/
+		part
+		{
+			name: "value.text";
+			type: TEXT;
+            effect: SOFT_OUTLINE;
+            clip_to: "whole";
+		    mouse_events: 1;
+			description
+			{
+				state: "default" 0.0;
+    			visible: 1;
+				color: 0 0 0 255;
+                color2: 255 255 255 255;
+				rel1.relative: 0.05 0.05;
+				rel2.relative: 0.95 0.75;
+				text
+				{
+                    font: "Sans,Edje-Vera";
+                    text: "N/A";
+					size: 44;
+					align: 0.5 0.5;
+				}
+			}
+		}/*value.text*/
+
+        part
+        {
+            name: "separator";
+            clip_to: "whole";
+            mouse_events: 1;
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.65;
+                rel2.relative: 0.8 0.65;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
+
+        part
+        {
+            name: "title.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            clip_to: "whole";
+		    mouse_events: 1;
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.77;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "sensor";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+            }
+        }/*title.text*/
+		part
+		{
+            name: "update";
+            type: IMAGE;
+            clip_to: "whole";
+			description
+            {
+               	state: "default" 0.0;
+				max: 34 34;
+               	aspect_preference: BOTH;
+	           	image.normal: "updated.png";
+               	visible: 0;
+			}
+           	description
+            {
+               	state: "show" 0.0;
+                inherit: "default";
+               	visible: 1;
+               	color: 0 0 0 0;
+            }
+		}/*update*/
+            part
+            {
+                name: "icon_min";
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.lowest";
+                    rel1.relative: 0.2 0.0;
+                    rel2.to_y: "text.lowest";
+                    rel2.relative: 0.2 1.0;
+                    image.normal: "icon_min.png";
+                }
+            }
+            part
+            {
+                name: "text.lowest";
+                type: TEXT;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 0.0 0.0;
+                    rel1.to_x: "icon_min";
+                    rel1.relative: 1.0 0.62;
+                    rel1.offset: 3 5;
+                    rel2.relative: 1.0 0.62;
+                    rel2.offset: 3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 0.0 0.5;
+                    }
+                }
+            }/*text.lowest*/
+            part
+            {
+                name: "icon_max";
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    align: 0.5 0.0;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.highest";
+                    rel1.relative: 0.8 0.0;
+                    rel2.to_y: "text.highest";
+                    rel2.relative: 0.8 1.0;
+                    image.normal: "icon_max.png";
+                }
+            }
+            part
+            {
+                name: "text.highest";
+                type: TEXT;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 1.0 0.0;
+                    rel1.relative: 0.0 0.62;
+                    rel1.offset: -3 5;
+                    rel2.to_x: "icon_max";
+                    rel2.relative: 0.0 0.62;
+                    rel2.offset: -3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 1.0 0.5;
+                    }
+                }
+            }/*text.highest*/
+	}/*parts*/
+
+	programs
+	{
+        program
+		{
+			name: "updated,start";
+			signal: "updated";
+			source: "whole";
+			action: STATE_SET "show" 0.0;
+			transition: SINUSOIDAL 2.0;
+			target: "update";
+			after: "hover2";
+		}
+
+		program
+		{
+			name: "hover2";
+	        source: "whole";
+			action: STATE_SET "default" 0.0;
+			target: "update";
+		}
+
+        program
+        {
+	        signal: "mouse,clicked,1";
+	        source: "title.text";
+	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
+        }
+	}/*programs*/
+}/*group widget/sensor.basic/text*/

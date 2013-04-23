@@ -1,0 +1,218 @@
+
+/*
+ * mail.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+group
+{
+	images
+	{
+		image: "mailbox_icon.png" COMP;
+	}
+
+	name: "widget/virtual/mailbox/icon";
+    min: 32 32;
+      parts
+      {
+      	part
+      	{
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "mailbox_icon.png";
+            }
+         }
+      }
+}/*widget/virtual/mailbox/icon*/
+
+
+
+
+group
+{
+	name: "widget/virtual/mailbox";
+	min: 50 80;
+	max: 50 80;
+
+   	data
+	{
+			item: "description" "Mail checker(maildir/mbox).";
+			item: "tags" "mail,checking,checker";
+	}/*data*/
+
+
+    images
+    {
+    	image, "mailbox_empty.png" RAW;
+    	image, "mailbox_new.png" RAW;
+    }/*images*/
+
+	parts
+	{
+	   part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 1;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }/*whole*/
+
+        part
+        {
+	        name, "icon";
+	        type, IMAGE;
+	        repeat_events, true;
+	        mouse_events, true;
+
+	        description
+	        {
+		        state: "default" 0.0;
+		        ICON_REL();
+                image.normal: "mailbox_empty.png";
+	        }
+
+	        description
+	        {
+		        state: "new" 0.0;
+		        ICON_REL();
+		        image.normal: "mailbox_new.png";
+	        }
+        }/*icon*/
+
+        part
+        {
+	        name, "mail.count.unseen.text";
+	        type, TEXT;
+	        repeat_events, true;
+            effect: SOFT_SHADOW;
+	        description
+	        {
+		        color: 255 0 0 255;
+		        rel1.relative: 0.0 0.0;
+			    rel1.offset: 0 17;
+			    rel1.to: "icon";
+
+                text
+		        {
+                    font: "Sans,Edje-Vera";
+                  	size: 13;
+                  	min: 1 1;
+			        align, 0.5 0.0;
+		        }
+	        }
+        }/*mail.count.unseen.text*/
+
+        part
+        {
+	        name, "mail.count.total.text";
+	        type, TEXT;
+	        repeat_events, true;
+            effect: SOFT_SHADOW;
+	        description
+	        {
+    		    color: 0 0 255 255;
+	    	    rel1.relative: 0.5 0.0;
+	    	    rel1.offset: 1 30;
+	    	    rel1.to: "icon";
+
+    		    text
+    		    {
+                    font: "Sans,Edje-Vera";
+                  	size: 11;
+                  	min: 1 1;
+    		    	align: 0.0 0.4;
+    		    }
+    	    }
+        }/*mail.count.total.text*/
+
+       part
+        {
+            name: "separator";
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.72;
+                rel2.relative: 0.8 0.72;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
+
+        part
+        {
+            name: "title.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.77;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "Mailbox";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+            }
+        }/*title.text*/
+    }/*parts*/
+
+	programs
+	{
+        program
+        {
+	        signal: "mail,new";
+	        source: "whole";
+		    transition: SINUSOIDAL 0.5;
+	        action: STATE_SET "new" 0.0;
+	        target: "icon";
+        }
+
+        program
+        {
+	        signal: "mail,empty";
+	        source: "whole";
+		    transition: SINUSOIDAL 0.5;
+	        action: STATE_SET "default" 0.0;
+	        target: "icon";
+        }
+
+        program
+        {
+	        name: "mailbox_clicked";
+	        signal: "mouse,clicked,1";
+	        source: "icon";
+	        action: SIGNAL_EMIT "mail,force_check" "icon";
+        }
+	}/*programs*/
+}/*widget/virtual/mail2*/

@@ -1,0 +1,1556 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: edams 0.9.0.115:256M\n"
+"Report-Msgid-Bugs-To: alexandre.dussart@laposte.net\n"
+"POT-Creation-Date: 2013-03-26 20:09+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/bin/about_dlg.c:37
+msgid "About E.D.A.M.S..."
+msgstr ""
+
+#: src/bin/about_dlg.c:64 src/bin/actions_editor.c:547
+#: src/bin/cmnd_editor.c:271 src/bin/debug_editor.c:103
+#: src/bin/exec_editor.c:165 src/bin/locations_creator.c:342
+#: src/bin/mail_editor.c:139 src/bin/osd_editor.c:123
+#: src/bin/preferences_dlg.c:498 src/bin/scheduler_editor.c:669
+#: src/bin/voice_editor.c:149 src/bin/widget_editor.c:653 src/lib/utils.c:117
+msgid "Close"
+msgstr ""
+
+#: src/bin/actions_editor.c:214 src/bin/scheduler_editor.c:198
+msgid "[EDAMS]About..."
+msgstr ""
+
+#: src/bin/actions_editor.c:371
+#, c-format
+msgid "If %s %s then %s"
+msgstr ""
+
+#: src/bin/actions_editor.c:425
+#, c-format
+msgid "Edit actions for '%s' xPL sensor.basic"
+msgstr ""
+
+#: src/bin/actions_editor.c:438
+msgid "Actions list"
+msgstr ""
+
+#: src/bin/actions_editor.c:487 src/bin/scheduler_editor.c:604
+msgid "Action"
+msgstr ""
+
+#: src/bin/actions_editor.c:525 src/bin/edams.c:452 src/bin/edams.c:651
+#: src/bin/scheduler_editor.c:647
+msgid "Add"
+msgstr ""
+
+#: src/bin/actions_editor.c:536 src/bin/edams.c:462 src/bin/edams.c:662
+#: src/bin/scheduler_editor.c:658
+msgid "Remove"
+msgstr ""
+
+#: src/bin/cmnd_editor.c:189
+msgid "Edit xPL control.basic CMND"
+msgstr ""
+
+#: src/bin/cmnd_editor.c:201
+msgid "Select control.basic:"
+msgstr ""
+
+#: src/bin/cmnd_editor.c:226
+msgid "Widget set to"
+msgstr ""
+
+#: src/bin/cmnd_editor.c:238
+msgid "xPL CMND Preview"
+msgstr ""
+
+#: src/bin/cmnd_editor.c:261 src/bin/debug_editor.c:93
+#: src/bin/exec_editor.c:155 src/bin/locations_creator.c:331
+#: src/bin/mail_editor.c:129 src/bin/osd_editor.c:113
+#: src/bin/preferences_dlg.c:487 src/bin/voice_editor.c:139
+#: src/bin/widget_editor.c:642
+msgid "Ok"
+msgstr ""
+
+#: src/bin/debug_editor.c:59
+msgid "Edit debug message"
+msgstr ""
+
+#: src/bin/debug_editor.c:71 src/bin/voice_editor.c:91
+msgid "Message:"
+msgstr ""
+
+#: src/bin/edams.c:190
+msgid "Can't remove:no location selected!"
+msgstr ""
+
+#: src/bin/edams.c:203
+#, c-format
+msgid "Location '%s' have been removed"
+msgstr ""
+
+#: src/bin/edams.c:225
+msgid "Can't remove widget:no location selected!"
+msgstr ""
+
+#: src/bin/edams.c:240
+#, c-format
+msgid "Widget '%s' have been removed from '%s' location's"
+msgstr ""
+
+#: src/bin/edams.c:377
+#, c-format
+msgid "Name:%s<br>Cosm feedid:%d"
+msgstr ""
+
+#: src/bin/edams.c:391 src/bin/widget_editor.c:595
+msgid "Widgets"
+msgstr ""
+
+#: src/bin/edams.c:432
+msgid "Edit"
+msgstr ""
+
+#: src/bin/edams.c:442
+msgid "Actions"
+msgstr ""
+
+#: src/bin/edams.c:534
+#, c-format
+msgid "[31mERROR:[0mCan't parse command line options!\n"
+msgstr ""
+
+#: src/bin/edams.c:547
+#, c-format
+msgid "[31mERROR:[0mCan't calloc App_Info struct!\n"
+msgstr ""
+
+#: src/bin/edams.c:562
+msgid "Can't parse action data"
+msgstr ""
+
+#: src/bin/edams.c:570
+msgid "Can't parse action type"
+msgstr ""
+
+#: src/bin/edams.c:588
+msgid "Enlightened Domotics Alarm Monitoring System"
+msgstr ""
+
+#: src/bin/edams.c:607
+msgid "Global View"
+msgstr ""
+
+#: src/bin/edams.c:608
+msgid "Scheduler Editor"
+msgstr ""
+
+#: src/bin/edams.c:609
+msgid "Preferences"
+msgstr ""
+
+#: src/bin/edams.c:610
+msgid "About"
+msgstr ""
+
+#: src/bin/edams.c:611
+msgid "Quit"
+msgstr ""
+
+#: src/bin/edams.c:632
+msgid "Locations"
+msgstr ""
+
+#: src/bin/edams.c:739
+#, c-format
+msgid "Welcome to EDAMS v%s - %02d/%02d/%d"
+msgstr ""
+
+#: src/bin/exec_editor.c:82
+msgid "Select a program"
+msgstr ""
+
+#: src/bin/exec_editor.c:97
+msgid "Edit exec"
+msgstr ""
+
+#: src/bin/exec_editor.c:109
+msgid "Exec:"
+msgstr ""
+
+#: src/bin/exec_editor.c:127 src/bin/locations_creator.c:258
+#: src/bin/preferences_dlg.c:251
+msgid "Open..."
+msgstr ""
+
+#: src/bin/exec_editor.c:140
+msgid "Exec in terminal"
+msgstr ""
+
+#: src/bin/global_view.c:66 src/bin/global_view.c:75
+#, c-format
+msgid "No widget data for object %p (%s)"
+msgstr ""
+
+#: src/bin/global_view.c:181
+msgid "Can't create Edje object"
+msgstr ""
+
+#: src/bin/global_view.c:187
+#, c-format
+msgid "Can't load Edje cursor '%s' from '%s'"
+msgstr ""
+
+#: src/bin/global_view.c:590 src/bin/global_view.c:893
+msgid "Can't create Edje_Object object"
+msgstr ""
+
+#: src/bin/global_view.c:596 src/bin/global_view.c:899
+#, c-format
+msgid "Can't load group Edje group '%s' from Edje file '%s'"
+msgstr ""
+
+#: src/bin/global_view.c:678
+#, c-format
+msgid "Global view edition has been %s\n"
+msgstr ""
+
+#: src/bin/global_view.c:962
+msgid "Can't construct Ecore_Evas object"
+msgstr ""
+
+#: src/bin/global_view.c:970 src/bin/preferences_dlg.c:455
+#: src/bin/preferences_dlg.c:456
+msgid "Global view"
+msgstr ""
+
+#: src/bin/global_view.c:977
+#, c-format
+msgid "Using Ecore_Evas '%s' engine"
+msgstr ""
+
+#: src/bin/global_view.c:993
+#, c-format
+msgid "Can't load image file from '%s'"
+msgstr ""
+
+#: src/bin/init.c:47
+msgid "Can't init Eina"
+msgstr ""
+
+#: src/bin/init.c:56
+msgid "Can't init Ecore_Con or Ecore_Con_Url"
+msgstr ""
+
+#: src/bin/init.c:62
+msgid "Ecore_Con_Url pipeline has been enabled"
+msgstr ""
+
+#: src/bin/init.c:71
+msgid "Can't init Elementary"
+msgstr ""
+
+#: src/bin/locations_creator.c:122
+#, c-format
+msgid "Location %s has been created."
+msgstr ""
+
+#: src/bin/locations_creator.c:166 src/bin/preferences_dlg.c:181
+msgid "Select a picture file"
+msgstr ""
+
+#: src/bin/locations_creator.c:226
+msgid "Add a location"
+msgstr ""
+
+#: src/bin/locations_creator.c:238
+msgid "Photo"
+msgstr ""
+
+#: src/bin/locations_creator.c:270
+msgid "Name:"
+msgstr ""
+
+#: src/bin/locations_creator.c:283
+msgid "Geolocalization:"
+msgstr ""
+
+#: src/bin/locations_creator.c:313
+msgid "Go to"
+msgstr ""
+
+#: src/bin/mail_editor.c:58
+msgid "Edit mail"
+msgstr ""
+
+#: src/bin/mail_editor.c:70
+msgid "From:"
+msgstr ""
+
+#: src/bin/mail_editor.c:83
+msgid "To:"
+msgstr ""
+
+#: src/bin/mail_editor.c:95
+msgid "Subject:"
+msgstr ""
+
+#: src/bin/mail_editor.c:107
+msgid "Body:"
+msgstr ""
+
+#: src/bin/osd_editor.c:55
+msgid "Edit xPL osd.basic CMND"
+msgstr ""
+
+#: src/bin/osd_editor.c:67
+msgid "Command:"
+msgstr ""
+
+#: src/bin/osd_editor.c:80
+msgid "Text:"
+msgstr ""
+
+#: src/bin/osd_editor.c:92
+msgid "Delay:"
+msgstr ""
+
+#: src/bin/osd_editor.c:97
+#, c-format
+msgid "%1.0f seconds"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:107
+msgid "User name:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:121
+msgid "User mail:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:198
+#, c-format
+msgid "Can't open Eet file '%s' in rw mode"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:231
+msgid "Global view background image:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:266
+msgid "Reset widgets geometry"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:274
+msgid "Mbox file path:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:306
+msgid "Cosm API key:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:320
+msgid "Voicerss API key:"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:351
+msgid "xPL software emulation"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:358
+msgid "Debug with printf"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:405
+msgid "Settings"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:442
+msgid "Options"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:445 src/bin/preferences_dlg.c:446
+msgid "General"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:450 src/bin/preferences_dlg.c:451
+msgid "Services"
+msgstr ""
+
+#: src/bin/preferences_dlg.c:460 src/bin/preferences_dlg.c:461
+msgid "Advanced"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:413
+#, c-format
+msgid "On %s %s %s %s %s"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:456
+msgid "Scheduler editor"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:467
+msgid "Events"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:485
+msgid "Weekday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:492 src/lib/crontab.c:137
+msgid "Sunday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:493 src/lib/crontab.c:138
+msgid "Monday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:494 src/lib/crontab.c:139
+msgid "Tuesday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:495 src/lib/crontab.c:140
+msgid "Wednesday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:496 src/lib/crontab.c:141
+msgid "Thursday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:497 src/lib/crontab.c:142
+msgid "Friday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:498 src/lib/crontab.c:143
+msgid "Saturday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:499 src/lib/crontab.c:144
+msgid "Every Weekday"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:504
+msgid "Day"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:520 src/lib/crontab.c:85
+msgid "Every Day"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:523
+msgid "Month"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:530 src/lib/crontab.c:105
+msgid "January"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:531 src/lib/crontab.c:106
+msgid "February"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:532 src/lib/crontab.c:107
+msgid "March"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:533 src/lib/crontab.c:108
+msgid "April"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:534 src/lib/crontab.c:109
+msgid "May"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:535 src/lib/crontab.c:110
+msgid "June"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:536 src/lib/crontab.c:111
+msgid "July"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:537 src/lib/crontab.c:112
+msgid "August"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:538 src/lib/crontab.c:113
+msgid "September"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:539 src/lib/crontab.c:114
+msgid "October"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:540 src/lib/crontab.c:115
+msgid "November"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:541 src/lib/crontab.c:116
+msgid "December"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:542 src/lib/crontab.c:117
+msgid "Every Month"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:548
+msgid "Hour"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:555 src/lib/crontab.c:63
+msgid "12 Midnight"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:556
+msgid "1 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:557
+msgid "2 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:558
+msgid "3 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:559
+msgid "4 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:560
+msgid "5 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:561
+msgid "6 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:562
+msgid "7 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:563
+msgid "8 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:564
+msgid "9 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:565
+msgid "10 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:566
+msgid "11 AM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:567 src/lib/crontab.c:64
+msgid "12 Noon"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:568
+msgid "1 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:569
+msgid "2 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:570
+msgid "3 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:571
+msgid "4 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:572
+msgid "5 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:573
+msgid "6 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:574
+msgid "7 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:575
+msgid "8 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:576
+msgid "9 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:577
+msgid "10 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:578
+msgid "11 PM"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:579 src/lib/crontab.c:65
+msgid "Every Hour"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:584
+msgid "Minute"
+msgstr ""
+
+#: src/bin/scheduler_editor.c:600 src/lib/crontab.c:43
+msgid "Every Minute"
+msgstr ""
+
+#: src/bin/shutdown.c:42
+msgid "Shutdown Enlightenment Foundation Libraries..."
+msgstr ""
+
+#: src/bin/shutdown.c:63
+msgid "Free allocated memory..."
+msgstr ""
+
+#: src/bin/voice_editor.c:79
+msgid "Edit voice message"
+msgstr ""
+
+#: src/bin/voice_editor.c:109
+msgid "Make and play"
+msgstr ""
+
+#: src/bin/voice_editor.c:121
+msgid "Making voice"
+msgstr ""
+
+#: src/bin/widget_editor.c:78
+#, c-format
+msgid "Widget '%s' has been added to '%s'"
+msgstr ""
+
+#: src/bin/widget_editor.c:83
+#, c-format
+msgid "Widget '%s' from '%s' has been updated"
+msgstr ""
+
+#: src/bin/widget_editor.c:435 src/bin/widget_editor.c:554
+msgid "xPL type"
+msgstr ""
+
+#: src/bin/widget_editor.c:494
+#, c-format
+msgid "Add a new widget to '%s' location"
+msgstr ""
+
+#: src/bin/widget_editor.c:501
+#, c-format
+msgid "Edit widget '%s' from '%s' location"
+msgstr ""
+
+#: src/bin/widget_editor.c:517
+msgid "Widget class"
+msgstr ""
+
+#: src/bin/widget_editor.c:527
+msgid "Widget name"
+msgstr ""
+
+#: src/bin/widget_editor.c:541
+msgid "xPL device"
+msgstr ""
+
+#: src/bin/widget_editor.c:568 src/lib/myfileselector.c:264
+msgid "Preview"
+msgstr ""
+
+#: src/bin/widget_editor.c:581
+msgid "xPL scheme preview"
+msgstr ""
+
+#: src/lib/action.c:82 src/lib/sound.c:123
+msgid "Can't create an Ecore_Exec_Pipe process"
+msgstr ""
+
+#: src/lib/action.c:93 src/lib/sound.c:132
+msgid "Can't create get PID of Ecore_Exec_Pipe process"
+msgstr ""
+
+#: src/lib/action.c:102 src/lib/sound.c:138
+#, c-format
+msgid "Exec '%s' with PID '%d'"
+msgstr ""
+
+#: src/lib/action.c:179
+msgid "Can't send mail with sendmail"
+msgstr ""
+
+#: src/lib/action.c:469
+msgid "Can't execute action with no data passed in arg"
+msgstr ""
+
+#: src/lib/action.c:495
+msgid "Can't execute an unknown action"
+msgstr ""
+
+#: src/lib/action.c:563
+msgid "Send xPL CMND to control.basic"
+msgstr ""
+
+#: src/lib/action.c:564
+msgid "Send a mail"
+msgstr ""
+
+#: src/lib/action.c:565
+msgid "Execute an external program"
+msgstr ""
+
+#: src/lib/action.c:566
+msgid "Debug stuff for testing purpose"
+msgstr ""
+
+#: src/lib/action.c:567
+msgid "Send xPL CMND to osd.basic"
+msgstr ""
+
+#: src/lib/action.c:568
+msgid "Use synthetized voice to say some message"
+msgstr ""
+
+#: src/lib/cosm.c:44
+msgid "401 Not Authorized"
+msgstr ""
+
+#: src/lib/cosm.c:45
+msgid "403 Forbidden"
+msgstr ""
+
+#: src/lib/cosm.c:46
+msgid "404 Not Found"
+msgstr ""
+
+#: src/lib/cosm.c:47
+msgid "422 Unprocessable Entity"
+msgstr ""
+
+#: src/lib/cosm.c:48
+msgid "500 Internal Server Error"
+msgstr ""
+
+#: src/lib/cosm.c:49
+msgid "503 No server error"
+msgstr ""
+
+#: src/lib/cosm.c:75 src/lib/cosm.c:134 src/lib/cosm.c:200
+#: src/lib/voicerss.c:140
+msgid "Can't create Ecore_Con_Url object"
+msgstr ""
+
+#: src/lib/cosm.c:107 src/lib/cosm.c:169 src/lib/cosm.c:209
+msgid "Can't realize url PUT request"
+msgstr ""
+
+#: src/lib/cosm.c:128
+#, c-format
+msgid "Creating cosm feed '%s'..."
+msgstr ""
+
+#: src/lib/cosm.c:193
+#, c-format
+msgid "Deleting Cosm feed '%s'..."
+msgstr ""
+
+#: src/lib/cosm.c:230
+#, c-format
+msgid "A datastream feed hasn't been updated, Cosm server returned error '%s'"
+msgstr ""
+
+#: src/lib/cosm.c:257 src/lib/cosm.c:302
+#, c-format
+msgid "Cosm server returned code: '%d'"
+msgstr ""
+
+#: src/lib/cosm.c:259
+#, c-format
+msgid "A location feed hasn't been added, Cosm server returned error '%s'"
+msgstr ""
+
+#: src/lib/cosm.c:278
+#, c-format
+msgid "Location has been added to Cosm with feedid '%d'"
+msgstr ""
+
+#: src/lib/cosm.c:304
+#, c-format
+msgid "A location feed hasn't been deleted, Cosm server returned error '%s'"
+msgstr ""
+
+#: src/lib/cosm.c:317
+#, c-format
+msgid "Location with feedid '%d' has been removed from Cosm"
+msgstr ""
+
+#: src/lib/crontab.c:199
+msgid "Listing crons entries with crontab"
+msgstr ""
+
+#: src/lib/crontab.c:255
+msgid "Can't parse crontab list"
+msgstr ""
+
+#: src/lib/crontab.c:284 src/lib/voicerss.c:127
+msgid "Can't create a valid temp name file"
+msgstr ""
+
+#: src/lib/location.c:140
+msgid "Can't calloc Action struct"
+msgstr ""
+
+#: src/lib/location.c:317
+msgid "Can't calloc Widget struct"
+msgstr ""
+
+#: src/lib/location.c:322 src/lib/location.c:836
+msgid "undefined"
+msgstr ""
+
+#: src/lib/location.c:333
+msgid "You shouldn't create a new widget with unknown class"
+msgstr ""
+
+#: src/lib/location.c:833
+msgid "Can't calloc Location struct"
+msgstr ""
+
+#: src/lib/location.c:1020 src/lib/location.c:1187
+#, c-format
+msgid "Can't open Eet file '%s' in write mode"
+msgstr ""
+
+#: src/lib/location.c:1036 src/lib/location.c:1196
+#, c-format
+msgid "Can't write any data to Eet file '%s'"
+msgstr ""
+
+#: src/lib/location.c:1149
+#, c-format
+msgid "Can't open Eet file '%s' in read mode"
+msgstr ""
+
+#: src/lib/location.c:1160
+#, c-format
+msgid "Eet file '%s' %#x was too old, upgrading it to %#x"
+msgstr ""
+
+#: src/lib/location.c:1236
+#, c-format
+msgid "Can't remove Eet location file '%s'"
+msgstr ""
+
+#: src/lib/location.c:1240
+#, c-format
+msgid "Eet Location file '%s' has been removed"
+msgstr ""
+
+#: src/lib/location.c:1324
+msgid "Can't alloc Eina_List node"
+msgstr ""
+
+#: src/lib/location.c:1334
+#, c-format
+msgid "%d locations registered"
+msgstr ""
+
+#: src/lib/myfileselector.c:44
+#, c-format
+msgid "You"
+msgstr ""
+
+#: src/lib/myfileselector.c:98
+#, c-format
+msgid "Protected"
+msgstr ""
+
+#: src/lib/myfileselector.c:100 src/lib/myfileselector.c:109
+#: src/lib/myfileselector.c:118
+#, c-format
+msgid "Read Only"
+msgstr ""
+
+#: src/lib/myfileselector.c:107 src/lib/myfileselector.c:116
+#, c-format
+msgid "Forbidden"
+msgstr ""
+
+#: src/lib/myfileselector.c:125
+msgid "Read-Write"
+msgstr ""
+
+#: src/lib/myfileselector.c:138
+#, c-format
+msgid "%'.0f Bytes"
+msgstr ""
+
+#: src/lib/myfileselector.c:142
+#, c-format
+msgid "%'.0f KB"
+msgstr ""
+
+#: src/lib/myfileselector.c:146
+#, c-format
+msgid "%'.0f MB"
+msgstr ""
+
+#: src/lib/myfileselector.c:150
+#, c-format
+msgid "%'.1f GB"
+msgstr ""
+
+#: src/lib/myfileselector.c:226
+msgid "Select a file..."
+msgstr ""
+
+#: src/lib/myfileselector.c:270
+msgid "Type :"
+msgstr ""
+
+#: src/lib/myfileselector.c:282
+msgid "Size :"
+msgstr ""
+
+#: src/lib/myfileselector.c:294
+msgid "Owner :"
+msgstr ""
+
+#: src/lib/myfileselector.c:306
+msgid "Permissions :"
+msgstr ""
+
+#: src/lib/myfileselector.c:326
+msgid "Cancel"
+msgstr ""
+
+#: src/lib/myfileselector.c:336
+msgid "Open"
+msgstr ""
+
+#: src/lib/settings.c:95
+#, c-format
+msgid "Debug is %s"
+msgstr ""
+
+#: src/lib/settings.c:95 src/lib/settings.c:117 src/lib/settings.c:150
+#: src/lib/settings.c:181 src/lib/settings.c:215 src/lib/settings.c:299
+msgid "enabled"
+msgstr ""
+
+#: src/lib/settings.c:95 src/lib/settings.c:117 src/lib/settings.c:150
+#: src/lib/settings.c:181 src/lib/settings.c:215 src/lib/settings.c:299
+msgid "disabled"
+msgstr ""
+
+#: src/lib/settings.c:117
+#, c-format
+msgid "Software emulation is %s"
+msgstr ""
+
+#: src/lib/settings.c:150
+#, c-format
+msgid "Global view background options is %s"
+msgstr ""
+
+#: src/lib/settings.c:181
+#, c-format
+msgid "Cosm data handling options is %s"
+msgstr ""
+
+#: src/lib/settings.c:215
+#, c-format
+msgid "Mbox monitoring is %s"
+msgstr ""
+
+#: src/lib/settings.c:299
+#, c-format
+msgid "Voicerss handling options is %s"
+msgstr ""
+
+#: src/lib/settings.c:314
+msgid "Can't calloc Settings struct"
+msgstr ""
+
+#: src/lib/sound.c:41
+msgid "Sound support with Emotion has been enabled"
+msgstr ""
+
+#: src/lib/sound.c:71
+msgid "Can't play sound with Emotion gstreamer backend"
+msgstr ""
+
+#: src/lib/sound.c:92
+msgid "No sound system for playing audio, using mplayer pipe"
+msgstr ""
+
+#: src/lib/utils.c:49
+#, c-format
+msgid "Caught attempt to free NULL pointer variable %s at %s:%lu!"
+msgstr ""
+
+#: src/lib/utils.c:102
+msgid "Confirmation"
+msgstr ""
+
+#: src/lib/utils.c:353
+msgid "Pictures"
+msgstr ""
+
+#: src/lib/voicerss.c:154
+msgid "Can't realize Ecore_Con_Url GET request"
+msgstr ""
+
+#: src/lib/voicerss.c:173
+#, c-format
+msgid "Voicerss server returned code: '%d'"
+msgstr ""
+
+#: src/lib/voicerss.c:184
+msgid "Voice has been created from voicerss.org"
+msgstr ""
+
+#: src/lib/xpl-io.c:184
+#, c-format
+msgid "Can't remove managed IO device, fd=%d not found"
+msgstr ""
+
+#: src/lib/xpl-io.c:283
+#, c-format
+msgid "Can't read receive socket buffer size - %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:289
+#, c-format
+msgid "Can't to set receive buffer to %d bytes - retrying"
+msgstr ""
+
+#: src/lib/xpl-io.c:297
+#, c-format
+msgid "Can't  read receive socket buffer size - %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:303
+msgid "Can't increase receive buffer size - dang!"
+msgstr ""
+
+#: src/lib/xpl-io.c:323 src/lib/xpl-io.c:383
+msgid "Can't to lookup UDP protocol info"
+msgstr ""
+
+#: src/lib/xpl-io.c:330 src/lib/xpl-io.c:390
+#, c-format
+msgid "Can't create listener socket %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:337
+#, c-format
+msgid "Can't set SO_REUSEADDR on socket %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:345 src/lib/xpl-io.c:397 src/lib/xpl-io.c:518
+#, c-format
+msgid "Can't set SO_BROADCAST on socket %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:353 src/lib/xpl-io.c:405
+#, c-format
+msgid "Can't bind listener socket to port %d, %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:413
+#, c-format
+msgid "Can't fetch socket info for bound listener, %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:437
+#, c-format
+msgid "Standalong connect failed - %d %d"
+msgstr ""
+
+#: src/lib/xpl-io.c:504
+msgid "Can't lookup UDP protocol info"
+msgstr ""
+
+#: src/lib/xpl-io.c:511
+#, c-format
+msgid "Can't to create broadcast socket %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:528
+msgid "Can't find a working, non-loopback network interface"
+msgstr ""
+
+#: src/lib/xpl-io.c:542
+#, c-format
+msgid "Can't get IP addr for interface %s"
+msgstr ""
+
+#: src/lib/xpl-io.c:555
+msgid "Can't extract the interface net mask"
+msgstr ""
+
+#: src/lib/xpl-io.c:583
+#, c-format
+msgid "Can't broadcast message, %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-io.c:726
+#, c-format
+msgid "Can't poll devices - %s (%d) - terminating"
+msgstr ""
+
+#: src/lib/xpl-message.c:528
+#, c-format
+msgid "Can't format xPL message -- invalid/unknown message type '%d'"
+msgstr ""
+
+#: src/lib/xpl-message.c:652
+#, c-format
+msgid "Got invalid character parsing block header - %c at position %d"
+msgstr ""
+
+#: src/lib/xpl-message.c:663
+#, c-format
+msgid ""
+"Got invalid character parsing start of block - %c at position %d (wanted a {)"
+msgstr ""
+
+#: src/lib/xpl-message.c:676
+#, c-format
+msgid ""
+"Got invalid character parsing start of block -  %c at position %d (wanted a "
+"LF)"
+msgstr ""
+
+#: src/lib/xpl-message.c:712
+#, c-format
+msgid ""
+"Got invalid character parsing block name/value name -  %c at position %d"
+msgstr ""
+
+#: src/lib/xpl-message.c:729
+#, c-format
+msgid "Can't xlate binary value for name %s"
+msgstr ""
+
+#: src/lib/xpl-message.c:748
+#, c-format
+msgid "Got invalid character parsing name/value value -  %c at position %d"
+msgstr ""
+
+#: src/lib/xpl-message.c:762
+#, c-format
+msgid ""
+"Got invalid character parsing end of name/value -  %c at position %d (wanted "
+"a LF)"
+msgstr ""
+
+#: src/lib/xpl-message.c:772
+msgid "Ran out of characters parsing block"
+msgstr ""
+
+#: src/lib/xpl-message.c:789
+msgid "Message missing HOP count"
+msgstr ""
+
+#: src/lib/xpl-message.c:793
+msgid "Message HOP Count invalid"
+msgstr ""
+
+#: src/lib/xpl-message.c:800
+msgid "Message missing SOURCE"
+msgstr ""
+
+#: src/lib/xpl-message.c:805
+#, c-format
+msgid "SOURCE Missing Device ID - %s"
+msgstr ""
+
+#: src/lib/xpl-message.c:812
+#, c-format
+msgid "SOURCE Missing Instance ID - %s.%s"
+msgstr ""
+
+#: src/lib/xpl-message.c:829
+msgid "Message missing TARGET"
+msgstr ""
+
+#: src/lib/xpl-message.c:844
+#, c-format
+msgid "TARGET Missing Device ID - %s"
+msgstr ""
+
+#: src/lib/xpl-message.c:851
+#, c-format
+msgid "TARGET Missing Instance ID - %s.%s"
+msgstr ""
+
+#: src/lib/xpl-message.c:893
+msgid "Error parsing message header"
+msgstr ""
+
+#: src/lib/xpl-message.c:907
+#, c-format
+msgid "Unknown message header of %s - bad message"
+msgstr ""
+
+#: src/lib/xpl-message.c:919
+msgid "Can't parse message header"
+msgstr ""
+
+#: src/lib/xpl-message.c:932
+msgid "Can't parse message block"
+msgstr ""
+
+#: src/lib/xpl-message.c:946
+#, c-format
+msgid "Malformed message block header - %s"
+msgstr ""
+
+#: src/lib/xpl-message.c:1004
+#, c-format
+msgid "Can't read xPL message from network - %s (%d)"
+msgstr ""
+
+#: src/lib/xpl-message.c:1016
+msgid "Can't parse network message - ignored"
+msgstr ""
+
+#: src/lib/xpl.c:163
+msgid "MSG=xpl-cmnd CLASS=osd.basic"
+msgstr ""
+
+#: src/lib/xpl.c:185
+#, c-format
+msgid "MSG=xpl-trig CLASS=sensor.basic DEVICE=%s TYPE=%s CURRENT=%s"
+msgstr ""
+
+#: src/lib/xpl.c:408
+msgid "Can't init xPL service"
+msgstr ""
+
+#: src/lib/xpl.c:419
+msgid "xPL service initialized"
+msgstr ""
+
+#: src/lib/xpl.c:433
+msgid "Shutdown xPL..."
+msgstr ""
+
+#: src/lib/xpl.c:501
+msgid "A battery level in percent"
+msgstr ""
+
+#: src/lib/xpl.c:502
+msgid "A counter value (door openings, rain fall, etc)"
+msgstr ""
+
+#: src/lib/xpl.c:503
+msgid "A current value in Amps"
+msgstr ""
+
+#: src/lib/xpl.c:504
+msgid ""
+"Direction, represented as degrees from north (0-360, 0=north, 180=south, etc)"
+msgstr ""
+
+#: src/lib/xpl.c:505
+msgid "Distance measurments. Default unit of measure is meters"
+msgstr ""
+
+#: src/lib/xpl.c:506
+msgid "Consumption of energy over a preiod of time in kWh (kilowatt hours)"
+msgstr ""
+
+#: src/lib/xpl.c:507
+msgid "A fan speed in RPM"
+msgstr ""
+
+#: src/lib/xpl.c:508
+msgid ""
+"A generic analogue value who's units of measurement are application specific"
+msgstr ""
+
+#: src/lib/xpl.c:509
+msgid "A relative humidity percentage (0 to 100, no percent sign)"
+msgstr ""
+
+#: src/lib/xpl.c:510
+msgid ""
+"A switch that can either be current=HIGH (on), current=LOW (off) or "
+"current=PULSE (representing a button press)"
+msgstr ""
+
+#: src/lib/xpl.c:511
+msgid "A change in an output state with values of LOW and HIGH"
+msgstr ""
+
+#: src/lib/xpl.c:512
+msgid "Instantaneous energy consumption level in kW"
+msgstr ""
+
+#: src/lib/xpl.c:513
+msgid "A pressure value in Pascals (N/m2)"
+msgstr ""
+
+#: src/lib/xpl.c:514
+msgid ""
+"A thermostat threshold temperature value in degrees. Default unit of measure "
+"is centigrade/celsius"
+msgstr ""
+
+#: src/lib/xpl.c:515
+msgid "A generic speed. Default unit of measure is Miles per Hour"
+msgstr ""
+
+#: src/lib/xpl.c:516
+msgid ""
+"A temperature value in degrees. Default unit of measure is centigrade celsius"
+msgstr ""
+
+#: src/lib/xpl.c:517
+msgid "UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index"
+msgstr ""
+
+#: src/lib/xpl.c:518
+msgid "A voltage value in Volts"
+msgstr ""
+
+#: src/lib/xpl.c:519
+msgid "A volume in m3. Often used as a measure of gas and water consumption"
+msgstr ""
+
+#: src/lib/xpl.c:520
+msgid ""
+"The default unit is kilograms (yes, kilograms are a unit of mass, not weight)"
+msgstr ""
+
+#: src/lib/xpl.c:521
+msgid "balance - -100 to +100"
+msgstr ""
+
+#: src/lib/xpl.c:522
+msgid "flag - set, clear, neutral"
+msgstr ""
+
+#: src/lib/xpl.c:523
+msgid ""
+"infrared - send, enable_rx, disable_rx, enable_tx, disable_tx, sendx (send x "
+"times)"
+msgstr ""
+
+#: src/lib/xpl.c:524
+msgid "input - enable, disable"
+msgstr ""
+
+#: src/lib/xpl.c:525
+msgid "macro - enable, disable, do"
+msgstr ""
+
+#: src/lib/xpl.c:526
+msgid "mute - yes, no"
+msgstr ""
+
+#: src/lib/xpl.c:527
+msgid "output - enable, disable, high, low, toggle, pulse"
+msgstr ""
+
+#: src/lib/xpl.c:528
+msgid "variable - inc, dec, 0-255 (for set)"
+msgstr ""
+
+#: src/lib/xpl.c:529
+msgid "periodic - started, enable, disable"
+msgstr ""
+
+#: src/lib/xpl.c:530
+msgid "scheduled - started, enable, disable"
+msgstr ""
+
+#: src/lib/xpl.c:531
+msgid ""
+"slider - nn = set to value (0-255), +nn = increment by nn, -nn = decrement "
+"by nn, n% = set to nn (where nn is a percentage - 0-100%)"
+msgstr ""
+
+#: src/lib/xpl.c:532
+msgid "timer - went off, start, stop, halt, resume"
+msgstr ""
+
+#: src/lib/xpl.c:533
+msgid "Unknown xPL type"
+msgstr ""
+
+#: src/lib/xpl.c:610
+msgid "Percent"
+msgstr ""
+
+#: src/lib/xpl.c:611
+msgid "Counter"
+msgstr ""
+
+#: src/lib/xpl.c:612
+msgid "Amps"
+msgstr ""
+
+#: src/lib/xpl.c:613 src/lib/xpl.c:623
+msgid "Degrees"
+msgstr ""
+
+#: src/lib/xpl.c:614
+msgid "Meters"
+msgstr ""
+
+#: src/lib/xpl.c:615
+msgid "Kilowatt hours"
+msgstr ""
+
+#: src/lib/xpl.c:616
+msgid "Rotation/min"
+msgstr ""
+
+#: src/lib/xpl.c:617
+msgid "Generic"
+msgstr ""
+
+#: src/lib/xpl.c:618
+msgid "Humidity ratio"
+msgstr ""
+
+#: src/lib/xpl.c:619
+msgid "Input"
+msgstr ""
+
+#: src/lib/xpl.c:620
+msgid "Output"
+msgstr ""
+
+#: src/lib/xpl.c:621
+msgid "Kilowatt"
+msgstr ""
+
+#: src/lib/xpl.c:622
+msgid "Pascals"
+msgstr ""
+
+#: src/lib/xpl.c:624
+msgid "Miles per Hour"
+msgstr ""
+
+#: src/lib/xpl.c:625
+msgid "Celsius"
+msgstr ""
+
+#: src/lib/xpl.c:626
+msgid "UV"
+msgstr ""
+
+#: src/lib/xpl.c:627
+msgid "Volts"
+msgstr ""
+
+#: src/lib/xpl.c:628
+msgid "Cubic meter"
+msgstr ""
+
+#: src/lib/xpl.c:629
+msgid "Kilograms"
+msgstr ""
+
+#: src/lib/xpl.c:641 src/lib/xpl.c:649
+msgid "%"
+msgstr ""
+
+#: src/lib/xpl.c:643
+msgid "A"
+msgstr ""
+
+#: src/lib/xpl.c:644
+msgid "o"
+msgstr ""
+
+#: src/lib/xpl.c:645
+msgid "m"
+msgstr ""
+
+#: src/lib/xpl.c:646
+msgid "kWh"
+msgstr ""
+
+#: src/lib/xpl.c:647
+msgid "RPM"
+msgstr ""
+
+#: src/lib/xpl.c:652
+msgid "kW"
+msgstr ""
+
+#: src/lib/xpl.c:653
+msgid "N/m2"
+msgstr ""
+
+#: src/lib/xpl.c:654 src/lib/xpl.c:656
+msgid "C"
+msgstr ""
+
+#: src/lib/xpl.c:655
+msgid "MpH"
+msgstr ""
+
+#: src/lib/xpl.c:658
+msgid "V"
+msgstr ""
+
+#: src/lib/xpl.c:659
+msgid "m3"
+msgstr ""
+
+#: src/lib/xpl.c:660
+msgid "kg"
+msgstr ""
+
+#: src/lib/xpl.c:675 src/lib/xpl.c:722 src/lib/xpl.c:768
+msgid "Can't create broadcast message"
+msgstr ""
+
+#: src/lib/xpl.c:693 src/lib/xpl.c:739 src/lib/xpl.c:781
+msgid "Can't send xPL message"
+msgstr ""
+
+#: src/lib/xpl.c:699
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=osd.basic COMMAND=%s TEXT=%s DELAY=%s"
+msgstr ""
+
+#: src/lib/xpl.c:745
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=control.basic DEVICE=%s TYPE=%s CURRENT=%s"
+msgstr ""
+
+#: src/lib/xpl.c:787
+#, c-format
+msgid "MSG=xpl-cmnd CLASS=sensor.request DEVICE=%s"
+msgstr ""

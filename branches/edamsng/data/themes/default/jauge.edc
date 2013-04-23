@@ -1,0 +1,334 @@
+/*
+ * jauge.edc
+ * This file is part of EDAMS
+ *
+ * Copyright (C) 2013 - Alexandre Dussart
+ *
+ * EDAMS is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EDAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EDAMS. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+group
+{
+	name: "widget/sensor.basic/jauge/icon";
+    min: 32 32;
+    images
+	{
+		image: "jauge_icon.png" COMP;
+	}
+
+    parts
+    {
+        part
+        {
+			type: IMAGE;
+            description
+            {
+               	aspect: 1 1;
+               	aspect_preference: BOTH;
+            	state: "default" 0;
+		   		image.normal: "jauge_icon.png";
+            }
+         }
+      }
+}/*group widget/sensor.basic/jauge/icon*/
+
+
+group
+{
+   	name: "widget/sensor.basic/jauge";
+	min: 110 170;
+	max: 110 170;
+
+	data
+	{
+		item: "drag" "EDJE_MESSAGE_FLOAT 1";
+		item: "description" "Jauge display value in a bar with green/reds gradient. Mostly useful with temperature sensor device or any device with bounds limits.";
+		item: "tags" "temperature,humidity,rpm";
+	}/*data*/
+
+
+	images
+	{
+		image: "jauge_bg.png" COMP;
+		image: "jauge_slider.png" COMP;
+	}/*images*/
+
+
+	script
+	{
+		public message(Msg_Type:type, id, ...)
+		{
+			if ((type == MSG_FLOAT) && (id == 1))
+			{
+				new Float:val;
+				val = getfarg(2);
+				set_drag(PART:"slider", 0.0, val);
+			}
+		}
+	}/*script*/
+
+	parts
+	{
+	   part
+        {
+            name: "whole";
+            type: RECT;
+            mouse_events: 1;
+            description
+            {
+                state: "default" 0.0;
+            }
+        }/*whole*/
+
+         part
+        {
+            name: "drag_area";
+            type: IMAGE;
+            mouse_events: 1;
+			clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+               	aspect_preference: BOTH;
+               	align: 0.5 0.5;
+               	rel1.relative: 0.45 0.00;
+               	rel2.relative: 0.55 0.70;
+                image.normal: "jauge_bg.png";
+
+            }
+        }/*drag_area*/
+
+        part
+        {
+            name: "slider";
+            type: IMAGE;
+            mouse_events: 1;
+            dragable
+            {
+                confine: "drag_area";
+                x: -1 0 0;
+                y: -1 1 0;
+            }
+
+            description
+            {
+                min: 20 9;
+                state: "default" 0.0;
+                image.normal: "jauge_slider.png";
+                visible: 1;
+            }
+        }/*slider*/
+
+        part
+        {
+            name: "value.text";
+            type: TEXT;
+            effect: OUTLINE_SOFT_SHADOW;
+            clip_to: "whole";
+            description
+            {
+				state: "default" 0.0;
+		       	rel1.relative: 0.0 0.0;
+    		   	rel2.relative: 1.0 1.0;
+				color: 255 255 255 255;
+				color2: 0 0 0 128;
+				color3: 0 0 0 32;
+				fixed: 1 1;
+               	text
+               	{
+                  	text: "N/A";
+                    font: "Sans,Edje-Vera";
+                  	size: 10;
+                  	min: 1 1;
+                  	align: 0.5 0.5;
+				}
+		    }
+        }/*value.text*/
+       part
+        {
+            name: "separator";
+            mouse_events: 0;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.2 0.72;
+                rel2.relative: 0.8 0.72;
+                rel2.offset: 0 3;
+                image.normal: "division_line.png";
+            }
+        }/*separator*/
+
+        part
+        {
+            name: "title.text";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            mouse_events: 1;
+            clip_to: "whole";
+            description
+            {
+                state: "default" 0.0;
+                rel1.relative: 0.0 0.77;
+                rel2.relative: 1.0 1.0;
+                text
+                {
+                    text: "sensor";
+                    font: "Sans,Edje-Vera";
+                    size: 12;
+                    min: 1 1;
+                    align: 0.5 0.5;
+                }
+            }
+        }/*title.text*/
+		part
+		{
+            name: "update";
+            type: IMAGE;
+            clip_to: "whole";
+			description
+            {
+               	state: "default" 0.0;
+				max: 34 34;
+               	aspect_preference: BOTH;
+	           	image.normal: "updated.png";
+               	visible: 0;
+			}
+           	description
+            {
+               	state: "show" 0.0;
+                inherit: "default";
+               	visible: 1;
+               	color: 0 0 0 0;
+            }
+		}/*update*/
+
+            part
+            {
+                name: "icon_min";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.lowest";
+                    rel1.relative: 0.2 0.0;
+                    rel2.to_y: "text.lowest";
+                    rel2.relative: 0.2 1.0;
+                    image.normal: "icon_min.png";
+                }
+            }
+            part
+            {
+                name: "text.lowest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 0.0 0.0;
+                    rel1.to_x: "icon_min";
+                    rel1.relative: 1.0 0.70;
+                    rel1.offset: 3 5;
+                    rel2.relative: 1.0 0.70;
+                    rel2.offset: 3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 0.0 0.5;
+                    }
+                }
+            }/*text.lowest*/
+            part
+            {
+                name: "icon_max";
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    aspect: 0.655 1;
+                    align: 0.5 0.0;
+                    aspect_preference: VERTICAL;
+                    rel1.to_y: "text.highest";
+                    rel1.relative: 0.8 0.0;
+                    rel2.to_y: "text.highest";
+                    rel2.relative: 0.8 1.0;
+                    image.normal: "icon_max.png";
+                }
+            }
+            part
+            {
+                name: "text.highest";
+                type: TEXT;
+                mouse_events: 0;
+                clip_to: "whole";
+                description
+                {
+                    state: "default" 0.0;
+                    align: 1.0 0.0;
+                    rel1.relative: 0.0 0.70;
+                    rel1.offset: -3 5;
+                    rel2.to_x: "icon_max";
+                    rel2.relative: 0.0 0.70;
+                    rel2.offset: -3 0;
+                    text
+                    {
+                        text: "";
+                        font: "Sans,Edje-Vera";
+                        size: 10;
+                        min: 1 1;
+                        max: 1 1;
+                        align: 1.0 0.5;
+                    }
+                }
+            }/*text.highest*/
+      }/*parts*/
+
+	programs
+	{
+		program
+        {
+            name: "updated,start";
+            signal: "updated";
+            source: "whole";
+            action: STATE_SET "show" 0.0;
+    	    transition: SINUSOIDAL 2.0;
+            target: "update";
+            after: "hover2";
+         }
+         program
+         {
+            name: "hover2";
+            source: "whole";
+            action: STATE_SET "default" 0.0;
+            target: "update";
+         }
+        program
+        {
+	        signal: "mouse,clicked,1";
+	        source: "title.text";
+	        action: SIGNAL_EMIT "sensor.basic,cmnd" "";
+        }
+      }/*programs*/
+}/*group widget/sensor.basic/jauge*/
