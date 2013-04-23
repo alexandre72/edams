@@ -57,6 +57,7 @@ efl_shutdown(App_Info * app __UNUSED__)
 int
 edams_shutdown(App_Info * app)
 {
+	devices_shutdown();
     sound_shutdown();
 
 	debug(MSG_INFO, _("Free allocated memory..."));

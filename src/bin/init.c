@@ -145,14 +145,16 @@ i18n_init(App_Info * app __UNUSED__)
 int
 edams_init(App_Info * app)
 {
-	i18n_init(app);
-	edams_settings_init();
+	i18n_init(app);		
 	efl_init(app);
 	paths_init(app);
+	edams_settings_init();
+	printf("Here!\n");
+	
 	locations_init();
 	sound_init();
     crontab_init();
-
+    
     if(edams_settings_mbox_path_get())
         mbox_monitoring_init();
 

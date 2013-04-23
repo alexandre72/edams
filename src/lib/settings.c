@@ -338,6 +338,8 @@ edams_settings_voicerss_apikey_set(const char *voicerss_apikey)
 void
 edams_settings_init()
 {
+	char *s;
+	
     settings = calloc(1, sizeof(Settings));
 
 	if(!settings)
@@ -346,15 +348,28 @@ edams_settings_init()
 		return;
 	}
 
+
+    /*Try to open location Eet filename in writing mode*/
 	ef = eet_open(edams_settings_file_get(), EET_FILE_MODE_READ_WRITE);
+    if (!ef)
+	{
+        debug(MSG_ERROR, _("Can't open Eet file '%s' in read/write mode"), edams_settings_file_get());
+		return;
+	}
+
 	settings->cosm_apikey = NULL;
 	settings->voicerss_apikey = NULL;
 	settings->global_view_background = NULL;
+	settings->user_name = NULL;
+	settings->user_mail = NULL;
+/*
 	settings->user_name = eina_stringshare_add(getlogin());
-	char *s;
-	asprintf(&s, "%s@localhost", getlogin());
+		
+	asprintf(&s, "%s@localhost", settings->user_name);
 	settings->user_mail = eina_stringshare_add(s);
-    FREE(s);
+	FREE(s);
+*/
+
 	settings->softemu = EINA_FALSE;
     if(home_dir_get())
         asprintf(&s, "%s/mbox", home_dir_get());
