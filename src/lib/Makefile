@@ -100,7 +100,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libedams_la_DEPENDENCIES =
 am_libedams_la_OBJECTS = action.lo cJSON.lo crontab.lo device.lo \
 	mbox.lo myfileselector.lo path.lo location.lo settings.lo \
-	sound.lo cosm.lo utils.lo voicerss.lo widget.lo
+	sound.lo serial.lo cosm.lo utils.lo voicerss.lo widget.lo
 libedams_la_OBJECTS = $(am_libedams_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -237,10 +237,10 @@ OTOOL64 =
 PACKAGE = edams
 PACKAGE_BUGREPORT = alexandre.dussart@laposte.net
 PACKAGE_NAME = edams
-PACKAGE_STRING = edams 0.9.0.290:292M
+PACKAGE_STRING = edams 0.9.0.290:294M
 PACKAGE_TARNAME = edams
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.9.0.290:292M
+PACKAGE_VERSION = 0.9.0.290:294M
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
@@ -252,7 +252,7 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = strip
 USE_NLS = yes
-VERSION = 0.9.0.290:292M
+VERSION = 0.9.0.290:294M
 XGETTEXT = /usr/bin/xgettext
 XGETTEXT_015 = /usr/bin/xgettext
 XGETTEXT_EXTRA_OPTIONS = 
@@ -332,6 +332,7 @@ path.c \
 location.c \
 settings.c \
 sound.c \
+serial.c \
 cosm.c \
 utils.c \
 voicerss.c \
@@ -430,6 +431,7 @@ include ./$(DEPDIR)/location.Plo
 include ./$(DEPDIR)/mbox.Plo
 include ./$(DEPDIR)/myfileselector.Plo
 include ./$(DEPDIR)/path.Plo
+include ./$(DEPDIR)/serial.Plo
 include ./$(DEPDIR)/settings.Plo
 include ./$(DEPDIR)/sound.Plo
 include ./$(DEPDIR)/utils.Plo

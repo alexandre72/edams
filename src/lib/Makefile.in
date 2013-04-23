@@ -100,7 +100,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libedams_la_DEPENDENCIES =
 am_libedams_la_OBJECTS = action.lo cJSON.lo crontab.lo device.lo \
 	mbox.lo myfileselector.lo path.lo location.lo settings.lo \
-	sound.lo cosm.lo utils.lo voicerss.lo widget.lo
+	sound.lo serial.lo cosm.lo utils.lo voicerss.lo widget.lo
 libedams_la_OBJECTS = $(am_libedams_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -332,6 +332,7 @@ path.c \
 location.c \
 settings.c \
 sound.c \
+serial.c \
 cosm.c \
 utils.c \
 voicerss.c \
@@ -430,6 +431,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/myfileselector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/path.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/serial.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/settings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sound.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Plo@am__quote@

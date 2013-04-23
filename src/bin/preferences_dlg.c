@@ -62,9 +62,10 @@ _button_apply_clicked_cb(void *data __UNUSED__, Evas_Object * obj __UNUSED__, vo
 	entry = elm_object_name_find(win, "cosm api key entry", -1);
 	edams_settings_cosm_apikey_set(elm_object_text_get(entry));
 
+/*
 	entry = elm_object_name_find(win, "thingspeak api key entry", -1);
-	edams_settings_cosm_apikey_set(elm_object_text_get(entry));
-
+	edams_settings_thingspeak_apikey_set(elm_object_text_get(entry));
+*/
 	entry = elm_object_name_find(win, "voicerss api key entry", -1);
 	edams_settings_voicerss_apikey_set(elm_object_text_get(entry));
 
@@ -318,24 +319,11 @@ _services_settings_content()
     evas_object_show(entry);
     elm_object_content_set(frame, entry);
     elm_object_text_set(entry, edams_settings_cosm_apikey_get());
-
-    frame = elm_frame_add(win);
-    elm_object_text_set(frame, _("ThingSpeak API key:"));
-    elm_grid_pack(grid, frame, 1, 16, 99, 15);
-    evas_object_show(frame);
-
-    entry = elm_entry_add(win);
-    evas_object_name_set(entry, "thingspeak api key entry");
-    elm_entry_scrollable_set(entry, EINA_TRUE);
-    elm_entry_editable_set(entry, EINA_TRUE);
-    elm_entry_single_line_set(entry, EINA_TRUE);
-    evas_object_show(entry);
-    elm_object_content_set(frame, entry);
-    elm_object_text_set(entry, edams_settings_thingspeak_apikey_get());
-
+    
+    
     frame = elm_frame_add(win);
     elm_object_text_set(frame, _("Voicerss API key:"));
-    elm_grid_pack(grid, frame, 1, 31, 99, 15);
+    elm_grid_pack(grid, frame, 1, 16, 99, 15);
     evas_object_show(frame);
 
     entry = elm_entry_add(win);
@@ -346,6 +334,22 @@ _services_settings_content()
     evas_object_show(entry);
     elm_object_content_set(frame, entry);
     elm_object_text_set(entry, edams_settings_voicerss_apikey_get());
+/*
+    frame = elm_frame_add(win);
+    elm_object_text_set(frame, _("ThingSpeak API key:"));
+    *     elm_grid_pack(grid, frame, 1, 31, 99, 15);
+
+    evas_object_show(frame);
+
+    entry = elm_entry_add(win);
+    evas_object_name_set(entry, "thingspeak api key entry");
+    elm_entry_scrollable_set(entry, EINA_TRUE);
+    elm_entry_editable_set(entry, EINA_TRUE);
+    elm_entry_single_line_set(entry, EINA_TRUE);
+    evas_object_show(entry);
+    elm_object_content_set(frame, entry);
+    elm_object_text_set(entry, edams_settings_thingspeak_apikey_get());
+*/
 
     return grid;
 }/*_services_settings_content*/
@@ -365,7 +369,7 @@ _advanced_settings_content()
 
 	check = elm_check_add(win);
 	evas_object_name_set(check, "emulation check");
-	elm_object_text_set(check, _("xPL software emulation"));
+	elm_object_text_set(check, _("Devices emulation"));
 	elm_grid_pack(grid, check, 1, 1, 99, 5);
 	elm_check_state_set(check, edams_settings_softemu_get());
 	evas_object_show(check);

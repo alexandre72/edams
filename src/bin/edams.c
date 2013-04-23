@@ -140,15 +140,25 @@ console_text_add(Message_Type msgtype, const char *msg)
         asprintf(&s, "<b><color=#FF0010>WARNING:%s</color></b><br>", msg);
     }
     else if(msgtype == MSG_INFO)
-    {
+    {	
 		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=info-logo></item>");
-        asprintf(&s, "<b><color=#2ad338>INFO:%s</b></color><br>", msg);
+        asprintf(&s, "<b><color=#2ad338>%s</b></color><br>", msg);	
     }
-    else if(msgtype == MSG_XPL)
+    else if(msgtype == MSG_DEVICE_CONTROL)
     {
-		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=xpl-logo></item>");
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=device-control-logo></item>");
         asprintf(&s, "<b><color=#121cff>%s</b></color><br>", msg);
     }
+    else if(msgtype == MSG_DEVICE_SENSOR)
+    {
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=device-sensor-logo></item>");
+        asprintf(&s, "<b><color=#121cff>%s</b></color><br>", msg);
+    }    
+    else if(msgtype == MSG_DEVICE_OSD)
+    {
+		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=device-osd-logo></item>");
+        asprintf(&s, "<b><color=#121cff>%s</b></color><br>", msg);
+    }    
     else if(msgtype == MSG_THINGSPEAK)
     {
 		elm_entry_entry_insert(entry, "<item size=16x16 vsize=full href=thingspeak-logo></item>");

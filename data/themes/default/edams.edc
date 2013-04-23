@@ -31,7 +31,7 @@ images
 	image: "icons/thingspeak-logo.png" COMP;
     image: "icons/voice-action.png" COMP;
     image: "icons/voicerss-logo.png" COMP;
-	image: "icons/xpl-logo.png" COMP;
+	image: "icons/device-sensor-logo.png" COMP;
 	image: "cursors/left_ptr.png" COMP;
 	image: "cursors/dotbox.png" COMP;
 	image: "cursors/grab.png" COMP;
@@ -125,7 +125,7 @@ ICON("elm/icon/grapher-logo/default", "icons/grapher-logo.png")
 ICON("elm/icon/info-logo/default", "icons/info-logo.png")
 ICON("elm/icon/thingspeak-logo/default", "icons/thingspeak-logo.png")
 ICON("elm/icon/voicerss-logo/default", "icons/voicerss-logo.png")
-ICON("elm/icon/xpl-logo/default", "icons/xpl-logo.png")
+ICON("elm/icon/device-sensor-logo/default", "icons/device-sensor-logo.png")
 
 ICON("elm/icon/debug-action/default", "icons/debug-action.png")
 ICON("elm/icon/osd-action/default", "icons/osd-action.png")

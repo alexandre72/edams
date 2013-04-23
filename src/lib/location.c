@@ -51,7 +51,7 @@ struct _Widget
 {
     unsigned int id;				/*GID of widget e.g '12'*/
     Eina_Stringshare *name;			/*Name e.g 'temperature'*/
-    Eina_Stringshare * group;	    /*Name of edc widget group e.g. 'widget/sensor.basic/counter'*/
+    Eina_Stringshare * group;	    /*Name of edc widget group e.g. 'widget/sensor/counter'*/
     Widget_Class class;             /*Widget class. Eg 'WIDGET_CLASS_CONTROL_BASIC'*/
 
     /*Widget device specifics fields*/

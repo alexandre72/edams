@@ -23,6 +23,7 @@ path.c \
 location.c \
 settings.c \
 sound.c \
+serial.c \
 cosm.c \
 utils.c \
 voicerss.c \
