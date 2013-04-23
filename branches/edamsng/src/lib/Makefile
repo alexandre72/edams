@@ -98,7 +98,9 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libedams_la_DEPENDENCIES =
-am_libedams_la_OBJECTS = action.lo cJSON.lo crontab.lo device.lo
+am_libedams_la_OBJECTS = action.lo cJSON.lo crontab.lo device.lo \
+	mbox.lo myfileselector.lo path.lo location.lo settings.lo \
+	sound.lo cosm.lo utils.lo voicerss.lo widget.lo
 libedams_la_OBJECTS = $(am_libedams_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -168,13 +170,13 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/alex/Electronics/Edams/edams/missing aclocal-1.13
+ACLOCAL = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing aclocal-1.13
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
 AR = ar
-AUTOCONF = ${SHELL} /home/alex/Electronics/Edams/edams/missing autoconf
-AUTOHEADER = ${SHELL} /home/alex/Electronics/Edams/edams/missing autoheader
-AUTOMAKE = ${SHELL} /home/alex/Electronics/Edams/edams/missing automake-1.13
+AUTOCONF = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing autoconf
+AUTOHEADER = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing autoheader
+AUTOMAKE = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing automake-1.13
 AWK = gawk
 CC = gcc -std=gnu99
 CCDEPMODE = depmode=gcc3
@@ -220,7 +222,7 @@ LN_S = ln -s
 LTLIBICONV = -liconv
 LTLIBINTL = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/alex/Electronics/Edams/edams/missing makeinfo
+MAKEINFO = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
 MSGFMT = /usr/bin/msgfmt
@@ -235,10 +237,10 @@ OTOOL64 =
 PACKAGE = edams
 PACKAGE_BUGREPORT = alexandre.dussart@laposte.net
 PACKAGE_NAME = edams
-PACKAGE_STRING = edams 0.9.0.Répertoire non versionné
+PACKAGE_STRING = edams 0.9.0.288M
 PACKAGE_TARNAME = edams
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.9.0.Répertoire non versionné
+PACKAGE_VERSION = 0.9.0.288M
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
@@ -250,14 +252,14 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = strip
 USE_NLS = yes
-VERSION = 0.9.0.Répertoire non versionné
+VERSION = 0.9.0.288M
 XGETTEXT = /usr/bin/xgettext
 XGETTEXT_015 = /usr/bin/xgettext
 XGETTEXT_EXTRA_OPTIONS = 
-abs_builddir = /home/alex/Electronics/Edams/edams/src/lib
-abs_srcdir = /home/alex/Electronics/Edams/edams/src/lib
-abs_top_builddir = /home/alex/Electronics/Edams/edams
-abs_top_srcdir = /home/alex/Electronics/Edams/edams
+abs_builddir = /home/alex/Electronics/Edams/branches/edamsng/src/lib
+abs_srcdir = /home/alex/Electronics/Edams/branches/edamsng/src/lib
+abs_top_builddir = /home/alex/Electronics/Edams/branches/edamsng
+abs_top_srcdir = /home/alex/Electronics/Edams/branches/edamsng
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -287,7 +289,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/alex/Electronics/Edams/edams/install-sh
+install_sh = ${SHELL} /home/alex/Electronics/Edams/branches/edamsng/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -323,7 +325,17 @@ libedams_la_SOURCES = \
 action.c \
 cJSON.c \
 crontab.c \
-device.c
+device.c \
+mbox.c \
+myfileselector.c \
+path.c \
+location.c \
+settings.c \
+sound.c \
+cosm.c \
+utils.c \
+voicerss.c \
+widget.c
 
 libedams_la_LIBADD = \
 -leina -lpthread -leet -levas -leina -lpthread -lrt -lecore -leina -lpthread -ledje -lelementary -lm -leina -lpthread -leet -levas -leina -lpthread -lrt -lecore -leina -lpthread -lecore_evas -lecore_file -ledje -lefreet -lefreet_mime -lefreet_trash -ledbus -ldbus-1 -lethumb_client -ledbus -ldbus-1 -lethumb -leina -lpthread -levas -leina -lpthread -lrt -lecore -leina -lpthread -lecore_evas -lecore_file -ledje -lemotion -lexif -lecore_imf -lecore_con  \
@@ -411,8 +423,18 @@ distclean-compile:
 
 include ./$(DEPDIR)/action.Plo
 include ./$(DEPDIR)/cJSON.Plo
+include ./$(DEPDIR)/cosm.Plo
 include ./$(DEPDIR)/crontab.Plo
 include ./$(DEPDIR)/device.Plo
+include ./$(DEPDIR)/location.Plo
+include ./$(DEPDIR)/mbox.Plo
+include ./$(DEPDIR)/myfileselector.Plo
+include ./$(DEPDIR)/path.Plo
+include ./$(DEPDIR)/settings.Plo
+include ./$(DEPDIR)/sound.Plo
+include ./$(DEPDIR)/utils.Plo
+include ./$(DEPDIR)/voicerss.Plo
+include ./$(DEPDIR)/widget.Plo
 
 .c.o:
 	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -648,17 +670,6 @@ uninstall-am: uninstall-libLTLIBRARIES
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
 
-mbox.c \
-myfileselector.c \
-path.c \
-location.c \
-settings.c \
-sound.c \
-cosm.c \
-thingspeak.c \
-utils.c \
-voicerss.c \
-widget.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

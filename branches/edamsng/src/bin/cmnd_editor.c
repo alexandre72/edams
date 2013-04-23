@@ -27,8 +27,8 @@
 
 
 static void _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const char  *source);
-static void _list_control_basic_item_add(CmndEditor *cmndeditor, Widget *widget);
-static void _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
+static void _list_control_item_add(CmndEditor *cmndeditor, Widget *widget);
+static void _list_control_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__);
 
 
 /*
@@ -47,7 +47,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
 	if(!selected_item) return;
 
     Widget *widget = elm_object_item_data_get(selected_item);
-    type = widget_xpl_type_get(widget);
+    type = widget_device_type_get(widget);
 
     /*Skip basic's edje signal emission*/
 	if(strstr(source, "edje")) return;
@@ -77,28 +77,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
     }
 
     /*Scale to device type format*/
-    if(strcmp(type, XPL_TYPE_OUTPUT_CONTROL_BASIC) == 0)
-    {
-            if(val == 0)
-                asprintf(&s, "disable");
-            else
-                asprintf(&s, "enable");
-    }
-    else if(strcmp(type, XPL_TYPE_INPUT_CONTROL_BASIC) == 0)
-    {
-            if(val == 0)
-                asprintf(&s, "disable");
-            else
-                asprintf(&s, "enable");
-    }
-    else if(strcmp(type, XPL_TYPE_MUTE_CONTROL_BASIC) == 0)
-    {
-        if(val == 0)
-            asprintf(&s, "no");
-        else
-            asprintf(&s, "yes");
-    }
-    else if(strcmp(type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)
+    if(strcmp(type, DEVICE_TYPE_PERCENTAGE_CONTROL) == 0)
     {
         val = (val * 100);
         asprintf(&s, "%d%%", (int)val);
@@ -108,11 +87,9 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
         asprintf(&s, "%d", (int)val);
     }
 
-    widget_xpl_current_set(widget, s);
+    widget_device_current_set(widget, s);
 	elm_object_part_text_set(obj, "value.text", s);
 	FREE(s);
-
-   	elm_object_text_set(cmndeditor->entry, xpl_control_basic_cmnd_to_elm_str(widget));
 }/*_layout_signals_cb*/
 
 
@@ -120,7 +97,7 @@ _layout_signals_cb(void *data, Evas_Object *obj, const char  *emission, const ch
  *Callback called in 'control.basic' list when clicked signal is emitted.
  */
 static void
-_list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+_list_control_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
     Widget *widget = data;
     Evas_Object *list = elm_object_item_widget_get(event_info);
@@ -130,14 +107,14 @@ _list_control_basic_item_selected_cb(void *data, Evas_Object * obj __UNUSED__, v
     elm_layout_file_set(cmndeditor->layout, edams_edje_theme_file_get(), widget_group_get(widget));
 
 	elm_layout_signal_callback_add(cmndeditor->layout, "*", "*", _layout_signals_cb, cmndeditor);
-}/*_list_control_basic_item_selected_cb*/
+}/*_list_control_item_selected_cb*/
 
 
 /*
  *
  */
 static void
-_list_control_basic_item_add(CmndEditor *cmndeditor, Widget *widget)
+_list_control_item_add(CmndEditor *cmndeditor, Widget *widget)
 {
 	char *s;
 
@@ -148,12 +125,12 @@ _list_control_basic_item_add(CmndEditor *cmndeditor, Widget *widget)
 	elm_image_aspect_fixed_set(cmndeditor->icon, EINA_TRUE);
 	elm_image_resizable_set(cmndeditor->icon, 1, 0);
 
-	asprintf(&s, "%s %s", widget_xpl_device_get(widget), widget_xpl_type_get(widget));
+	asprintf(&s, "%s %s", widget_device_id_get(widget), widget_device_type_get(widget));
 
-	elm_list_item_append(cmndeditor->list, s, cmndeditor->icon, NULL, _list_control_basic_item_selected_cb, widget);
+	elm_list_item_append(cmndeditor->list, s, cmndeditor->icon, NULL, _list_control_item_selected_cb, widget);
 	elm_list_go(cmndeditor->list);
 	FREE(s);
-}/*_list_control_basic_item_selected_cb*/
+}/*_list_control_item_selected_cb*/
 
 
 /*
@@ -217,8 +194,8 @@ cmndeditor_add()
 	    widgets = location_widgets_list_get(location_elem);
         EINA_LIST_FOREACH(widgets, l2, widget_elem)
         {
-            if(widget_class_get(widget_elem) == WIDGET_CLASS_XPL_CONTROL_BASIC)
-                _list_control_basic_item_add(cmndeditor, widget_elem);
+            if(widget_class_get(widget_elem) == WIDGET_CLASS_CONTROL)
+                _list_control_item_add(cmndeditor, widget_elem);
         }
     }
 

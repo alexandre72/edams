@@ -772,7 +772,7 @@ elm_main(int argc, char **argv)
     console_text_add(MSG_INFO, s);
     FREE(s);
 
-    pipe = xpl_start();
+    pipe = devices_start();
     elm_run();
 
     if(pipe) ecore_pipe_del(pipe);

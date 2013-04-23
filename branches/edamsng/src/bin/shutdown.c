@@ -58,7 +58,6 @@ int
 edams_shutdown(App_Info * app)
 {
     sound_shutdown();
-	xpl_shutdown(app);
 
 	debug(MSG_INFO, _("Free allocated memory..."));
 	app->locations = locations_list_free(app->locations);

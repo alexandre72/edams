@@ -29,20 +29,22 @@
 #include "cosm.h"
 #include "edams.h"
 #include "global_view.h"
-#include "xpl.h"
+#include "location.h"
+#include "widget.h"
 
 
 
 /*Globals vars*/
 static pid_t            child_pid;
 
-
+static void _devices_handler(void *data __UNUSED__, void *buf, unsigned int len);
+void devices_process_messages();
 
 /*
  *
  */
 static void
-_xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
+_devices_handler(void *data __UNUSED__, void *buf, unsigned int len)
 {
     char *str = malloc(sizeof(char) * len + 1);
     memcpy(str, buf, len);
@@ -59,18 +61,18 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
     char *schema = cJSON_PrintUnformatted(jschema);
     strdelstr(schema, "\"");
 
-    /*If schema to parse is osd.basic*/
-    if(strcmp(schema, "osd.basic") == 0)
+    /*If schema to parse is osd*/
+    if(strcmp(schema, "osd") == 0)
     {
         char *s;
-        asprintf(&s, _("MSG=xpl-cmnd CLASS=osd.basic"));
+        asprintf(&s, _("CMND CLASS=osd.basic"));
         debug(MSG_XPL, s);
         FREE(s);
 
         osd_action_parse(str);
     }
-    /*If schema to parse is sensor.basic*/
-    else if(strcmp(schema, "sensor.basic") == 0)
+    /*If schema to parse is sensor*/
+    else if(strcmp(schema, "sensor") == 0)
     {
 	    cJSON *jdevice = cJSON_GetObjectItem(root, "DEVICE");
 	    cJSON *jtype = cJSON_GetObjectItem(root, "TYPE");
@@ -85,7 +87,7 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
         strdelstr(type, "\"");
 
         char *s;
-        asprintf(&s, _("MSG=xpl-trig CLASS=sensor.basic DEVICE=%s TYPE=%s CURRENT=%s"), device, type, current);
+        asprintf(&s, _("TRIG CLASS=sensor.basic DEVICE=%s TYPE=%s CURRENT=%s"), device, type, current);
         debug(MSG_XPL, s);
         FREE(s);
 
@@ -103,11 +105,11 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
             EINA_LIST_FOREACH(widgets, l2, widget)
             {
-                /*If xPL widget class, then check xpl device*/
-                if((widget_class_get(widget) != WIDGET_CLASS_XPL_SENSOR_BASIC)) continue;
+                /*If widget class is set to device, then check device*/
+                if((widget_class_get(widget) != WIDGET_CLASS_SENSOR)) continue;
 
-                /*Compare xpl device with arg 'xpl_device', if found return widget*/
-                if(strcmp(device, widget_xpl_device_get(widget)) == 0)
+                /*Compare device with arg 'device', if found return widget*/
+                if(strcmp(device, widget_device_id_get(widget)) == 0)
                 {
                     /*Parse all widget action's and to execute them(if condition is full)*/
                     Eina_List *l3, *actions;
@@ -147,31 +149,31 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
                         }/*switch action_ifcondition_get*/
                     }/*EINA_LIST_FOREACH actions*/
 
-                    widget_xpl_current_set(widget, current);
+                    widget_device_current_set(widget, current);
 
-                    if(!widget_xpl_highest_get(widget))
-                           widget_xpl_highest_set(widget, current);
+                    if(!widget_device_highest_get(widget))
+                           widget_device_highest_set(widget, current);
                     {
-                        if(atoi(current) > atoi(widget_xpl_highest_get(widget)))
+                        if(atoi(current) > atoi(widget_device_highest_get(widget)))
                         {
                             debug(MSG_XPL, ("New highest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
-                                                    widget_xpl_highest_get(widget));
-                            widget_xpl_highest_set(widget, current);
+                                                    widget_device_highest_get(widget));
+                            widget_device_highest_set(widget, current);
                         }
                     }
 
-                    if(!widget_xpl_lowest_get(widget))
-                        widget_xpl_lowest_set(widget, current);
+                    if(!widget_device_lowest_get(widget))
+                        widget_device_lowest_set(widget, current);
                     {
-                        if(atoi(current) < atoi(widget_xpl_lowest_get(widget)))
+                        if(atoi(current) < atoi(widget_device_lowest_get(widget)))
                         {
                             debug(MSG_XPL, ("New lowest value for '%s' set to '%s'(old was '%s')"),
                                                     widget_name_get(widget),
                                                     current,
-                                                    widget_xpl_lowest_get(widget));
-                            widget_xpl_lowest_set(widget, current);
+                                                    widget_device_lowest_get(widget));
+                            widget_device_lowest_set(widget, current);
                         }
                     }
 
@@ -192,28 +194,27 @@ _xpl_handler(void *data __UNUSED__, void *buf, unsigned int len)
 
     FREE(schema);
 	cJSON_Delete(root);
-}/*_xpl_handler*/
+}/*_devices_handler*/
 
 
 
 /*
- *Child process that listen xPL messages received from xPL hub(hub is an external prog and need to be run).
+ *Child process that listen devices messages received from wireless nodes.
  */
 void
-xpl_process_messages()
+devices_process_messages()
 {
 	for (;;)
 	{
-		xPL_processMessages(-1);
 	}
-}/*xpl_process_messages*/
+}/*devices_process_messages*/
 
 
 /*
  *
  */
 static void
-_xpl_emulate_messages(Ecore_Pipe *pipe)
+_devices_emulate_messages(Ecore_Pipe *pipe)
 {
     char *samples[100][100]={
                                 {"DHT11", "humidity"},
@@ -241,7 +242,7 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
         	cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(samples[i][1]));
 	        RANDOMIZE();
 
-   	        asprintf(&str, "%d", RANDOM(xpl_type_current_max_get(samples[i][1])));
+   	        asprintf(&str, "%d", RANDOM(device_type_current_max_get(samples[i][1])));
 
         	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(str));
         	FREE(str);
@@ -252,7 +253,7 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
             sleep(1);
         }
      }
-}/*_xpl_emulate_messages*/
+}/*_devices_emulate_messages*/
 
 
 
@@ -261,12 +262,9 @@ _xpl_emulate_messages(Ecore_Pipe *pipe)
  *
  */
 Ecore_Pipe *
-xpl_start()
+devices_start()
 {
     Ecore_Pipe *pipe = NULL;
-
-    if(XPL_STARTED == EINA_FALSE)
-        return pipe;
 
     pipe = ecore_pipe_add(_devices_handler, NULL);
 
@@ -280,7 +278,7 @@ xpl_start()
             _devices_emulate_messages(pipe);
         else
 
-            xpl_process_messages();
+            devices_process_messages();
     }
     else
     {
@@ -288,7 +286,7 @@ xpl_start()
     }
 
     return pipe;
-}/*xpl_start*/
+}/*devices_start*/
 
 
 
@@ -296,138 +294,49 @@ xpl_start()
  *
  */
 Eina_Bool
-xpl_init()
+devices_shutdown()
 {
-	/*Initialize xPL*/
-	if (!xPL_initialize(xPL_getParsedConnectionType()))
-	{
-	    debug(MSG_XPL, _("Can't init xPL service"));
-        XPL_STARTED	= EINA_FALSE;
-	    return EINA_FALSE;
-	}
+    kill(child_pid, SIGKILL);
 
-	/*Create an xpl service*/
-	xpl_edams_service = xPL_createService("edams", "xpl", "edams.xpl");
-	xPL_setServiceVersion(xpl_edams_service, VERSION);
-
-	/*Enable the service*/
-	xPL_setServiceEnabled(xpl_edams_service, EINA_TRUE);
-    debug(MSG_XPL, _("xPL service initialized"));
-
-    XPL_STARTED	= EINA_TRUE;
-
-	return EINA_TRUE;
-}/*xpl_init*/
-
-
-/*
- *
- */
-Eina_Bool
-xpl_shutdown()
-{
-	debug(MSG_XPL, _("Shutdown xPL..."));
-
-	if(XPL_STARTED == EINA_TRUE)
-	{
-        kill(child_pid, SIGKILL);
-	    xPL_setServiceEnabled(xpl_edams_service, EINA_FALSE);
-	    xPL_releaseService(xpl_edams_service);
-	    xPL_shutdown();
-    }
-
-	return 0;
-}/*xpl_shutdown*/
+	return EINA_FALSE;
+}/*devices_shutdown*/
 
 
 
 /*
- *
- */
-const char*
-xpl_control_basic_cmnd_to_elm_str(Widget *widget)
-{
-    const char *s;
-
-    if( !widget_xpl_device_get(widget) ||
-        !widget_xpl_type_get(widget) ||
-        !widget_xpl_current_get(widget))
-            return NULL;
-
-    if(!widget_xpl_data1_get(widget))
-    {
-	    asprintf(&s,"<em>control.basic<br>\
-					{<br>\
-					<tab>device=%s<br>\
- 					<tab>type=%s<br>\
-					<tab>current=%s<br>\
-					}</em>",
-					widget_xpl_device_get(widget),
-					widget_xpl_type_get(widget),
-					widget_xpl_current_get(widget));
-    }
-    else
-    {
-	    asprintf(&s,"<em><em>control.basic<br>\
-					{<br>\
-					<tab>device=%s<br>\
- 					<tab>type=%s<br>\
-					<tab>current=%s<br>\
-					<tab>data11=%s<br>\
-					}</em>",
-					widget_xpl_device_get(widget),
-					widget_xpl_type_get(widget),
-					widget_xpl_current_get(widget),
-					widget_xpl_data1_get(widget));
-    }
-
-    return s;
-}/*xpl_control_basic_cmnd_to_elm_str*/
-
-
-
-/*
- *Return string description of 'xpl_type' arg.
+ *Return string description of device 'type' arg.
  */
 const char *
-xpl_type_to_desc(const char *xpl_type)
+device_type_to_desc(const char *type)
 {
-	if(!xpl_type) return NULL;
+	if(!type) return NULL;
 
-	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0)    return _("A battery level in percent");
-	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return _("A counter value (door openings, rain fall, etc)");
-	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return _("A current value in Amps");
-	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return _("Direction, represented as degrees from north (0-360, 0=north, 180=south, etc)");
-	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return _("Distance measurments. Default unit of measure is meters");
-	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return _("Consumption of energy over a preiod of time in kWh (kilowatt hours)");
-	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return _("A fan speed in RPM");
-	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return _("A generic analogue value who's units of measurement are application specific");
-	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return _("A relative humidity percentage (0 to 100, no percent sign)");
-	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return _("A switch that can either be current=HIGH (on), current=LOW (off) or current=PULSE (representing a button press)");
-	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return _("A change in an output state with values of LOW and HIGH");
-	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return _("Instantaneous energy consumption level in kW");
-	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return _("A pressure value in Pascals (N/m2)");
-	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return _("A thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius");
-	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return _("A generic speed. Default unit of measure is Miles per Hour");
-	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return _("A temperature value in degrees. Default unit of measure is centigrade celsius");
-	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return _("UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index");
-	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return _("A voltage value in Volts");
-	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return _("A volume in m3. Often used as a measure of gas and water consumption");
-	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return _("The default unit is kilograms (yes, kilograms are a unit of mass, not weight)");
-	if(strcmp(xpl_type, XPL_TYPE_BALANCE_CONTROL_BASIC) == 0)    return _("balance - -100 to +100");
-	if(strcmp(xpl_type, XPL_TYPE_FLAG_CONTROL_BASIC) == 0)    return _("flag - set, clear, neutral");
-	if(strcmp(xpl_type, XPL_TYPE_INFRARED_CONTROL_BASIC) == 0)    return _("infrared - send, enable_rx, disable_rx, enable_tx, disable_tx, sendx (send x times)");
-	if(strcmp(xpl_type, XPL_TYPE_INPUT_CONTROL_BASIC) == 0)    return _("input - enable, disable");
-	if(strcmp(xpl_type, XPL_TYPE_MACRO_CONTROL_BASIC) == 0)    return _("macro - enable, disable, do");
-	if(strcmp(xpl_type, XPL_TYPE_MUTE_CONTROL_BASIC) == 0)    return _("mute - yes, no");
-	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_CONTROL_BASIC) == 0)    return _("output - enable, disable, high, low, toggle, pulse");
-	if(strcmp(xpl_type, XPL_TYPE_VARIABLE_CONTROL_BASIC) == 0)    return _("variable - inc, dec, 0-255 (for set)");
-	if(strcmp(xpl_type, XPL_TYPE_PERIODIC_CONTROL_BASIC) == 0)    return _("periodic - started, enable, disable");
-	if(strcmp(xpl_type, XPL_TYPE_SCHEDULED_CONTROL_BASIC) == 0)    return _("scheduled - started, enable, disable");
-	if(strcmp(xpl_type, XPL_TYPE_SLIDER_CONTROL_BASIC) == 0)    return _("slider - nn = set to value (0-255), +nn = increment by nn, -nn = decrement by nn, n% = set to nn (where nn is a percentage - 0-100%)");
-	if(strcmp(xpl_type, XPL_TYPE_TIMER_CONTROL_BASIC) == 0)    return _("timer - went off, start, stop, halt, resume");
+	if(strcmp(type, DEVICE_TYPE_BATTERY_SENSOR) == 0)    return _("A battery level in percent");
+	if(strcmp(type, DEVICE_TYPE_COUNT_SENSOR) == 0)    return _("A counter value (door openings, rain fall, etc)");
+	if(strcmp(type, DEVICE_TYPE_CURRENT_SENSOR) == 0)    return _("A current value in Amps");
+	if(strcmp(type, DEVICE_TYPE_DIRECTION_SENSOR) == 0)    return _("Direction, represented as degrees from north (0-360, 0=north, 180=south, etc)");
+	if(strcmp(type, DEVICE_TYPE_DISTANCE_SENSOR) == 0)    return _("Distance measurments. Default unit of measure is meters");
+	if(strcmp(type, DEVICE_TYPE_ENERGY_SENSOR) == 0)    return _("Consumption of energy over a preiod of time in kWh (kilowatt hours)");
+	if(strcmp(type, DEVICE_TYPE_FAN_SENSOR) == 0)    return _("A fan speed in RPM");
+	if(strcmp(type, DEVICE_TYPE_GENERIC_SENSOR) == 0)    return _("A generic analogue value who's units of measurement are application specific");
+	if(strcmp(type, DEVICE_TYPE_HUMIDITY_SENSOR) == 0)    return _("A relative humidity percentage (0 to 100, no percent sign)");
+	if(strcmp(type, DEVICE_TYPE_INPUT_SENSOR) == 0)    return _("A switch that can either be current=HIGH (on), current=LOW (off) or current=PULSE (representing a button press)");
+	if(strcmp(type, DEVICE_TYPE_OUTPUT_SENSOR) == 0)    return _("A change in an output state with values of LOW and HIGH");
+	if(strcmp(type, DEVICE_TYPE_POWER_SENSOR) == 0)    return _("Instantaneous energy consumption level in kW");
+	if(strcmp(type, DEVICE_TYPE_PRESSURE_SENSOR) == 0)    return _("A pressure value in Pascals (N/m2)");
+	if(strcmp(type, DEVICE_TYPE_SETPOINT_SENSOR) == 0)    return _("A thermostat threshold temperature value in degrees. Default unit of measure is centigrade/celsius");
+	if(strcmp(type, DEVICE_TYPE_SPEED_SENSOR) == 0)    return _("A generic speed. Default unit of measure is Miles per Hour");
+	if(strcmp(type, DEVICE_TYPE_TEMP_SENSOR) == 0)    return _("A temperature value in degrees. Default unit of measure is centigrade celsius");
+	if(strcmp(type, DEVICE_TYPE_UV_SENSOR) == 0)    return _("UV Index (with no units). See http://en.wikipedia.org/wiki/UV_index");
+	if(strcmp(type, DEVICE_TYPE_VOLTAGE_SENSOR) == 0)    return _("A voltage value in Volts");
+	if(strcmp(type, DEVICE_TYPE_VOLUME_SENSOR) == 0)    return _("A volume in m3. Often used as a measure of gas and water consumption");
+	if(strcmp(type, DEVICE_TYPE_WEIGHT_SENSOR) == 0)    return _("The default unit is kilograms (yes, kilograms are a unit of mass, not weight)");
+	
+	if(strcmp(type, DEVICE_TYPE_DIGITAL_CONTROL) == 0)    return _("digital - binaries - 0-1");
+	if(strcmp(type, DEVICE_TYPE_VARIABLE_CONTROL) == 0)    return _("variable - min to max");
+	if(strcmp(type, DEVICE_TYPE_PERCENTAGE_CONTROL) == 0)    return _("slider - percentage - 0-100%)");
 	else	return _("Unknown xPL type");
-}/*xpl_str_to_desc*/
+}/*str_to_desc*/
 
 
 
@@ -435,160 +344,172 @@ xpl_type_to_desc(const char *xpl_type)
  *
  */
 const char *
-xpl_type_to_unit_symbol(const char *xpl_type)
+device_type_to_units(const char *type)
 {
-	if(!xpl_type) return NULL;
+	if(!type) return NULL;
 
-	if(strcmp(xpl_type, XPL_TYPE_BATTERY_SENSOR_BASIC) == 0) return _("%");
-	if(strcmp(xpl_type, XPL_TYPE_COUNT_SENSOR_BASIC) == 0)    return " ";
-	if(strcmp(xpl_type, XPL_TYPE_CURRENT_SENSOR_BASIC) == 0)    return _("A");
-	if(strcmp(xpl_type, XPL_TYPE_DIRECTION_SENSOR_BASIC) == 0)    return _("o");
-	if(strcmp(xpl_type, XPL_TYPE_DISTANCE_SENSOR_BASIC) == 0)    return _("m");
-	if(strcmp(xpl_type, XPL_TYPE_ENERGY_SENSOR_BASIC) == 0)    return _("kWh");
-	if(strcmp(xpl_type, XPL_TYPE_FAN_SENSOR_BASIC) == 0)    return _("RPM");
-	if(strcmp(xpl_type, XPL_TYPE_GENERIC_SENSOR_BASIC) == 0)    return " ";
-	if(strcmp(xpl_type, XPL_TYPE_HUMIDITY_SENSOR_BASIC) == 0)    return _("%");
-	if(strcmp(xpl_type, XPL_TYPE_INPUT_SENSOR_BASIC) == 0)    return " ";
-	if(strcmp(xpl_type, XPL_TYPE_OUTPUT_SENSOR_BASIC) == 0)    return " ";
-	if(strcmp(xpl_type, XPL_TYPE_POWER_SENSOR_BASIC) == 0)    return _("kW");
-	if(strcmp(xpl_type, XPL_TYPE_PRESSURE_SENSOR_BASIC) == 0)    return _("N/m2");
-	if(strcmp(xpl_type, XPL_TYPE_SETPOINT_SENSOR_BASIC) == 0)    return _("C");
-	if(strcmp(xpl_type, XPL_TYPE_SPEED_SENSOR_BASIC) == 0)    return _("MpH");
-	if(strcmp(xpl_type, XPL_TYPE_TEMP_SENSOR_BASIC) == 0)    return _("C");
-	if(strcmp(xpl_type, XPL_TYPE_UV_SENSOR_BASIC) == 0)    return " ";
-	if(strcmp(xpl_type, XPL_TYPE_VOLTAGE_SENSOR_BASIC) == 0)    return _("V");
-	if(strcmp(xpl_type, XPL_TYPE_VOLUME_SENSOR_BASIC) == 0)    return _("m3");
-	if(strcmp(xpl_type, XPL_TYPE_WEIGHT_SENSOR_BASIC) == 0)    return _("kg");
+	if(strcmp(type, DEVICE_TYPE_BATTERY_SENSOR) == 0) return _("Percent");
+	if(strcmp(type, DEVICE_TYPE_COUNT_SENSOR) == 0)    return _("Counter");
+	if(strcmp(type, DEVICE_TYPE_CURRENT_SENSOR) == 0)    return _("Amps");
+	if(strcmp(type, DEVICE_TYPE_DIRECTION_SENSOR) == 0)    return _("Degrees");
+	if(strcmp(type, DEVICE_TYPE_DISTANCE_SENSOR) == 0)    return _("Meters");
+	if(strcmp(type, DEVICE_TYPE_ENERGY_SENSOR) == 0)    return _("Kilowatt hours");
+	if(strcmp(type, DEVICE_TYPE_FAN_SENSOR) == 0)    return _("Rotation/min");
+	if(strcmp(type, DEVICE_TYPE_GENERIC_SENSOR) == 0)    return _("Generic");
+	if(strcmp(type, DEVICE_TYPE_HUMIDITY_SENSOR) == 0)    return _("Humidity ratio");
+	if(strcmp(type, DEVICE_TYPE_INPUT_SENSOR) == 0)    return _("Input");
+	if(strcmp(type, DEVICE_TYPE_OUTPUT_SENSOR) == 0)    return _("Output");
+	if(strcmp(type, DEVICE_TYPE_POWER_SENSOR) == 0)    return _("Kilowatt");
+	if(strcmp(type, DEVICE_TYPE_PRESSURE_SENSOR) == 0)    return _("Pascals");
+	if(strcmp(type, DEVICE_TYPE_SETPOINT_SENSOR) == 0)    return _("Degrees");
+	if(strcmp(type, DEVICE_TYPE_SPEED_SENSOR) == 0)    return _("Miles per Hour");
+	if(strcmp(type, DEVICE_TYPE_TEMP_SENSOR) == 0)    return _("Celsius");
+	if(strcmp(type, DEVICE_TYPE_UV_SENSOR) == 0)    return _("UV");
+	if(strcmp(type, DEVICE_TYPE_VOLTAGE_SENSOR) == 0)    return _("Volts");
+	if(strcmp(type, DEVICE_TYPE_VOLUME_SENSOR) == 0)    return _("Cubic meter");
+	if(strcmp(type, DEVICE_TYPE_WEIGHT_SENSOR) == 0)    return _("Kilograms");
 	else return "";
-}/*xpl_type_to_unit_symbol*/
+}/*device_type_to_units*/
+
+/*
+ *
+ */
+const char *
+device_type_to_unit_symbol(const char *type)
+{
+	if(!type) return NULL;
+
+	if(strcmp(type, DEVICE_TYPE_BATTERY_SENSOR) == 0) return _("%");
+	if(strcmp(type, DEVICE_TYPE_COUNT_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_CURRENT_SENSOR) == 0)    return _("A");
+	if(strcmp(type, DEVICE_TYPE_DIRECTION_SENSOR) == 0)    return _("o");
+	if(strcmp(type, DEVICE_TYPE_DISTANCE_SENSOR) == 0)    return _("m");
+	if(strcmp(type, DEVICE_TYPE_ENERGY_SENSOR) == 0)    return _("kWh");
+	if(strcmp(type, DEVICE_TYPE_FAN_SENSOR) == 0)    return _("RPM");
+	if(strcmp(type, DEVICE_TYPE_GENERIC_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_HUMIDITY_SENSOR) == 0)    return _("%");
+	if(strcmp(type, DEVICE_TYPE_INPUT_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_OUTPUT_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_POWER_SENSOR) == 0)    return _("kW");
+	if(strcmp(type, DEVICE_TYPE_PRESSURE_SENSOR) == 0)    return _("N/m2");
+	if(strcmp(type, DEVICE_TYPE_SETPOINT_SENSOR) == 0)    return _("C");
+	if(strcmp(type, DEVICE_TYPE_SPEED_SENSOR) == 0)    return _("MpH");
+	if(strcmp(type, DEVICE_TYPE_TEMP_SENSOR) == 0)    return _("C");
+	if(strcmp(type, DEVICE_TYPE_UV_SENSOR) == 0)    return " ";
+	if(strcmp(type, DEVICE_TYPE_VOLTAGE_SENSOR) == 0)    return _("V");
+	if(strcmp(type, DEVICE_TYPE_VOLUME_SENSOR) == 0)    return _("m3");
+	if(strcmp(type, DEVICE_TYPE_WEIGHT_SENSOR) == 0)    return _("kg");
+	else return "";
+}/*device_type_to_unit_symbol*/
+
+
+
+/*
+ *
+ */
+int
+device_type_current_max_get(const char *type)
+{
+	if(!type) return 32000;
+
+	if(strcmp(type, DEVICE_TYPE_BATTERY_SENSOR) == 0) 	return 100;
+	if(strcmp(type, DEVICE_TYPE_COUNT_SENSOR) == 0)    return 10000;
+	if(strcmp(type, DEVICE_TYPE_CURRENT_SENSOR) == 0)    return 100;
+	if(strcmp(type, DEVICE_TYPE_DIRECTION_SENSOR) == 0)    return 360;
+	if(strcmp(type, DEVICE_TYPE_DISTANCE_SENSOR) == 0)    return 100;
+	if(strcmp(type, DEVICE_TYPE_ENERGY_SENSOR) == 0)    return 1000;
+	if(strcmp(type, DEVICE_TYPE_FAN_SENSOR) == 0)    return 10000;
+	if(strcmp(type, DEVICE_TYPE_GENERIC_SENSOR) == 0)    return 10000;
+	if(strcmp(type, DEVICE_TYPE_HUMIDITY_SENSOR) == 0)    return 100;
+	if(strcmp(type, DEVICE_TYPE_INPUT_SENSOR) == 0)    return 2; /*3 states, LOW/HIGH/PULSE*/
+	if(strcmp(type, DEVICE_TYPE_OUTPUT_SENSOR) == 0)    return 1;
+	if(strcmp(type, DEVICE_TYPE_POWER_SENSOR) == 0)    return 1000;
+	if(strcmp(type, DEVICE_TYPE_PRESSURE_SENSOR) == 0)    return 1000;
+	if(strcmp(type, DEVICE_TYPE_SETPOINT_SENSOR) == 0)    return 300;
+	if(strcmp(type, DEVICE_TYPE_SPEED_SENSOR) == 0)    return 1000;
+	if(strcmp(type, DEVICE_TYPE_TEMP_SENSOR) == 0)    return 100;
+	if(strcmp(type, DEVICE_TYPE_UV_SENSOR) == 0)    return 15;
+	if(strcmp(type, DEVICE_TYPE_VOLTAGE_SENSOR) == 0)    return 1000;
+	if(strcmp(type, DEVICE_TYPE_VOLUME_SENSOR) == 0)    return 1000;
+	if(strcmp(type, DEVICE_TYPE_WEIGHT_SENSOR) == 0)    return 1000;
+	else return 32000;
+
+}/*device_type_max_get*/
+
+
+/*
+ *
+ */
+int
+device_type_current_min_get(const char *type)
+{
+	if(!type) return 0;
+
+	if(strcmp(type, DEVICE_TYPE_BATTERY_SENSOR) == 0) 	return 0;
+	if(strcmp(type, DEVICE_TYPE_COUNT_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_CURRENT_SENSOR) == 0)    return -100;
+	if(strcmp(type, DEVICE_TYPE_DIRECTION_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_DISTANCE_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_ENERGY_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_FAN_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_GENERIC_SENSOR) == 0)    return -10000;
+	if(strcmp(type, DEVICE_TYPE_HUMIDITY_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_INPUT_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_OUTPUT_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_POWER_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_PRESSURE_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_SETPOINT_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_SPEED_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_TEMP_SENSOR) == 0)    return -100;
+	if(strcmp(type, DEVICE_TYPE_UV_SENSOR) == 0)    return 1;
+	if(strcmp(type, DEVICE_TYPE_VOLTAGE_SENSOR) == 0)    return -1000;
+	if(strcmp(type, DEVICE_TYPE_VOLUME_SENSOR) == 0)    return 0;
+	if(strcmp(type, DEVICE_TYPE_WEIGHT_SENSOR) == 0)    return 0;
+	else return 0;
+}/*device_type_min_get*/
+
+
 
 /*
  *
  */
 Eina_Bool
-xpl_osd_basic_cmnd_send(char *command, char *text, char *delay)
+device_osd_cmnd_send(char *command, char *text, char *delay)
 {
-    xPL_MessagePtr xpl_message_cmnd = NULL;
-
-    /* Create an appropriate message */
-    if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
-    {
-        debug(MSG_XPL, _("Can't create broadcast message"));
-        return EINA_FALSE;
-    }
-
-  	xPL_setSchema(xpl_message_cmnd, "osd", "basic");
-
-    /*Install the value(s) and send the message*/
-  	xPL_setMessageNamedValue(xpl_message_cmnd, "command", command);
-
-  	if(text)
-      	xPL_setMessageNamedValue(xpl_message_cmnd, "text", text);
-
-  	if(delay)
-        xPL_setMessageNamedValue(xpl_message_cmnd, "delay", delay);
-
-	/*Broadcast the message*/
-	if (!xPL_sendMessage(xpl_message_cmnd))
-	{
-		debug(MSG_XPL, _("Can't send xPL message"));
-        xPL_releaseMessage(xpl_message_cmnd);
-		return EINA_FALSE;
-	}
-
     char *s;
-    asprintf(&s, _("MSG=xpl-cmnd CLASS=osd.basic COMMAND=%s TEXT=%s DELAY=%s"),
+    asprintf(&s, _("CMND CLASS=osd.basic COMMAND=%s TEXT=%s DELAY=%s"),
                     command,
                     text,
                     delay);
     debug(MSG_XPL, s);
     FREE(s);
 
-    xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;
-}/*xpl_osd_basic_cmnd_send*/
+}/*device_osd_basic_cmnd_send*/
 
 
 /*
  *
  */
 Eina_Bool
-xpl_control_basic_cmnd_send(Widget *widget)
+device_control_cmnd_send(Widget *widget)
 {
-    xPL_MessagePtr xpl_message_cmnd = NULL;
-
-    /* Create an appropriate message */
-    if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
-    {
-        debug(MSG_XPL, _("Can't create broadcast message"));
-        return EINA_FALSE;
-    }
-
-  	xPL_setSchema(xpl_message_cmnd, "control", "basic");
-
-    /*Install the value(s) and send the message*/
-  	xPL_setMessageNamedValue(xpl_message_cmnd, "device", widget_xpl_device_get(widget));
-  	xPL_setMessageNamedValue(xpl_message_cmnd, "type", widget_xpl_type_get(widget));
-  	xPL_setMessageNamedValue(xpl_message_cmnd, "current", widget_xpl_current_get(widget));
-
-	if(widget_xpl_data1_get(widget))
-	  	xPL_setMessageNamedValue(xpl_message_cmnd, "data1", widget_xpl_data1_get(widget));
-
-	/*Broadcast the message*/
-	if (!xPL_sendMessage(xpl_message_cmnd))
-	{
-		debug(MSG_XPL, _("Can't send xPL message"));
-		xPL_releaseMessage(xpl_message_cmnd);
-		return EINA_FALSE;
-	}
-
     char *s;
-    asprintf(&s, _("MSG=xpl-cmnd CLASS=control.basic DEVICE=%s TYPE=%s CURRENT=%s"),
-                    widget_xpl_device_get(widget),
-                    widget_xpl_type_get(widget),
-                    widget_xpl_current_get(widget));
+    asprintf(&s, _("CMND CLASS=control DEVICE=%s TYPE=%s CURRENT=%s"),
+                    widget_device_id_get(widget),
+                    widget_device_type_get(widget),
+                    widget_device_current_get(widget));
     debug(MSG_XPL, s);
-    FREE(s);
 
-    xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;
-}/*xpl_control_basic_cmnd_send*/
+}/*device_control_cmnd_send*/
 
 
 /*
  *
  */
 Eina_Bool
-xpl_sensor_basic_cmnd_send(Widget *widget)
+device_sensor_cmnd_send(Widget *widget)
 {
-    xPL_MessagePtr xpl_message_cmnd = NULL;
-
-    /* Create an appropriate message */
-    if ((xpl_message_cmnd = xPL_createBroadcastMessage(xpl_edams_service, xPL_MESSAGE_COMMAND)) == NULL)
-    {
-        debug(MSG_XPL, _("Can't create broadcast message"));
-        return EINA_FALSE;
-    }
-
-  	xPL_setSchema(xpl_message_cmnd, "sensor", "request");
-
-    /*Install the value(s) and send the message*/
-  	xPL_setMessageNamedValue(xpl_message_cmnd, "request", "current");
-  	xPL_setMessageNamedValue(xpl_message_cmnd, "device", widget_xpl_device_get(widget));
-
-	/*Broadcast the message*/
-	if (!xPL_sendMessage(xpl_message_cmnd))
-	{
-		debug(MSG_XPL, _("Can't send xPL message"));
-		xPL_releaseMessage(xpl_message_cmnd);
-		return EINA_FALSE;
-	}
-
-    char *s;
-    asprintf(&s, _("MSG=xpl-cmnd CLASS=sensor.request DEVICE=%s"), widget_xpl_device_get(widget));
-    debug(MSG_XPL, s);
-    FREE(s);
-
-    xPL_releaseMessage(xpl_message_cmnd);
     return EINA_TRUE;
-}/*xpl_sensor_basic_stat_send*/
+}/*device_sensor_cmnd_send*/

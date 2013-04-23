@@ -31,6 +31,7 @@
 #include "location.h"
 #include "path.h"
 #include "utils.h"
+#include "widget.h"
 
 #define LOCATION_FILE_VERSION 0x92
 
@@ -365,7 +366,7 @@ widget_free(Widget *widget)
     eina_stringshare_del(widget->group);
 
     /*If class is set on device specific, so free device specifics field*/
-    if((widget->class == WIDGET_CLASS_CONTROL_BASIC) ||
+    if((widget->class == WIDGET_CLASS_CONTROL) ||
        (widget->class == WIDGET_CLASS_SENSOR ))
     {
         eina_stringshare_del(widget->device_id);
@@ -401,7 +402,7 @@ widget_clone(Widget *src)
        (src->class == WIDGET_CLASS_SENSOR))
     {
         ret->device_id = eina_stringshare_add(src->device_id);
-        ret->devicel_type = eina_stringshare_add(src->device_type);;
+        ret->device_type = eina_stringshare_add(src->device_type);
         ret->device_current = eina_stringshare_add(src->device_current);
         ret->device_highest = eina_stringshare_add(src->device_highest);
         ret->device_lowest = eina_stringshare_add(src->device_lowest);
@@ -512,7 +513,7 @@ widget_device_id_set(Widget *widget, const char *id)
 {
     EINA_SAFETY_ON_NULL_RETURN(widget);
     if((widget->class == WIDGET_CLASS_CONTROL) ||
-       (widget->class == WIDGET_CLASS_SENSOR)
+       (widget->class == WIDGET_CLASS_SENSOR))
     {
     	eina_stringshare_replace(&(widget->device_id), id);
     }
@@ -526,7 +527,7 @@ inline const char *
 widget_device_id_get(const Widget *widget)
 {
     if((widget->class == WIDGET_CLASS_CONTROL) ||
-       (widget->class == WIDGET_CLASS_SENSOR)
+       (widget->class == WIDGET_CLASS_SENSOR))
     {
         return elm_entry_markup_to_utf8(widget->device_id);
     }

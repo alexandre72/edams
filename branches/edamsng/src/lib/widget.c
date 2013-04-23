@@ -19,11 +19,11 @@
  */
 
 
+#include <stdio.h>
+#include <string.h>
 
 #include "widget.h"
 
-#include <stdio.h>
-#include <string.h>
 
 Widget_Class
 widget_str_to_class(const char *str)
@@ -31,8 +31,8 @@ widget_str_to_class(const char *str)
 	if(!str) return WIDGET_CLASS_UNKNOWN;
 
 	if(strcmp(str, "sensor") == 0) 			return WIDGET_CLASS_SENSOR;
-	else if(strcmp(str, "control") == 0)		return WIDGET_CLASS_CONTROL;
-	else if(strcmp(str, "virtual") == 0)			return WIDGET_CLASS_VIRTUAL;
+	else if(strcmp(str, "control") == 0)	return WIDGET_CLASS_CONTROL;
+	else if(strcmp(str, "virtual") == 0)	return WIDGET_CLASS_VIRTUAL;
     else return WIDGET_CLASS_UNKNOWN;
 }/*widget_str_to_class*/
 

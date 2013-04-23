@@ -22,7 +22,7 @@
 
 group
 {
-	name: "widget/control.basic/mute/icon";
+	name: "widget/control/mute/icon";
     min: 32 32;
 
 	images
@@ -44,13 +44,13 @@ group
             }
          }
       }
-}/*group widget/control.basic/mute/icon*/
+}/*group widget/control/mute/icon*/
 
 
 
 group
 {
-	name: "widget/control.basic/mute";
+	name: "widget/control/mute";
 	min: 110 70;
 	max: 110 70;
 
@@ -187,4 +187,4 @@ group
 		}
 
 	}/*programs*/
-}/*group widget/control.basic/mute*/
+}/*group widget/control/mute*/

@@ -20,7 +20,7 @@
 
 group
 {
-	name: "widget/sensor.basic/led/icon";
+	name: "widget/sensor/led/icon";
     min: 32 32;
 
 	images
@@ -42,12 +42,12 @@ group
             }
 		}
 	}
-}/*group widget/sensor.basic/led/icon*/
+}/*group widget/sensor/led/icon*/
 
 
 group
 {
-	name: "widget/sensor.basic/led";
+	name: "widget/sensor/led";
 	min: 110 70;
  	max: 110 70;
 
@@ -285,4 +285,4 @@ group
             target: "update";
          }
    }
-}/*group widget/sensor.basic/led*/
+}/*group widget/sensor/led*/

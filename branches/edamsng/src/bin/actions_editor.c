@@ -25,6 +25,7 @@
 #include "cJSON.h"
 #include "cmnd_editor.h"
 #include "debug_editor.h"
+#include "device.h"
 #include "edams.h"
 #include "exec_editor.h"
 #include "mail_editor.h"
@@ -33,7 +34,6 @@
 #include "path.h"
 #include "utils.h"
 #include "voice_editor.h"
-#include "xpl.h"
 
 /*Global objects*/
 static Evas_Object *win = NULL;
@@ -77,11 +77,9 @@ _cmndeditor_button_ok_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void 
 
     Widget *widget = elm_object_item_data_get(selected_item);
 
-    s = action_cmnd_data_format(widget_xpl_device_get(widget),
-                            widget_xpl_type_get(widget),
-                            widget_xpl_current_get(widget),
-                            widget_xpl_data1_get(widget));
-
+    s = action_cmnd_data_format(widget_device_id_get(widget),
+                            widget_device_type_get(widget),
+                            widget_device_current_get(widget));
 
     evas_object_data_set(win, "action data", s);
 	cmndeditor_close(cmndeditor);
@@ -418,11 +416,11 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *ev
 	Evas_Object *list;
 	char *s;
 
-    if((!app->widget) || (widget_class_get(app->widget) != WIDGET_CLASS_XPL_SENSOR_BASIC)) return;
+    if((!app->widget) || (widget_class_get(app->widget) != WIDGET_CLASS_SENSOR)) return;
 
-    const char *type = widget_xpl_type_get(app->widget);
+    const char *type = widget_device_type_get(app->widget);
 
-	asprintf(&s, _("Edit actions for '%s' xPL sensor.basic"), widget_xpl_device_get(app->widget));
+	asprintf(&s, _("Edit actions for '%s' device sensor"), widget_device_id_get(app->widget));
 	win = elm_win_util_standard_add("actions_editor", s);
 	FREE(s);
 	elm_win_autodel_set(win, EINA_TRUE);
@@ -468,17 +466,17 @@ actions_editor_add(void *data __UNUSED__, Evas_Object * obj __UNUSED__,	void *ev
 
    	frame = elm_frame_add(win);
 	elm_grid_pack(grid, frame, 11, 61, 40, 20);
-   	elm_object_text_set(frame, xpl_type_to_units(type));
+   	elm_object_text_set(frame, device_type_to_units(type));
 	evas_object_show(frame);
 
     slider = elm_slider_add(win);
    	evas_object_name_set(slider, "ifvalue slider");
     //FIXME:'%' could be a symbol format used by device unit, but it's a C printf* reserved keyword too.
     //so, try to print it correctly.
-    asprintf(&s, "%%1.0f %s", xpl_type_to_unit_symbol(type));
+    asprintf(&s, "%%1.0f %s", device_type_to_unit_symbol(type));
     elm_slider_unit_format_set(slider, s);
     FREE(s);
-    elm_slider_min_max_set(slider, xpl_type_current_min_get(type), xpl_type_current_max_get(type));
+    elm_slider_min_max_set(slider, device_type_current_min_get(type), device_type_current_max_get(type));
     evas_object_show(slider);
 	elm_object_content_set(frame, slider);
 

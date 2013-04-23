@@ -1,4 +1,4 @@
-/*
+	/*
  * action.c
  * This file is part of EDAMS
  *
@@ -27,7 +27,7 @@
 #include "location.h"
 #include "sound.h"
 #include "utils.h"
-#include "xpl.h"
+#include "widget.h"
 
 /*
  *
@@ -300,13 +300,13 @@ osd_action_parse(const char *data)
                 {
                     char *delay = cJSON_PrintUnformatted(jdelay);
                     global_view_osd_write(text, atoi(delay));
-                    xpl_osd_basic_cmnd_send(command, text, delay);
+                    device_osd_cmnd_send(command, text, delay);
                     FREE(delay);
                 }
                 else
                 {
                     global_view_osd_write(text, -1);
-                    xpl_osd_basic_cmnd_send(command, text, NULL);
+                    device_osd_cmnd_send(command, text, NULL);
                     FREE(text);
                 }
             }
@@ -324,7 +324,7 @@ osd_action_parse(const char *data)
  *
  */
 const char *
-action_cmnd_data_format(const char *device, const char *type, const char *current, const char *data1)
+action_cmnd_data_format(const char *device, const char *type, const char *current)
 {
     cJSON *root;
     const char *s;
@@ -334,9 +334,6 @@ action_cmnd_data_format(const char *device, const char *type, const char *curren
 	cJSON_AddItemToObject(root, "DEVICE", cJSON_CreateString(device));
     cJSON_AddItemToObject(root, "TYPE", cJSON_CreateString(type));
  	cJSON_AddItemToObject(root, "CURRENT", cJSON_CreateString(current));
-
- 	if(data1)
-        cJSON_AddItemToObject(root, "DATA1", cJSON_CreateString(data1));
 
     s = cJSON_PrintUnformatted(root);
 
@@ -354,8 +351,8 @@ cmnd_action_parse(const char *data)
 {
     Widget *widget = NULL;
 	cJSON *root;
-    cJSON *jdevice, *jtype, *jcurrent, *jdata1;
-    char *device, *current, *type, *data1;
+    cJSON *jdevice, *jtype, *jcurrent;
+    char *device, *current, *type;
 
 	root = cJSON_Parse(data);
 
@@ -364,7 +361,6 @@ cmnd_action_parse(const char *data)
 	jdevice = cJSON_GetObjectItem(root, "DEVICE");
 	jtype = cJSON_GetObjectItem(root, "TYPE");
 	jcurrent = cJSON_GetObjectItem(root, "CURRENT");
-	jdata1 = cJSON_GetObjectItem(root, "DATA1");
 
     device =cJSON_PrintUnformatted(jdevice);
     type =cJSON_PrintUnformatted(jtype);
@@ -374,25 +370,17 @@ cmnd_action_parse(const char *data)
     strdelstr(type, "\"");
     strdelstr(current, "\"");
 
-    widget = widget_new(device, WIDGET_CLASS_XPL_CONTROL_BASIC);
-    widget_xpl_device_set(widget, device);
-    widget_xpl_type_set(widget, type);
-    widget_xpl_current_set(widget, current);
-
-    if(jdata1)
-    {
-        data1 =cJSON_PrintUnformatted(jdata1);
-        strdelstr(data1, "\"");
-        widget_xpl_data1_set(widget, data1);
-        FREE(data1);
-    }
+    widget = widget_new(device, WIDGET_CLASS_CONTROL);
+    widget_device_id_set(widget, device);
+    widget_device_type_set(widget, type);
+    widget_device_current_set(widget, current);
 
 	cJSON_Delete(root);
     FREE(device);
     FREE(type);
     FREE(current);
 
-    xpl_control_basic_cmnd_send(widget);
+    device_control_cmnd_send(widget);
 
     widget_free(widget);
 

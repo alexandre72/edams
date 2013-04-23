@@ -98,7 +98,9 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libedams_la_DEPENDENCIES =
-am_libedams_la_OBJECTS = action.lo cJSON.lo crontab.lo device.lo
+am_libedams_la_OBJECTS = action.lo cJSON.lo crontab.lo device.lo \
+	mbox.lo myfileselector.lo path.lo location.lo settings.lo \
+	sound.lo cosm.lo utils.lo voicerss.lo widget.lo
 libedams_la_OBJECTS = $(am_libedams_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -323,7 +325,17 @@ libedams_la_SOURCES = \
 action.c \
 cJSON.c \
 crontab.c \
-device.c
+device.c \
+mbox.c \
+myfileselector.c \
+path.c \
+location.c \
+settings.c \
+sound.c \
+cosm.c \
+utils.c \
+voicerss.c \
+widget.c
 
 libedams_la_LIBADD = \
 @EDAMS_LIBS@ \
@@ -411,8 +423,18 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cJSON.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cosm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crontab.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/device.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/location.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbox.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/myfileselector.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/path.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/settings.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sound.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/voicerss.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/widget.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -648,17 +670,6 @@ uninstall-am: uninstall-libLTLIBRARIES
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
 
-mbox.c \
-myfileselector.c \
-path.c \
-location.c \
-settings.c \
-sound.c \
-cosm.c \
-thingspeak.c \
-utils.c \
-voicerss.c \
-widget.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

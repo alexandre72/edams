@@ -63,7 +63,7 @@ const char *action_condition_to_str(Condition condition);
 const char *action_debug_data_format(const char *print);
 const char *action_exec_data_format(const char *exec, const char *terminal);
 const char *action_mail_data_format(const char *from, const char *to, const char *subject, const char *body);
-const char *action_cmnd_data_format(const char *device, const char *type, const char *current, const char *data1);
+const char *action_cmnd_data_format(const char *device, const char *type, const char *current);
 const char *action_osd_data_format(const char *command, const char *text, double delay);
 const char *action_voice_data_format(const char *text, const char *file);
 

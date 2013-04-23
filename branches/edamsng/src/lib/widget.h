@@ -25,10 +25,10 @@ typedef struct _Widget Widget;
 
 typedef enum _Widget_Class_
 {
-	WIDGET_CLASS_UNKNOWN            = (0),
-	WIDGET_CLASS_XPL_SENSOR_BASIC   = (1),
-	WIDGET_CLASS_XPL_CONTROL_BASIC  = (2),
-	WIDGET_CLASS_VIRTUAL	        = (3),
+	WIDGET_CLASS_UNKNOWN    = (0),
+	WIDGET_CLASS_SENSOR   	= (1),
+	WIDGET_CLASS_CONTROL  	= (2),
+	WIDGET_CLASS_VIRTUAL	= (3),
 	WIDGET_CLASS_LAST
 }Widget_Class;
 
