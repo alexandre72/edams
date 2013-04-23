@@ -144,7 +144,7 @@ cosm_location_feed_add(Location *location)
 
 	cJSON *root,*fmt;
 	root=cJSON_CreateObject();
-	asprintf(&s, "%s sensor.basic", location_name_get(location));
+	asprintf(&s, "%s sensor", location_name_get(location));
 	cJSON_AddItemToObject(root, "title", cJSON_CreateString(s));
 	FREE(s);
 	cJSON_AddItemToObject(root, "version", cJSON_CreateString("1.0.0"));
