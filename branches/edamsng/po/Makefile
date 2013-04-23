@@ -12,7 +12,7 @@
 GETTEXT_MACRO_VERSION = 0.17
 
 PACKAGE = edams
-VERSION = 0.9.0.288M
+VERSION = 0.9.0.290:292M
 PACKAGE_BUGREPORT = alexandre.dussart@laposte.net
 
 SHELL = /bin/sh
@@ -239,7 +239,7 @@ $(DOMAIN).pot-update: $(POTFILES) $(srcdir)/POTFILES.in remove-potcdate.sed
 	      --files-from=$(srcdir)/POTFILES.in \
 	      --copyright-holder='$(COPYRIGHT_HOLDER)' \
 	      --package-name="$${package_gnu}edams" \
-	      --package-version='0.9.0.288M' \
+	      --package-version='0.9.0.290:292M' \
 	      --msgid-bugs-address="$$msgid_bugs_address" \
 	    ;; \
 	esac
